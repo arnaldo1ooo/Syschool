@@ -322,20 +322,20 @@ public class Metodos {
     public boolean PermisoRol(String ElAlias, String modulo, String elRol) {
         con = con.ObtenerRSSentencia("CALL SP_UsuarioRolConsulta('" + ElAlias + "','" + modulo + "')");
         String rol;
-        boolean valido = false;
+        boolean tienepermiso = false;
         try {
             while (con.rs.next()) {
                 rol = con.rs.getString("rol_denominacion");
                 if (rol.equals(elRol)) {
                     System.out.println("El usuario (" + ElAlias + ") tiene permiso para " + elRol + " en el modulo " + modulo);
-                    valido = true;
+                    tienepermiso = true;
                 }
             }
         } catch (SQLException ex) {
             System.out.println("Error al verificar roles del usuario " + ex);
         }
         con.DesconectarBasedeDatos();
-        return valido;
+        return tienepermiso;
     }
 
     public String MayusPrimeraLetra(String laCadena) {
@@ -364,8 +364,11 @@ public class Metodos {
         }
     }
 
-    
-    
-    
-    
+    public void OcultarColumna(JTable LaTabla, int NumColumna) {
+        if (LaTabla.getColumnCount() >= NumColumna) {
+            LaTabla.getColumnModel().getColumn(NumColumna).setMaxWidth(0);
+            LaTabla.getColumnModel().getColumn(NumColumna).setMinWidth(0);
+            LaTabla.getColumnModel().getColumn(NumColumna).setPreferredWidth(0);
+        }
+    }
 }

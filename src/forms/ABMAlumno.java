@@ -680,6 +680,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
         lblCodigo.setForeground(new java.awt.Color(102, 102, 102));
         lblCodigo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCodigo.setText("Código:");
+        lblCodigo.setFocusable(false);
 
         txtCodigo.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtCodigo.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -690,11 +691,13 @@ public final class ABMAlumno extends javax.swing.JDialog {
         lblFechaIngreso.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblFechaIngreso.setText("Fecha de inscripción*:");
         lblFechaIngreso.setToolTipText("");
+        lblFechaIngreso.setFocusable(false);
 
         lblNombre.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblNombre.setForeground(new java.awt.Color(102, 102, 102));
         lblNombre.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblNombre.setText("Nombre*:");
+        lblNombre.setFocusable(false);
 
         txtNombre.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtNombre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -712,6 +715,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
         lblApellido.setForeground(new java.awt.Color(102, 102, 102));
         lblApellido.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblApellido.setText("Apellido*:");
+        lblApellido.setFocusable(false);
 
         txtApellido.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtApellido.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -729,6 +733,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
         lblTelefono.setForeground(new java.awt.Color(102, 102, 102));
         lblTelefono.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblTelefono.setText("Teléfono:");
+        lblTelefono.setFocusable(false);
 
         txtTelefono.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtTelefono.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -746,6 +751,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
         lblEmail.setForeground(new java.awt.Color(102, 102, 102));
         lblEmail.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblEmail.setText("Email:");
+        lblEmail.setFocusable(false);
 
         txtEmail.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtEmail.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -763,6 +769,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
         lblObs.setForeground(new java.awt.Color(102, 102, 102));
         lblObs.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblObs.setText("Obs:");
+        lblObs.setFocusable(false);
 
         taObs.setColumns(20);
         taObs.setRows(5);
@@ -787,6 +794,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
         lblSexo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblSexo.setText("Sexo*:");
         lblSexo.setToolTipText("");
+        lblSexo.setFocusable(false);
 
         cbSexo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "MASCULINO", "FEMENINO", "SIN ESPECIFICAR" }));
         cbSexo.setEnabled(false);
@@ -796,6 +804,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
         lblEstado.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblEstado.setText("Estado*:");
         lblEstado.setToolTipText("");
+        lblEstado.setFocusable(false);
 
         cbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "INACTIVO", "ACTIVO" }));
         cbEstado.setSelectedIndex(1);
@@ -806,6 +815,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
         lblEstado1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblEstado1.setText("Apoderado*:");
         lblEstado1.setToolTipText("");
+        lblEstado1.setFocusable(false);
 
         cbApoderado.setEnabled(false);
 
@@ -813,6 +823,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
         lblCedula.setForeground(new java.awt.Color(102, 102, 102));
         lblCedula.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCedula.setText("N° de cédula*:");
+        lblCedula.setFocusable(false);
 
         txtCedula.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtCedula.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -835,11 +846,13 @@ public final class ABMAlumno extends javax.swing.JDialog {
         lblFechaNacimiento.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblFechaNacimiento.setText("Fecha de nacimiento*:");
         lblFechaNacimiento.setToolTipText("");
+        lblFechaNacimiento.setFocusable(false);
 
         lblCedula1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblCedula1.setForeground(new java.awt.Color(102, 102, 102));
         lblCedula1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCedula1.setText("Edad:");
+        lblCedula1.setFocusable(false);
 
         txtEdad.setEditable(false);
         txtEdad.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -1026,6 +1039,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
         labelMetric1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         labelMetric1.setText("ALUMNOS");
         labelMetric1.setDireccionDeSombra(110);
+        labelMetric1.setFocusable(false);
         labelMetric1.setFont(new java.awt.Font("Cooper Black", 0, 28)); // NOI18N
 
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);

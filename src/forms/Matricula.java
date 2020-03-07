@@ -24,7 +24,7 @@ public class Matricula extends javax.swing.JDialog {
         initComponents();
 
         CargarFiltroPeriodo();
-        ConsultaAllMatricula("TODOS");
+        ConsultaAllMatricula(cbFiltroPeriodo.getSelectedItem().toString());
 
         if (eliminar == false) {
             //Oculta los botones si no es para eliminar pago
@@ -37,18 +37,12 @@ public class Matricula extends javax.swing.JDialog {
 
     private void CargarFiltroPeriodo() {
         try {
-            con = con.ObtenerRSSentencia("SELECT MIN(mat_periodo) AS menor, MAX(mat_periodo) AS mayor FROM matricula");
-            if (con.rs.next()) {
-                if (con.rs.getInt("menor") == con.rs.getInt("mayor")) {
-                    cbFiltroPeriodo.addItem("TODOS");
-                    cbFiltroPeriodo.addItem(con.rs.getString("menor"));
-                } else {
-                    cbFiltroPeriodo.addItem("TODOS");
-                    cbFiltroPeriodo.addItem(con.rs.getString("menor"));
-                    cbFiltroPeriodo.addItem(con.rs.getString("mayor"));
-                }
+            con = con.ObtenerRSSentencia("SELECT mat_periodo FROM matricula GROUP BY(mat_periodo) ORDER BY mat_periodo DESC");
+            cbFiltroPeriodo.addItem("TODOS");
+            while (con.rs.next()) {
+                cbFiltroPeriodo.addItem(con.rs.getString("mat_periodo"));
             }
-            cbFiltroPeriodo.setSelectedIndex(0);
+            cbFiltroPeriodo.setSelectedIndex(1);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -60,7 +54,7 @@ public class Matricula extends javax.swing.JDialog {
         String titlesJtabla[] = {"Código", "Alumno", "Nivel", "Fecha", "Periodo"};
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
 
-        //metodos.AnchuraColumna(tbPrincipal);
+        metodos.AnchuraColumna(tbPrincipal);
         cbCampoBuscar.setSelectedIndex(1);
 
         if (tbPrincipal.getModel().getRowCount() == 1) {
@@ -279,7 +273,7 @@ public class Matricula extends javax.swing.JDialog {
                 String sentencia = "CALL SP_MatriculaEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
-                ConsultaAllMatricula("TODOS"); //Actualizar tabla
+                ConsultaAllMatricula(cbFiltroPeriodo.getSelectedItem().toString()); //Actualizar tabla
             }
         }
     }//GEN-LAST:event_btnEliminarActionPerformed

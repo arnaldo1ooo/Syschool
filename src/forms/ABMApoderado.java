@@ -11,7 +11,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
 
-import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
@@ -25,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 import static login.Login.Alias;
@@ -263,6 +261,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblApellido.setForeground(new Color(102, 102, 102));
         lblDireccion.setForeground(new Color(102, 102, 102));
 
+        
         txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
 
@@ -715,6 +714,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
         jLabel10.setText("  BUSCAR ");
+        jLabel10.setFocusable(false);
 
         txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
         txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
@@ -760,11 +760,13 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblBuscarCampo.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         lblBuscarCampo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblBuscarCampo.setText("Buscar por:");
+        lblBuscarCampo.setFocusable(false);
 
         lbCantRegistros.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         lbCantRegistros.setForeground(new java.awt.Color(153, 153, 0));
         lbCantRegistros.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lbCantRegistros.setText("0 Registros encontrados");
+        lbCantRegistros.setFocusable(false);
         lbCantRegistros.setPreferredSize(new java.awt.Dimension(57, 25));
 
         javax.swing.GroupLayout jpTablaLayout = new javax.swing.GroupLayout(jpTabla);
@@ -879,6 +881,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblCodigo.setForeground(new java.awt.Color(102, 102, 102));
         lblCodigo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCodigo.setText("Código:");
+        lblCodigo.setFocusable(false);
 
         txtCodigo.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtCodigo.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -889,6 +892,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblCedula.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCedula.setText("N° de cédula*:");
         lblCedula.setToolTipText("");
+        lblCedula.setFocusable(false);
 
         txtCedula.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtCedula.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -914,6 +918,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblNombre.setForeground(new java.awt.Color(102, 102, 102));
         lblNombre.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblNombre.setText("Nombre*:");
+        lblNombre.setFocusable(false);
 
         txtNombre.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtNombre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -931,6 +936,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblApellido.setForeground(new java.awt.Color(102, 102, 102));
         lblApellido.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblApellido.setText("Apellido*:");
+        lblApellido.setFocusable(false);
 
         txtApellido.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtApellido.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -948,6 +954,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblDireccion.setForeground(new java.awt.Color(102, 102, 102));
         lblDireccion.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblDireccion.setText("Dirección*:");
+        lblDireccion.setFocusable(false);
 
         txtDireccion.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtDireccion.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -968,6 +975,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblTelefono.setForeground(new java.awt.Color(102, 102, 102));
         lblTelefono.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblTelefono.setText("Teléfono:");
+        lblTelefono.setFocusable(false);
 
         txtTelefono.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtTelefono.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -985,6 +993,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblEmail.setForeground(new java.awt.Color(102, 102, 102));
         lblEmail.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblEmail.setText("Email:");
+        lblEmail.setFocusable(false);
 
         txtEmail.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtEmail.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -1002,6 +1011,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblObs.setForeground(new java.awt.Color(102, 102, 102));
         lblObs.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblObs.setText("Obs:");
+        lblObs.setFocusable(false);
 
         taObs.setColumns(20);
         taObs.setRows(5);
@@ -1026,6 +1036,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblSexo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblSexo.setText("Sexo*:");
         lblSexo.setToolTipText("");
+        lblSexo.setFocusable(false);
 
         javax.swing.GroupLayout jpEdicionLayout = new javax.swing.GroupLayout(jpEdicion);
         jpEdicion.setLayout(jpEdicionLayout);
@@ -1240,6 +1251,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         labelMetric2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         labelMetric2.setText("APODERADOS");
         labelMetric2.setDireccionDeSombra(110);
+        labelMetric2.setFocusable(false);
         labelMetric2.setFont(new java.awt.Font("Cooper Black", 0, 28)); // NOI18N
 
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);

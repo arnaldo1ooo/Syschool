@@ -62,7 +62,9 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
         //Carga los combobox con las consultas
         metodoscombo.CargarComboBox(cbAlumno, "SELECT alu_codigo, CONCAT(alu_nombre,' ', alu_apellido) AS nomape "
                 + "FROM alumno ORDER BY alu_nombre", -1);
-        metodoscombo.CargarComboBox(cbNivel, "SELECT niv_codigo, CONCAT(niv_descripcion,' \"',niv_seccion,'\"', ' ',niv_turno) AS nivel "
+        metodoscombo.CargarComboBox(cbNivel, "SELECT niv_codigo, "
+                + "CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
+                + "ELSE CONCAT(niv_descripcion,' \"', niv_seccion,'\"', ' ',niv_turno) END AS nivel "
                 + "FROM nivel ORDER BY niv_codigo", 1);
     }
 
@@ -115,7 +117,7 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
     private boolean ComprobarCampos() {
         if (cbAlumno.getSelectedIndex() == -1) {
             Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(this, "Seleccione el alumno", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Seleccione el alumno/a", "Advertencia", JOptionPane.WARNING_MESSAGE);
             cbAlumno.requestFocus();
             return false;
         }
@@ -131,7 +133,7 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
                 + metodoscombo.ObtenerIDSelectComboBox(cbAlumno) + "' AND mat_periodo='" + txtPeriodo.getText() + "'");
         if (YaExisteEnLaBD == true) {
             Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(this, "El alumno " + cbAlumno.getSelectedItem().toString()
+            JOptionPane.showMessageDialog(this, "El alumno/a " + cbAlumno.getSelectedItem().toString()
                     + " ya se encuentra matriculado en el periodo " + txtPeriodo.getText(), "Advertencia", JOptionPane.WARNING_MESSAGE);
             return false;
         }
@@ -313,6 +315,7 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
         setTitle("Ventana Registrar Matricula");
         setBackground(new java.awt.Color(45, 62, 80));
         setResizable(false);
+        setSize(new java.awt.Dimension(616, 311));
 
         jpPrincipal.setBackground(new java.awt.Color(233, 255, 255));
         jpPrincipal.setPreferredSize(new java.awt.Dimension(1580, 478));
@@ -379,6 +382,7 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
         lblRucCedula.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRucCedula.setText("Alumno/a:");
         lblRucCedula.setToolTipText("");
+        lblRucCedula.setFocusable(false);
 
         cbAlumno.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -398,6 +402,7 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
         lblFechaRegistro.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblFechaRegistro.setText("Fecha de matricula:");
         lblFechaRegistro.setToolTipText("");
+        lblFechaRegistro.setFocusable(false);
 
         dcFechaMatricula.setEnabled(false);
         dcFechaMatricula.setMaxSelectableDate(new java.util.Date(4102455600000L));
@@ -407,6 +412,7 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
         lblNivel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblNivel.setText("Nivel:");
         lblNivel.setToolTipText("");
+        lblNivel.setFocusable(false);
 
         txtPeriodo.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         txtPeriodo.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
@@ -416,6 +422,7 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
         lblCodigo6.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblCodigo6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCodigo6.setText("Periodo:");
+        lblCodigo6.setFocusable(false);
 
         javax.swing.GroupLayout jpDatosVentaLayout = new javax.swing.GroupLayout(jpDatosVenta);
         jpDatosVenta.setLayout(jpDatosVentaLayout);
@@ -468,6 +475,7 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
         labelMetric2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         labelMetric2.setText("REGISTRAR MATRICULA  ");
         labelMetric2.setDireccionDeSombra(110);
+        labelMetric2.setFocusable(false);
         labelMetric2.setFont(new java.awt.Font("Cooper Black", 0, 22)); // NOI18N
 
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
@@ -495,7 +503,7 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
 
         lblRucCedula3.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         lblRucCedula3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblRucCedula3.setText("Alumno:");
+        lblRucCedula3.setText("Alumno/a:");
         lblRucCedula3.setToolTipText("");
         lblRucCedula3.setFocusable(false);
 
@@ -536,7 +544,7 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jpPrincipalLayout.createSequentialGroup()
                                 .addComponent(lblRucCedula3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblAlumnoActual, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lblAlumnoActual, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jpPrincipalLayout.createSequentialGroup()
                                 .addComponent(lblRucCedula4)
@@ -575,7 +583,7 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
                 .addComponent(jpDatosVenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -586,7 +594,7 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         getAccessibleContext().setAccessibleName("RegistrarCompra");
@@ -644,7 +652,8 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
         try {
             lblAlumnoActual.setText(cbAlumno.getSelectedItem().toString());
 
-            con = con.ObtenerRSSentencia("SELECT mat_periodo, CONCAT(niv_descripcion, ' \"',niv_seccion,'\"', ' ', niv_turno) AS nivel "
+            con = con.ObtenerRSSentencia("SELECT mat_periodo, CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
+                    + "ELSE CONCAT(niv_descripcion,' \"', niv_seccion,'\"', ' ',niv_turno) END AS nivel "
                     + "FROM matricula, nivel WHERE mat_alumno='" + metodoscombo.ObtenerIDSelectComboBox(cbAlumno) + "' "
                     + "AND mat_nivel=niv_codigo ORDER BY mat_periodo DESC LIMIT 1");
             if (con.rs.next()) {

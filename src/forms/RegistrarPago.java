@@ -49,14 +49,14 @@ public final class RegistrarPago extends javax.swing.JDialog {
     MetodosTXT metodostxt = new MetodosTXT();
     MetodosCombo metodoscombo = new MetodosCombo();
     DefaultTableModel tablemodelConceptoAPagar;
-    DefaultTableModel modeltableAlumnosACargo;
+    DefaultTableModel modeltablePoderantes;
 
     public RegistrarPago(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
 
         tablemodelConceptoAPagar = (DefaultTableModel) tbConceptoAPagar.getModel();
-        modeltableAlumnosACargo = (DefaultTableModel) tbAlumnosACargo.getModel();
+        modeltablePoderantes = (DefaultTableModel) tbPoderantes.getModel();
         //Obtener fecha actual
         dcFechaPago.setDate(new Date());
         Calendar c2 = new GregorianCalendar();
@@ -372,6 +372,10 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lbl10 = new javax.swing.JLabel();
         txtSubtotal = new javax.swing.JTextField();
         lbl8 = new javax.swing.JLabel();
+        lblPoderantesMedio2 = new javax.swing.JLabel();
+        lblPoderantesBasico2 = new javax.swing.JLabel();
+        lblPoderantesMedio = new javax.swing.JLabel();
+        lblPoderantesBasico = new javax.swing.JLabel();
         BuscadorApoderado = new javax.swing.JDialog();
         panel6 = new org.edisoncor.gui.panel.Panel();
         jLabel12 = new javax.swing.JLabel();
@@ -385,11 +389,11 @@ public final class RegistrarPago extends javax.swing.JDialog {
             }
         };
         lbCantRegistrosApoderado = new javax.swing.JLabel();
+        panelRoundTranslucido1 = new org.edisoncor.gui.panel.PanelRoundTranslucido();
         jpPrincipal = new javax.swing.JPanel();
         jpBotones = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
-        btnImprimir = new javax.swing.JButton();
         jpDatosVenta = new javax.swing.JPanel();
         lblApoderado = new javax.swing.JLabel();
         cbApoderado = new javax.swing.JComboBox<>();
@@ -399,12 +403,12 @@ public final class RegistrarPago extends javax.swing.JDialog {
         txtCedulaApoderado = new javax.swing.JTextField();
         lblCedulaApoderado = new javax.swing.JLabel();
         scAllConcepto1 = new javax.swing.JScrollPane();
-        tbAlumnosACargo = new javax.swing.JTable(){
+        tbPoderantes = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex) {
                 return false; //Disallow the editing of any cell
             }
         };
-        lblAlumnosACargo = new javax.swing.JLabel();
+        lblPoderantes = new javax.swing.JLabel();
         panel2 = new org.edisoncor.gui.panel.Panel();
         labelMetric2 = new org.edisoncor.gui.label.LabelMetric();
         labelMetric1 = new org.edisoncor.gui.label.LabelMetric();
@@ -444,8 +448,9 @@ public final class RegistrarPago extends javax.swing.JDialog {
         AgregarPago.setTitle("Agregar pago");
         AgregarPago.setLocation(new java.awt.Point(0, 0));
         AgregarPago.setModal(true);
+        AgregarPago.setPreferredSize(new java.awt.Dimension(690, 365));
         AgregarPago.setResizable(false);
-        AgregarPago.setSize(new java.awt.Dimension(647, 365));
+        AgregarPago.setSize(new java.awt.Dimension(690, 365));
         AgregarPago.setType(java.awt.Window.Type.POPUP);
 
         panel3.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -459,7 +464,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lbl4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lbl4.setText("N° de cuotas a pagar:");
 
-        txtNumCuotasAPagar.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        txtNumCuotasAPagar.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         txtNumCuotasAPagar.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtNumCuotasAPagar.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtNumCuotasAPagar.addActionListener(new java.awt.event.ActionListener() {
@@ -562,8 +567,8 @@ public final class RegistrarPago extends javax.swing.JDialog {
         pnMesesPagados.setLayout(pnMesesPagadosLayout);
         pnMesesPagadosLayout.setHorizontalGroup(
             pnMesesPagadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnMesesPagadosLayout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnMesesPagadosLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblEne2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblFeb2)
@@ -587,12 +592,12 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 .addComponent(lblNov2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblDic2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(36, 36, 36))
         );
         pnMesesPagadosLayout.setVerticalGroup(
             pnMesesPagadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnMesesPagadosLayout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnMesesPagadosLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnMesesPagadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblEne2)
                     .addComponent(lblFeb2)
@@ -606,10 +611,10 @@ public final class RegistrarPago extends javax.swing.JDialog {
                     .addComponent(lblOct2)
                     .addComponent(lblNov2)
                     .addComponent(lblDic2))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
-        lblCancelado.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        lblCancelado.setFont(new java.awt.Font("SansSerif", 1, 16)); // NOI18N
         lblCancelado.setForeground(new java.awt.Color(0, 255, 51));
         lblCancelado.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblCancelado.setText("CANCELADO");
@@ -618,8 +623,9 @@ public final class RegistrarPago extends javax.swing.JDialog {
         panel4.setLayout(panel4Layout);
         panel4Layout.setHorizontalGroup(
             panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnMesesPagados, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panel4Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(41, 41, 41)
                 .addComponent(lbl5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblNumCuotasPagados)
@@ -630,7 +636,6 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblCancelado)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(pnMesesPagados, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panel4Layout.setVerticalGroup(
             panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -777,8 +782,8 @@ public final class RegistrarPago extends javax.swing.JDialog {
         pnMesesAPagar.setLayout(pnMesesAPagarLayout);
         pnMesesAPagarLayout.setHorizontalGroup(
             pnMesesAPagarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnMesesAPagarLayout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnMesesAPagarLayout.createSequentialGroup()
+                .addContainerGap(40, Short.MAX_VALUE)
                 .addComponent(lblEne)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblFeb)
@@ -802,7 +807,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 .addComponent(lblNov)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblDic)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(37, 37, 37))
         );
         pnMesesAPagarLayout.setVerticalGroup(
             pnMesesAPagarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -832,10 +837,11 @@ public final class RegistrarPago extends javax.swing.JDialog {
         panel5.setLayout(panel5Layout);
         panel5Layout.setHorizontalGroup(
             panel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnMesesAPagar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panel5Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(panel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel5Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addComponent(lbl7, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(2, 2, 2)
                         .addComponent(txtConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -845,9 +851,10 @@ public final class RegistrarPago extends javax.swing.JDialog {
                         .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(2, 2, 2)
                         .addComponent(lblCedula10))
-                    .addComponent(lbl3, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(99, Short.MAX_VALUE))
-            .addComponent(pnMesesAPagar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panel5Layout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addComponent(lbl3)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panel5Layout.setVerticalGroup(
             panel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -871,7 +878,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lbl10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lbl10.setText("Subtotal:");
 
-        txtSubtotal.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        txtSubtotal.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         txtSubtotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtSubtotal.setText("0");
         txtSubtotal.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -890,34 +897,61 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lbl8.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lbl8.setText("Guaranies");
 
+        lblPoderantesMedio2.setFont(new java.awt.Font("SansSerif", 1, 11)); // NOI18N
+        lblPoderantesMedio2.setForeground(new java.awt.Color(204, 204, 0));
+        lblPoderantesMedio2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblPoderantesMedio2.setText("Alumnos en nivel medio:");
+
+        lblPoderantesBasico2.setFont(new java.awt.Font("SansSerif", 1, 11)); // NOI18N
+        lblPoderantesBasico2.setForeground(new java.awt.Color(204, 204, 0));
+        lblPoderantesBasico2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblPoderantesBasico2.setText("Alumnos en nivel básico:");
+
+        lblPoderantesMedio.setFont(new java.awt.Font("SansSerif", 1, 11)); // NOI18N
+        lblPoderantesMedio.setForeground(new java.awt.Color(204, 204, 0));
+        lblPoderantesMedio.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblPoderantesMedio.setText("0");
+
+        lblPoderantesBasico.setFont(new java.awt.Font("SansSerif", 1, 11)); // NOI18N
+        lblPoderantesBasico.setForeground(new java.awt.Color(204, 204, 0));
+        lblPoderantesBasico.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblPoderantesBasico.setText("NO");
+
         javax.swing.GroupLayout panel3Layout = new javax.swing.GroupLayout(panel3);
         panel3.setLayout(panel3Layout);
         panel3Layout.setHorizontalGroup(
             panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel3Layout.createSequentialGroup()
-                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(10, 10, 10)
+                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(panel3Layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
                         .addComponent(lbl4)
                         .addGap(2, 2, 2)
                         .addComponent(txtNumCuotasAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
+                        .addGap(35, 35, 35)
                         .addComponent(lbl10)
                         .addGap(2, 2, 2)
                         .addComponent(txtSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(2, 2, 2)
-                        .addComponent(lbl8))
-                    .addGroup(panel3Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(panel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(panel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(panel3Layout.createSequentialGroup()
-                        .addGap(212, 212, 212)
-                        .addComponent(btnAgregar2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(buttonSeven2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(15, Short.MAX_VALUE))
+                        .addComponent(lbl8)
+                        .addGap(57, 57, 57)
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblPoderantesBasico2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblPoderantesMedio2, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblPoderantesBasico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblPoderantesMedio, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(panel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(panel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(0, 19, Short.MAX_VALUE))
+            .addGroup(panel3Layout.createSequentialGroup()
+                .addGap(233, 233, 233)
+                .addComponent(btnAgregar2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(buttonSeven2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panel3Layout.setVerticalGroup(
             panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -926,18 +960,26 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 .addComponent(panel5, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26)
                 .addComponent(panel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(txtSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbl10)
-                    .addComponent(txtNumCuotasAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbl4)
-                    .addComponent(lbl8))
+                    .addComponent(lbl4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtNumCuotasAPagar)
+                    .addComponent(lbl10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtSubtotal)
+                    .addComponent(lbl8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panel3Layout.createSequentialGroup()
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblPoderantesBasico2)
+                            .addComponent(lblPoderantesBasico))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblPoderantesMedio2)
+                            .addComponent(lblPoderantesMedio))))
                 .addGap(18, 18, 18)
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAgregar2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(buttonSeven2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout AgregarPagoLayout = new javax.swing.GroupLayout(AgregarPago.getContentPane());
@@ -948,7 +990,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
         );
         AgregarPagoLayout.setVerticalGroup(
             AgregarPagoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         BuscadorApoderado.setTitle("Buscador de apoderados");
@@ -1060,6 +1102,17 @@ public final class RegistrarPago extends javax.swing.JDialog {
             .addComponent(panel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        javax.swing.GroupLayout panelRoundTranslucido1Layout = new javax.swing.GroupLayout(panelRoundTranslucido1);
+        panelRoundTranslucido1.setLayout(panelRoundTranslucido1Layout);
+        panelRoundTranslucido1Layout.setHorizontalGroup(
+            panelRoundTranslucido1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        panelRoundTranslucido1Layout.setVerticalGroup(
+            panelRoundTranslucido1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
         setTitle("Ventana Registrar Compra");
         setBackground(new java.awt.Color(45, 62, 80));
         setPreferredSize(new java.awt.Dimension(950, 575));
@@ -1103,19 +1156,6 @@ public final class RegistrarPago extends javax.swing.JDialog {
             }
         });
 
-        btnImprimir.setBackground(new java.awt.Color(102, 0, 102));
-        btnImprimir.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
-        btnImprimir.setForeground(new java.awt.Color(255, 255, 255));
-        btnImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos20x20/IconoImprimir.png"))); // NOI18N
-        btnImprimir.setText("Imprimir");
-        btnImprimir.setToolTipText("Cancela la acción");
-        btnImprimir.setEnabled(false);
-        btnImprimir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnImprimirActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jpBotonesLayout = new javax.swing.GroupLayout(jpBotones);
         jpBotones.setLayout(jpBotonesLayout);
         jpBotonesLayout.setHorizontalGroup(
@@ -1125,8 +1165,6 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnCancelar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnImprimir)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jpBotonesLayout.setVerticalGroup(
@@ -1135,8 +1173,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -1145,8 +1182,9 @@ public final class RegistrarPago extends javax.swing.JDialog {
 
         lblApoderado.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblApoderado.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblApoderado.setText("Apoderado");
+        lblApoderado.setText("Apoderado (Encargado)");
         lblApoderado.setToolTipText("");
+        lblApoderado.setFocusable(false);
 
         cbApoderado.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
         cbApoderado.addItemListener(new java.awt.event.ItemListener() {
@@ -1167,6 +1205,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lblFechaPago.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblFechaPago.setText("Fecha de pago");
         lblFechaPago.setToolTipText("");
+        lblFechaPago.setFocusable(false);
 
         dcFechaPago.setEnabled(false);
         dcFechaPago.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
@@ -1189,43 +1228,46 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lblCedulaApoderado.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblCedulaApoderado.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblCedulaApoderado.setText("N° de cédula");
+        lblCedulaApoderado.setFocusable(false);
 
-        tbAlumnosACargo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        tbAlumnosACargo.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        tbAlumnosACargo.setModel(new javax.swing.table.DefaultTableModel(
+        tbPoderantes.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        tbPoderantes.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        tbPoderantes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Alumno", "N° de cédula", "Nivel"
+                "Nombre y Apellido", "N° de cédula", "Nivel", "CodNivel"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tbAlumnosACargo.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        tbAlumnosACargo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        tbAlumnosACargo.setEnabled(false);
-        tbAlumnosACargo.setGridColor(new java.awt.Color(0, 153, 204));
-        tbAlumnosACargo.setOpaque(false);
-        tbAlumnosACargo.setRowHeight(20);
-        tbAlumnosACargo.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tbAlumnosACargo.getTableHeader().setReorderingAllowed(false);
-        tbAlumnosACargo.addMouseListener(new java.awt.event.MouseAdapter() {
+        tbPoderantes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tbPoderantes.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tbPoderantes.setEnabled(false);
+        tbPoderantes.setGridColor(new java.awt.Color(0, 153, 204));
+        tbPoderantes.setOpaque(false);
+        tbPoderantes.setRowHeight(20);
+        tbPoderantes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tbPoderantes.getTableHeader().setResizingAllowed(false);
+        tbPoderantes.getTableHeader().setReorderingAllowed(false);
+        tbPoderantes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                tbAlumnosACargoMousePressed(evt);
+                tbPoderantesMousePressed(evt);
             }
         });
-        scAllConcepto1.setViewportView(tbAlumnosACargo);
+        scAllConcepto1.setViewportView(tbPoderantes);
 
-        lblAlumnosACargo.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        lblAlumnosACargo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblAlumnosACargo.setText("Alumnos a cargo");
+        lblPoderantes.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lblPoderantes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblPoderantes.setText("Poderantes (Alumnos a cargo)");
+        lblPoderantes.setFocusable(false);
 
         javax.swing.GroupLayout jpDatosVentaLayout = new javax.swing.GroupLayout(jpDatosVenta);
         jpDatosVenta.setLayout(jpDatosVentaLayout);
@@ -1250,9 +1292,9 @@ public final class RegistrarPago extends javax.swing.JDialog {
                             .addComponent(dcFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblAlumnosACargo)
-                    .addComponent(scAllConcepto1, javax.swing.GroupLayout.PREFERRED_SIZE, 482, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(lblPoderantes)
+                    .addComponent(scAllConcepto1, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15))
         );
         jpDatosVentaLayout.setVerticalGroup(
             jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1261,25 +1303,26 @@ public final class RegistrarPago extends javax.swing.JDialog {
                     .addGroup(jpDatosVentaLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lblAlumnosACargo)
+                            .addComponent(lblPoderantes)
                             .addComponent(lblApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(2, 2, 2)
-                        .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jpDatosVentaLayout.createSequentialGroup()
                                 .addComponent(cbApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                                     .addComponent(lblCedulaApoderado)
                                     .addComponent(lblFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(2, 2, 2)
                                 .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                                     .addComponent(txtCedulaApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(dcFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(dcFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(scAllConcepto1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                     .addGroup(jpDatosVentaLayout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(btnBuscarApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         panel2.setColorPrimario(new java.awt.Color(0, 153, 153));
@@ -1288,12 +1331,15 @@ public final class RegistrarPago extends javax.swing.JDialog {
         labelMetric2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         labelMetric2.setText("REGISTRAR PAGOS");
         labelMetric2.setDireccionDeSombra(110);
+        labelMetric2.setFocusable(false);
         labelMetric2.setFont(new java.awt.Font("Cooper Black", 0, 28)); // NOI18N
 
         labelMetric1.setText("N° de pago:");
         labelMetric1.setDistanciaDeSombra(2);
+        labelMetric1.setFocusable(false);
 
         lblNumPago.setText("00000000");
+        lblNumPago.setFocusable(false);
         lblNumPago.setFont(new java.awt.Font("Arial", 1, 20)); // NOI18N
 
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
@@ -1327,6 +1373,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lblTituloTotalCompra1.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblTituloTotalCompra1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblTituloTotalCompra1.setText("IMPORTE");
+        lblTituloTotalCompra1.setFocusable(false);
 
         txtImporte.setFont(new java.awt.Font("sansserif", 1, 22)); // NOI18N
         txtImporte.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
@@ -1362,10 +1409,12 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lblTituloTotalCompra2.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblTituloTotalCompra2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblTituloTotalCompra2.setText("VUELTO");
+        lblTituloTotalCompra2.setFocusable(false);
 
         lblTotalMoneda.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         lblTotalMoneda.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblTotalMoneda.setText("Guaranies");
+        lblTotalMoneda.setFocusable(false);
         lblTotalMoneda.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
         txtTotalAPagar.setEditable(false);
@@ -1384,15 +1433,18 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lblTituloTotalCompra.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblTituloTotalCompra.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblTituloTotalCompra.setText("TOTAL A PAGAR");
+        lblTituloTotalCompra.setFocusable(false);
 
         lblTotalMoneda1.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         lblTotalMoneda1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblTotalMoneda1.setText("Guaranies");
+        lblTotalMoneda1.setFocusable(false);
         lblTotalMoneda1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
         lblTotalMoneda2.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         lblTotalMoneda2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblTotalMoneda2.setText("Guaranies");
+        lblTotalMoneda2.setFocusable(false);
         lblTotalMoneda2.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -1449,6 +1501,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel10.setText("Buscar por concepto");
+        jLabel10.setFocusable(false);
 
         txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
         txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
@@ -1463,6 +1516,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel11.setText("Pagos a realizarse");
+        jLabel11.setFocusable(false);
 
         tbConceptoAPagar.setAutoCreateRowSorter(true);
         tbConceptoAPagar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -1603,18 +1657,20 @@ public final class RegistrarPago extends javax.swing.JDialog {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("PERIODO ");
+        jLabel1.setFocusable(false);
 
         lblAnhoActual.setFont(new java.awt.Font("Nirmala UI", 1, 38)); // NOI18N
         lblAnhoActual.setForeground(new java.awt.Color(255, 255, 255));
         lblAnhoActual.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblAnhoActual.setText("0000");
+        lblAnhoActual.setFocusable(false);
 
         javax.swing.GroupLayout panel7Layout = new javax.swing.GroupLayout(panel7);
         panel7.setLayout(panel7Layout);
         panel7Layout.setHorizontalGroup(
             panel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel7Layout.createSequentialGroup()
-                .addContainerGap(18, Short.MAX_VALUE)
+                .addContainerGap(23, Short.MAX_VALUE)
                 .addGroup(panel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblAnhoActual, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1627,7 +1683,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 .addComponent(jLabel1)
                 .addGap(2, 2, 2)
                 .addComponent(lblAnhoActual, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jpPrincipalLayout = new javax.swing.GroupLayout(jpPrincipal);
@@ -1640,15 +1696,15 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jpPrincipalLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
                         .addComponent(jpDatosVenta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 542, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(196, 196, 196)))
+                        .addComponent(panel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
+            .addGroup(jpPrincipalLayout.createSequentialGroup()
+                .addGap(266, 266, 266)
+                .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1657,14 +1713,14 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jpDatosVenta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(panel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(66, Short.MAX_VALUE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1686,6 +1742,41 @@ public final class RegistrarPago extends javax.swing.JDialog {
 
 
     private void btnAnadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnadirActionPerformed
+        //VERIFICAR CANTIDAD DE PODERANTES DEL BASICO Y MEDIO
+        String cantbasico = "NO";
+        int cantmedio = 0;
+        String nivel;
+        int codnivel;
+        for (int i = 0; i < tbPoderantes.getRowCount(); i++) {
+            nivel = tbPoderantes.getValueAt(i, 2) + "";
+            if (nivel.equals("NO MATRICULADO")) {
+                Toolkit.getDefaultToolkit().beep();
+                JOptionPane.showMessageDialog(this, "Existe uno o más Poderantes no matriculados, no se puede realizar el pago",
+                        "Advertencia", JOptionPane.WARNING_MESSAGE);
+                con.DesconectarBasedeDatos();
+                return;
+            } else {
+                codnivel = Integer.parseInt(tbPoderantes.getValueAt(i, 3) + "");
+                con = con.ObtenerRSSentencia("SELECT niv_tipo FROM nivel WHERE niv_codigo='" + codnivel + "'");
+                try {
+                    if (con.rs.next()) {
+                        if (con.rs.getString("niv_tipo").equals("BÁSICO") && cantbasico.equals("NO")) {
+                            cantbasico = "SI";
+                        } else {
+                            if (con.rs.getString("niv_tipo").equals("MEDIO")) {
+                                cantmedio = cantmedio + 1;
+                            }
+                        }
+                    }
+                    lblPoderantesBasico.setText(cantbasico + "");
+                    lblPoderantesMedio.setText(cantmedio + "");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        con.DesconectarBasedeDatos();
+
         String codconceptoselect = tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 0) + "";
         for (int f = 0; f < tbConceptoAPagar.getRowCount(); f++) {
             String codagregado = tbConceptoAPagar.getValueAt(f, 0) + "";
@@ -1881,28 +1972,33 @@ public final class RegistrarPago extends javax.swing.JDialog {
     private void cbApoderadoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbApoderadoItemStateChanged
         if (cbApoderado.getSelectedIndex() != -1) {
             con = con.ObtenerRSSentencia("SELECT CONCAT(alu_nombre,' ',alu_apellido) AS nomapealumno, alu_cedula, "
-                    + "CASE WHEN mat_alumno IS NULL THEN 'NO MATRICULADO' ELSE CONCAT(niv_descripcion, ' \"',niv_seccion,'\"',' ', niv_turno) END AS nivel "
+                    + "(CASE WHEN mat_alumno IS NULL THEN 'NO MATRICULADO' "
+                    + "ELSE (CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
+                    + "ELSE CONCAT(niv_descripcion,' \"', niv_seccion,'\"', ' ',niv_turno) END) END) AS nivel, niv_codigo "
                     + "FROM alumno LEFT OUTER JOIN matricula ON alu_codigo=mat_alumno LEFT OUTER JOIN nivel ON mat_nivel=niv_codigo "
-                    + "WHERE alu_apoderado='" + metodoscombo.ObtenerIDSelectComboBox(cbApoderado) + "' AND (mat_alumno IS NULL OR mat_alumno=alu_codigo) "
-                    + "AND (mat_nivel IS NULL OR mat_nivel=niv_codigo) ORDER BY alu_nombre");
+                    + "WHERE alu_apoderado='" + metodoscombo.ObtenerIDSelectComboBox(cbApoderado) + "' "
+                    + "AND (mat_alumno IS NULL OR mat_alumno=alu_codigo) AND (mat_nivel IS NULL OR mat_nivel=niv_codigo) ORDER BY alu_nombre");
 
             try {
                 String nomapealumno;
                 String cedula;
                 String nivel;
-                modeltableAlumnosACargo.setRowCount(0); //Vacia la tabla
+                String codnivel;
+                modeltablePoderantes.setRowCount(0); //Vacia la tabla
                 while (con.rs.next()) {
                     nomapealumno = con.rs.getString("nomapealumno");
                     cedula = metodostxt.IntegerPuntosMiles(con.rs.getInt("alu_cedula"));
                     nivel = con.rs.getString("nivel");
+                    codnivel = con.rs.getString("niv_codigo");
 
-                    modeltableAlumnosACargo.addRow(new Object[]{nomapealumno, cedula, nivel});
+                    modeltablePoderantes.addRow(new Object[]{nomapealumno, cedula, nivel, codnivel});
                 }
-                tbAlumnosACargo.setModel(modeltableAlumnosACargo);
-                
+                tbPoderantes.setModel(modeltablePoderantes);
+                metodos.OcultarColumna(tbPoderantes, 3); //Ocultar columna
+
                 //Colorear
-                tbAlumnosACargo.setDefaultRenderer(Object.class, new ColorearJTable());
-                
+                tbPoderantes.setDefaultRenderer(Object.class, new ColorearJTable());
+
                 //Obtener cedula del apoderado
                 con = con.ObtenerRSSentencia("SELECT apo_cedula FROM apoderado WHERE apo_codigo='"
                         + metodoscombo.ObtenerIDSelectComboBox(cbApoderado) + "'");
@@ -1955,6 +2051,18 @@ public final class RegistrarPago extends javax.swing.JDialog {
             }
 
             double monto = metodostxt.DoubleAFormatoAmericano(txtMonto.getText());
+
+            //Sumar cantidad de poderantes basicos y medio
+            int numpoderantes = 0;
+            if (lblPoderantesBasico.getText().equals("SI")) {
+                numpoderantes = numpoderantes + 1;
+            }
+            if (lblPoderantesMedio.getText().equals("0") == false) {
+                numpoderantes = numpoderantes + Integer.parseInt(lblPoderantesMedio.getText());
+            }
+            monto = monto * numpoderantes;
+
+            
             txtSubtotal.setText(metodostxt.DoubleAFormatoSudamerica(numCuotasAPagar * monto));
             if (numactual != Integer.parseInt(txtNumCuotasAPagar.getText())) { //Si el numero ingresado no es el mismo
                 numactual = Integer.parseInt(txtNumCuotasAPagar.getText());
@@ -1977,7 +2085,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
                     }
                 }
             }
-        } else {
+        } else { //Si es vacio
             txtSubtotal.setText("0");
             numactual = 0;
             //Recorrer los meses y sacar checks sin pagar
@@ -2121,13 +2229,9 @@ public final class RegistrarPago extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_tbApoderadoKeyReleased
 
-    private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
+    private void tbPoderantesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPoderantesMousePressed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnImprimirActionPerformed
-
-    private void tbAlumnosACargoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbAlumnosACargoMousePressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tbAlumnosACargoMousePressed
+    }//GEN-LAST:event_tbPoderantesMousePressed
 
     List<Component> ordenTabulador;
 
@@ -2177,7 +2281,6 @@ public final class RegistrarPago extends javax.swing.JDialog {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
-    private javax.swing.JButton btnImprimir;
     private org.edisoncor.gui.button.ButtonSeven buttonSeven2;
     private static javax.swing.JComboBox<MetodosCombo> cbApoderado;
     private javax.swing.JComboBox cbCampoBuscarApoderado;
@@ -2204,7 +2307,6 @@ public final class RegistrarPago extends javax.swing.JDialog {
     private javax.swing.JLabel lblAbr2;
     private javax.swing.JLabel lblAgo;
     private javax.swing.JLabel lblAgo2;
-    private javax.swing.JLabel lblAlumnosACargo;
     private javax.swing.JLabel lblAnhoActual;
     private javax.swing.JLabel lblApoderado;
     private javax.swing.JLabel lblBuscarCampoApoderado;
@@ -2234,6 +2336,11 @@ public final class RegistrarPago extends javax.swing.JDialog {
     private javax.swing.JLabel lblNumTotalCuotas;
     private javax.swing.JLabel lblOct;
     private javax.swing.JLabel lblOct2;
+    private javax.swing.JLabel lblPoderantes;
+    private javax.swing.JLabel lblPoderantesBasico;
+    private javax.swing.JLabel lblPoderantesBasico2;
+    private javax.swing.JLabel lblPoderantesMedio;
+    private javax.swing.JLabel lblPoderantesMedio2;
     private javax.swing.JLabel lblSep;
     private javax.swing.JLabel lblSep2;
     private javax.swing.JLabel lblTituloTotalCompra;
@@ -2249,6 +2356,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
     private org.edisoncor.gui.panel.Panel panel5;
     private org.edisoncor.gui.panel.Panel panel6;
     private org.edisoncor.gui.panel.Panel panel7;
+    private org.edisoncor.gui.panel.PanelRoundTranslucido panelRoundTranslucido1;
     private org.edisoncor.gui.panel.Panel pnMesesAPagar;
     private org.edisoncor.gui.panel.Panel pnMesesPagados;
     private javax.swing.JScrollPane scAllConcepto;
@@ -2256,9 +2364,9 @@ public final class RegistrarPago extends javax.swing.JDialog {
     private javax.swing.JScrollPane scApoderado;
     private javax.swing.JScrollPane scConceptoAPagar;
     private javax.swing.JTable tbAllConcepto;
-    private javax.swing.JTable tbAlumnosACargo;
     private javax.swing.JTable tbApoderado;
     private javax.swing.JTable tbConceptoAPagar;
+    private javax.swing.JTable tbPoderantes;
     private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtBuscarApoderado;
     private javax.swing.JTextField txtCedulaApoderado;
