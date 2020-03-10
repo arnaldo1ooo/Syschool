@@ -180,9 +180,6 @@ public final class RegistrarPago extends javax.swing.JDialog {
             parametros.put("APODERADO", cbApoderado.getSelectedItem() + "");
             parametros.put("APODERADO2", cbApoderado.getSelectedItem() + "");
 
-            parametros.put("USUARIO", "ACES (Cooperadora Escolar de Padres)");
-            parametros.put("USUARIO2", "ACES (Cooperadora Escolar de Padres)");
-
             /*try {//Buscar nombre y apellido de usuario registrado
                 con = con.ObtenerRSSentencia("SELECT CONCAT(usu_nombre,' ', usu_apellido) AS nomapeusu FROM usuario WHERE usu_alias = '" + Alias + "'");
                 if (con.rs.next()) {
@@ -191,7 +188,13 @@ public final class RegistrarPago extends javax.swing.JDialog {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            con.DesconectarBasedeDatos();*/
+            con.DesconectarBasedeDatos();
+            parametros.put("USUARIO", "ACES (Cooperadora Escolar de Padres)");
+            parametros.put("USUARIO2", "ACES (Cooperadora Escolar de Padres)");*/
+            parametros.put("NIVEL_BASICO", lblPoderantesBasico.getText());
+            parametros.put("NIVEL_BASICO2", lblPoderantesBasico.getText());
+            parametros.put("NIVEL_MEDIO", lblPoderantesMedio.getText());
+            parametros.put("NIVEL_MEDIO2", lblPoderantesMedio.getText());
             parametros.put("CEDULA", txtCedulaApoderado.getText());
             parametros.put("CEDULA2", txtCedulaApoderado.getText());
             parametros.put("TOTAL", totalString);
@@ -1670,20 +1673,20 @@ public final class RegistrarPago extends javax.swing.JDialog {
         panel7Layout.setHorizontalGroup(
             panel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel7Layout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
+                .addContainerGap(22, Short.MAX_VALUE)
                 .addGroup(panel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblAnhoActual, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18))
+                .addGap(19, 19, 19))
         );
         panel7Layout.setVerticalGroup(
             panel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel7Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
+                .addGap(35, 35, 35)
                 .addComponent(jLabel1)
                 .addGap(2, 2, 2)
                 .addComponent(lblAnhoActual, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jpPrincipalLayout = new javax.swing.GroupLayout(jpPrincipal);
@@ -2062,7 +2065,6 @@ public final class RegistrarPago extends javax.swing.JDialog {
             }
             monto = monto * numpoderantes;
 
-            
             txtSubtotal.setText(metodostxt.DoubleAFormatoSudamerica(numCuotasAPagar * monto));
             if (numactual != Integer.parseInt(txtNumCuotasAPagar.getText())) { //Si el numero ingresado no es el mismo
                 numactual = Integer.parseInt(txtNumCuotasAPagar.getText());

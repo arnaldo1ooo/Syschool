@@ -6,12 +6,13 @@
 	<parameter name="NUMPAGO" class="java.lang.String"/>
 	<parameter name="LOGO" class="java.io.InputStream"/>
 	<parameter name="APODERADO" class="java.lang.String"/>
-	<parameter name="USUARIO" class="java.lang.String"/>
 	<parameter name="CEDULA" class="java.lang.String"/>
 	<parameter name="TOTAL" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\Arnaldo_Cantero\\Documents\\NetBeansProjects\\Escuela\\src\\reportes\\recibo\\"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="NIVEL_BASICO" class="java.lang.String"/>
+	<parameter name="NIVEL_MEDIO" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -82,32 +83,42 @@
 				<textFieldExpression><![CDATA[$P{APODERADO}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="366" y="5" width="73" height="20" uuid="dbde3206-1f44-471f-bcd5-10155ece3c62"/>
+				<reportElement x="45" y="25" width="70" height="20" uuid="dbde3206-1f44-471f-bcd5-10155ece3c62"/>
 				<textElement verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[N° de cédula:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="439" y="5" width="100" height="20" uuid="834ef35f-7721-4cc3-9299-dd6070c1edc8"/>
+				<reportElement x="118" y="25" width="151" height="20" uuid="834ef35f-7721-4cc3-9299-dd6070c1edc8"/>
 				<textElement verticalAlignment="Middle">
 					<font size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{CEDULA}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="31" width="115" height="20" uuid="84811bd8-4925-4ad9-974c-a459a150d68f"/>
+				<reportElement x="365" y="5" width="140" height="20" uuid="98e14e53-8d6a-425d-914d-91d3980ff3a1"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Usuario registrante:]]></text>
+				<text><![CDATA[Alumnos en nivel básico:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="365" y="25" width="140" height="20" uuid="96c1417c-2c7f-4bd1-b69c-e83f0333c2fa"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Alumnos en nivel medio:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="118" y="31" width="289" height="20" uuid="bcbdece3-3a29-47e8-8dcd-609faff40bd0"/>
-				<textElement verticalAlignment="Middle">
-					<font size="11"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{USUARIO}]]></textFieldExpression>
+				<reportElement x="509" y="5" width="46" height="20" uuid="bb792060-9ae6-4509-9330-6b3cd1fa7b7b"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{NIVEL_BASICO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="509" y="25" width="46" height="20" uuid="e313a48d-a7c9-4ca4-9864-5693587cb452"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{NIVEL_MEDIO}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

@@ -9,8 +9,6 @@
 	<parameter name="LOGO2" class="java.io.InputStream"/>
 	<parameter name="APODERADO" class="java.lang.String"/>
 	<parameter name="APODERADO2" class="java.lang.String"/>
-	<parameter name="USUARIO" class="java.lang.String"/>
-	<parameter name="USUARIO2" class="java.lang.String"/>
 	<parameter name="CEDULA" class="java.lang.String"/>
 	<parameter name="CEDULA2" class="java.lang.String"/>
 	<parameter name="TOTAL" class="java.lang.String"/>
@@ -24,6 +22,10 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Users\\Arnaldo_Cantero\\Documents\\NetBeansProjects\\Escuela\\src\\reportes\\recibo\\"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="NIVEL_BASICO" class="java.lang.String"/>
+	<parameter name="NIVEL_BASICO2" class="java.lang.String"/>
+	<parameter name="NIVEL_MEDIO" class="java.lang.String"/>
+	<parameter name="NIVEL_MEDIO2" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -35,14 +37,17 @@
 				<subreportParameter name="NUMPAGO">
 					<subreportParameterExpression><![CDATA[$P{NUMPAGO}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="USUARIO">
-					<subreportParameterExpression><![CDATA[$P{USUARIO}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="LOGO">
 					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="NIVEL_MEDIO">
+					<subreportParameterExpression><![CDATA[$P{NIVEL_MEDIO}]]></subreportParameterExpression>
+				</subreportParameter>
 				<subreportParameter name="APODERADO">
 					<subreportParameterExpression><![CDATA[$P{APODERADO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NIVEL_BASICO">
+					<subreportParameterExpression><![CDATA[$P{NIVEL_BASICO}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="TOTAL">
 					<subreportParameterExpression><![CDATA[$P{TOTAL}]]></subreportParameterExpression>
@@ -65,14 +70,17 @@
 				<subreportParameter name="NUMPAGO">
 					<subreportParameterExpression><![CDATA[$P{NUMPAGO2}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="USUARIO">
-					<subreportParameterExpression><![CDATA[$P{USUARIO2}]]></subreportParameterExpression>
-				</subreportParameter>
 				<subreportParameter name="LOGO">
 					<subreportParameterExpression><![CDATA[$P{LOGO2}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="NIVEL_MEDIO">
+					<subreportParameterExpression><![CDATA[$P{NIVEL_MEDIO2}]]></subreportParameterExpression>
+				</subreportParameter>
 				<subreportParameter name="APODERADO">
 					<subreportParameterExpression><![CDATA[$P{APODERADO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NIVEL_BASICO">
+					<subreportParameterExpression><![CDATA[$P{NIVEL_BASICO2}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="TOTAL">
 					<subreportParameterExpression><![CDATA[$P{TOTAL2}]]></subreportParameterExpression>
