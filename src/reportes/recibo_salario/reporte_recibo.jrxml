@@ -59,7 +59,7 @@
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font fontName="Bodoni MT" size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[RECIBO DE PAGO]]></text>
+				<text><![CDATA[RECIBO DE PAGO SALARIAL]]></text>
 			</staticText>
 			<line>
 				<reportElement x="0" y="95" width="555" height="1" uuid="fba8c39c-7a58-49e5-9f6b-f80e0e01569b"/>

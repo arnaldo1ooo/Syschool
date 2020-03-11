@@ -222,7 +222,7 @@ public final class ABMNivel extends javax.swing.JDialog {
         panel2 = new org.edisoncor.gui.panel.Panel();
         labelMetric2 = new org.edisoncor.gui.label.LabelMetric();
 
-        setTitle("Ventana módulos");
+        setTitle("Ventana niveles");
         setBackground(new java.awt.Color(45, 62, 80));
         setResizable(false);
 

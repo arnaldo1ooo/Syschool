@@ -9,6 +9,7 @@ import conexion.Conexion;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
+import java.awt.Toolkit;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -42,6 +43,9 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         GenerarNumpago();
         CargarComboBoxes();
         Limpiar();
+        
+        txtCedula.setText("");
+        txtSalario.setText("");
 
         //Permiso Roles de usuario
         btnGuardar.setVisible(metodos.PermisoRol(Alias, "PAGO_SALARIO", "ALTA"));
@@ -58,6 +62,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
     
     public void RegistroNuevo() {
         if (ComprobarCampos() == true) {
+            String numpago = lblNumPago.getText();
             int idfuncionario = metodoscombo.ObtenerIDSelectComboBox(cbFuncionario);
             double salario = metodostxt.DoubleAFormatoAmericano(txtSalario.getText());
             
@@ -68,9 +73,10 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este pago de salario?", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
                 //Registrar nuevo gasto
-                String sentencia = "CALL SP_PagoSalarioAlta('" + idfuncionario + "','" + salario + "','" + fecha + "','" + obs + "')";
+                String sentencia = "CALL SP_PagoSalarioAlta('" + numpago + "','" + idfuncionario + "','" + salario + "','" + fecha
+                        + "','" + obs + "')";
                 con.EjecutarABM(sentencia, true);
-                
+                GenerarNumpago();
                 Limpiar();
             }
         }
@@ -85,18 +91,21 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
     
     private boolean ComprobarCampos() {
         if (cbFuncionario.getSelectedIndex() == -1) {
+            Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Seleccione un funcionario", "Advertencia", JOptionPane.WARNING_MESSAGE);
             cbFuncionario.requestFocus();
             return false;
         }
         
         if (txtSalario.getText().equals("")) {
+            Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Salario vacío", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtSalario.requestFocus();
             return false;
         }
         
         if (dcFecha.getDate() == null) {
+            Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Seleccione la fecha", "Advertencia", JOptionPane.WARNING_MESSAGE);
             dcFecha.requestFocus();
             return false;
@@ -161,7 +170,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
             .addGroup(panel2Layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(labelMetric2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
                 .addComponent(labelMetric1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(3, 3, 3)
                 .addComponent(lblNumPago, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -281,7 +290,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
 
         lblFechaRegistro1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblFechaRegistro1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblFechaRegistro1.setText("Fecha*:");
+        lblFechaRegistro1.setText("Fecha:");
         lblFechaRegistro1.setToolTipText("");
 
         dcFecha.setEnabled(false);
@@ -322,10 +331,10 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
                             .addComponent(lblFechaRegistro1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(2, 2, 2)
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtCedula)
-                            .addComponent(dcFecha, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)))
+                            .addComponent(dcFecha, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                            .addComponent(txtCedula)))
                     .addComponent(txtObs))
-                .addGap(17, 17, 17))
+                .addGap(41, 41, 41))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -365,14 +374,11 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
                 .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
-                .addGap(49, 49, 49)
-                .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(36, 36, 36))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
-                        .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(49, 49, 49))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(49, 49, 49))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -421,10 +427,11 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
     private void cbFuncionarioItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFuncionarioItemStateChanged
         try {
             int idfuncionario = metodoscombo.ObtenerIDSelectComboBox(cbFuncionario);
-            String sentencia = "SELECT * FROM funcionario WHERE fun_codigo = '" + idfuncionario + "'";
+            String sentencia = "SELECT fun_cedula, fun_salario FROM funcionario WHERE fun_codigo = '" + idfuncionario + "'";
             con = con.ObtenerRSSentencia(sentencia);
             while (con.rs.next()) {
-                txtCedula.setText(con.rs.getString("fun_cedula"));
+                txtCedula.setText(metodostxt.IntegerPuntosMiles(con.rs.getInt("fun_cedula")));
+                txtSalario.setText(metodostxt.DoubleAFormatoSudamerica(con.rs.getDouble("fun_salario")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -468,7 +475,6 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         ordenTabulador = new ArrayList<>();
         ordenTabulador.add(cbFuncionario);
         ordenTabulador.add(txtObs);
-        ordenTabulador.add(dcFecha);
         ordenTabulador.add(btnGuardar);
         setFocusTraversalPolicy(new PersonalizadoFocusTraversalPolicy());
     }

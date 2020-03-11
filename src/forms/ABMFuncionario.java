@@ -111,7 +111,7 @@ public final class ABMFuncionario extends javax.swing.JDialog {
         String codigo = tbPrincipal.getModel().getValueAt(filasel, 0) + "";
 
         if (filasel != -1) {
-            int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea eliminar este registro?", "Confirmación", JOptionPane.YES_OPTION);
+            int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea eliminar este funcionario?, tambien se ELIMINARÁN los pagos salariales del mismo", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
                 String sentencia = "CALL SP_" + nombreTablaBD + "Eliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
@@ -156,23 +156,24 @@ public final class ABMFuncionario extends javax.swing.JDialog {
         txtCedula.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 3) + "");
         try {
             java.util.Date fechaParseada = new SimpleDateFormat("dd/MM/yyyy")
-                    .parse(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 4).toString());
+                    .parse(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 4) + "");
             dcFechaIngreso.setDate(fechaParseada);
         } catch (ParseException e) {
             System.out.println("Error al parsear fecha");
         }
 
-        cbSexo.setSelectedItem(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 5).toString());
-        txtTelefono.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 6).toString());
-        txtSalario.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 7).toString());
-        txtEmail.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 8).toString());
-        taObs.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 9).toString());
+        cbSexo.setSelectedItem(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 5) + "");
+        txtTelefono.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 6) + "");
+        txtSalario.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 7) + "");
+        txtEmail.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 8) + "");
+        taObs.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 9) + "");
 
-        String estado = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 10).toString();
+        String estado = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 10) + "";
         cbEstado.setSelectedItem(estado);
 
-        String cargo = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 11).toString();
-        cbCargo.setSelectedItem(cargo);
+        String cargo = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 11) + "";
+        System.out.println("cargo " + cargo);
+        metodoscombo.setSelectedNombreItem(cbCargo, cargo);
     }
 
     private void ModoEdicion(boolean valor) {
@@ -981,7 +982,7 @@ public final class ABMFuncionario extends javax.swing.JDialog {
     }//GEN-LAST:event_txtSalarioKeyTyped
 
     private void txtCedulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyReleased
-        
+
     }//GEN-LAST:event_txtCedulaKeyReleased
 
     private void txtCedulaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyTyped

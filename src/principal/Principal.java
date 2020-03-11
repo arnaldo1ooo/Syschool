@@ -60,6 +60,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         //Redimensionar iconos menu
         meMatricula.setIcon(metodos.AjustarIconoAButton(meMatricula.getIcon(), meMatricula.getHeight()));
         mePago.setIcon(metodos.AjustarIconoAButton(mePago.getIcon(), mePago.getHeight()));
+        mePagoSalario.setIcon(metodos.AjustarIconoAButton(mePagoSalario.getIcon(), mePagoSalario.getHeight()));
         meGasto.setIcon(metodos.AjustarIconoAButton(meGasto.getIcon(), meGasto.getHeight()));
         meUsuario.setIcon(metodos.AjustarIconoAButton(meUsuario.getIcon(), meUsuario.getHeight()));
         meReporte.setIcon(metodos.AjustarIconoAButton(meReporte.getIcon(), meReporte.getHeight()));
@@ -474,7 +475,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         mePago.setText("PAGOS");
         mePago.setEnabled(false);
         mePago.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        mePago.setPreferredSize(new java.awt.Dimension(170, 70));
+        mePago.setPreferredSize(new java.awt.Dimension(140, 70));
         mePago.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mePagoActionPerformed(evt);
@@ -538,7 +539,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meGasto.setText("GASTOS");
         meGasto.setEnabled(false);
         meGasto.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        meGasto.setPreferredSize(new java.awt.Dimension(170, 70));
+        meGasto.setPreferredSize(new java.awt.Dimension(140, 70));
         meGasto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 meGastoActionPerformed(evt);
@@ -570,7 +571,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meReporte.setText("REPORTES");
         meReporte.setEnabled(false);
         meReporte.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        meReporte.setPreferredSize(new java.awt.Dimension(170, 70));
+        meReporte.setPreferredSize(new java.awt.Dimension(150, 70));
 
         jMenuItem7.setText("Reporte de compras");
         jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
@@ -587,8 +588,9 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meUsuario.setText("USUARIOS");
         meUsuario.setEnabled(false);
         meUsuario.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        meUsuario.setMinimumSize(new java.awt.Dimension(210, 70));
-        meUsuario.setPreferredSize(new java.awt.Dimension(170, 70));
+        meUsuario.setMaximumSize(new java.awt.Dimension(150, 32767));
+        meUsuario.setMinimumSize(new java.awt.Dimension(150, 70));
+        meUsuario.setPreferredSize(new java.awt.Dimension(140, 70));
 
         jMenuItem9.setText("Perfiles");
         jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
