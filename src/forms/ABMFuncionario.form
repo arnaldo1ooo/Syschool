@@ -35,7 +35,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jpPrincipal" alignment="0" pref="604" max="32767" attributes="0"/>
+          <Component id="jpPrincipal" alignment="0" pref="655" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -70,7 +70,7 @@
               </Group>
               <Component id="panel1" alignment="0" max="32767" attributes="0"/>
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="270" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="277" max="-2" attributes="0"/>
                   <Component id="jpBotones2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -86,10 +86,10 @@
                       <Component id="jpTabla" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-                  <Component id="jtpEdicion" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="9" max="32767" attributes="0"/>
+                  <Component id="jtpEdicion" min="-2" pref="276" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jpBotones2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="16" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -415,58 +415,58 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblSalario" max="32767" attributes="0"/>
-                              <Component id="lblSexo" alignment="1" max="32767" attributes="0"/>
-                              <Component id="lblNombre" alignment="1" pref="115" max="32767" attributes="0"/>
-                              <Component id="lblCodigo" alignment="1" max="32767" attributes="0"/>
-                              <Component id="lblApellido" max="32767" attributes="0"/>
-                              <Group type="102" attributes="0">
-                                  <EmptySpace min="0" pref="8" max="32767" attributes="0"/>
-                                  <Component id="lblFechaIngreso" min="-2" pref="107" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <EmptySpace pref="12" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="txtCodigo" min="-2" pref="85" max="-2" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="jLabel2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Component id="txtNombre" alignment="0" min="-2" pref="259" max="-2" attributes="0"/>
-                                      <Component id="txtApellido" alignment="0" min="-2" pref="259" max="-2" attributes="0"/>
-                                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                          <Component id="dcFechaIngreso" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="cbSexo" alignment="0" max="32767" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                              </Group>
-                              <Group type="102" attributes="0">
+                              <Component id="lblSexo" alignment="1" max="32767" attributes="0"/>
+                              <Component id="lblCodigo" alignment="1" max="32767" attributes="0"/>
+                              <Component id="lblNombre" alignment="1" max="32767" attributes="0"/>
+                              <Component id="lblApellido" alignment="1" max="32767" attributes="0"/>
+                              <Component id="lblApellido1" alignment="1" max="32767" attributes="0"/>
+                              <Component id="lblFechaIngreso" alignment="1" pref="107" max="32767" attributes="0"/>
+                              <Component id="lblSalario" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="txtCodigo" min="-2" pref="85" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="txtSalario" max="32767" attributes="0"/>
+                                  <Component id="jLabel2" max="-2" attributes="0"/>
                               </Group>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblTelefono" alignment="1" pref="97" max="32767" attributes="0"/>
-                              <Component id="lblEmail" alignment="1" min="-2" pref="93" max="-2" attributes="0"/>
-                              <Component id="lblObs" alignment="1" max="32767" attributes="0"/>
-                              <Component id="lblEstado" alignment="1" min="-2" pref="95" max="-2" attributes="0"/>
-                              <Component id="lblEstado1" alignment="1" max="32767" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="txtEmail" max="32767" attributes="0"/>
-                                  <Component id="scpObs" alignment="1" pref="327" max="32767" attributes="0"/>
-                                  <Component id="txtTelefono" max="32767" attributes="0"/>
-                              </Group>
+                              <Component id="txtNombre" alignment="0" min="-2" pref="259" max="-2" attributes="0"/>
+                              <Component id="txtApellido" alignment="0" min="-2" pref="259" max="-2" attributes="0"/>
+                              <Component id="txtCedula" alignment="0" min="-2" pref="259" max="-2" attributes="0"/>
+                              <Component id="txtSalario" alignment="0" min="-2" pref="259" max="-2" attributes="0"/>
                               <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="cbEstado" alignment="0" pref="130" max="32767" attributes="0"/>
-                                  <Component id="cbCargo" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="dcFechaIngreso" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="cbSexo" alignment="0" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <EmptySpace pref="18" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="lblTelefono" alignment="1" pref="101" max="32767" attributes="0"/>
+                                      <Component id="lblEmail" alignment="1" min="-2" pref="93" max="-2" attributes="0"/>
+                                      <Component id="lblObs" alignment="1" max="32767" attributes="0"/>
+                                      <Component id="lblEstado" alignment="1" min="-2" pref="95" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="lblEstado1" min="-2" pref="98" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="txtEmail" max="32767" attributes="0"/>
+                              <Component id="scpObs" alignment="1" pref="327" max="32767" attributes="0"/>
+                              <Component id="txtTelefono" max="32767" attributes="0"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Group type="103" groupAlignment="1" attributes="0">
+                                      <Component id="cbEstado" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="cbCargo" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="197" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
@@ -495,33 +495,50 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="lblObs" alignment="0" min="-2" pref="28" max="-2" attributes="0"/>
                               <Component id="scpObs" alignment="0" min="-2" pref="62" max="-2" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
+                              <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="lblApellido" alignment="0" min="-2" pref="28" max="-2" attributes="0"/>
                                       <Component id="txtApellido" alignment="0" min="-2" pref="28" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="lblApellido1" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                                      <Component id="txtCedula" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                          </Group>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="1" attributes="0">
                                       <Component id="dcFechaIngreso" min="-2" pref="26" max="-2" attributes="0"/>
                                       <Component id="lblFechaIngreso" min="-2" pref="28" max="-2" attributes="0"/>
                                   </Group>
+                                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="2" attributes="0">
+                                      <Component id="lblSexo" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                                      <Component id="cbSexo" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="lblSalario" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                                      <Component id="txtSalario" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="2" attributes="0">
+                                      <Component id="lblEstado" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                                      <Component id="cbEstado" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="lblEstado1" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                                      <Component id="cbCargo" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
-                          <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="2" attributes="0">
-                              <Component id="lblSexo" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                              <Component id="cbSexo" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                              <Component id="lblEstado" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                              <Component id="cbEstado" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="32767" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="lblSalario" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                              <Component id="txtSalario" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblEstado1" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                              <Component id="cbCargo" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace pref="10" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -613,6 +630,7 @@
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtApellidoActionPerformed"/>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtApellidoKeyReleased"/>
                     <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtApellidoKeyTyped"/>
                   </Events>
@@ -831,6 +849,33 @@
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;MetodosCombo&gt;"/>
                   </AuxValues>
+                </Component>
+                <Component class="javax.swing.JLabel" name="lblApellido1">
+                  <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="SansSerif" size="12" style="0"/>
+                    </Property>
+                    <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="66" green="66" red="66" type="rgb"/>
+                    </Property>
+                    <Property name="horizontalAlignment" type="int" value="4"/>
+                    <Property name="text" type="java.lang.String" value="N&#xb0; de c&#xe9;dula*:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JTextField" name="txtCedula">
+                  <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="SansSerif" size="12" style="0"/>
+                    </Property>
+                    <Property name="disabledTextColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="0" green="0" red="0" type="rgb"/>
+                    </Property>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtCedulaKeyReleased"/>
+                    <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtCedulaKeyTyped"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

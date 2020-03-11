@@ -277,6 +277,7 @@ public final class RegistrarGasto extends javax.swing.JDialog {
         lblFechaRegistro1.setText("Fecha*:");
         lblFechaRegistro1.setToolTipText("");
 
+        dcFecha.setEnabled(false);
         dcFecha.setMaxSelectableDate(new java.util.Date(4102455600000L));
         dcFecha.setMinSelectableDate(new java.util.Date(631162800000L));
 
