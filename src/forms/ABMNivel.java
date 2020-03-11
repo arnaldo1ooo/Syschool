@@ -68,11 +68,12 @@ public final class ABMNivel extends javax.swing.JDialog {
             if (cbDocente.getSelectedItem().toString().equals("SIN ESPECIFICAR") == false) {
                 docente = "'" + metodoscombo.ObtenerIDSelectComboBox(cbDocente) + "'";
             }
+            String tipo = cbTipo.getSelectedItem() + "";
 
             if (txtCodigo.getText().equals("")) { //NUEVO REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo registro?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
-                    String sentencia = "CALL SP_NivelAlta ('" + descripcion + "','" + seccion + "','" + turno + "'," + docente + ")";
+                    String sentencia = "CALL SP_NivelAlta ('" + descripcion + "','" + seccion + "','" + turno + "'," + docente + ",'" + tipo + "')";
                     con.EjecutarABM(sentencia, true);
 
                     TablaConsultaBDAll(); //Actualizar tabla
@@ -82,7 +83,7 @@ public final class ABMNivel extends javax.swing.JDialog {
             } else { //MODIFICAR REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar este regitro?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
-                    String sentencia = "CALL SP_NivelModificar(" + codigo + ",'" + descripcion + "','" + seccion + "','" + turno + "'," + docente + ")";
+                    String sentencia = "CALL SP_NivelModificar('" + codigo + "','" + descripcion + "','" + seccion + "','" + turno + "'," + docente + ",'" + tipo + "')";
                     con.EjecutarABM(sentencia, true);
 
                     TablaConsultaBDAll(); //Actualizar tabla
@@ -158,7 +159,7 @@ public final class ABMNivel extends javax.swing.JDialog {
         txtCodigo.setText("");
         lblDescripcion.setForeground(Color.BLACK);
         txtDescripcion.setText("");
-        cbDocente.setSelectedItem("SIN ESPECIFICAR");
+        metodoscombo.setSelectedNombreItem(cbDocente, "SIN ESPECIFICAR");
         cbSeccion.setSelectedIndex(0);
         cbTurno.setSelectedIndex(0);
         cbTipo.setSelectedIndex(0);
