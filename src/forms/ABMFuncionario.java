@@ -136,8 +136,8 @@ public final class ABMFuncionario extends javax.swing.JDialog {
 
         double salario;
         for (int i = 0; i < tbPrincipal.getRowCount(); i++) {
-            salario = Double.parseDouble(tbPrincipal.getValueAt(i, 6) + "");
-            tbPrincipal.setValueAt(metodostxt.DoubleAFormatoSudamerica(salario), i, 6);
+            salario = Double.parseDouble(tbPrincipal.getValueAt(i, 7) + "");
+            tbPrincipal.setValueAt(metodostxt.DoubleAFormatoSudamerica(salario), i, 7);
         }
 
         metodos.AnchuraColumna(tbPrincipal);
@@ -656,9 +656,9 @@ public final class ABMFuncionario extends javax.swing.JDialog {
                         .addComponent(jLabel2))
                     .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(txtCedula, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(txtSalario, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(dcFechaIngreso, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(cbSexo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)

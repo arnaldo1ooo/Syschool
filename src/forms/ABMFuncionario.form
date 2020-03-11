@@ -434,9 +434,9 @@
                               </Group>
                               <Component id="txtNombre" alignment="0" min="-2" pref="259" max="-2" attributes="0"/>
                               <Component id="txtApellido" alignment="0" min="-2" pref="259" max="-2" attributes="0"/>
-                              <Component id="txtCedula" alignment="0" min="-2" pref="259" max="-2" attributes="0"/>
-                              <Component id="txtSalario" alignment="0" min="-2" pref="259" max="-2" attributes="0"/>
                               <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="txtCedula" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="txtSalario" alignment="0" max="32767" attributes="0"/>
                                   <Component id="dcFechaIngreso" alignment="0" max="32767" attributes="0"/>
                                   <Component id="cbSexo" alignment="0" max="32767" attributes="0"/>
                               </Group>

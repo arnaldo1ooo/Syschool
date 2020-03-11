@@ -14,6 +14,7 @@ import forms.Pago;
 import forms.RegistrarGasto;
 import forms.RegistrarMatricula;
 import forms.RegistrarPago;
+import forms.RegistrarPagoSalario;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -52,6 +53,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meitAnularMatricula.setEnabled(metodos.PermisoRol(Alias, "MATRICULA", "BAJA"));
         meitRegistrarPago.setEnabled(metodos.PermisoRol(Alias, "PAGO", "ALTA"));
         meitAnularPago.setEnabled(metodos.PermisoRol(Alias, "PAGO", "BAJA"));
+        meitRegistrarPagoSalario.setEnabled(metodos.PermisoRol(Alias, "PAGO_SALARIO", "ALTA"));
+        meitAnularPagoSalario.setEnabled(metodos.PermisoRol(Alias, "PAGO_SALARIO", "BAJA"));
         meitRegistrarGasto.setEnabled(metodos.PermisoRol(Alias, "GASTO", "ALTA"));
         meitAnularGasto.setEnabled(metodos.PermisoRol(Alias, "GASTO", "BAJA"));
         //Redimensionar iconos menu
@@ -84,6 +87,10 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                     case "PAGO":
                         btnPago.setEnabled(true);
                         mePago.setEnabled(true);
+                        break;
+                    case "PAGO_SALARIO":
+                        System.out.println("sas");
+                        mePagoSalario.setEnabled(true);
                         break;
                     case "GASTO":
                         btnGasto.setEnabled(true);
@@ -180,6 +187,10 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meitRegistrarPago = new javax.swing.JMenuItem();
         jSeparator17 = new javax.swing.JPopupMenu.Separator();
         meitAnularPago = new javax.swing.JMenuItem();
+        mePagoSalario = new javax.swing.JMenu();
+        meitRegistrarPagoSalario = new javax.swing.JMenuItem();
+        jSeparator23 = new javax.swing.JPopupMenu.Separator();
+        meitAnularPagoSalario = new javax.swing.JMenuItem();
         meGasto = new javax.swing.JMenu();
         meitRegistrarGasto = new javax.swing.JMenuItem();
         jSeparator20 = new javax.swing.JPopupMenu.Separator();
@@ -491,6 +502,38 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         jMenuBar1.add(mePago);
 
+        mePagoSalario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoPagos70.png"))); // NOI18N
+        mePagoSalario.setText("PAGO DE SALARIO");
+        mePagoSalario.setEnabled(false);
+        mePagoSalario.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        mePagoSalario.setPreferredSize(new java.awt.Dimension(210, 70));
+        mePagoSalario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mePagoSalarioActionPerformed(evt);
+            }
+        });
+
+        meitRegistrarPagoSalario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoRegistrar.png"))); // NOI18N
+        meitRegistrarPagoSalario.setText("Registrar pago de salario");
+        meitRegistrarPagoSalario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meitRegistrarPagoSalarioActionPerformed(evt);
+            }
+        });
+        mePagoSalario.add(meitRegistrarPagoSalario);
+        mePagoSalario.add(jSeparator23);
+
+        meitAnularPagoSalario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoEliminar25.png"))); // NOI18N
+        meitAnularPagoSalario.setText("Anular pago de salario");
+        meitAnularPagoSalario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meitAnularPagoSalarioActionPerformed(evt);
+            }
+        });
+        mePagoSalario.add(meitAnularPagoSalario);
+
+        jMenuBar1.add(mePagoSalario);
+
         meGasto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoGastos70.png"))); // NOI18N
         meGasto.setText("GASTOS");
         meGasto.setEnabled(false);
@@ -766,6 +809,19 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         abmnivel.setVisible(true);
     }//GEN-LAST:event_meitNivelActionPerformed
 
+    private void meitRegistrarPagoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitRegistrarPagoSalarioActionPerformed
+        RegistrarPagoSalario registrarpagosalario = new RegistrarPagoSalario(this, true);
+        registrarpagosalario.setVisible(true);
+    }//GEN-LAST:event_meitRegistrarPagoSalarioActionPerformed
+
+    private void meitAnularPagoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitAnularPagoSalarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_meitAnularPagoSalarioActionPerformed
+
+    private void mePagoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mePagoSalarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_mePagoSalarioActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -828,6 +884,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JPopupMenu.Separator jSeparator20;
     private javax.swing.JPopupMenu.Separator jSeparator21;
     private javax.swing.JPopupMenu.Separator jSeparator22;
+    private javax.swing.JPopupMenu.Separator jSeparator23;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JLabel lbAlias;
@@ -840,17 +897,20 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenu meGasto;
     private javax.swing.JMenu meMatricula;
     private javax.swing.JMenu mePago;
+    private javax.swing.JMenu mePagoSalario;
     private javax.swing.JMenu meReporte;
     private javax.swing.JMenu meSalir;
     private javax.swing.JMenu meUsuario;
     private javax.swing.JMenuItem meitAnularGasto;
     private javax.swing.JMenuItem meitAnularMatricula;
     private javax.swing.JMenuItem meitAnularPago;
+    private javax.swing.JMenuItem meitAnularPagoSalario;
     private javax.swing.JMenuItem meitModulo;
     private javax.swing.JMenuItem meitNivel;
     private javax.swing.JMenuItem meitRegistrarGasto;
     private javax.swing.JMenuItem meitRegistrarMatricula;
     private javax.swing.JMenuItem meitRegistrarPago;
+    private javax.swing.JMenuItem meitRegistrarPagoSalario;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.PanelImage piPrincipal;
     // End of variables declaration//GEN-END:variables
