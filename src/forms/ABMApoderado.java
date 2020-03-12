@@ -1188,7 +1188,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
-        jtpEdicion.addTab("Alumnos a cargo", jpAlumnosACargo);
+        jtpEdicion.addTab("Poderantes (Alumnos a cargo)", jpAlumnosACargo);
 
         jpBotones2.setBackground(new java.awt.Color(233, 255, 255));
         jpBotones2.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));

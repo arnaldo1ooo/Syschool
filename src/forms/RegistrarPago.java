@@ -1745,7 +1745,14 @@ public final class RegistrarPago extends javax.swing.JDialog {
 
 
     private void btnAnadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnadirActionPerformed
-        //VERIFICAR CANTIDAD DE PODERANTES DEL BASICO Y MEDIO
+//SI EL APODERADO NO TIENE ALUMNOS A SU CARGO
+        if (tbPoderantes.getRowCount() == 0) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "El Apoderado seleccionado no tiene ningún alumno a su cargo", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+//VERIFICAR CANTIDAD DE PODERANTES DEL BASICO Y MEDIO
         String cantbasico = "NO";
         int cantmedio = 0;
         String nivel;

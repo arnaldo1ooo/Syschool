@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import login.Login;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 //Variables globales
@@ -57,15 +58,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meitAnularPagoSalario.setEnabled(metodos.PermisoRol(Alias, "PAGO_SALARIO", "BAJA"));
         meitRegistrarGasto.setEnabled(metodos.PermisoRol(Alias, "GASTO", "ALTA"));
         meitAnularGasto.setEnabled(metodos.PermisoRol(Alias, "GASTO", "BAJA"));
-        //Redimensionar iconos menu
-        meMatricula.setIcon(metodos.AjustarIconoAButton(meMatricula.getIcon(), meMatricula.getHeight()));
-        mePago.setIcon(metodos.AjustarIconoAButton(mePago.getIcon(), mePago.getHeight()));
-        mePagoSalario.setIcon(metodos.AjustarIconoAButton(mePagoSalario.getIcon(), mePagoSalario.getHeight()));
-        meGasto.setIcon(metodos.AjustarIconoAButton(meGasto.getIcon(), meGasto.getHeight()));
-        meUsuario.setIcon(metodos.AjustarIconoAButton(meUsuario.getIcon(), meUsuario.getHeight()));
-        meReporte.setIcon(metodos.AjustarIconoAButton(meReporte.getIcon(), meReporte.getHeight()));
-        meConfiguracion.setIcon(metodos.AjustarIconoAButton(meConfiguracion.getIcon(), meConfiguracion.getHeight()));
-        meSalir.setIcon(metodos.AjustarIconoAButton(meSalir.getIcon(), meSalir.getHeight()));
     }
 
     private void PermisoModulos(String ElAlias) {
@@ -75,6 +67,9 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             while (con.rs.next()) {
                 modulo = con.rs.getString("mo_denominacion");
                 switch (modulo) {
+                    case "NIVEL":
+                        btnNivel.setEnabled(true);
+                        break;
                     case "APODERADO":
                         btnApoderado.setEnabled(true);
                         break;
@@ -177,13 +172,12 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         lbHora = new javax.swing.JLabel();
         btnGasto = new javax.swing.JButton();
         btnMatricula = new javax.swing.JButton();
+        btnNivel = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         meMatricula = new javax.swing.JMenu();
         meitRegistrarMatricula = new javax.swing.JMenuItem();
         jSeparator21 = new javax.swing.JPopupMenu.Separator();
         meitAnularMatricula = new javax.swing.JMenuItem();
-        jSeparator22 = new javax.swing.JPopupMenu.Separator();
-        meitNivel = new javax.swing.JMenuItem();
         mePago = new javax.swing.JMenu();
         meitRegistrarPago = new javax.swing.JMenuItem();
         jSeparator17 = new javax.swing.JPopupMenu.Separator();
@@ -387,41 +381,55 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             }
         });
 
+        btnNivel.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        btnNivel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoNivel.png"))); // NOI18N
+        btnNivel.setText("NIVELES");
+        btnNivel.setEnabled(false);
+        btnNivel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnNivel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNivelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout piPrincipalLayout = new javax.swing.GroupLayout(piPrincipal);
         piPrincipal.setLayout(piPrincipalLayout);
         piPrincipalLayout.setHorizontalGroup(
             piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(piPrincipalLayout.createSequentialGroup()
-                .addGap(42, 42, 42)
+                .addContainerGap()
                 .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnMatricula, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnFuncionario)
-                    .addComponent(btnGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnPago, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnFuncionario)
+                    .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         piPrincipalLayout.setVerticalGroup(
             piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(piPrincipalLayout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(btnApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnMatricula, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnPago, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 108, Short.MAX_VALUE)
+                .addComponent(btnApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnMatricula, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPago, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 210, Short.MAX_VALUE)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
@@ -458,16 +466,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             }
         });
         meMatricula.add(meitAnularMatricula);
-        meMatricula.add(jSeparator22);
-
-        meitNivel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoBotonAzul.png"))); // NOI18N
-        meitNivel.setText("Niveles");
-        meitNivel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                meitNivelActionPerformed(evt);
-            }
-        });
-        meMatricula.add(meitNivel);
 
         jMenuBar1.add(meMatricula);
 
@@ -504,10 +502,10 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         jMenuBar1.add(mePago);
 
         mePagoSalario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoPagos70.png"))); // NOI18N
-        mePagoSalario.setText("PAGO DE SALARIO");
+        mePagoSalario.setText("PAGO SALARIO");
         mePagoSalario.setEnabled(false);
         mePagoSalario.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        mePagoSalario.setPreferredSize(new java.awt.Dimension(210, 70));
+        mePagoSalario.setPreferredSize(new java.awt.Dimension(190, 70));
         mePagoSalario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mePagoSalarioActionPerformed(evt);
@@ -590,7 +588,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meUsuario.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         meUsuario.setMaximumSize(new java.awt.Dimension(150, 32767));
         meUsuario.setMinimumSize(new java.awt.Dimension(150, 70));
-        meUsuario.setPreferredSize(new java.awt.Dimension(140, 70));
+        meUsuario.setPreferredSize(new java.awt.Dimension(150, 70));
 
         jMenuItem9.setText("Perfiles");
         jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
@@ -646,9 +644,9 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         jMenuBar1.add(meConfiguracion);
 
         meSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoSalir70.png"))); // NOI18N
-        meSalir.setText("SALIR");
+        meSalir.setText("DESCONECTAR");
         meSalir.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        meSalir.setPreferredSize(new java.awt.Dimension(220, 70));
+        meSalir.setPreferredSize(new java.awt.Dimension(200, 70));
 
         jMenuItem19.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0));
         jMenuItem19.setText("OK");
@@ -709,10 +707,9 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     }//GEN-LAST:event_formWindowOpened
 
     private void jMenuItem19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem19ActionPerformed
-        int opcion = JOptionPane.showConfirmDialog(null, "¿Realmente desea salir?", "Advertencia!", JOptionPane.YES_NO_OPTION);
-        if (opcion == JOptionPane.YES_OPTION) {
-            System.exit(1);
-        }
+        Login login = new Login();
+        login.setVisible(true);
+        dispose();
     }//GEN-LAST:event_jMenuItem19ActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
@@ -806,11 +803,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         matricula.setVisible(true);
     }//GEN-LAST:event_btnMatriculaActionPerformed
 
-    private void meitNivelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitNivelActionPerformed
-        ABMNivel abmnivel = new ABMNivel(this, true);
-        abmnivel.setVisible(true);
-    }//GEN-LAST:event_meitNivelActionPerformed
-
     private void meitRegistrarPagoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitRegistrarPagoSalarioActionPerformed
         RegistrarPagoSalario registrarpagosalario = new RegistrarPagoSalario(this, true);
         registrarpagosalario.setVisible(true);
@@ -823,6 +815,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private void mePagoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mePagoSalarioActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_mePagoSalarioActionPerformed
+
+    private void btnNivelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNivelActionPerformed
+        ABMNivel abmnivel = new ABMNivel(this, true);
+        abmnivel.setVisible(true);
+    }//GEN-LAST:event_btnNivelActionPerformed
 
     /**
      * @param args the command line arguments
@@ -869,6 +866,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JButton btnFuncionario;
     private javax.swing.JButton btnGasto;
     private javax.swing.JButton btnMatricula;
+    private javax.swing.JButton btnNivel;
     private javax.swing.JButton btnPago;
     private javax.swing.JButton btnUsuario;
     private javax.swing.JLabel jLabel1;
@@ -885,7 +883,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JPopupMenu.Separator jSeparator19;
     private javax.swing.JPopupMenu.Separator jSeparator20;
     private javax.swing.JPopupMenu.Separator jSeparator21;
-    private javax.swing.JPopupMenu.Separator jSeparator22;
     private javax.swing.JPopupMenu.Separator jSeparator23;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
@@ -908,7 +905,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenuItem meitAnularPago;
     private javax.swing.JMenuItem meitAnularPagoSalario;
     private javax.swing.JMenuItem meitModulo;
-    private javax.swing.JMenuItem meitNivel;
     private javax.swing.JMenuItem meitRegistrarGasto;
     private javax.swing.JMenuItem meitRegistrarMatricula;
     private javax.swing.JMenuItem meitRegistrarPago;

@@ -24,7 +24,7 @@ public class Matricula extends javax.swing.JDialog {
         initComponents();
 
         CargarFiltroPeriodo();
-        ConsultaAllMatricula(cbFiltroPeriodo.getSelectedItem().toString());
+        ConsultaMatriculaPorPeriodo(cbFiltroPeriodo.getSelectedItem().toString());
 
         if (eliminar == false) {
             //Oculta los botones si no es para eliminar pago
@@ -42,14 +42,19 @@ public class Matricula extends javax.swing.JDialog {
             while (con.rs.next()) {
                 cbFiltroPeriodo.addItem(con.rs.getString("mat_periodo"));
             }
-            cbFiltroPeriodo.setSelectedIndex(1);
+            if (cbFiltroPeriodo.getItemCount() == 1) {
+                cbFiltroPeriodo.setSelectedIndex(0);
+            } else {
+                cbFiltroPeriodo.setSelectedIndex(1);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         con.DesconectarBasedeDatos();
     }
 
-    private void ConsultaAllMatricula(String periodo) {
+    private void ConsultaMatriculaPorPeriodo(String periodo) {
         String sentencia = "CALL SP_MatriculaConsultaPorPeriodo('" + periodo + "')";
         String titlesJtabla[] = {"Código", "Alumno", "Nivel", "Fecha", "Periodo"};
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
@@ -273,13 +278,13 @@ public class Matricula extends javax.swing.JDialog {
                 String sentencia = "CALL SP_MatriculaEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
-                ConsultaAllMatricula(cbFiltroPeriodo.getSelectedItem().toString()); //Actualizar tabla
+                ConsultaMatriculaPorPeriodo(cbFiltroPeriodo.getSelectedItem().toString()); //Actualizar tabla
             }
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void cbFiltroPeriodoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFiltroPeriodoItemStateChanged
-        ConsultaAllMatricula(cbFiltroPeriodo.getSelectedItem().toString());
+        ConsultaMatriculaPorPeriodo(cbFiltroPeriodo.getSelectedItem().toString());
     }//GEN-LAST:event_cbFiltroPeriodoItemStateChanged
 
     public static void main(String args[]) {

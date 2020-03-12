@@ -7,6 +7,7 @@ package forms;
 
 import conexion.Conexion;
 import java.awt.Toolkit;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import static login.Login.Alias;
 import utilidades.Metodos;
@@ -22,7 +23,9 @@ public class Gasto extends javax.swing.JDialog {
         super(parent);
         initComponents();
 
-        ConsultaAllGasto();
+        //Metodos
+        CargarFiltroAnho();
+        ConsultaGastosPorAnho(cbFiltroAnho.getSelectedItem() + "");
 
         if (eliminar == false) {
             //Oculta los botones si no es para eliminar pago
@@ -33,8 +36,27 @@ public class Gasto extends javax.swing.JDialog {
         }
     }
 
-    private void ConsultaAllGasto() {
-        String sentencia = "CALL SP_GastoConsulta";
+    private void CargarFiltroAnho() {
+        try {
+            cbFiltroAnho.addItem("TODOS");
+            con = con.ObtenerRSSentencia("SELECT YEAR(gas_fecha) AS anho FROM gasto GROUP BY(gas_fecha) ORDER BY gas_fecha DESC");
+            while (con.rs.next()) {
+                cbFiltroAnho.addItem(con.rs.getString("anho"));
+            }
+            if (cbFiltroAnho.getItemCount() == 1) {
+                cbFiltroAnho.setSelectedIndex(0);
+            } else {
+                cbFiltroAnho.setSelectedIndex(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
+    }
+
+    private void ConsultaGastosPorAnho(String anho) {
+        String sentencia = "CALL SP_GastoConsultaPorAnho('" + anho + "')";
         String titlesJtabla[] = {"Código", "Tipo de gasto", "Monto", "Descripción", "Fecha"};
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
 
@@ -61,8 +83,6 @@ public class Gasto extends javax.swing.JDialog {
         panel1 = new org.edisoncor.gui.panel.Panel();
         jLabel10 = new javax.swing.JLabel();
         txtBuscar = new javax.swing.JTextField();
-        cbCampoBuscar = new javax.swing.JComboBox();
-        lblBuscarCampo = new javax.swing.JLabel();
         scPrincipal = new javax.swing.JScrollPane();
         tbPrincipal = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex) {
@@ -73,9 +93,13 @@ public class Gasto extends javax.swing.JDialog {
         panel3 = new org.edisoncor.gui.panel.Panel();
         labelMetric2 = new org.edisoncor.gui.label.LabelMetric();
         btnEliminar = new javax.swing.JButton();
+        lblBuscarCampo2 = new javax.swing.JLabel();
+        cbCampoBuscar = new javax.swing.JComboBox();
+        cbFiltroAnho = new javax.swing.JComboBox();
+        lblBuscarCampo1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Pagos");
+        setTitle("Gastos");
         setModal(true);
         setResizable(false);
 
@@ -85,6 +109,7 @@ public class Gasto extends javax.swing.JDialog {
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
         jLabel10.setText("  BUSCAR ");
+        jLabel10.setIconTextGap(1);
 
         txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
         txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
@@ -96,10 +121,6 @@ public class Gasto extends javax.swing.JDialog {
                 txtBuscarKeyReleased(evt);
             }
         });
-
-        lblBuscarCampo.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        lblBuscarCampo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblBuscarCampo.setText("Buscar por:");
 
         tbPrincipal.setAutoCreateRowSorter(true);
         tbPrincipal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -175,6 +196,20 @@ public class Gasto extends javax.swing.JDialog {
             }
         });
 
+        lblBuscarCampo2.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
+        lblBuscarCampo2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblBuscarCampo2.setText("Buscar por");
+
+        cbFiltroAnho.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbFiltroAnhoItemStateChanged(evt);
+            }
+        });
+
+        lblBuscarCampo1.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
+        lblBuscarCampo1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblBuscarCampo1.setText("Filtrar por año");
+
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
@@ -184,43 +219,56 @@ public class Gasto extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(363, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel1Layout.createSequentialGroup()
+                                .addGap(11, 11, 11)
+                                .addComponent(lblBuscarCampo2))
+                            .addGroup(panel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(31, 31, 31)
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblBuscarCampo1)
+                            .addComponent(cbFiltroAnho, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(12, Short.MAX_VALUE))
+                    .addGroup(panel1Layout.createSequentialGroup()
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(scPrincipal, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panel1Layout.createSequentialGroup()
-                                .addComponent(lblBuscarCampo)
-                                .addGap(4, 4, 4)
-                                .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(panel1Layout.createSequentialGroup()
                                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(15, 15, 15)))
                         .addGap(10, 10, 10))))
             .addGroup(panel1Layout.createSequentialGroup()
-                .addGap(331, 331, 331)
+                .addGap(344, 344, 344)
                 .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
-                .addComponent(panel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                        .addComponent(panel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1)
+                        .addComponent(lblBuscarCampo2))
+                    .addComponent(lblBuscarCampo1, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(2, 2, 2)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cbFiltroAnho, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblBuscarCampo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(1, 1, 1)
+                    .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(txtBuscar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)))
+                .addGap(2, 2, 2)
                 .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addGap(0, 0, 0)
                 .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -259,7 +307,7 @@ public class Gasto extends javax.swing.JDialog {
                 String sentencia = "CALL SP_GastoEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
-                ConsultaAllGasto(); //Actualizar tabla
+                ConsultaGastosPorAnho(cbFiltroAnho.getSelectedItem() + ""); //Actualizar tabla
             }
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
@@ -271,6 +319,10 @@ public class Gasto extends javax.swing.JDialog {
     private void tbPrincipalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPrincipalMouseClicked
 
     }//GEN-LAST:event_tbPrincipalMouseClicked
+
+    private void cbFiltroAnhoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFiltroAnhoItemStateChanged
+        ConsultaGastosPorAnho(cbFiltroAnho.getSelectedItem() + "");
+    }//GEN-LAST:event_cbFiltroAnhoItemStateChanged
 
     public static void main(String args[]) {
 
@@ -292,10 +344,12 @@ public class Gasto extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEliminar;
     private javax.swing.JComboBox cbCampoBuscar;
+    private javax.swing.JComboBox cbFiltroAnho;
     private javax.swing.JLabel jLabel10;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;
-    private javax.swing.JLabel lblBuscarCampo;
+    private javax.swing.JLabel lblBuscarCampo1;
+    private javax.swing.JLabel lblBuscarCampo2;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel3;
     private javax.swing.JScrollPane scPrincipal;

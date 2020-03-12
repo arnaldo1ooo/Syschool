@@ -8,6 +8,7 @@ package forms;
 import conexion.Conexion;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import static login.Login.Alias;
@@ -24,7 +25,8 @@ public class Pago extends javax.swing.JDialog {
         super(parent);
         initComponents();
 
-        ConsultaAllPago();
+        CargarFiltroAnho();
+        ConsultaPagosPorAnho(cbFiltroAnho.getSelectedItem() + "");
 
         if (eliminar == false) {
             //Oculta los botones si no es para eliminar pago
@@ -35,8 +37,27 @@ public class Pago extends javax.swing.JDialog {
         }
     }
 
-    private void ConsultaAllPago() {
-        String sentencia = "CALL SP_PagoConsulta";
+    private void CargarFiltroAnho() {
+        try {
+            cbFiltroAnho.addItem("TODOS");
+            con = con.ObtenerRSSentencia("SELECT YEAR(pag_fechapago) AS anho FROM pago GROUP BY(pag_fechapago) ORDER BY pag_fechapago DESC");
+            while (con.rs.next()) {
+                cbFiltroAnho.addItem(con.rs.getString("anho"));
+            }
+            if (cbFiltroAnho.getItemCount() == 1) {
+                cbFiltroAnho.setSelectedIndex(0);
+            } else {
+                cbFiltroAnho.setSelectedIndex(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
+    }
+
+    private void ConsultaPagosPorAnho(String anho) {
+        String sentencia = "CALL SP_PagoConsultaPorAnho('" + anho + "')";
         String titlesJtabla[] = {"Código", "N° de pago", "Apoderado", "Fecha de pago", "Importe", "Total"};
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
 
@@ -98,11 +119,11 @@ public class Pago extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        brightPassFilter1 = new org.edisoncor.gui.util.BrightPassFilter();
         panel1 = new org.edisoncor.gui.panel.Panel();
         jLabel10 = new javax.swing.JLabel();
         txtBuscar = new javax.swing.JTextField();
         cbCampoBuscar = new javax.swing.JComboBox();
-        lblBuscarCampo = new javax.swing.JLabel();
         pnProductosComprados = new javax.swing.JPanel();
         scPrincipal1 = new javax.swing.JScrollPane();
         tbConceptosPagados = new javax.swing.JTable(){
@@ -121,6 +142,9 @@ public class Pago extends javax.swing.JDialog {
         panel3 = new org.edisoncor.gui.panel.Panel();
         labelMetric2 = new org.edisoncor.gui.label.LabelMetric();
         btnEliminar = new javax.swing.JButton();
+        cbFiltroAnho = new javax.swing.JComboBox();
+        lblBuscarCampo1 = new javax.swing.JLabel();
+        lblBuscarCampo2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Pagos");
@@ -133,6 +157,7 @@ public class Pago extends javax.swing.JDialog {
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
         jLabel10.setText("  BUSCAR ");
+        jLabel10.setIconTextGap(1);
 
         txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
         txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
@@ -144,10 +169,6 @@ public class Pago extends javax.swing.JDialog {
                 txtBuscarKeyReleased(evt);
             }
         });
-
-        lblBuscarCampo.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        lblBuscarCampo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblBuscarCampo.setText("Buscar por:");
 
         pnProductosComprados.setBackground(new java.awt.Color(255, 255, 255));
         pnProductosComprados.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Conceptos del pago N° 000000"));
@@ -277,38 +298,58 @@ public class Pago extends javax.swing.JDialog {
             }
         });
 
+        cbFiltroAnho.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbFiltroAnhoItemStateChanged(evt);
+            }
+        });
+
+        lblBuscarCampo1.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
+        lblBuscarCampo1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblBuscarCampo1.setText("Filtrar por año");
+
+        lblBuscarCampo2.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
+        lblBuscarCampo2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblBuscarCampo2.setText("Buscar por");
+
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(344, 344, 344))
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel1Layout.createSequentialGroup()
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panel1Layout.createSequentialGroup()
-                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(pnProductosComprados, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(pnProductosComprados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(scPrincipal, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(panel1Layout.createSequentialGroup()
-                                .addComponent(lblBuscarCampo)
-                                .addGap(4, 4, 4)
-                                .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblBuscarCampo1)
+                                    .addComponent(cbFiltroAnho, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(scPrincipal, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(panel1Layout.createSequentialGroup()
                                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(15, 15, 15)))
-                        .addGap(10, 10, 10))))
-            .addGroup(panel1Layout.createSequentialGroup()
-                .addGap(334, 334, 334)
-                .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(10, 10, 10))
+                    .addGroup(panel1Layout.createSequentialGroup()
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(2, 2, 2)
+                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(388, 388, 388))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblBuscarCampo2)
+                            .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(175, 175, 175))))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -316,19 +357,23 @@ public class Pago extends javax.swing.JDialog {
                 .addComponent(panel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblBuscarCampo2)
+                    .addComponent(lblBuscarCampo1))
+                .addGap(2, 2, 2)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(cbFiltroAnho, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblBuscarCampo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(1, 1, 1)
-                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtBuscar)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(2, 2, 2)
+                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnProductosComprados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -381,7 +426,7 @@ public class Pago extends javax.swing.JDialog {
                     return;
                 }
 
-                ConsultaAllPago(); //Actualizar tabla
+                ConsultaPagosPorAnho(cbFiltroAnho.getSelectedItem() + ""); //Actualizar tabla
                 tbConceptosPagados.setModel(new DefaultTableModel()); //Vaciar tabla
                 Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(this, "Pago anulado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -398,6 +443,10 @@ public class Pago extends javax.swing.JDialog {
     private void tbPrincipalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPrincipalMouseClicked
 
     }//GEN-LAST:event_tbPrincipalMouseClicked
+
+    private void cbFiltroAnhoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFiltroAnhoItemStateChanged
+        ConsultaPagosPorAnho(cbFiltroAnho.getSelectedItem() + "");
+    }//GEN-LAST:event_cbFiltroAnhoItemStateChanged
 
     public static void main(String args[]) {
 
@@ -417,13 +466,16 @@ public class Pago extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private org.edisoncor.gui.util.BrightPassFilter brightPassFilter1;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JComboBox cbCampoBuscar;
+    private javax.swing.JComboBox cbFiltroAnho;
     private javax.swing.JLabel jLabel10;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;
     private javax.swing.JLabel lbCantRegistrosProductos;
-    private javax.swing.JLabel lblBuscarCampo;
+    private javax.swing.JLabel lblBuscarCampo1;
+    private javax.swing.JLabel lblBuscarCampo2;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel3;
     private javax.swing.JPanel pnProductosComprados;
