@@ -393,10 +393,10 @@ public class Login extends javax.swing.JFrame {
         panel2.setColorPrimario(new java.awt.Color(0, 51, 102));
         panel2.setColorSecundario(new java.awt.Color(1, 1, 11));
 
-        jLabel1.setFont(new java.awt.Font("Cinzel Black", 1, 20)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Microsoft PhagsPa", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("SISTEMA DE PAGOS");
+        jLabel1.setText("SYSCHOOL");
 
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
         panel2.setLayout(panel2Layout);

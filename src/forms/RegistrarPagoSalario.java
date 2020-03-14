@@ -10,16 +10,22 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
 import java.awt.Toolkit;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import static login.Login.Alias;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
@@ -46,6 +52,11 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         
         txtCedula.setText("");
         txtSalario.setText("");
+        txtCargo.setText("");
+        
+        Calendar cal = Calendar.getInstance();
+        int mesActual = cal.get(Calendar.MONTH);
+        cbPeriodo.setSelectedIndex(mesActual);
 
         //Permiso Roles de usuario
         btnGuardar.setVisible(metodos.PermisoRol(Alias, "PAGO_SALARIO", "ALTA"));
@@ -68,13 +79,15 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
             
             DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
             String fecha = formatoFecha.format(dcFecha.getDate());
+            String fechadesde = formatoFecha.format(dcFechaDesde.getDate());
+            String fechahasta = formatoFecha.format(dcFechaHasta.getDate());
             String obs = txtObs.getText();
             
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este pago de salario?", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
                 //Registrar nuevo gasto
                 String sentencia = "CALL SP_PagoSalarioAlta('" + numpago + "','" + idfuncionario + "','" + salario + "','" + fecha
-                        + "','" + obs + "')";
+                        + "','" + fechadesde + "','" + fechahasta + "','" + obs + "')";
                 con.EjecutarABM(sentencia, true);
                 GenerarNumpago();
                 Limpiar();
@@ -88,7 +101,66 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         dcFecha.setDate(new Date());
         txtObs.setText("");
     }
-    
+
+    /*
+    private void ImprimirRecibo() {
+        //Imprimir recibo
+        int confirmado2 = JOptionPane.showConfirmDialog(this, "¿Quieres imprimir el recibo de pago salarial?", "Confirmación", JOptionPane.YES_OPTION);
+        if (JOptionPane.YES_OPTION == confirmado2) {
+
+            InputStream logo = this.getClass().getResourceAsStream("/reportes/images/logo_ace.jpg");
+            InputStream logo2 = this.getClass().getResourceAsStream("/reportes/images/logo_ace.jpg");
+            //Parametros
+            Map parametros = new HashMap();
+            parametros.clear();
+            parametros.put("NUMPAGO", lblNumPago.getText());
+            parametros.put("NUMPAGO2", lblNumPago.getText());
+            parametros.put("LOGO", logo);
+            parametros.put("LOGO2", logo2);
+            parametros.put("APODERADO", cbApoderado.getSelectedItem() + "");
+            parametros.put("APODERADO2", cbApoderado.getSelectedItem() + "");
+            parametros.put("NIVEL_BASICO", lblPoderantesBasico.getText());
+            parametros.put("NIVEL_BASICO2", lblPoderantesBasico.getText());
+            parametros.put("NIVEL_MEDIO", lblPoderantesMedio.getText());
+            parametros.put("NIVEL_MEDIO2", lblPoderantesMedio.getText());
+            parametros.put("CEDULA", txtCedulaApoderado.getText());
+            parametros.put("CEDULA2", txtCedulaApoderado.getText());
+            parametros.put("TOTAL", totalString);
+            parametros.put("TOTAL2", totalString);
+            JRDataSource datasource = new JRTableModelDataSource(tbConceptoAPagar.getModel());
+            parametros.put("DATASOURCE", datasource);
+            JRDataSource datasource2 = new JRTableModelDataSource(tbConceptoAPagar.getModel());
+            parametros.put("DATASOURCE2", datasource2);
+            //Enviar directorio del subreporte
+            String directoriosub = this.getClass().getResource("/reportes/recibo_salario/reporte_recibo.jasper").toString();
+            directoriosub = directoriosub.replaceAll("reporte_recibo.jasper", "");
+            parametros.put("SUBREPORT_DIR", directoriosub); //Direccion del subreporte
+
+            String tipohoja = "";
+            try {
+                con = con.ObtenerRSSentencia("SELECT conf_descripcion, conf_valor FROM configuracion");
+                while (con.rs.next()) {
+                    switch (con.rs.getString("conf_descripcion")) {
+                        case "TIPOHOJA":
+                            tipohoja = con.rs.getString("conf_valor");
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(this, "No se encontró la hoja seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
+                            break;
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            con.DesconectarBasedeDatos();
+
+            System.out.println("tipohoja " + tipohoja);
+            String rutajasper = "/reportes/recibo/reporte_recibo_principal_" + tipohoja.toLowerCase() + ".jasper";
+
+            metodos.GenerarReporteJTABLE(rutajasper, parametros, null);
+        }
+    }
+     */
     private boolean ComprobarCampos() {
         if (cbFuncionario.getSelectedIndex() == -1) {
             Toolkit.getDefaultToolkit().beep();
@@ -138,6 +210,14 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         dcFecha = new com.toedter.calendar.JDateChooser();
         lblCodigo9 = new javax.swing.JLabel();
         txtCedula = new javax.swing.JTextField();
+        lblFechaRegistro2 = new javax.swing.JLabel();
+        dcFechaDesde = new com.toedter.calendar.JDateChooser();
+        dcFechaHasta = new com.toedter.calendar.JDateChooser();
+        lblFechaRegistro3 = new javax.swing.JLabel();
+        lblCodigo7 = new javax.swing.JLabel();
+        cbPeriodo = new javax.swing.JComboBox();
+        lblCodigo10 = new javax.swing.JLabel();
+        txtCargo = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
 
         setTitle("Ventana Registrar Gastos");
@@ -170,21 +250,21 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
             .addGroup(panel2Layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(labelMetric2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                .addGap(147, 147, 147)
                 .addComponent(labelMetric1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(3, 3, 3)
                 .addComponent(lblNumPago, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panel2Layout.setVerticalGroup(
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(labelMetric2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lblNumPago, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(labelMetric1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(labelMetric2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(labelMetric1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(7, Short.MAX_VALUE))
         );
 
@@ -247,7 +327,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         panel1.setColorPrimario(new java.awt.Color(233, 255, 255));
         panel1.setColorSecundario(new java.awt.Color(255, 255, 255));
 
-        lblFuncionario.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lblFuncionario.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblFuncionario.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblFuncionario.setText("Funcionario*:");
         lblFuncionario.setToolTipText("");
@@ -258,7 +338,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
             }
         });
 
-        lblCodigo6.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lblCodigo6.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblCodigo6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCodigo6.setText("Salario:");
 
@@ -275,7 +355,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
             }
         });
 
-        lblFechaRegistro.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lblFechaRegistro.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblFechaRegistro.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblFechaRegistro.setText("Gs.");
         lblFechaRegistro.setToolTipText("");
@@ -284,11 +364,11 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         txtObs.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         txtObs.setDisabledTextColor(new java.awt.Color(0, 0, 0));
 
-        lblCodigo8.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lblCodigo8.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblCodigo8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCodigo8.setText("Obs:");
 
-        lblFechaRegistro1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lblFechaRegistro1.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblFechaRegistro1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblFechaRegistro1.setText("Fecha:");
         lblFechaRegistro1.setToolTipText("");
@@ -297,7 +377,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         dcFecha.setMaxSelectableDate(new java.util.Date(4102455600000L));
         dcFecha.setMinSelectableDate(new java.util.Date(631162800000L));
 
-        lblCodigo9.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lblCodigo9.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblCodigo9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCodigo9.setText("N° de cédula:");
 
@@ -306,58 +386,143 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         txtCedula.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtCedula.setEnabled(false);
 
+        lblFechaRegistro2.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
+        lblFechaRegistro2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblFechaRegistro2.setText("Desde:");
+        lblFechaRegistro2.setToolTipText("");
+
+        dcFechaDesde.setEnabled(false);
+        dcFechaDesde.setMaxSelectableDate(new java.util.Date(4102455600000L));
+        dcFechaDesde.setMinSelectableDate(new java.util.Date(631162800000L));
+
+        dcFechaHasta.setEnabled(false);
+        dcFechaHasta.setMaxSelectableDate(new java.util.Date(4102455600000L));
+        dcFechaHasta.setMinSelectableDate(new java.util.Date(631162800000L));
+
+        lblFechaRegistro3.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
+        lblFechaRegistro3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblFechaRegistro3.setText("Hasta:");
+        lblFechaRegistro3.setToolTipText("");
+
+        lblCodigo7.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        lblCodigo7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCodigo7.setText("Periodo:");
+
+        cbPeriodo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" }));
+        cbPeriodo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbPeriodoItemStateChanged(evt);
+            }
+        });
+
+        lblCodigo10.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        lblCodigo10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCodigo10.setText("Cargo:");
+
+        txtCargo.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        txtCargo.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txtCargo.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtCargo.setEnabled(false);
+        txtCargo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCargoKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCargoKeyTyped(evt);
+            }
+        });
+
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblCodigo7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblCodigo6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblFuncionario, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblCodigo6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblCodigo8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(2, 2, 2)
+                    .addComponent(lblCodigo8, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, 6)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel1Layout.createSequentialGroup()
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(panel1Layout.createSequentialGroup()
-                                .addComponent(txtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(2, 2, 2)
-                                .addComponent(lblFechaRegistro))
-                            .addComponent(cbFuncionario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(29, 29, 29)
+                        .addComponent(cbPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(14, 14, 14)
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblCodigo9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblFechaRegistro1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(2, 2, 2)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(dcFecha, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
-                            .addComponent(txtCedula)))
-                    .addComponent(txtObs))
-                .addGap(41, 41, 41))
+                            .addComponent(dcFechaDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblFechaRegistro2))
+                        .addGap(18, 18, 18)
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblFechaRegistro3)
+                            .addComponent(dcFechaHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(399, 399, 399))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtObs, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel1Layout.createSequentialGroup()
+                                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(panel1Layout.createSequentialGroup()
+                                        .addComponent(txtSalario)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblFechaRegistro)
+                                        .addGap(51, 51, 51))
+                                    .addGroup(panel1Layout.createSequentialGroup()
+                                        .addComponent(cbFuncionario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(lblCodigo9)
+                                    .addComponent(lblCodigo10, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtCedula, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                                    .addComponent(txtCargo))
+                                .addGap(18, 18, 18)
+                                .addComponent(lblFechaRegistro1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(dcFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(195, 195, 195))))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel1Layout.createSequentialGroup()
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(cbFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                                .addComponent(lblCodigo6, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblFechaRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblFechaRegistro1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCodigo9, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(dcFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblCodigo10, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCargo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(3, 3, 3)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblFechaRegistro3)
+                    .addComponent(lblFechaRegistro2))
+                .addGap(2, 2, 2)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(cbFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblCodigo9, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(lblFechaRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblCodigo6, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dcFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblFechaRegistro1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(dcFechaHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dcFechaDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCodigo7, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblCodigo8, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtObs, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(16, Short.MAX_VALUE))
+                    .addComponent(lblCodigo8, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtObs, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18))
         );
 
         jLabel2.setForeground(new java.awt.Color(0, 0, 153));
@@ -370,15 +535,16 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jpPrincipalLayout.createSequentialGroup()
-                .addGap(151, 151, 151)
-                .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(49, 49, 49))
+                    .addGroup(jpPrincipalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, 743, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(196, 196, 196))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -388,20 +554,20 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
         );
 
         getAccessibleContext().setAccessibleName("RegistrarCompra");
@@ -427,11 +593,14 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
     private void cbFuncionarioItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFuncionarioItemStateChanged
         try {
             int idfuncionario = metodoscombo.ObtenerIDSelectComboBox(cbFuncionario);
-            String sentencia = "SELECT fun_cedula, fun_salario FROM funcionario WHERE fun_codigo = '" + idfuncionario + "'";
+            
+            String sentencia = "SELECT fun_cedula, fun_salario, car_descripcion FROM funcionario,cargo "
+                    + "WHERE fun_codigo = '" + idfuncionario + "' AND fun_cargo=car_codigo";
             con = con.ObtenerRSSentencia(sentencia);
             while (con.rs.next()) {
                 txtCedula.setText(metodostxt.IntegerPuntosMiles(con.rs.getInt("fun_cedula")));
                 txtSalario.setText(metodostxt.DoubleAFormatoSudamerica(con.rs.getDouble("fun_salario")));
+                txtCargo.setText(con.rs.getString("car_descripcion"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -447,6 +616,24 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         metodostxt.SoloNumeroDecimalKeyTyped(evt, txtSalario);
         metodostxt.TxtCantidadCaracteresKeyTyped(txtSalario, 11);
     }//GEN-LAST:event_txtSalarioKeyTyped
+
+    private void cbPeriodoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbPeriodoItemStateChanged
+        Calendar cal = Calendar.getInstance();
+        
+        cal.set(cal.get(Calendar.YEAR), cbPeriodo.getSelectedIndex(), 1); //Primer dia del mes seleccionado
+        dcFechaDesde.setCalendar(cal);
+        
+        cal.set(cal.get(Calendar.YEAR), cbPeriodo.getSelectedIndex(), cal.getActualMaximum(Calendar.DAY_OF_MONTH)); //Ultimo dia del mes seleccionado
+        dcFechaHasta.setCalendar(cal);
+    }//GEN-LAST:event_cbPeriodoItemStateChanged
+
+    private void txtCargoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCargoKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCargoKeyReleased
+
+    private void txtCargoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCargoKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCargoKeyTyped
     
     private void GenerarNumpago() {
         try {
@@ -510,21 +697,29 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnGuardar;
     private static javax.swing.JComboBox<MetodosCombo> cbFuncionario;
+    private javax.swing.JComboBox cbPeriodo;
     private com.toedter.calendar.JDateChooser dcFecha;
+    private com.toedter.calendar.JDateChooser dcFechaDesde;
+    private com.toedter.calendar.JDateChooser dcFechaHasta;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jpBotones;
     private javax.swing.JPanel jpPrincipal;
     private org.edisoncor.gui.label.LabelMetric labelMetric1;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
+    private javax.swing.JLabel lblCodigo10;
     private javax.swing.JLabel lblCodigo6;
+    private javax.swing.JLabel lblCodigo7;
     private javax.swing.JLabel lblCodigo8;
     private javax.swing.JLabel lblCodigo9;
     private javax.swing.JLabel lblFechaRegistro;
     private javax.swing.JLabel lblFechaRegistro1;
+    private javax.swing.JLabel lblFechaRegistro2;
+    private javax.swing.JLabel lblFechaRegistro3;
     private javax.swing.JLabel lblFuncionario;
     private org.edisoncor.gui.label.LabelMetric lblNumPago;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel2;
+    private javax.swing.JTextField txtCargo;
     private javax.swing.JTextField txtCedula;
     private javax.swing.JTextField txtObs;
     private javax.swing.JTextField txtSalario;

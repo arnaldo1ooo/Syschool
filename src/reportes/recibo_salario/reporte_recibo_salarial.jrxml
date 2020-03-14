@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d7ba0bb7-545a-46fb-9be6-63e81b1f1532">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\Arnaldo_Cantero\\Documents\\NetBeansProjects\\Escuela\\src\\reportes\\recibo\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NUMPAGO" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="FUNCIONARIO" class="java.lang.String"/>
+	<parameter name="CEDULA" class="java.lang.String"/>
+	<parameter name="CARGO" class="java.lang.String"/>
+	<parameter name="MES" class="java.lang.String"/>
+	<parameter name="DESDE" class="java.lang.String"/>
+	<parameter name="HASTA" class="java.lang.String"/>
+	<parameter name="SALARIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="Concepto" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Cuotas a pagar" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Mes" class="java.lang.String"/>
+	<field name="Monto" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Subtotal" class="java.lang.String"/>
+	<field name="Cuotas pagadas" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="216" splitType="Stretch">
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="0" width="116" height="20" uuid="340e32f3-7d0b-4e84-8d3b-74a780373cbc"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Top">
+				<reportElement stretchType="RelativeToTallestObject" x="120" y="0" width="294" height="60" uuid="10ebd1ef-0920-4bd4-9b8d-8e3b1b47b2d6"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="420" y="0" width="57" height="20" uuid="9d607796-1ecd-470c-a2c2-f6dfc3eb4b86"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[N° de pago:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="477" y="0" width="78" height="20" uuid="5bf0ccc9-0fc3-4f7f-8280-c3afa7597899"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{NUMPAGO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="75" width="219" height="25" uuid="07641e82-9742-45d4-aea6-af901e8d35f7"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Bodoni MT" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RECIBO DE PAGO SALARIAL]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="100" width="555" height="1" uuid="b8872de4-e7d2-44fc-9781-c1bd06b0f18c"/>
+			</line>
+			<rectangle>
+				<reportElement x="0" y="111" width="555" height="93" uuid="f2b02d15-2ff0-48ec-b703-2327a87ecde6"/>
+			</rectangle>
+			<line>
+				<reportElement x="0" y="146" width="555" height="1" uuid="9c3dbb58-2ec2-4945-b786-98fefcc561f4"/>
+			</line>
+			<line>
+				<reportElement mode="Opaque" x="236" y="111" width="1" height="36" uuid="4ac924d3-e4e8-4609-9629-476b285e555e"/>
+			</line>
+			<line>
+				<reportElement mode="Opaque" x="378" y="111" width="1" height="93" uuid="c4f65dfe-2785-4b24-be82-ed91a41bc757"/>
+			</line>
+			<staticText>
+				<reportElement x="10" y="111" width="219" height="15" uuid="18845270-8c59-4462-8dfd-1ee906d0a00d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre y Apellido del Funcionario:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="10" y="126" width="219" height="20" uuid="bc14bf1d-3e5c-417e-8df8-90a90ab9c696"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FUNCIONARIO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="248" y="111" width="120" height="15" uuid="f4ceb984-7e1f-4699-abd2-4f015bc26ab4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[N° de cédula:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="248" y="126" width="120" height="20" uuid="5a083625-9fe2-46e8-bb5c-8f9e1888c934"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CEDULA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="388" y="111" width="154" height="15" uuid="8afa4274-9c7b-4d91-b33a-61e9c17fc6c9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cargo:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="388" y="126" width="154" height="20" uuid="75cc70ce-05a0-4ee7-bf3e-2fd33fe4d659"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CARGO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="153" width="44" height="19" uuid="331c973f-93ee-4357-85a2-cff89f1a74ce"/>
+				<textElement verticalAlignment="Top">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Periodo:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="56" y="172" width="87" height="20" uuid="2cceea1f-4df6-4f98-ae5a-198bb1e06073"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DESDE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="141" y="172" width="30" height="20" uuid="d2ff7cf8-8829-414a-8446-9ad1895ea85b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Hasta:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="174" y="172" width="88" height="20" uuid="810ba820-e57f-4d8b-9cc3-52430b08f280"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{HASTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="388" y="153" width="44" height="19" uuid="e58efee0-7951-462f-93de-16bda65ddb5d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Salario:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="388" y="172" width="154" height="20" uuid="00a17d28-ac9f-4f5d-8e5a-04bebb5e2b3f"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{SALARIO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="19" y="172" width="35" height="20" uuid="dcfbed5c-c044-4cae-a2d0-430376f2a805"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="54" y="153" width="100" height="19" uuid="9806ab3c-5d9c-4480-9334-f48ba5e85381"/>
+				<textElement verticalAlignment="Top">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{MES}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

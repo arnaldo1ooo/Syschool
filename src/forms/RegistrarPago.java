@@ -214,7 +214,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 while (con.rs.next()) {
                     switch (con.rs.getString("conf_descripcion")) {
                         case "TIPOHOJA":
-                            tipohoja = con.rs.getString("conf_Valor");
+                            tipohoja = con.rs.getString("conf_valor");
                             break;
                         default:
                             JOptionPane.showMessageDialog(this, "No se encontró la moneda seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
