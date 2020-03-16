@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import static login.Login.Alias;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
@@ -52,7 +53,6 @@ public final class ABMUsuario extends javax.swing.JDialog {
         //Metodos
         TablaConsultaUsuarios(); //Trae todos los registros
         TablaAllPerfiles();
-        TablaAllRoles();
 
         txtBuscar.requestFocus();
         //Permiso Roles de usuario
@@ -203,44 +203,23 @@ public final class ABMUsuario extends javax.swing.JDialog {
         con.DesconectarBasedeDatos();
     }
 
-    public void TablaAllRoles() {
+    public void TablaRolesDelUsu() {
         try {
-            String sentencia = "CALL SP_UsuarioRolesABMAll()";
-            con = con.ObtenerRSSentencia(sentencia);
             dtmRoles = (DefaultTableModel) tbRoles.getModel();
             dtmRoles.setRowCount(0);
-            while (con.rs.next()) {
-                dtmRoles.addRow(new Object[]{con.rs.getString("mo_denominacion"), false, false, false,
-                    con.rs.getString("altacodigo"), con.rs.getString("modificarcodigo"), con.rs.getString("bajacodigo")});
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        con.DesconectarBasedeDatos();
-    }
-
-    public void TablaRolesDelUsu() {
-        //Poner todo en false
-        for (int i = 0; i < tbRoles.getRowCount(); i++) {
-            tbRoles.setValueAt(false, i, 1);
-            tbRoles.setValueAt(false, i, 2);
-            tbRoles.setValueAt(false, i, 3);
-        }
-
-        try {
             String codususelect = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "";
-            String sentencia = "CALL SP_UsuarioRolesABM('" + codususelect + "')";
+            String sentencia = "CALL SP_UsuarioRolesPorUsuario('" + codususelect + "')";
             con = con.ObtenerRSSentencia(sentencia);
-            String modulo;
             while (con.rs.next()) {
-                for (int i = 0; i < tbRoles.getRowCount(); i++) {
-                    modulo = tbRoles.getValueAt(i, 0) + "";
-                    if (modulo.equals(con.rs.getString("mo_denominacion"))) {
-                        tbRoles.setValueAt(con.rs.getBoolean("alta"), i, 1);
-                        tbRoles.setValueAt(con.rs.getBoolean("modificar"), i, 2);
-                        tbRoles.setValueAt(con.rs.getBoolean("baja"), i, 3);
-                    }
-                }
+                dtmRoles.addRow(new Object[]{
+                    con.rs.getString("modulo"),
+                    con.rs.getBoolean("estadoalta"),
+                    con.rs.getBoolean("estadomodificar"),
+                    con.rs.getBoolean("estadobaja"),
+                    con.rs.getString("codalta"),
+                    con.rs.getString("codmodificar"),
+                    con.rs.getString("codbaja")
+                });
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -480,13 +459,17 @@ public final class ABMUsuario extends javax.swing.JDialog {
         tbPrincipal.clearSelection();
 
         TablaAllPerfiles();
-        TablaAllRoles();
-        try {
+        
+        try { //Vacia tablas
             if (dtmPerfilModulos.getRowCount() > 0) {
-                dtmPerfilModulos.setRowCount(0); //Vacia tabla
+                dtmPerfilModulos.setRowCount(0);
+            }
+            if (dtmRoles.getRowCount() > 0) {
+                dtmRoles.setRowCount(0);
             }
         } catch (Exception e) {
         }
+
     }
 
     public boolean ComprobarCampos() {

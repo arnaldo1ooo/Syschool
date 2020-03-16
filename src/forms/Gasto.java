@@ -300,7 +300,7 @@ public class Gasto extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtBuscar.requestFocus();
         } else {
-            int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea anular este pago?", "Confirmación", JOptionPane.YES_OPTION);
+            int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea anular este gasto?", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
                 String codigo = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0).toString();
                 //Elimina el pago (Primero se debe eliminar los conceptos del pago)

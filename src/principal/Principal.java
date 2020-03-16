@@ -11,6 +11,7 @@ import forms.Configuracion;
 import forms.Gasto;
 import forms.Matricula;
 import forms.Pago;
+import forms.PagoSalarial;
 import forms.RegistrarGasto;
 import forms.RegistrarMatricula;
 import forms.RegistrarPago;
@@ -35,12 +36,12 @@ import static login.Login.Alias;
  * @author Lic. Arnaldo Cantero
  */
 public class Principal extends javax.swing.JFrame implements Runnable {
-
+    
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
     Thread hilo;
-
+    
     public Principal() {
         initComponents();
         this.setExtendedState(Principal.MAXIMIZED_BOTH);//Maximizar ventana
@@ -59,7 +60,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meitRegistrarGasto.setEnabled(metodos.PermisoRol(Alias, "GASTO", "ALTA"));
         meitAnularGasto.setEnabled(metodos.PermisoRol(Alias, "GASTO", "BAJA"));
     }
-
+    
     private void PermisoModulos(String ElAlias) {
         con = con.ObtenerRSSentencia("CALL SP_UsuarioModuloConsulta('" + ElAlias + "')");
         String modulo;
@@ -85,7 +86,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                         mePago.setEnabled(true);
                         break;
                     case "PAGO_SALARIO":
-                        System.out.println("sas");
+                        btnPagoSalario.setEnabled(true);
                         mePagoSalario.setEnabled(true);
                         break;
                     case "GASTO":
@@ -121,7 +122,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     private void PerfilesUsuario(String alias) {
         String consulta = "SELECT per_codigo, per_denominacion "
                 + "FROM usuario,perfil,usuario_perfil "
@@ -145,7 +146,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         }
         con.DesconectarBasedeDatos();
     }
-
+    
     private void ObtenerHorayFecha() {
         //Obtener fecha y hora
         hilo = new Thread(this);
@@ -173,6 +174,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         btnGasto = new javax.swing.JButton();
         btnMatricula = new javax.swing.JButton();
         btnNivel = new javax.swing.JButton();
+        btnPagoSalario = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         meMatricula = new javax.swing.JMenu();
         meitRegistrarMatricula = new javax.swing.JMenuItem();
@@ -392,6 +394,17 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             }
         });
 
+        btnPagoSalario.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        btnPagoSalario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoPagos70.png"))); // NOI18N
+        btnPagoSalario.setText("PAGOS DE SALARIO");
+        btnPagoSalario.setEnabled(false);
+        btnPagoSalario.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnPagoSalario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPagoSalarioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout piPrincipalLayout = new javax.swing.GroupLayout(piPrincipal);
         piPrincipal.setLayout(piPrincipalLayout);
         piPrincipalLayout.setHorizontalGroup(
@@ -399,16 +412,17 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(piPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnMatricula, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnPago, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnFuncionario)
-                    .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnPagoSalario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnPago, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnGasto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnFuncionario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnNivel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnMatricula, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnApoderado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 1144, Short.MAX_VALUE))
         );
         piPrincipalLayout.setVerticalGroup(
             piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -424,12 +438,14 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnPago, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPagoSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 210, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 143, Short.MAX_VALUE)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
@@ -686,12 +702,12 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
 
     }//GEN-LAST:event_jMenuItem9ActionPerformed
-
+    
 
     private void jMenuItem17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem17ActionPerformed
 
     }//GEN-LAST:event_jMenuItem17ActionPerformed
-
+    
     private void ObtenerFechayHora() {
         Date fecha = new Date();
         //Formateando la fecha:
@@ -700,7 +716,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         DateFormat formatoHora = new SimpleDateFormat("HH:mm:ss");
         lbHora.setText(formatoHora.format(fecha));
     }
-
+    
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
 
@@ -809,7 +825,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     }//GEN-LAST:event_meitRegistrarPagoSalarioActionPerformed
 
     private void meitAnularPagoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitAnularPagoSalarioActionPerformed
-        // TODO add your handling code here:
+       PagoSalarial pagosalarial = new PagoSalarial(this, true);
+       pagosalarial.setVisible(true);
     }//GEN-LAST:event_meitAnularPagoSalarioActionPerformed
 
     private void mePagoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mePagoSalarioActionPerformed
@@ -820,6 +837,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         ABMNivel abmnivel = new ABMNivel(this, true);
         abmnivel.setVisible(true);
     }//GEN-LAST:event_btnNivelActionPerformed
+
+    private void btnPagoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagoSalarioActionPerformed
+        PagoSalarial pagosalarial = new PagoSalarial(this, false);
+        pagosalarial.setVisible(true);
+    }//GEN-LAST:event_btnPagoSalarioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -868,6 +890,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JButton btnMatricula;
     private javax.swing.JButton btnNivel;
     private javax.swing.JButton btnPago;
+    private javax.swing.JButton btnPagoSalario;
     private javax.swing.JButton btnUsuario;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -918,10 +941,10 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
         Thread current = Thread.currentThread();
-
+        
         while (current == hilo) {
             ObtenerFechayHora();
-
+            
         }
     }
 }

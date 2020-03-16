@@ -35,12 +35,12 @@ import utilidades.MetodosTXT;
  * @author Lic. Arnaldo Cantero
  */
 public final class RegistrarPagoSalario extends javax.swing.JDialog {
-    
+
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
     MetodosCombo metodoscombo = new MetodosCombo();
-    
+
     public RegistrarPagoSalario(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
@@ -49,18 +49,18 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         GenerarNumpago();
         CargarComboBoxes();
         Limpiar();
-        
+
         txtCedula.setText("");
         txtSalario.setText("");
         txtCargo.setText("");
-        
+
         Calendar cal = Calendar.getInstance();
         int mesActual = cal.get(Calendar.MONTH);
-        cbPeriodo.setSelectedIndex(mesActual);
+        cbMes.setSelectedIndex(mesActual);
 
         //Permiso Roles de usuario
         btnGuardar.setVisible(metodos.PermisoRol(Alias, "PAGO_SALARIO", "ALTA"));
-        
+
         OrdenTabulador();
     }
 
@@ -70,35 +70,35 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         metodoscombo.CargarComboBox(cbFuncionario, "SELECT fun_codigo, CONCAT(fun_nombre,' ',fun_apellido) AS nomape "
                 + "FROM funcionario ORDER BY fun_nombre ", -1);
     }
-    
+
     public void RegistroNuevo() {
         if (ComprobarCampos() == true) {
             String numpago = lblNumPago.getText();
             int idfuncionario = metodoscombo.ObtenerIDSelectComboBox(cbFuncionario);
             double salario = metodostxt.DoubleAFormatoAmericano(txtSalario.getText());
-            
+
             DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
             String fecha = formatoFecha.format(dcFecha.getDate());
-            String fechadesde = formatoFecha.format(dcFechaDesde.getDate());
-            String fechahasta = formatoFecha.format(dcFechaHasta.getDate());
+            String mes = cbMes.getSelectedItem() + "";
             String obs = txtObs.getText();
-            
+
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este pago de salario?", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
                 //Registrar nuevo gasto
                 String sentencia = "CALL SP_PagoSalarioAlta('" + numpago + "','" + idfuncionario + "','" + salario + "','" + fecha
-                        + "','" + fechadesde + "','" + fechahasta + "','" + obs + "')";
+                        + "','" + mes + "','" + obs + "')";
                 con.EjecutarABM(sentencia, true);
                 GenerarNumpago();
                 Limpiar();
             }
         }
     }
-    
+
     private void Limpiar() {
         cbFuncionario.setSelectedIndex(-1);
         txtSalario.setText("");
         dcFecha.setDate(new Date());
+        cbMes.setSelectedIndex(0);
         txtObs.setText("");
     }
 
@@ -168,21 +168,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
             cbFuncionario.requestFocus();
             return false;
         }
-        
-        if (txtSalario.getText().equals("")) {
-            Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(this, "Salario vacío", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtSalario.requestFocus();
-            return false;
-        }
-        
-        if (dcFecha.getDate() == null) {
-            Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(this, "Seleccione la fecha", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            dcFecha.requestFocus();
-            return false;
-        }
-        
+
         return true;
     }
 
@@ -215,12 +201,12 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         dcFechaHasta = new com.toedter.calendar.JDateChooser();
         lblFechaRegistro3 = new javax.swing.JLabel();
         lblCodigo7 = new javax.swing.JLabel();
-        cbPeriodo = new javax.swing.JComboBox();
+        cbMes = new javax.swing.JComboBox();
         lblCodigo10 = new javax.swing.JLabel();
         txtCargo = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
 
-        setTitle("Ventana Registrar Gastos");
+        setTitle("Ventana Registrar Pago de Salarios");
         setBackground(new java.awt.Color(45, 62, 80));
         setResizable(false);
 
@@ -260,11 +246,11 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelMetric2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lblNumPago, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(labelMetric1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(labelMetric1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(labelMetric2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(7, Short.MAX_VALUE))
         );
 
@@ -342,7 +328,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         lblCodigo6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCodigo6.setText("Salario:");
 
-        txtSalario.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        txtSalario.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtSalario.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtSalario.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtSalario.setEnabled(false);
@@ -408,10 +394,10 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         lblCodigo7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCodigo7.setText("Periodo:");
 
-        cbPeriodo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" }));
-        cbPeriodo.addItemListener(new java.awt.event.ItemListener() {
+        cbMes.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" }));
+        cbMes.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbPeriodoItemStateChanged(evt);
+                cbMesItemStateChanged(evt);
             }
         });
 
@@ -419,7 +405,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         lblCodigo10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblCodigo10.setText("Cargo:");
 
-        txtCargo.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        txtCargo.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtCargo.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         txtCargo.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtCargo.setEnabled(false);
@@ -446,20 +432,23 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
                 .addGap(6, 6, 6)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(cbPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(14, 14, 14)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dcFechaDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblFechaRegistro2))
-                        .addGap(18, 18, 18)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblFechaRegistro3)
-                            .addComponent(dcFechaHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtCargo, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel1Layout.createSequentialGroup()
+                                .addComponent(cbMes, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(14, 14, 14)
+                                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(dcFechaDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblFechaRegistro2))
+                                .addGap(18, 18, 18)
+                                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblFechaRegistro3)
+                                    .addComponent(dcFechaHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(399, 399, 399))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtObs, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel1Layout.createSequentialGroup()
+                            .addGroup(panel1Layout.createSequentialGroup()
                                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(panel1Layout.createSequentialGroup()
                                         .addComponent(txtSalario)
@@ -473,20 +462,26 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
                                     .addComponent(lblCodigo9)
                                     .addComponent(lblCodigo10, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtCedula, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                                    .addComponent(txtCargo))
+                                .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(lblFechaRegistro1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(dcFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(195, 195, 195))))
+                        .addGap(204, 204, 204))))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblFechaRegistro1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dcFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblCodigo10, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCargo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(cbFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -497,18 +492,10 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
                                 .addComponent(lblCodigo6, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(txtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(lblFechaRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblFechaRegistro1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblCodigo9, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(dcFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblCodigo10, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCargo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(3, 3, 3)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblCodigo9, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(10, 10, 10)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblFechaRegistro3)
                     .addComponent(lblFechaRegistro2))
@@ -516,13 +503,13 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(dcFechaHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(dcFechaDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbMes, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblCodigo7, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCodigo8, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtObs, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18))
+                .addContainerGap())
         );
 
         jLabel2.setForeground(new java.awt.Color(0, 0, 153));
@@ -535,16 +522,20 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jpPrincipalLayout.createSequentialGroup()
-                .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, 743, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(196, 196, 196))
+                        .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, 743, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
+                                .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(197, 197, 197))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())))))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -554,9 +545,9 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -567,7 +558,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
         );
 
         getAccessibleContext().setAccessibleName("RegistrarCompra");
@@ -582,7 +573,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnGuardarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnGuardarKeyPressed
-        
+
 
     }//GEN-LAST:event_btnGuardarKeyPressed
 
@@ -593,7 +584,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
     private void cbFuncionarioItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFuncionarioItemStateChanged
         try {
             int idfuncionario = metodoscombo.ObtenerIDSelectComboBox(cbFuncionario);
-            
+
             String sentencia = "SELECT fun_cedula, fun_salario, car_descripcion FROM funcionario,cargo "
                     + "WHERE fun_codigo = '" + idfuncionario + "' AND fun_cargo=car_codigo";
             con = con.ObtenerRSSentencia(sentencia);
@@ -617,15 +608,15 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         metodostxt.TxtCantidadCaracteresKeyTyped(txtSalario, 11);
     }//GEN-LAST:event_txtSalarioKeyTyped
 
-    private void cbPeriodoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbPeriodoItemStateChanged
+    private void cbMesItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbMesItemStateChanged
         Calendar cal = Calendar.getInstance();
-        
-        cal.set(cal.get(Calendar.YEAR), cbPeriodo.getSelectedIndex(), 1); //Primer dia del mes seleccionado
+
+        cal.set(cal.get(Calendar.YEAR), cbMes.getSelectedIndex(), 1); //Primer dia del mes seleccionado
         dcFechaDesde.setCalendar(cal);
-        
-        cal.set(cal.get(Calendar.YEAR), cbPeriodo.getSelectedIndex(), cal.getActualMaximum(Calendar.DAY_OF_MONTH)); //Ultimo dia del mes seleccionado
+
+        cal.set(cal.get(Calendar.YEAR), cbMes.getSelectedIndex(), cal.getActualMaximum(Calendar.DAY_OF_MONTH)); //Ultimo dia del mes seleccionado
         dcFechaHasta.setCalendar(cal);
-    }//GEN-LAST:event_cbPeriodoItemStateChanged
+    }//GEN-LAST:event_cbMesItemStateChanged
 
     private void txtCargoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCargoKeyReleased
         // TODO add your handling code here:
@@ -634,7 +625,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
     private void txtCargoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCargoKeyTyped
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCargoKeyTyped
-    
+
     private void GenerarNumpago() {
         try {
             con = con.ObtenerRSSentencia("SELECT MAX(pasal_numpago) AS numultimopago FROM pago_salario");
@@ -642,7 +633,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
             while (con.rs.next()) {
                 numultimapago = con.rs.getString("numultimopago");
             }
-            
+
             if (numultimapago == null) {
                 numultimapago = String.format("%8s", String.valueOf(1)).replace(' ', '0');
             } else {
@@ -655,9 +646,9 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         }
         con.DesconectarBasedeDatos();
     }
-    
+
     List<Component> ordenTabulador;
-    
+
     private void OrdenTabulador() {
         ordenTabulador = new ArrayList<>();
         ordenTabulador.add(cbFuncionario);
@@ -665,29 +656,29 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         ordenTabulador.add(btnGuardar);
         setFocusTraversalPolicy(new PersonalizadoFocusTraversalPolicy());
     }
-    
+
     private class PersonalizadoFocusTraversalPolicy extends FocusTraversalPolicy {
-        
+
         public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
             int currentPosition = ordenTabulador.indexOf(aComponent);
             currentPosition = (currentPosition + 1) % ordenTabulador.size();
             return (Component) ordenTabulador.get(currentPosition);
         }
-        
+
         public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
             int currentPosition = ordenTabulador.indexOf(aComponent);
             currentPosition = (ordenTabulador.size() + currentPosition - 1) % ordenTabulador.size();
             return (Component) ordenTabulador.get(currentPosition);
         }
-        
+
         public Component getFirstComponent(Container cntnr) {
             return (Component) ordenTabulador.get(0);
         }
-        
+
         public Component getLastComponent(Container cntnr) {
             return (Component) ordenTabulador.get(ordenTabulador.size() - 1);
         }
-        
+
         public Component getDefaultComponent(Container cntnr) {
             return (Component) ordenTabulador.get(0);
         }
@@ -697,7 +688,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnGuardar;
     private static javax.swing.JComboBox<MetodosCombo> cbFuncionario;
-    private javax.swing.JComboBox cbPeriodo;
+    private javax.swing.JComboBox cbMes;
     private com.toedter.calendar.JDateChooser dcFecha;
     private com.toedter.calendar.JDateChooser dcFechaDesde;
     private com.toedter.calendar.JDateChooser dcFechaHasta;
