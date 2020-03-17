@@ -16,12 +16,8 @@
 	<parameter name="CEDULA2" class="java.lang.String"/>
 	<parameter name="CARGO" class="java.lang.String"/>
 	<parameter name="CARGO2" class="java.lang.String"/>
-	<parameter name="DATASOURCE" class="net.sf.jasperreports.engine.JRDataSource" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></defaultValueExpression>
-	</parameter>
-	<parameter name="DATASOURCE2" class="net.sf.jasperreports.engine.JRDataSource" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></defaultValueExpression>
-	</parameter>
+	<parameter name="MES" class="java.lang.String"/>
+	<parameter name="MES2" class="java.lang.String"/>
 	<parameter name="DESDE" class="java.lang.String"/>
 	<parameter name="DESDE2" class="java.lang.String"/>
 	<parameter name="HASTA" class="java.lang.String"/>
@@ -35,12 +31,15 @@
 		<band height="802" splitType="Stretch">
 			<subreport isUsingCache="false">
 				<reportElement x="-20" y="-21" width="596" height="400" isRemoveLineWhenBlank="true" uuid="2306a1d4-14c9-4f44-a7c6-322cf4a608f2"/>
-				<subreportParameter name="SUBREPORT_DIR"/>
-				<subreportParameter name="NUMPAGO">
-					<subreportParameterExpression><![CDATA[$P{NUMPAGO}]]></subreportParameterExpression>
+				<subreportParameter name="MES">
+					<subreportParameterExpression><![CDATA[$P{MES}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR"/>
 				<subreportParameter name="HASTA">
 					<subreportParameterExpression><![CDATA[$P{HASTA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NUMPAGO">
+					<subreportParameterExpression><![CDATA[$P{NUMPAGO}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="LOGO">
 					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
@@ -60,7 +59,7 @@
 				<subreportParameter name="CEDULA">
 					<subreportParameterExpression><![CDATA[$P{CEDULA}]]></subreportParameterExpression>
 				</subreportParameter>
-				<dataSourceExpression><![CDATA[$P{DATASOURCE}]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reporte_recibo_salarial.jasper"]]></subreportExpression>
 			</subreport>
 			<line>
@@ -71,12 +70,15 @@
 			</line>
 			<subreport isUsingCache="false">
 				<reportElement x="-20" y="398" width="596" height="400" isRemoveLineWhenBlank="true" uuid="59b4d847-9d75-4b35-96aa-ee2d71bbe506"/>
-				<subreportParameter name="SUBREPORT_DIR"/>
-				<subreportParameter name="NUMPAGO">
-					<subreportParameterExpression><![CDATA[$P{NUMPAGO2}]]></subreportParameterExpression>
+				<subreportParameter name="MES">
+					<subreportParameterExpression><![CDATA[$P{MES2}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR"/>
 				<subreportParameter name="HASTA">
 					<subreportParameterExpression><![CDATA[$P{HASTA2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NUMPAGO">
+					<subreportParameterExpression><![CDATA[$P{NUMPAGO2}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="LOGO">
 					<subreportParameterExpression><![CDATA[$P{LOGO2}]]></subreportParameterExpression>
@@ -96,8 +98,8 @@
 				<subreportParameter name="CEDULA">
 					<subreportParameterExpression><![CDATA[$P{CEDULA2}]]></subreportParameterExpression>
 				</subreportParameter>
-				<dataSourceExpression><![CDATA[$P{DATASOURCE}]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reporte_recibo.jasper"]]></subreportExpression>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reporte_recibo_salarial.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>

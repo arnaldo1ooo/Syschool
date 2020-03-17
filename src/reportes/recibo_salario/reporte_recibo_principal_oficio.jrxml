@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" pageWidth="612" pageHeight="943" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d7ba0bb7-545a-46fb-9be6-63e81b1f1532">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\Arnaldo_Cantero\\Documents\\NetBeansProjects\\Escuela\\src\\reportes\\recibo\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NUMPAGO" class="java.lang.String"/>
+	<parameter name="NUMPAGO2" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="LOGO2" class="java.io.InputStream"/>
+	<parameter name="FUNCIONARIO" class="java.lang.String"/>
+	<parameter name="FUNCIONARIO2" class="java.lang.String"/>
+	<parameter name="CEDULA" class="java.lang.String"/>
+	<parameter name="CEDULA2" class="java.lang.String"/>
+	<parameter name="CARGO" class="java.lang.String"/>
+	<parameter name="CARGO2" class="java.lang.String"/>
+	<parameter name="MES" class="java.lang.String"/>
+	<parameter name="MES2" class="java.lang.String"/>
+	<parameter name="DESDE" class="java.lang.String"/>
+	<parameter name="DESDE2" class="java.lang.String"/>
+	<parameter name="HASTA" class="java.lang.String"/>
+	<parameter name="HASTA2" class="java.lang.String"/>
+	<parameter name="SALARIO" class="java.lang.String"/>
+	<parameter name="SALARIO2" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<detail>
+		<band height="802" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement x="-20" y="-21" width="612" height="451" isRemoveLineWhenBlank="true" uuid="2306a1d4-14c9-4f44-a7c6-322cf4a608f2"/>
+				<subreportParameter name="MES">
+					<subreportParameterExpression><![CDATA[$P{MES}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR"/>
+				<subreportParameter name="HASTA">
+					<subreportParameterExpression><![CDATA[$P{HASTA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NUMPAGO">
+					<subreportParameterExpression><![CDATA[$P{NUMPAGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SALARIO">
+					<subreportParameterExpression><![CDATA[$P{SALARIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FUNCIONARIO">
+					<subreportParameterExpression><![CDATA[$P{FUNCIONARIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CARGO">
+					<subreportParameterExpression><![CDATA[$P{CARGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DESDE">
+					<subreportParameterExpression><![CDATA[$P{DESDE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CEDULA">
+					<subreportParameterExpression><![CDATA[$P{CEDULA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reporte_recibo_salarial.jasper"]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="-20" y="450" width="612" height="1" isRemoveLineWhenBlank="true" forecolor="#999999" uuid="e0dad45f-260e-448f-a0f1-f0ba41415028"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<subreport isUsingCache="false">
+				<reportElement x="-20" y="456" width="612" height="334" isRemoveLineWhenBlank="true" uuid="59b4d847-9d75-4b35-96aa-ee2d71bbe506"/>
+				<subreportParameter name="MES">
+					<subreportParameterExpression><![CDATA[$P{MES2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SUBREPORT_DIR"/>
+				<subreportParameter name="HASTA">
+					<subreportParameterExpression><![CDATA[$P{HASTA2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NUMPAGO">
+					<subreportParameterExpression><![CDATA[$P{NUMPAGO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SALARIO">
+					<subreportParameterExpression><![CDATA[$P{SALARIO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FUNCIONARIO">
+					<subreportParameterExpression><![CDATA[$P{FUNCIONARIO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CARGO">
+					<subreportParameterExpression><![CDATA[$P{CARGO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DESDE">
+					<subreportParameterExpression><![CDATA[$P{DESDE2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CEDULA">
+					<subreportParameterExpression><![CDATA[$P{CEDULA2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reporte_recibo_salarial.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

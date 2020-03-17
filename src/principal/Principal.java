@@ -6,6 +6,7 @@ import forms.ABMApoderado;
 import forms.ABMFuncionario;
 import forms.ABMModulo;
 import forms.ABMNivel;
+import forms.ABMPerfil;
 import forms.ABMUsuario;
 import forms.Configuracion;
 import forms.Gasto;
@@ -700,7 +701,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     }//GEN-LAST:event_meitModuloActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-
+        ABMPerfil abmperfil = new ABMPerfil(this, true);
+        abmperfil.setVisible(true);
     }//GEN-LAST:event_jMenuItem9ActionPerformed
     
 
@@ -825,8 +827,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     }//GEN-LAST:event_meitRegistrarPagoSalarioActionPerformed
 
     private void meitAnularPagoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitAnularPagoSalarioActionPerformed
-       PagoSalarial pagosalarial = new PagoSalarial(this, true);
-       pagosalarial.setVisible(true);
+        PagoSalarial pagosalarial = new PagoSalarial(this, true);
+        pagosalarial.setVisible(true);
     }//GEN-LAST:event_meitAnularPagoSalarioActionPerformed
 
     private void mePagoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mePagoSalarioActionPerformed

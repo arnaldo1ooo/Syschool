@@ -88,6 +88,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
                 String sentencia = "CALL SP_PagoSalarioAlta('" + numpago + "','" + idfuncionario + "','" + salario + "','" + fecha
                         + "','" + mes + "','" + obs + "')";
                 con.EjecutarABM(sentencia, true);
+                ImprimirRecibo();
                 GenerarNumpago();
                 Limpiar();
             }
@@ -102,7 +103,6 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
         txtObs.setText("");
     }
 
-    /*
     private void ImprimirRecibo() {
         //Imprimir recibo
         int confirmado2 = JOptionPane.showConfirmDialog(this, "¿Quieres imprimir el recibo de pago salarial?", "Confirmación", JOptionPane.YES_OPTION);
@@ -117,23 +117,25 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
             parametros.put("NUMPAGO2", lblNumPago.getText());
             parametros.put("LOGO", logo);
             parametros.put("LOGO2", logo2);
-            parametros.put("APODERADO", cbApoderado.getSelectedItem() + "");
-            parametros.put("APODERADO2", cbApoderado.getSelectedItem() + "");
-            parametros.put("NIVEL_BASICO", lblPoderantesBasico.getText());
-            parametros.put("NIVEL_BASICO2", lblPoderantesBasico.getText());
-            parametros.put("NIVEL_MEDIO", lblPoderantesMedio.getText());
-            parametros.put("NIVEL_MEDIO2", lblPoderantesMedio.getText());
-            parametros.put("CEDULA", txtCedulaApoderado.getText());
-            parametros.put("CEDULA2", txtCedulaApoderado.getText());
-            parametros.put("TOTAL", totalString);
-            parametros.put("TOTAL2", totalString);
-            JRDataSource datasource = new JRTableModelDataSource(tbConceptoAPagar.getModel());
-            parametros.put("DATASOURCE", datasource);
-            JRDataSource datasource2 = new JRTableModelDataSource(tbConceptoAPagar.getModel());
-            parametros.put("DATASOURCE2", datasource2);
+            parametros.put("FUNCIONARIO", cbFuncionario.getSelectedItem() + "");
+            parametros.put("FUNCIONARIO2", cbFuncionario.getSelectedItem() + "");
+            parametros.put("CEDULA", txtCedula.getText());
+            parametros.put("CEDULA2", txtCedula.getText());
+            parametros.put("CARGO", txtCargo.getText());
+            parametros.put("CARGO2", txtCargo.getText());
+            parametros.put("MES", cbMes.getSelectedItem() + "");
+            parametros.put("MES2", cbMes.getSelectedItem() + "");
+            SimpleDateFormat formatosuda = new SimpleDateFormat("dd/MM/yyyy");  //25/08/2015
+            parametros.put("DESDE", formatosuda.format(dcFechaDesde.getDate()));
+            parametros.put("DESDE2", formatosuda.format(dcFechaDesde.getDate()));
+            parametros.put("HASTA", formatosuda.format(dcFechaHasta.getDate()));
+            parametros.put("HASTA2", formatosuda.format(dcFechaHasta.getDate()));
+            parametros.put("SALARIO", txtSalario.getText() + " Gs");
+            parametros.put("SALARIO2", txtSalario.getText() + " Gs");
+
             //Enviar directorio del subreporte
-            String directoriosub = this.getClass().getResource("/reportes/recibo_salario/reporte_recibo.jasper").toString();
-            directoriosub = directoriosub.replaceAll("reporte_recibo.jasper", "");
+            String directoriosub = this.getClass().getResource("/reportes/recibo_salario/reporte_recibo_salarial.jasper").toString();
+            directoriosub = directoriosub.replaceAll("reporte_recibo_salarial.jasper", "");
             parametros.put("SUBREPORT_DIR", directoriosub); //Direccion del subreporte
 
             String tipohoja = "";
@@ -154,13 +156,14 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
             }
             con.DesconectarBasedeDatos();
 
+            String rutajasperPrincipal = "/reportes/recibo_salario/reporte_recibo_principal_" + tipohoja.toLowerCase() + ".jasper";
             System.out.println("tipohoja " + tipohoja);
-            String rutajasper = "/reportes/recibo/reporte_recibo_principal_" + tipohoja.toLowerCase() + ".jasper";
+            System.out.println("Ruta del jasper principal " + rutajasperPrincipal);
 
-            metodos.GenerarReporteJTABLE(rutajasper, parametros, null);
+            metodos.GenerarReporteJTABLE(rutajasperPrincipal, parametros, null);
         }
     }
-     */
+
     private boolean ComprobarCampos() {
         if (cbFuncionario.getSelectedIndex() == -1) {
             Toolkit.getDefaultToolkit().beep();

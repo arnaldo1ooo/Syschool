@@ -41,7 +41,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
         btnModificar.setVisible(metodos.PermisoRol(Alias, "PERFIL", "MODIFICAR"));
         btnEliminar.setVisible(metodos.PermisoRol(Alias, "PERFIL", "BAJA"));
 
-        TablaConsultaBDAll(); //Trae todos los registros
+        TablaConsultaPerfilAll(); //Trae todos los registros
         txtBuscar.requestFocus();
 
         OrdenTabulador();
@@ -60,7 +60,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
                     String sentencia = "CALL SP_PerfilAlta ('" + denominacion + "','" + descripcion + "')";
                     con.EjecutarABM(sentencia, true);
 
-                    TablaConsultaBDAll(); //Actualizar tabla
+                    TablaConsultaPerfilAll(); //Actualizar tabla
                     ModoEdicion(false);
                     Limpiar();
                 }
@@ -70,7 +70,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
                     String sentencia = "CALL SP_PerfilModificar('" + codigo + "','" + denominacion + "','" + descripcion + "')";
                     con.EjecutarABM(sentencia, true);
 
-                    TablaConsultaBDAll(); //Actualizar tabla
+                    TablaConsultaPerfilAll(); //Actualizar tabla
                     ModoEdicion(false);
                     Limpiar();
                 }
@@ -87,7 +87,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
                 String sentencia = "CALL SP_NivelEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
-                TablaConsultaBDAll(); //Actualizar tabla
+                TablaConsultaPerfilAll(); //Actualizar tabla
                 ModoEdicion(false);
                 Limpiar();
             }
@@ -98,7 +98,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
         }
     }
 
-    public void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
+    public void TablaConsultaPerfilAll() {//Realiza la consulta de los productos que tenemos en la base de datos
         String sentencia = "CALL SP_NivelConsulta";
         String titlesJtabla[] = {"Código", "Descripción", "Sección", "Turno", "Docente", "Tipo"};
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));

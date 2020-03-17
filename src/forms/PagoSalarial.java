@@ -32,7 +32,7 @@ public class PagoSalarial extends javax.swing.JDialog {
             btnEliminar.setVisible(eliminar);
         } else {
             //Permiso Roles de usuario
-            btnEliminar.setVisible(metodos.PermisoRol(Alias, "PAGO_SALARIAL", "BAJA"));
+            btnEliminar.setVisible(metodos.PermisoRol(Alias, "PAGO_SALARIO", "BAJA"));
         }
     }
 
@@ -303,7 +303,7 @@ public class PagoSalarial extends javax.swing.JDialog {
             if (confirmado == JOptionPane.YES_OPTION) {
                 String codigo = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0).toString();
                 //Elimina el pago (Primero se debe eliminar los conceptos del pago)
-                String sentencia = "CALL SP_PagoSalarialEliminar(" + codigo + ")";
+                String sentencia = "CALL SP_PagoSalarioEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
                 ConsultaAllPagoSal(cbFiltroAnho.getSelectedItem() + "");//Actualizar tabla
