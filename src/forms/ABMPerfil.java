@@ -13,9 +13,11 @@ import java.awt.FocusTraversalPolicy;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 import static login.Login.Alias;
@@ -31,6 +33,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
     MetodosCombo metodoscombo = new MetodosCombo();
+    DefaultTableModel dtmPerfilModulos;
 
     public ABMPerfil(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -42,20 +45,34 @@ public final class ABMPerfil extends javax.swing.JDialog {
         btnEliminar.setVisible(metodos.PermisoRol(Alias, "PERFIL", "BAJA"));
 
         TablaConsultaPerfilAll(); //Trae todos los registros
+        TablaConsultaAllModulos();
+
         txtBuscar.requestFocus();
 
         OrdenTabulador();
+    }
+
+    private void TablaConsultaAllModulos() {
+        try {
+            dtmPerfilModulos = (DefaultTableModel) tbPerfilModulos.getModel();
+            con = con.ObtenerRSSentencia("CALL SP_ModuloConsulta()");
+            while (con.rs.next()) {
+                dtmPerfilModulos.addRow(new Object[]{con.rs.getString("mo_codigo"), con.rs.getString("mo_denominacion")});
+            }
+        } catch (SQLException e) {
+        }
+        con.DesconectarBasedeDatos();
     }
 
 //--------------------------METODOS----------------------------//
     public void RegistroNuevoModificar() {
         if (ComprobarCampos() == true) {
             String codigo = txtCodigo.getText();
-            String denominacion = txtDescripcion.getText().toUpperCase();
-            String descripcion = txtDescripcion.getText().toUpperCase();
+            String denominacion = txtDenominacion.getText().toUpperCase();
+            String descripcion = metodos.MayusPrimeraLetra(taDescripcion.getText());
 
             if (txtCodigo.getText().equals("")) { //NUEVO REGISTRO
-                int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo registro?", "Confirmación", JOptionPane.YES_OPTION);
+                int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo perfil?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
                     String sentencia = "CALL SP_PerfilAlta ('" + denominacion + "','" + descripcion + "')";
                     con.EjecutarABM(sentencia, true);
@@ -99,8 +116,8 @@ public final class ABMPerfil extends javax.swing.JDialog {
     }
 
     public void TablaConsultaPerfilAll() {//Realiza la consulta de los productos que tenemos en la base de datos
-        String sentencia = "CALL SP_NivelConsulta";
-        String titlesJtabla[] = {"Código", "Descripción", "Sección", "Turno", "Docente", "Tipo"};
+        String sentencia = "CALL SP_PerfilConsulta";
+        String titlesJtabla[] = {"Código", "Denominación", "Descripción"};
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
         cbCampoBuscar.setSelectedIndex(1);
         metodos.AnchuraColumna(tbPrincipal);
@@ -115,14 +132,38 @@ public final class ABMPerfil extends javax.swing.JDialog {
     private void ModoVistaPrevia() {
         txtCodigo.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + ""));
         txtDenominacion.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1) + ""));
-        txtDescripcion.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 2) + ""));
+        taDescripcion.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 2) + ""));
+
+        try {
+            for (int i = 0; i < tbPerfilModulos.getRowCount(); i++) {
+                tbPerfilModulos.setValueAt(false, i, 2);
+            }
+
+            String codperfil = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "";
+            lblTituloPerfilModulos.setText("Módulos del perfil: " + tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1));
+            String sentencia = "SELECT mo_codigo, mo_denominacion FROM perfil_modulo, modulo WHERE permo_perfil = '" + codperfil
+                    + "' AND permo_modulo=mo_codigo ORDER BY mo_denominacion";
+            con = con.ObtenerRSSentencia(sentencia);
+            while (con.rs.next()) {
+                for (int i = 0, estado = 0; i < tbPerfilModulos.getRowCount() && estado == 0; i++) {
+                    if (con.rs.getString("mo_codigo").equals(tbPerfilModulos.getValueAt(i, 0))) {
+                        tbPerfilModulos.setValueAt(true, i, 2);
+                        estado = 1;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
+
     }
 
     private void ModoEdicion(boolean valor) {
         txtBuscar.setEnabled(!valor);
         tbPrincipal.setEnabled(!valor);
         txtDenominacion.setEnabled(valor);
-        txtDescripcion.setEnabled(valor);
+        taDescripcion.setEnabled(valor);
 
         btnNuevo.setEnabled(!valor);
         btnModificar.setEnabled(false);
@@ -130,16 +171,20 @@ public final class ABMPerfil extends javax.swing.JDialog {
         btnGuardar.setEnabled(valor);
         btnCancelar.setEnabled(valor);
 
-        txtDescripcion.requestFocus();
+        taDescripcion.requestFocus();
     }
 
     private void Limpiar() {
         txtCodigo.setText("");
         lblDescripcion.setForeground(Color.BLACK);
         txtDenominacion.setText("");
-        txtDescripcion.setText("");
+        taDescripcion.setText("");
         txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
+
+        for (int i = 0; i < tbPerfilModulos.getRowCount(); i++) {
+            tbPerfilModulos.setValueAt(false, i, 2);
+        }
     }
 
     public boolean ComprobarCampos() {
@@ -176,13 +221,14 @@ public final class ABMPerfil extends javax.swing.JDialog {
         lblCodigo = new javax.swing.JLabel();
         txtCodigo = new javax.swing.JTextField();
         lblDescripcion = new javax.swing.JLabel();
-        txtDescripcion = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         lblDenominacion = new javax.swing.JLabel();
         txtDenominacion = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         tbPerfilModulos = new javax.swing.JTable();
         lblTituloPerfilModulos = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        taDescripcion = new javax.swing.JTextArea();
         jpBotones2 = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
@@ -260,12 +306,11 @@ public final class ABMPerfil extends javax.swing.JDialog {
         jpTablaLayout.setHorizontalGroup(
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(scPrincipal)
                     .addGroup(jpTablaLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(scPrincipal))
-                    .addGroup(jpTablaLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -274,7 +319,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jpTablaLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -381,18 +426,6 @@ public final class ABMPerfil extends javax.swing.JDialog {
         lblDescripcion.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblDescripcion.setText("Descripción:");
 
-        txtDescripcion.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        txtDescripcion.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtDescripcion.setEnabled(false);
-        txtDescripcion.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtDescripcionKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtDescripcionKeyTyped(evt);
-            }
-        });
-
         jLabel2.setForeground(new java.awt.Color(0, 0, 153));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("Campos con (*) son obligatorios");
@@ -415,7 +448,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
             }
         });
 
-        tbPerfilModulos.setFont(new java.awt.Font("sansserif", 0, 13)); // NOI18N
+        tbPerfilModulos.setFont(new java.awt.Font("sansserif", 0, 11)); // NOI18N
         tbPerfilModulos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -448,29 +481,35 @@ public final class ABMPerfil extends javax.swing.JDialog {
         lblTituloPerfilModulos.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         lblTituloPerfilModulos.setText("Módulos del perfil:");
 
+        taDescripcion.setColumns(20);
+        taDescripcion.setRows(5);
+        taDescripcion.setEnabled(false);
+        jScrollPane1.setViewportView(taDescripcion);
+
         javax.swing.GroupLayout jpEdicionLayout = new javax.swing.GroupLayout(jpEdicion);
         jpEdicion.setLayout(jpEdicionLayout);
         jpEdicionLayout.setHorizontalGroup(
             jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpEdicionLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblDescripcion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblDenominacion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(lblDenominacion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblCodigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtDescripcion, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
                     .addGroup(jpEdicionLayout.createSequentialGroup()
                         .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(txtDenominacion))
-                .addGap(48, 48, 48)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE))
+                    .addComponent(txtDenominacion)
+                    .addComponent(jScrollPane1))
+                .addGap(18, 18, 18)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpEdicionLayout.createSequentialGroup()
                         .addComponent(lblTituloPerfilModulos, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 90, Short.MAX_VALUE))
+                        .addGap(0, 120, Short.MAX_VALUE))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -489,13 +528,14 @@ public final class ABMPerfil extends javax.swing.JDialog {
                             .addComponent(txtDenominacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblDenominacion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(txtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 11, Short.MAX_VALUE))
+                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jpEdicionLayout.createSequentialGroup()
+                                .addComponent(lblDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)))
                     .addGroup(jpEdicionLayout.createSequentialGroup()
                         .addComponent(lblTituloPerfilModulos)
-                        .addGap(2, 2, 2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -611,10 +651,10 @@ public final class ABMPerfil extends javax.swing.JDialog {
                     .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jpTabla, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jtpEdicion.getAccessibleContext().setAccessibleName("");
@@ -627,7 +667,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE)
         );
 
         getAccessibleContext().setAccessibleName("Encargados");
@@ -687,17 +727,6 @@ public final class ABMPerfil extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_tbPrincipalMousePressed
 
-    private void txtDescripcionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescripcionKeyTyped
-        metodostxt.FiltroCaracteresProhibidos(evt);
-
-        //Cantidad de caracteres
-        metodostxt.TxtCantidadCaracteresKeyTyped(txtDescripcion, 30);
-    }//GEN-LAST:event_txtDescripcionKeyTyped
-
-    private void txtDescripcionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescripcionKeyReleased
-        metodostxt.TxtColorLabelKeyReleased(txtDescripcion, lblDescripcion);
-    }//GEN-LAST:event_txtDescripcionKeyReleased
-
     private void tbPrincipalKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbPrincipalKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
             ModoVistaPrevia();
@@ -716,7 +745,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
 
     private void OrdenTabulador() {
         ordenTabulador = new ArrayList<>();
-        ordenTabulador.add(txtDescripcion);
+        ordenTabulador.add(taDescripcion);
         ordenTabulador.add(btnGuardar);
         setFocusTraversalPolicy(new PersonalizadoFocusTraversalPolicy());
     }
@@ -757,6 +786,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
     private javax.swing.JComboBox cbCampoBuscar;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel jpBotones;
     private javax.swing.JPanel jpBotones2;
@@ -773,11 +803,11 @@ public final class ABMPerfil extends javax.swing.JDialog {
     private javax.swing.JLabel lblTituloPerfilModulos;
     private org.edisoncor.gui.panel.Panel panel2;
     private javax.swing.JScrollPane scPrincipal;
+    private javax.swing.JTextArea taDescripcion;
     private javax.swing.JTable tbPerfilModulos;
     private javax.swing.JTable tbPrincipal;
     private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtDenominacion;
-    private javax.swing.JTextField txtDescripcion;
     // End of variables declaration//GEN-END:variables
 }
