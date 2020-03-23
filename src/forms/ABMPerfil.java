@@ -66,33 +66,73 @@ public final class ABMPerfil extends javax.swing.JDialog {
 
 //--------------------------METODOS----------------------------//
     public void RegistroNuevoModificar() {
-        if (ComprobarCampos() == true) {
-            String codigo = txtCodigo.getText();
-            String denominacion = txtDenominacion.getText().toUpperCase();
-            String descripcion = metodos.MayusPrimeraLetra(taDescripcion.getText());
+        try {
+            if (ComprobarCampos() == true) {
+                String codigo = txtCodigo.getText();
+                String denominacion = txtDenominacion.getText().toUpperCase();
+                String descripcion = metodos.MayusPrimeraLetra(taDescripcion.getText());
 
-            if (txtCodigo.getText().equals("")) { //NUEVO REGISTRO
-                int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo perfil?", "Confirmación", JOptionPane.YES_OPTION);
-                if (JOptionPane.YES_OPTION == confirmado) {
-                    String sentencia = "CALL SP_PerfilAlta ('" + denominacion + "','" + descripcion + "')";
-                    con.EjecutarABM(sentencia, true);
+                if (txtCodigo.getText().equals("")) { //NUEVO REGISTRO
+                    int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo perfil?",
+                            "Confirmación", JOptionPane.YES_OPTION);
+                    if (JOptionPane.YES_OPTION == confirmado) {
+                        String sentencia = "CALL SP_PerfilAlta ('" + denominacion + "','" + descripcion + "')";
+                        con.EjecutarABM(sentencia, true);
 
-                    TablaConsultaPerfilAll(); //Actualizar tabla
-                    ModoEdicion(false);
-                    Limpiar();
-                }
-            } else { //MODIFICAR REGISTRO
-                int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar este regitro?", "Confirmación", JOptionPane.YES_OPTION);
-                if (JOptionPane.YES_OPTION == confirmado) {
-                    String sentencia = "CALL SP_PerfilModificar('" + codigo + "','" + denominacion + "','" + descripcion + "')";
-                    con.EjecutarABM(sentencia, true);
+                        //Obtener ultimo codigo perfil
+                        String ultimoidperfil = "";
+                        con = con.ObtenerRSSentencia("SELECT MAX(per_codigo) AS ultimoid FROM perfil");
+                        if (con.rs.next()) {
+                            ultimoidperfil = con.rs.getString("ultimoid");
+                        }
 
-                    TablaConsultaPerfilAll(); //Actualizar tabla
-                    ModoEdicion(false);
-                    Limpiar();
+                        //Nuevos Perfil_Modulo
+                        String idmodulo;
+                        boolean estado;
+                        for (int i = 0; i < tbPerfilModulos.getRowCount(); i++) {
+                            idmodulo = tbPerfilModulos.getValueAt(i, 0) + "";
+                            estado = (Boolean) tbPerfilModulos.getValueAt(i, 2);
+                            if (estado == true) {
+                                con.EjecutarABM("CALL SP_Perfil_ModuloAlta('" + ultimoidperfil + "','" + idmodulo + "')", false);
+                            }
+                        }
+
+                        TablaConsultaPerfilAll(); //Actualizar tabla
+                        ModoEdicion(false);
+                        Limpiar();
+                    }
+                } else { //MODIFICAR REGISTRO
+                    int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar este regitro?", "Confirmación", JOptionPane.YES_OPTION);
+                    if (JOptionPane.YES_OPTION == confirmado) {
+                        String sentencia = "CALL SP_PerfilModificar('" + codigo + "','" + denominacion + "','" + descripcion + "')";
+                        con.EjecutarABM(sentencia, true);
+
+                        //Agregar o eliminar nuevo perfil_modulo
+                        String idmodulo;
+                        boolean estado;
+                        for (int i = 0; i < tbPerfilModulos.getRowCount(); i++) {
+                            idmodulo = tbPerfilModulos.getValueAt(i, 0) + "";
+                            estado = (Boolean) tbPerfilModulos.getValueAt(i, 2);
+                            con = con.ObtenerRSSentencia("SELECT permo_codigo FROM perfil_modulo WHERE permo_perfil='" + txtCodigo.getText()
+                                    + "' AND permo_modulo='" + idmodulo + "'");
+                            if (con.rs.next()) {
+                                if (estado == false) {
+                                    con.EjecutarABM("CALL SP_Perfil_ModuloEliminar('" + txtCodigo.getText() + "','" + idmodulo + "'", false);
+                                }
+                            } else {
+                                con.EjecutarABM("CALL SP_Perfil_ModuloAlta('" + txtCodigo.getText() + "','" + idmodulo + "')", false);
+                            }
+                        }
+
+                        TablaConsultaPerfilAll(); //Actualizar tabla
+                        ModoEdicion(false);
+                        Limpiar();
+                    }
                 }
             }
+        } catch (SQLException e) {
         }
+        con.DesconectarBasedeDatos();
     }
 
     private void RegistroEliminar() {

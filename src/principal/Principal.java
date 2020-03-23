@@ -37,12 +37,12 @@ import static login.Login.Alias;
  * @author Lic. Arnaldo Cantero
  */
 public class Principal extends javax.swing.JFrame implements Runnable {
-    
+
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
     Thread hilo;
-    
+
     public Principal() {
         initComponents();
         this.setExtendedState(Principal.MAXIMIZED_BOTH);//Maximizar ventana
@@ -61,7 +61,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meitRegistrarGasto.setEnabled(metodos.PermisoRol(Alias, "GASTO", "ALTA"));
         meitAnularGasto.setEnabled(metodos.PermisoRol(Alias, "GASTO", "BAJA"));
     }
-    
+
     private void PermisoModulos(String ElAlias) {
         con = con.ObtenerRSSentencia("CALL SP_UsuarioModuloConsulta('" + ElAlias + "')");
         String modulo;
@@ -74,6 +74,9 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                         break;
                     case "APODERADO":
                         btnApoderado.setEnabled(true);
+                        break;
+                    case "PERFIL":
+                        MeitPerfil.setEnabled(true);
                         break;
                     case "ALUMNO":
                         btnAlumno.setEnabled(true);
@@ -123,7 +126,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void PerfilesUsuario(String alias) {
         String consulta = "SELECT per_codigo, per_denominacion "
                 + "FROM usuario,perfil,usuario_perfil "
@@ -147,7 +150,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         }
         con.DesconectarBasedeDatos();
     }
-    
+
     private void ObtenerHorayFecha() {
         //Obtener fecha y hora
         hilo = new Thread(this);
@@ -197,7 +200,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         jMenuItem7 = new javax.swing.JMenuItem();
         jSeparator19 = new javax.swing.JPopupMenu.Separator();
         meUsuario = new javax.swing.JMenu();
-        jMenuItem9 = new javax.swing.JMenuItem();
+        MeitPerfil = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         meitModulo = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
@@ -607,13 +610,14 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meUsuario.setMinimumSize(new java.awt.Dimension(150, 70));
         meUsuario.setPreferredSize(new java.awt.Dimension(150, 70));
 
-        jMenuItem9.setText("Perfiles");
-        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+        MeitPerfil.setText("Perfiles");
+        MeitPerfil.setEnabled(false);
+        MeitPerfil.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem9ActionPerformed(evt);
+                MeitPerfilActionPerformed(evt);
             }
         });
-        meUsuario.add(jMenuItem9);
+        meUsuario.add(MeitPerfil);
         meUsuario.add(jSeparator7);
 
         meitModulo.setText("Modulos");
@@ -700,16 +704,16 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         abmmodulos.setVisible(true);
     }//GEN-LAST:event_meitModuloActionPerformed
 
-    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+    private void MeitPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MeitPerfilActionPerformed
         ABMPerfil abmperfil = new ABMPerfil(this, true);
         abmperfil.setVisible(true);
-    }//GEN-LAST:event_jMenuItem9ActionPerformed
-    
+    }//GEN-LAST:event_MeitPerfilActionPerformed
+
 
     private void jMenuItem17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem17ActionPerformed
 
     }//GEN-LAST:event_jMenuItem17ActionPerformed
-    
+
     private void ObtenerFechayHora() {
         Date fecha = new Date();
         //Formateando la fecha:
@@ -718,7 +722,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         DateFormat formatoHora = new SimpleDateFormat("HH:mm:ss");
         lbHora.setText(formatoHora.format(fecha));
     }
-    
+
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
 
@@ -885,6 +889,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem MeitPerfil;
     private javax.swing.JButton btnAlumno;
     private javax.swing.JButton btnApoderado;
     private javax.swing.JButton btnFuncionario;
@@ -902,7 +907,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenuItem jMenuItem19;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
-    private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JPopupMenu.Separator jSeparator17;
     private javax.swing.JPopupMenu.Separator jSeparator18;
     private javax.swing.JPopupMenu.Separator jSeparator19;
@@ -943,10 +947,10 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
         Thread current = Thread.currentThread();
-        
+
         while (current == hilo) {
             ObtenerFechayHora();
-            
+
         }
     }
 }

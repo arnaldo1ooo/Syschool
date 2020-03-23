@@ -26,7 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import static login.Login.Alias;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
@@ -194,6 +193,7 @@ public final class ABMUsuario extends javax.swing.JDialog {
                     perfil = tbPerfiles.getValueAt(i, 1) + "";
                     if (perfil.equals(con.rs.getString("per_denominacion"))) {
                         tbPerfiles.setValueAt(true, i, 2);
+                        
                     }
                 }
             }
@@ -459,7 +459,7 @@ public final class ABMUsuario extends javax.swing.JDialog {
         tbPrincipal.clearSelection();
 
         TablaAllPerfiles();
-        
+
         try { //Vacia tablas
             if (dtmPerfilModulos.getRowCount() > 0) {
                 dtmPerfilModulos.setRowCount(0);
