@@ -29,7 +29,7 @@ public class Conexion {
     private Conexion con;
 
     public static Connection ConectarBasedeDatos() {
-        String tipoHost = "remoto";
+        String tipoHost = "local";
         switch (tipoHost) {
             case "local":
                 //Modo host local
@@ -217,13 +217,13 @@ public class Conexion {
     public void EjecutarABM(String sentencia, boolean conAviso) {
         //Ejecuta consultas de Altas, Bajas y Modificaciones
         try {
-            Connection con = Conexion.ConectarBasedeDatos();
-            Statement st = con.createStatement();
-            System.out.println("Insertar o Modificar registro: " + sentencia);
+            connection = Conexion.ConectarBasedeDatos();
+            st = connection.createStatement();
+            System.out.println("EjecutarABM: " + sentencia);
             st.executeUpdate(sentencia);
-            con.close();
+            connection.close();
             st.close();
-
+            
             if (conAviso == true) {
                 Toolkit.getDefaultToolkit().beep(); //BEEP
                 JOptionPane.showMessageDialog(null, "Se realizó correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);

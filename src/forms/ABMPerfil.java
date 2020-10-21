@@ -523,6 +523,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
 
         taDescripcion.setColumns(20);
         taDescripcion.setRows(5);
+        taDescripcion.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         taDescripcion.setEnabled(false);
         jScrollPane1.setViewportView(taDescripcion);
 

@@ -193,7 +193,7 @@ public final class ABMUsuario extends javax.swing.JDialog {
                     perfil = tbPerfiles.getValueAt(i, 1) + "";
                     if (perfil.equals(con.rs.getString("per_denominacion"))) {
                         tbPerfiles.setValueAt(true, i, 2);
-                        
+
                     }
                 }
             }
@@ -207,20 +207,58 @@ public final class ABMUsuario extends javax.swing.JDialog {
         try {
             dtmRoles = (DefaultTableModel) tbRoles.getModel();
             dtmRoles.setRowCount(0);
+            //Se obtienen los modulos de los perfiles del usuario seleccionado
             String codususelect = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "";
-            String sentencia = "CALL SP_UsuarioRolesPorUsuario('" + codususelect + "')";
+            String sentencia = "CALL SP_UsuarioPerfilModulosConsulta('" + codususelect + "')";
             con = con.ObtenerRSSentencia(sentencia);
             while (con.rs.next()) {
                 dtmRoles.addRow(new Object[]{
-                    con.rs.getString("modulo"),
-                    con.rs.getBoolean("estadoalta"),
-                    con.rs.getBoolean("estadomodificar"),
-                    con.rs.getBoolean("estadobaja"),
-                    con.rs.getString("codalta"),
-                    con.rs.getString("codmodificar"),
-                    con.rs.getString("codbaja")
-                });
+                    con.rs.getString("mo_denominacion"),});
             }
+
+            //Se obtienen los estados de los roles
+            String modulo;
+            sentencia = "CALL SP_UsuarioRolesPorUsuario('" + codususelect + "')";
+            con = con.ObtenerRSSentencia(sentencia);
+            while (con.rs.next()) {
+                for (int i = 0; i < tbRoles.getRowCount(); i++) {
+                    modulo = tbRoles.getValueAt(i, 0) + "";
+                    if (con.rs.getString("modulo").equals(modulo)) {
+                        tbRoles.setValueAt(con.rs.getBoolean("estadoalta"), i, 1);
+                        tbRoles.setValueAt(con.rs.getBoolean("estadomodificar"), i, 2);
+                        tbRoles.setValueAt(con.rs.getBoolean("estadobaja"), i, 3);
+                        tbRoles.setValueAt(con.rs.getInt("codalta"), i, 4);
+                        tbRoles.setValueAt(con.rs.getInt("codmodificar"), i, 5);
+                        tbRoles.setValueAt(con.rs.getInt("codbaja"), i, 6);
+                    }
+                }
+            }
+
+            //Se obtienen los codigos de los roles faltantes
+            for (int i = 0; i < tbRoles.getRowCount(); i++) {
+                if (tbRoles.getValueAt(i, 4) == null) {
+                    modulo = tbRoles.getValueAt(i, 0) + "";
+                    sentencia = "SELECT rol_codigo, rol_denominacion FROM rol, modulo WHERE mo_denominacion='" + modulo + "' AND rol_modulo=mo_codigo";
+                    con = con.ObtenerRSSentencia(sentencia);
+                    while (con.rs.next()) {
+                        switch (con.rs.getString("rol_denominacion")) {
+                            case "ALTA":
+                                tbRoles.setValueAt(con.rs.getString("rol_codigo"), i, 4);
+                                break;
+                            case "MODIFICAR":
+                                tbRoles.setValueAt(con.rs.getString("rol_codigo"), i, 5);
+                                break;
+                            case "BAJA":
+                                tbRoles.setValueAt(con.rs.getString("rol_codigo"), i, 6);
+                                break;
+                            default:
+                                JOptionPane.showMessageDialog(this, "No se encontró", "Error", JOptionPane.ERROR_MESSAGE);
+                                break;
+                        }
+                    }
+                }
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -271,6 +309,12 @@ public final class ABMUsuario extends javax.swing.JDialog {
                             sentencia = "DELETE FROM usuario_perfil WHERE usuper_usuario='" + codusuario + "' "
                                     + "AND usuper_perfil='" + codperfil + "'";
                             con.EjecutarABM(sentencia, false);
+
+                            //Borrar todos los roles del usuario
+                            sentencia = "DELETE FROM usuario_rol WHERE usurol_usuario='" + codusuario + "'";
+                            con.EjecutarABM(sentencia, false);
+                            Toolkit.getDefaultToolkit().beep();
+                            JOptionPane.showMessageDialog(this, "Se modificó los perfiles del usuario, por ende se eliminaron los roles del usuario", "Advertencia", JOptionPane.WARNING_MESSAGE);
                         }
                     } else { //Si no existe
                         if (estado == true) {
@@ -338,7 +382,12 @@ public final class ABMUsuario extends javax.swing.JDialog {
                 for (int i = 0; i < tbRoles.getRowCount(); i++) {
                     codusuario = txtCodigo.getText();
 
-                    estadoAlta = (Boolean) tbRoles.getValueAt(i, 1);
+                    if (tbRoles.getValueAt(i, 1) != null) {
+                        estadoAlta = (Boolean) tbRoles.getValueAt(i, 1);
+                    } else {
+                        estadoAlta = false;
+                    }
+
                     codRolAlta = tbRoles.getValueAt(i, 4) + "";
                     sentencia = "SELECT usurol_codigo FROM usuario_rol WHERE usurol_usuario='" + codusuario
                             + "' AND usurol_rol='" + codRolAlta + "'";
@@ -356,7 +405,11 @@ public final class ABMUsuario extends javax.swing.JDialog {
                         }
                     }
                     //Si existe rol modificar
-                    estadoModificar = (Boolean) tbRoles.getValueAt(i, 2);
+                    if (tbRoles.getValueAt(i, 2) != null) {
+                        estadoModificar = (Boolean) tbRoles.getValueAt(i, 2);
+                    } else {
+                        estadoModificar = false;
+                    }
                     codRolModificar = tbRoles.getValueAt(i, 5) + "";
                     sentencia = "SELECT usurol_codigo FROM usuario_rol WHERE usurol_usuario='" + codusuario
                             + "' AND usurol_rol='" + codRolModificar + "'";
@@ -374,7 +427,11 @@ public final class ABMUsuario extends javax.swing.JDialog {
                         }
                     }
                     //Si existe rol baja
-                    estadoBaja = (Boolean) tbRoles.getValueAt(i, 3);
+                    if (tbRoles.getValueAt(i, 3) != null) {
+                        estadoBaja = (Boolean) tbRoles.getValueAt(i, 3);
+                    } else {
+                        estadoBaja = false;
+                    }
                     codRolBaja = tbRoles.getValueAt(i, 6) + "";
                     sentencia = "SELECT usurol_codigo FROM usuario_rol WHERE usurol_usuario='" + codusuario
                             + "' AND usurol_rol='" + codRolBaja + "'";
@@ -458,18 +515,12 @@ public final class ABMUsuario extends javax.swing.JDialog {
         txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
 
-        TablaAllPerfiles();
-
-        try { //Vacia tablas
-            if (dtmPerfilModulos.getRowCount() > 0) {
-                dtmPerfilModulos.setRowCount(0);
-            }
-            if (dtmRoles.getRowCount() > 0) {
-                dtmRoles.setRowCount(0);
-            }
-        } catch (Exception e) {
-        }
-
+        TablaAllPerfiles(); //Recargar tabla
+        //Vaciar tabla
+        dtmPerfilModulos = (DefaultTableModel) tbPerfilModulos.getModel();
+        dtmPerfilModulos.setRowCount(0);
+        dtmRoles = (DefaultTableModel) tbRoles.getModel();
+        dtmRoles.setRowCount(0);
     }
 
     public boolean ComprobarCampos() {

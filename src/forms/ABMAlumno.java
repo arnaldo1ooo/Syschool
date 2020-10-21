@@ -88,8 +88,8 @@ public final class ABMAlumno extends javax.swing.JDialog {
         try {
             if (ComprobarCampos() == true) {
                 String codigo = txtCodigo.getText();
-                String nombre = metodos.MayusPrimeraLetra(txtNombre.getText());
-                String apellido = metodos.MayusPrimeraLetra(txtApellido.getText());
+                String nombre = metodos.MayusCadaPrimeraLetra(txtNombre.getText());
+                String apellido = metodos.MayusCadaPrimeraLetra(txtApellido.getText());
                 String cedula = txtCedula.getText();
                 SimpleDateFormat formatofecha = new SimpleDateFormat("yyyy-MM-dd");
                 String fechanacimiento = formatofecha.format(dcFechaNacimiento.getDate());

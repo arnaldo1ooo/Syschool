@@ -65,8 +65,8 @@ public final class ABMFuncionario extends javax.swing.JDialog {
     public void RegistroNuevoModificar() {
         if (ComprobarCampos() == true) {
             String codigo = txtCodigo.getText();
-            String nombre = metodos.MayusPrimeraLetra(txtNombre.getText());
-            String apellido = metodos.MayusPrimeraLetra(txtApellido.getText());
+            String nombre = metodos.MayusCadaPrimeraLetra(txtNombre.getText());
+            String apellido = metodos.MayusCadaPrimeraLetra(txtApellido.getText());
             SimpleDateFormat formatofecha = new SimpleDateFormat("yyyy-MM-dd");
             String cedula = txtCedula.getText();
             String fechaingreso = formatofecha.format(dcFechaIngreso.getDate());

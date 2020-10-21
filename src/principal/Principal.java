@@ -179,6 +179,10 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         btnMatricula = new javax.swing.JButton();
         btnNivel = new javax.swing.JButton();
         btnPagoSalario = new javax.swing.JButton();
+        lbHora1 = new javax.swing.JLabel();
+        lbHora2 = new javax.swing.JLabel();
+        lbHora3 = new javax.swing.JLabel();
+        lbHora4 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         meMatricula = new javax.swing.JMenu();
         meitRegistrarMatricula = new javax.swing.JMenuItem();
@@ -337,7 +341,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblPerfil, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                .addComponent(lblPerfil, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
                 .addGap(508, 508, 508)
                 .addComponent(lbFechaTitulo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -351,7 +355,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
-                .addContainerGap(7, Short.MAX_VALUE)
+                .addContainerGap(16, Short.MAX_VALUE)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(lbAlias, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -409,6 +413,30 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             }
         });
 
+        lbHora1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lbHora1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lbHora1.setText("Versión del sistema:");
+        lbHora1.setFocusable(false);
+        lbHora1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        lbHora2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        lbHora2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lbHora2.setText("1.1.");
+        lbHora2.setFocusable(false);
+        lbHora2.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        lbHora3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        lbHora3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lbHora3.setText("Versión de la BD:");
+        lbHora3.setFocusable(false);
+        lbHora3.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        lbHora4.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        lbHora4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lbHora4.setText("1.1.");
+        lbHora4.setFocusable(false);
+        lbHora4.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
         javax.swing.GroupLayout piPrincipalLayout = new javax.swing.GroupLayout(piPrincipal);
         piPrincipal.setLayout(piPrincipalLayout);
         piPrincipalLayout.setHorizontalGroup(
@@ -427,6 +455,16 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                     .addComponent(btnAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnApoderado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 1144, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, piPrincipalLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbHora1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lbHora3, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lbHora2, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+                    .addComponent(lbHora4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         piPrincipalLayout.setVerticalGroup(
             piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -449,7 +487,15 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                 .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 143, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbHora1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbHora2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbHora3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbHora4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
@@ -919,6 +965,10 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JLabel lbFecha;
     private javax.swing.JLabel lbFechaTitulo;
     private javax.swing.JLabel lbHora;
+    private javax.swing.JLabel lbHora1;
+    private javax.swing.JLabel lbHora2;
+    private javax.swing.JLabel lbHora3;
+    private javax.swing.JLabel lbHora4;
     private javax.swing.JLabel lbHoraTitulo;
     private javax.swing.JLabel lblPerfil;
     private javax.swing.JMenu meConfiguracion;

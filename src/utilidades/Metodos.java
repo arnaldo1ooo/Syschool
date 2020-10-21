@@ -346,6 +346,24 @@ public class Metodos {
         }
     }
 
+        public String MayusCadaPrimeraLetra(String laCadena) {
+        if (laCadena == null || laCadena.isEmpty()) {
+            return "";
+        } else {
+            char[] caracteres = laCadena.toCharArray();
+            caracteres[0] = Character.toUpperCase(caracteres[0]);
+            
+            // el -2 es para evitar una excepción al caernos del arreglo
+            for (int i = 0; i < laCadena.length()- 2; i++){ 
+                // Es 'palabra'
+                if (caracteres[i] == ' ' || caracteres[i] == '.' || caracteres[i] == ','){ //Separadores puede ser espacio . o ,
+                    caracteres[i + 1] = Character.toUpperCase(caracteres[i + 1]); // Reemplazamos
+                }
+            }
+            return new String(caracteres);
+        }
+    }
+    
     public String SiStringEsNull(String laCadena) {
         if (laCadena.equals("null")) {
             laCadena = "";
