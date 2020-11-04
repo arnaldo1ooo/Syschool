@@ -164,7 +164,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-                          <Component id="btncancelar" min="-2" pref="136" max="-2" attributes="0"/>
+                          <Component id="btncancelar" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btnCambiarPass" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
@@ -175,7 +175,7 @@
                           <Component id="panelNice1" min="-2" pref="331" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="7" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

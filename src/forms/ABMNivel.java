@@ -41,7 +41,6 @@ public final class ABMNivel extends javax.swing.JDialog {
         btnModificar.setVisible(metodos.PermisoRol(Alias, "NIVEL", "MODIFICAR"));
         btnEliminar.setVisible(metodos.PermisoRol(Alias, "NIVEL", "BAJA"));
 
-        CargarComboBoxes();
         TablaConsultaBDAll(); //Trae todos los registros
         txtBuscar.requestFocus();
 
@@ -49,31 +48,19 @@ public final class ABMNivel extends javax.swing.JDialog {
     }
 
 //--------------------------METODOS----------------------------//
-    public void CargarComboBoxes() {
-        //Carga los combobox con las consultas
-        metodoscombo.CargarComboBox(cbDocente, "SELECT fun_codigo, CONCAT(fun_nombre, ' ', fun_apellido) AS nomapedocente "
-                + "FROM funcionario, cargo WHERE car_descripcion = 'DOCENTE' AND fun_cargo = car_codigo ORDER BY fun_nombre", -1);
-        cbDocente.addItem(new MetodosCombo(0, "SIN ESPECIFICAR"));
-        cbDocente.setMaximumRowCount(cbDocente.getModel().getSize());
-        cbDocente.setSelectedItem("SIN ESPECIFICAR");
-    }
-
     public void RegistroNuevoModificar() {
         if (ComprobarCampos() == true) {
             String codigo = txtCodigo.getText();
             String descripcion = txtDescripcion.getText().toUpperCase();
             String seccion = cbSeccion.getSelectedItem() + "";
             String turno = cbTurno.getSelectedItem() + "";
-            String docente = null;
-            if (cbDocente.getSelectedItem().toString().equals("SIN ESPECIFICAR") == false) {
-                docente = "'" + metodoscombo.ObtenerIDSelectComboBox(cbDocente) + "'";
-            }
+
             String tipo = cbTipo.getSelectedItem() + "";
 
             if (txtCodigo.getText().equals("")) { //NUEVO REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo registro?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
-                    String sentencia = "CALL SP_NivelAlta ('" + descripcion + "','" + seccion + "','" + turno + "'," + docente + ",'" + tipo + "')";
+                    String sentencia = "CALL SP_NivelAlta ('" + descripcion + "','" + seccion + "','" + turno + "','" + tipo + "')";
                     con.EjecutarABM(sentencia, true);
 
                     TablaConsultaBDAll(); //Actualizar tabla
@@ -83,7 +70,7 @@ public final class ABMNivel extends javax.swing.JDialog {
             } else { //MODIFICAR REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar este regitro?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
-                    String sentencia = "CALL SP_NivelModificar('" + codigo + "','" + descripcion + "','" + seccion + "','" + turno + "'," + docente + ",'" + tipo + "')";
+                    String sentencia = "CALL SP_NivelModificar('" + codigo + "','" + descripcion + "','" + seccion + "','" + turno + "','" + tipo + "')";
                     con.EjecutarABM(sentencia, true);
 
                     TablaConsultaBDAll(); //Actualizar tabla
@@ -116,7 +103,7 @@ public final class ABMNivel extends javax.swing.JDialog {
 
     public void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
         String sentencia = "CALL SP_NivelConsulta";
-        String titlesJtabla[] = {"Código", "Descripción", "Sección", "Turno", "Docente", "Tipo"};
+        String titlesJtabla[] = {"Código", "Descripción", "Sección", "Turno", "Tipo"};
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
         cbCampoBuscar.setSelectedIndex(1);
         metodos.AnchuraColumna(tbPrincipal);
@@ -133,8 +120,7 @@ public final class ABMNivel extends javax.swing.JDialog {
         txtDescripcion.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1) + ""));
         cbSeccion.setSelectedItem(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 2));
         cbTurno.setSelectedItem(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 3));
-        metodoscombo.setSelectedNombreItem(cbDocente, tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 4) + "");
-        cbTipo.setSelectedItem(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 5));
+        cbTipo.setSelectedItem(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 4));
     }
 
     private void ModoEdicion(boolean valor) {
@@ -143,7 +129,6 @@ public final class ABMNivel extends javax.swing.JDialog {
         txtDescripcion.setEnabled(valor);
         cbSeccion.setEnabled(valor);
         cbTurno.setEnabled(valor);
-        cbDocente.setEnabled(valor);
         cbTipo.setEnabled(valor);
 
         btnNuevo.setEnabled(!valor);
@@ -159,7 +144,6 @@ public final class ABMNivel extends javax.swing.JDialog {
         txtCodigo.setText("");
         lblDescripcion.setForeground(Color.BLACK);
         txtDescripcion.setText("");
-        metodoscombo.setSelectedNombreItem(cbDocente, "SIN ESPECIFICAR");
         cbSeccion.setSelectedIndex(0);
         cbTurno.setSelectedIndex(0);
         cbTipo.setSelectedIndex(0);
@@ -170,11 +154,6 @@ public final class ABMNivel extends javax.swing.JDialog {
 
     public boolean ComprobarCampos() {
         if (metodostxt.ValidarCampoVacioTXT(txtDescripcion, lblDescripcion) == false) {
-            return false;
-        }
-        if (cbDocente.getSelectedIndex() == -1 && cbDocente.getSelectedItem() != "SIN ESPECIFICAR") {
-            JOptionPane.showMessageDialog(this, "Seleccione el docente", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            cbDocente.requestFocus();
             return false;
         }
 
@@ -209,8 +188,6 @@ public final class ABMNivel extends javax.swing.JDialog {
         lblDescripcion = new javax.swing.JLabel();
         txtDescripcion = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        lblDocente = new javax.swing.JLabel();
-        cbDocente = new javax.swing.JComboBox<>();
         lblRucCedula1 = new javax.swing.JLabel();
         cbSeccion = new javax.swing.JComboBox<>();
         lblTurno = new javax.swing.JLabel();
@@ -430,13 +407,6 @@ public final class ABMNivel extends javax.swing.JDialog {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("Campos con (*) son obligatorios");
 
-        lblDocente.setBackground(new java.awt.Color(0, 0, 0));
-        lblDocente.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        lblDocente.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblDocente.setText("Docente encargado*:");
-
-        cbDocente.setEnabled(false);
-
         lblRucCedula1.setBackground(new java.awt.Color(0, 0, 0));
         lblRucCedula1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblRucCedula1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -469,59 +439,50 @@ public final class ABMNivel extends javax.swing.JDialog {
         jpEdicionLayout.setHorizontalGroup(
             jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpEdicionLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jpEdicionLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblCodigo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblRucCedula1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jpEdicionLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(lblDocente)))
-                .addGap(1, 1, 1)
+                    .addComponent(lblCodigo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblDescripcion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jpEdicionLayout.createSequentialGroup()
                         .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2))
-                    .addComponent(cbDocente, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cbSeccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(39, 39, 39)
+                    .addComponent(txtDescripcion))
+                .addGap(65, 65, 65)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblDescripcion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblRucCedula1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblTurno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblTipo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(2, 2, 2)
-                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(cbTipo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cbTurno, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(cbTurno, javax.swing.GroupLayout.Alignment.LEADING, 0, 148, Short.MAX_VALUE)
+                    .addComponent(cbTipo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbSeccion, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(316, Short.MAX_VALUE))
         );
         jpEdicionLayout.setVerticalGroup(
             jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpEdicionLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(txtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cbSeccion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblRucCedula1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbSeccion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblTurno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cbTurno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblTurno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblDocente, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbDocente, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14))
+                    .addComponent(txtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jtpEdicion.addTab("Edición", jpEdicion);
@@ -774,7 +735,6 @@ public final class ABMNivel extends javax.swing.JDialog {
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnNuevo;
     private javax.swing.JComboBox cbCampoBuscar;
-    private javax.swing.JComboBox<MetodosCombo> cbDocente;
     private javax.swing.JComboBox<String> cbSeccion;
     private javax.swing.JComboBox<String> cbTipo;
     private javax.swing.JComboBox<String> cbTurno;
@@ -791,7 +751,6 @@ public final class ABMNivel extends javax.swing.JDialog {
     private javax.swing.JLabel lblBuscarCampo;
     private javax.swing.JLabel lblCodigo;
     private javax.swing.JLabel lblDescripcion;
-    private javax.swing.JLabel lblDocente;
     private javax.swing.JLabel lblRucCedula1;
     private javax.swing.JLabel lblTipo;
     private javax.swing.JLabel lblTurno;

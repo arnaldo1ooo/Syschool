@@ -37,7 +37,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
-    DefaultTableModel modeltablaAlumnosACArgo;
+    DefaultTableModel modeltablaPoderantes;
 
     public ABMApoderado(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -121,26 +121,26 @@ public final class ABMApoderado extends javax.swing.JDialog {
         SimpleDateFormat formatfechaBD = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatfechaSuda = new SimpleDateFormat("dd/MM/yyyy");
 
-        for (int i = 0; i < tbAlumnosACargo.getRowCount(); i++) {
-            codigoalumno = tbAlumnosACargo.getValueAt(i, 0) + "";
+        for (int i = 0; i < tbPoderantes.getRowCount(); i++) {
+            codigoalumno = tbPoderantes.getValueAt(i, 0) + "";
             if (codigoalumno.equals("")) { //Si codigo es vacio
-                nombrealumno = metodos.MayusCadaPrimeraLetra(tbAlumnosACargo.getValueAt(i, 1) + "");
-                apellidoalumno = metodos.MayusCadaPrimeraLetra(tbAlumnosACargo.getValueAt(i, 2) + "");
-                cedulaalumno = tbAlumnosACargo.getValueAt(i, 3) + "";
+                nombrealumno = metodos.MayusCadaPrimeraLetra(tbPoderantes.getValueAt(i, 1) + "");
+                apellidoalumno = metodos.MayusCadaPrimeraLetra(tbPoderantes.getValueAt(i, 2) + "");
+                cedulaalumno = tbPoderantes.getValueAt(i, 3) + "";
 
                 //Convertir fechas
                 try {
-                    fechanacimiento = formatfechaBD.format(formatfechaSuda.parse(tbAlumnosACargo.getValueAt(i, 4) + ""));
-                    fechainscripcion = formatfechaBD.format(formatfechaSuda.parse(tbAlumnosACargo.getValueAt(i, 5) + ""));
+                    fechanacimiento = formatfechaBD.format(formatfechaSuda.parse(tbPoderantes.getValueAt(i, 4) + ""));
+                    fechainscripcion = formatfechaBD.format(formatfechaSuda.parse(tbPoderantes.getValueAt(i, 5) + ""));
                 } catch (ParseException e) {
                     e.printStackTrace();
                     return;
                 }
 
-                sexoalumno = tbAlumnosACargo.getValueAt(i, 6) + "";
-                telefonoalumno = tbAlumnosACargo.getValueAt(i, 7) + "";
-                emailalumno = tbAlumnosACargo.getValueAt(i, 8) + "";
-                obsalumno = tbAlumnosACargo.getValueAt(i, 9) + "";
+                sexoalumno = tbPoderantes.getValueAt(i, 6) + "";
+                telefonoalumno = tbPoderantes.getValueAt(i, 7) + "";
+                emailalumno = tbPoderantes.getValueAt(i, 8) + "";
+                obsalumno = tbPoderantes.getValueAt(i, 9) + "";
 
                 //Buscar el id del ultimo apoderado agregado
                 if (txtCodigo.getText().equals("")) { //Si es nuevo apoderado
@@ -158,7 +158,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
                     apoderado = Integer.parseInt(txtCodigo.getText());
                 }
 
-                estadoalumno = tbAlumnosACargo.getValueAt(i, 10) + "";
+                estadoalumno = tbPoderantes.getValueAt(i, 10) + "";
                 if (estadoalumno.equals("ACTIVO")) {
                     estadoalumno = "1";
                 } else {
@@ -175,9 +175,10 @@ public final class ABMApoderado extends javax.swing.JDialog {
 
     private void RegistroEliminar() {
         int filasel = tbPrincipal.getSelectedRow();
+        Toolkit.getDefaultToolkit().beep();
         if (filasel != -1) {
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de eliminar este apoderado? Tambien se ELIMINARÁN "
-                    + "los ALUMNOS A SU CARGO y sus respectivas MATRICULAS", "Confirmación", JOptionPane.YES_OPTION);
+                    + "los ALUMNOS A SU CARGO y sus respectivas MATRICULAS y PAGOS", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
                 String codigo = tbPrincipal.getModel().getValueAt(filasel, 0) + "";
                 String sentencia = "CALL SP_ApoderadoEliminar(" + codigo + ")";
@@ -188,8 +189,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
                 Limpiar();
             }
         } else {
-            Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(null, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtBuscar.requestFocus();
         }
     }
@@ -225,6 +225,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
     }
 
     private void ModoEdicion(boolean valor) {
+        jtpEdicion.setSelectedIndex(0);
         txtBuscar.setEnabled(!valor);
         tbPrincipal.setEnabled(!valor);
         txtCedula.setEnabled(valor);
@@ -240,8 +241,10 @@ public final class ABMApoderado extends javax.swing.JDialog {
         btnEliminar.setEnabled(false);
         btnGuardar.setEnabled(valor);
         btnCancelar.setEnabled(valor);
-        tbAlumnosACargo.setEnabled(valor);
+        tbPoderantes.setEnabled(valor);
         btnNuevoAlumno.setEnabled(valor);
+        btnModificarAlumno.setEnabled(false);
+        btnEliminarAlumno.setEnabled(false);
 
         txtNombre.requestFocus();
     }
@@ -262,14 +265,11 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblApellido.setForeground(new Color(102, 102, 102));
         lblDireccion.setForeground(new Color(102, 102, 102));
 
-        
         txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
 
-        try {
-            modeltablaAlumnosACArgo.setRowCount(0);
-        } catch (NullPointerException e) {
-        }
+        modeltablaPoderantes = (DefaultTableModel) tbPoderantes.getModel();
+        modeltablaPoderantes.setRowCount(0);
     }
 
     public boolean ComprobarCampos() {
@@ -325,11 +325,11 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblCedulaAlumno = new javax.swing.JLabel();
         txtCedulaAlumno = new javax.swing.JTextField();
         lblFechaNacimiento = new javax.swing.JLabel();
-        dcFechaNacimiento = new com.toedter.calendar.JDateChooser();
-        lblEdad = new javax.swing.JLabel();
-        txtEdad = new javax.swing.JTextField();
+        dcFechaNacimientoAlumno = new com.toedter.calendar.JDateChooser();
+        lblEdadAlumno = new javax.swing.JLabel();
+        txtEdadAlumno = new javax.swing.JTextField();
         lblFechaInscripcion = new javax.swing.JLabel();
-        dcFechaInscripcion = new com.toedter.calendar.JDateChooser();
+        dcFechaInscripcionAlumno = new com.toedter.calendar.JDateChooser();
         lblSexoAlumno = new javax.swing.JLabel();
         cbSexoAlumno = new javax.swing.JComboBox<>();
         lblTelefonoAlumno = new javax.swing.JLabel();
@@ -339,12 +339,14 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblObsAlumno = new javax.swing.JLabel();
         scpObsAlumno = new javax.swing.JScrollPane();
         taObsAlumno = new javax.swing.JTextArea();
-        lblEstado = new javax.swing.JLabel();
-        cbEstado = new javax.swing.JComboBox<>();
+        lblEstadoAlumno = new javax.swing.JLabel();
+        cbEstadoAlumno = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         btnAgregarAlumno = new org.edisoncor.gui.button.ButtonSeven();
         panel1 = new org.edisoncor.gui.panel.Panel();
-        labelMetric1 = new org.edisoncor.gui.label.LabelMetric();
+        lmTitulo = new org.edisoncor.gui.label.LabelMetric();
+        lblNombreAlumno1 = new javax.swing.JLabel();
+        txtCodigoAlumno = new javax.swing.JTextField();
         jpPrincipal = new javax.swing.JPanel();
         jpTabla = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
@@ -386,12 +388,14 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblSexo = new javax.swing.JLabel();
         jpAlumnosACargo = new javax.swing.JPanel();
         scPrincipal1 = new javax.swing.JScrollPane();
-        tbAlumnosACargo = new javax.swing.JTable(){
+        tbPoderantes = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex) {
                 return false; //Disallow the editing of any cell
             }
         };
         btnNuevoAlumno = new javax.swing.JButton();
+        btnModificarAlumno = new javax.swing.JButton();
+        btnEliminarAlumno = new javax.swing.JButton();
         jpBotones2 = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
@@ -401,7 +405,9 @@ public final class ABMApoderado extends javax.swing.JDialog {
         AltaAlumno.setTitle("Ventana Nuevo Alumno");
         AltaAlumno.setModal(true);
         AltaAlumno.setResizable(false);
-        AltaAlumno.setSize(new java.awt.Dimension(821, 329));
+        AltaAlumno.setSize(new java.awt.Dimension(821, 360));
+
+        pnAltaAlumno.setPreferredSize(new java.awt.Dimension(825, 360));
 
         lblNombreAlumno.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblNombreAlumno.setForeground(new java.awt.Color(255, 255, 255));
@@ -457,22 +463,22 @@ public final class ABMApoderado extends javax.swing.JDialog {
         lblFechaNacimiento.setText("Fecha de nacimiento*:");
         lblFechaNacimiento.setToolTipText("");
 
-        dcFechaNacimiento.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+        dcFechaNacimientoAlumno.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                dcFechaNacimientoPropertyChange(evt);
+                dcFechaNacimientoAlumnoPropertyChange(evt);
             }
         });
 
-        lblEdad.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        lblEdad.setForeground(new java.awt.Color(255, 255, 255));
-        lblEdad.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblEdad.setText("Edad:");
+        lblEdadAlumno.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lblEdadAlumno.setForeground(new java.awt.Color(255, 255, 255));
+        lblEdadAlumno.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblEdadAlumno.setText("Edad:");
 
-        txtEdad.setEditable(false);
-        txtEdad.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        txtEdad.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtEdad.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtEdad.setEnabled(false);
+        txtEdadAlumno.setEditable(false);
+        txtEdadAlumno.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        txtEdadAlumno.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtEdadAlumno.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtEdadAlumno.setEnabled(false);
 
         lblFechaInscripcion.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblFechaInscripcion.setForeground(new java.awt.Color(255, 255, 255));
@@ -535,14 +541,14 @@ public final class ABMApoderado extends javax.swing.JDialog {
         });
         scpObsAlumno.setViewportView(taObsAlumno);
 
-        lblEstado.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        lblEstado.setForeground(new java.awt.Color(255, 255, 255));
-        lblEstado.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblEstado.setText("Estado*:");
-        lblEstado.setToolTipText("");
+        lblEstadoAlumno.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lblEstadoAlumno.setForeground(new java.awt.Color(255, 255, 255));
+        lblEstadoAlumno.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblEstadoAlumno.setText("Estado*:");
+        lblEstadoAlumno.setToolTipText("");
 
-        cbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "INACTIVO", "ACTIVO" }));
-        cbEstado.setSelectedIndex(1);
+        cbEstadoAlumno.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "INACTIVO", "ACTIVO" }));
+        cbEstadoAlumno.setSelectedIndex(1);
 
         jLabel3.setForeground(new java.awt.Color(0, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -559,10 +565,10 @@ public final class ABMApoderado extends javax.swing.JDialog {
 
         panel1.setColorSecundario(new java.awt.Color(32, 39, 55));
 
-        labelMetric1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        labelMetric1.setText("Nuevo Alumno");
-        labelMetric1.setDireccionDeSombra(110);
-        labelMetric1.setFont(new java.awt.Font("Cooper Black", 0, 28)); // NOI18N
+        lmTitulo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lmTitulo.setText("Nuevo Alumno");
+        lmTitulo.setDireccionDeSombra(110);
+        lmTitulo.setFont(new java.awt.Font("Cooper Black", 0, 28)); // NOI18N
 
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
@@ -570,125 +576,146 @@ public final class ABMApoderado extends javax.swing.JDialog {
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
-                .addComponent(labelMetric1, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(lmTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(506, Short.MAX_VALUE))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(labelMetric1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(lmTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
+
+        lblNombreAlumno1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lblNombreAlumno1.setForeground(new java.awt.Color(255, 255, 255));
+        lblNombreAlumno1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblNombreAlumno1.setText("Codigo:");
+
+        txtCodigoAlumno.setEditable(false);
+        txtCodigoAlumno.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        txtCodigoAlumno.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtCodigoAlumno.setEnabled(false);
+        txtCodigoAlumno.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCodigoAlumnoKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCodigoAlumnoKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnAltaAlumnoLayout = new javax.swing.GroupLayout(pnAltaAlumno);
         pnAltaAlumno.setLayout(pnAltaAlumnoLayout);
         pnAltaAlumnoLayout.setHorizontalGroup(
             pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnAltaAlumnoLayout.createSequentialGroup()
+            .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
                 .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                        .addGap(13, 13, 13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnAgregarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(121, 121, 121)
+                        .addComponent(jLabel3))
+                    .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(lblCedulaAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
-                                    .addComponent(lblApellidoAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(lblNombreAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnAltaAlumnoLayout.createSequentialGroup()
+                                .addComponent(lblNombreAlumno1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(2, 2, 2)
-                                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(txtApellidoAlumno, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtCedulaAlumno, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)))
+                                .addComponent(txtCodigoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(170, 170, 170))
                             .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(lblFechaNacimiento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(lblFechaInscripcion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(3, 3, 3)
-                                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(dcFechaNacimiento, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
-                                    .addComponent(dcFechaInscripcion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(lblSexoAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(lblEdad, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(2, 2, 2)
-                                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(cbSexoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtEdad))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
+                                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(lblCedulaAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(lblApellidoAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(lblNombreAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(2, 2, 2)
+                                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addComponent(txtApellidoAlumno, javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtCedulaAlumno, javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
+                                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(lblFechaNacimiento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(lblFechaInscripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(3, 3, 3)
+                                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(dcFechaNacimientoAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(dcFechaInscripcionAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(lblSexoAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(lblEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(2, 2, 2)
+                                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(cbSexoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblTelefonoAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblTelefonoAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
                             .addComponent(lblEmailAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lblObsAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblEstado, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblEstadoAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(2, 2, 2)
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtEmailAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
-                            .addComponent(txtTelefonoAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
-                            .addComponent(cbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(scpObsAlumno))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE))
-                    .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                        .addContainerGap(364, Short.MAX_VALUE)
-                        .addComponent(btnAgregarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(146, 146, 146)
-                        .addComponent(jLabel3)))
-                .addGap(20, 20, 20))
-            .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtEmailAlumno)
+                            .addComponent(txtTelefonoAlumno)
+                            .addComponent(cbEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(scpObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
         pnAltaAlumnoLayout.setVerticalGroup(
             pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7)
+                .addGap(18, 18, 18)
+                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblNombreAlumno1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCodigoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4)
+                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblTelefonoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTelefonoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4)
+                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblApellidoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtApellidoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblEmailAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtEmailAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4)
                 .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                        .addGap(2, 2, 2)
-                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lblNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(4, 4, 4)
-                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblApellidoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtApellidoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(4, 4, 4)
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblCedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtCedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(11, 11, 11)
+                        .addGap(4, 4, 4)
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(lblFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dcFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblEdad, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEdad, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lblTelefonoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtTelefonoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(4, 4, 4)
-                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lblEmailAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEmailAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(4, 4, 4)
-                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(scpObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(dcFechaNacimientoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(scpObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4)
                 .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(lblFechaInscripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dcFechaInscripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dcFechaInscripcionAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblSexoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cbSexoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(btnAgregarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                        .addGap(37, 37, 37)
+                        .addGap(41, 41, 41)
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout AltaAlumnoLayout = new javax.swing.GroupLayout(AltaAlumno.getContentPane());
@@ -699,7 +726,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         );
         AltaAlumnoLayout.setVerticalGroup(
             AltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnAltaAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnAltaAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
         );
 
         setTitle("Ventana Apoderados");
@@ -908,9 +935,6 @@ public final class ABMApoderado extends javax.swing.JDialog {
             }
         });
         txtCedula.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtCedulaKeyPressed(evt);
-            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtCedulaKeyReleased(evt);
             }
@@ -1067,7 +1091,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
                                 .addComponent(jLabel2))
                             .addComponent(txtNombre, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtApellido, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 161, Short.MAX_VALUE)
                         .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(lblEmail, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblDireccion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1130,9 +1154,9 @@ public final class ABMApoderado extends javax.swing.JDialog {
         jpAlumnosACargo.setBackground(new java.awt.Color(233, 255, 255));
         jpAlumnosACargo.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
 
-        tbAlumnosACargo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        tbAlumnosACargo.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        tbAlumnosACargo.setModel(new javax.swing.table.DefaultTableModel(
+        tbPoderantes.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        tbPoderantes.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        tbPoderantes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -1140,27 +1164,27 @@ public final class ABMApoderado extends javax.swing.JDialog {
                 "Código", "Nombre", "Apellido", "Cédula", "Fecha de nac.", "Fecha de inscr.", "Sexo", "Teléfono", "Email", "Obs", "Estado"
             }
         ));
-        tbAlumnosACargo.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        tbAlumnosACargo.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        tbAlumnosACargo.setEnabled(false);
-        tbAlumnosACargo.setGridColor(new java.awt.Color(0, 153, 204));
-        tbAlumnosACargo.setOpaque(false);
-        tbAlumnosACargo.setRowHeight(20);
-        tbAlumnosACargo.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tbAlumnosACargo.getTableHeader().setReorderingAllowed(false);
-        tbAlumnosACargo.addMouseListener(new java.awt.event.MouseAdapter() {
+        tbPoderantes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tbPoderantes.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tbPoderantes.setEnabled(false);
+        tbPoderantes.setGridColor(new java.awt.Color(0, 153, 204));
+        tbPoderantes.setOpaque(false);
+        tbPoderantes.setRowHeight(20);
+        tbPoderantes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tbPoderantes.getTableHeader().setReorderingAllowed(false);
+        tbPoderantes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                tbAlumnosACargoMousePressed(evt);
+                tbPoderantesMousePressed(evt);
             }
         });
-        tbAlumnosACargo.addKeyListener(new java.awt.event.KeyAdapter() {
+        tbPoderantes.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                tbAlumnosACargoKeyReleased(evt);
+                tbPoderantesKeyReleased(evt);
             }
         });
-        scPrincipal1.setViewportView(tbAlumnosACargo);
+        scPrincipal1.setViewportView(tbPoderantes);
 
-        btnNuevoAlumno.setBackground(new java.awt.Color(0, 102, 204));
+        btnNuevoAlumno.setBackground(new java.awt.Color(0, 153, 153));
         btnNuevoAlumno.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         btnNuevoAlumno.setForeground(new java.awt.Color(255, 255, 255));
         btnNuevoAlumno.setText("Nuevo alumno");
@@ -1171,24 +1195,55 @@ public final class ABMApoderado extends javax.swing.JDialog {
             }
         });
 
+        btnModificarAlumno.setBackground(new java.awt.Color(0, 102, 204));
+        btnModificarAlumno.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
+        btnModificarAlumno.setForeground(new java.awt.Color(255, 255, 255));
+        btnModificarAlumno.setText("Modificar alumno");
+        btnModificarAlumno.setEnabled(false);
+        btnModificarAlumno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarAlumnoActionPerformed(evt);
+            }
+        });
+
+        btnEliminarAlumno.setBackground(new java.awt.Color(255, 153, 153));
+        btnEliminarAlumno.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
+        btnEliminarAlumno.setForeground(new java.awt.Color(255, 255, 255));
+        btnEliminarAlumno.setText("Eliminar alumno");
+        btnEliminarAlumno.setEnabled(false);
+        btnEliminarAlumno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarAlumnoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpAlumnosACargoLayout = new javax.swing.GroupLayout(jpAlumnosACargo);
         jpAlumnosACargo.setLayout(jpAlumnosACargoLayout);
         jpAlumnosACargoLayout.setHorizontalGroup(
             jpAlumnosACargoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpAlumnosACargoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scPrincipal1, javax.swing.GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnNuevoAlumno)
-                .addContainerGap())
+                .addComponent(scPrincipal1, javax.swing.GroupLayout.DEFAULT_SIZE, 857, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpAlumnosACargoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnModificarAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnEliminarAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnNuevoAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(12, 12, 12))
         );
         jpAlumnosACargoLayout.setVerticalGroup(
             jpAlumnosACargoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpAlumnosACargoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpAlumnosACargoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnNuevoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(scPrincipal1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(scPrincipal1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jpAlumnosACargoLayout.createSequentialGroup()
+                        .addGap(11, 11, 11)
+                        .addComponent(btnNuevoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnModificarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnEliminarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
@@ -1283,17 +1338,17 @@ public final class ABMApoderado extends javax.swing.JDialog {
             .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jpPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jtpEdicion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jtpEdicion)
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
                         .addComponent(jpTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(4, 4, 4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(9, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(jpPrincipalLayout.createSequentialGroup()
+                .addGap(349, 349, 349)
                 .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(297, 297, 297))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1316,7 +1371,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 924, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 1023, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1411,10 +1466,6 @@ public final class ABMApoderado extends javax.swing.JDialog {
         metodostxt.TxtColorLabelKeyReleased(txtCedula, lblCedula);
     }//GEN-LAST:event_txtCedulaKeyReleased
 
-    private void txtCedulaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyPressed
-
-    }//GEN-LAST:event_txtCedulaKeyPressed
-
     private void txtTelefonoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTelefonoKeyTyped
         metodostxt.SoloNumeroEnteroKeyTyped(evt);
     }//GEN-LAST:event_txtTelefonoKeyTyped
@@ -1470,34 +1521,54 @@ public final class ABMApoderado extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCedulaActionPerformed
 
-    private void tbAlumnosACargoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbAlumnosACargoMousePressed
+    private void tbPoderantesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPoderantesMousePressed
+        if (tbPoderantes.isEnabled() == true) {
+            btnModificarAlumno.setEnabled(true);
+            btnEliminarAlumno.setEnabled(true);
+        }
+    }//GEN-LAST:event_tbPoderantesMousePressed
 
-    }//GEN-LAST:event_tbAlumnosACargoMousePressed
-
-    private void tbAlumnosACargoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbAlumnosACargoKeyReleased
+    private void tbPoderantesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbPoderantesKeyReleased
         // TODO add your handling code here:
-    }//GEN-LAST:event_tbAlumnosACargoKeyReleased
+    }//GEN-LAST:event_tbPoderantesKeyReleased
 
-    private void btnNuevoAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoAlumnoActionPerformed
-        //Limpiar alumno
-        txtNombreAlumno.setText("");
-        txtApellidoAlumno.setText("");
-        txtCedulaAlumno.setText("");
-        dcFechaNacimiento.setDate(null);
-        txtEdad.setText("");
-        dcFechaInscripcion.setDate(new Date());
-        cbSexoAlumno.setSelectedIndex(0);
-        txtTelefonoAlumno.setText("");
-        txtEmailAlumno.setText("");
-        taObsAlumno.setText("");
-        cbEstado.setSelectedIndex(1);
-        lblNombreAlumno.setForeground(Color.WHITE);
-        lblApellidoAlumno.setForeground(Color.WHITE);
-        lblCedulaAlumno.setForeground(Color.WHITE);
+    private void btnModificarAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarAlumnoActionPerformed
+        //Cargar datos del alumno a modificar
+        lmTitulo.setText("Modificar alumno");
+        btnAgregarAlumno.setText("Modificar");
+        txtCodigoAlumno.setText(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 0) + "");
+        txtNombreAlumno.setText(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 1) + ""));
+        txtApellidoAlumno.setText(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 2) + ""));
+        txtCedulaAlumno.setText(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 3) + ""));
+
+        try {
+            Date fechaParseada = new SimpleDateFormat("dd/MM/yyyy").parse(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 4).toString() + ""));
+            dcFechaNacimientoAlumno.setDate(fechaParseada);
+
+            //Obtener edad
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate fechaNac = LocalDate.parse(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 4) + ""), fmt);
+            LocalDate ahora = LocalDate.now();
+            Period periodo = Period.between(fechaNac, ahora);
+            txtEdadAlumno.setText(metodos.SiStringEsNull(periodo.getYears() + ""));
+
+            fechaParseada = new SimpleDateFormat("dd/MM/yyyy").parse(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 5).toString() + ""));
+            dcFechaInscripcionAlumno.setDate(fechaParseada);
+        } catch (ParseException e) {
+            System.out.println("Error al parsear fecha");
+            e.printStackTrace();
+        }
+
+        cbSexoAlumno.setSelectedItem(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 6).toString());
+        txtTelefonoAlumno.setText(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 7).toString());
+        txtEmailAlumno.setText(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 8).toString());
+        taObsAlumno.setText(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 9).toString());
+        String estado = tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 10).toString();
+        cbEstadoAlumno.setSelectedItem(estado);
 
         AltaAlumno.setLocationRelativeTo(this);
         AltaAlumno.setVisible(true);
-    }//GEN-LAST:event_btnNuevoAlumnoActionPerformed
+    }//GEN-LAST:event_btnModificarAlumnoActionPerformed
 
     private void taObsAlumnoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_taObsAlumnoKeyPressed
         char car = (char) evt.getKeyCode();
@@ -1514,17 +1585,17 @@ public final class ABMApoderado extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_txtCedulaAlumnoKeyTyped
 
-    private void dcFechaNacimientoPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dcFechaNacimientoPropertyChange
+    private void dcFechaNacimientoAlumnoPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dcFechaNacimientoAlumnoPropertyChange
         //Obtener edad
-        if (dcFechaNacimiento.getDate() != null) {
+        if (dcFechaNacimientoAlumno.getDate() != null) {
             SimpleDateFormat formatosuda = new SimpleDateFormat("dd/MM/yyyy");
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDate fechaNac = LocalDate.parse(formatosuda.format(dcFechaNacimiento.getDate()), fmt);
+            LocalDate fechaNac = LocalDate.parse(formatosuda.format(dcFechaNacimientoAlumno.getDate()), fmt);
             LocalDate ahora = LocalDate.now();
             Period periodo = Period.between(fechaNac, ahora);
-            txtEdad.setText(periodo.getYears() + "");
+            txtEdadAlumno.setText(periodo.getYears() + "");
         }
-    }//GEN-LAST:event_dcFechaNacimientoPropertyChange
+    }//GEN-LAST:event_dcFechaNacimientoAlumnoPropertyChange
 
     private void txtNombreAlumnoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreAlumnoKeyReleased
         metodostxt.TxtColorLabelKeyReleased(txtNombreAlumno, lblNombreAlumno);
@@ -1565,42 +1636,116 @@ public final class ABMApoderado extends javax.swing.JDialog {
     }//GEN-LAST:event_txtEmailAlumnoKeyTyped
 
     private void btnAgregarAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarAlumnoActionPerformed
+
         if (ComprobarCamposAlumnos() == true) {
             String nombre = txtNombreAlumno.getText();
             String apellido = txtApellidoAlumno.getText();
             String cedula = txtCedulaAlumno.getText();
             SimpleDateFormat formatofecha = new SimpleDateFormat("dd/MM/yyyy");
-            String fechanacimiento = formatofecha.format(dcFechaNacimiento.getDate());
-            String fechainscripcion = formatofecha.format(dcFechaInscripcion.getDate());
+            String fechanacimiento = formatofecha.format(dcFechaNacimientoAlumno.getDate());
+            String fechainscripcion = formatofecha.format(dcFechaInscripcionAlumno.getDate());
             String sexo = cbSexoAlumno.getSelectedItem() + "";
             String telefono = txtTelefonoAlumno.getText();
             String email = txtEmailAlumno.getText();
             String obs = taObsAlumno.getText();
-            String estado = cbEstado.getSelectedItem() + "";
+            String estado = cbEstadoAlumno.getSelectedItem() + "";
 
-            modeltablaAlumnosACArgo = (DefaultTableModel) tbAlumnosACargo.getModel();
-            modeltablaAlumnosACArgo.addRow(new Object[]{"", nombre, apellido, cedula, fechanacimiento,
-                fechainscripcion, sexo, telefono, email, obs, estado});
+            if (btnAgregarAlumno.getText().equals("Agregar")) {
+                modeltablaPoderantes = (DefaultTableModel) tbPoderantes.getModel();
+                modeltablaPoderantes.addRow(new Object[]{"", nombre, apellido, cedula, fechanacimiento, fechainscripcion, sexo, telefono, email, obs, estado});
+            }
+            if (btnAgregarAlumno.getText().equals("Modificar")) {
+                int filaSelect = -1;
+                filaSelect = tbPoderantes.getSelectedRow();
+
+                if (filaSelect != -1) {
+                    tbPoderantes.setValueAt(nombre, filaSelect, 1);
+                    tbPoderantes.setValueAt(apellido, filaSelect, 2);
+                    tbPoderantes.setValueAt(cedula, filaSelect, 3);
+                    tbPoderantes.setValueAt(fechanacimiento, filaSelect, 4);
+                    tbPoderantes.setValueAt(fechainscripcion, filaSelect, 5);
+                    tbPoderantes.setValueAt(sexo, filaSelect, 6);
+                    tbPoderantes.setValueAt(telefono, filaSelect, 7);
+                    tbPoderantes.setValueAt(email, filaSelect, 8);
+                    tbPoderantes.setValueAt(obs, filaSelect, 9);
+                    tbPoderantes.setValueAt(estado, filaSelect, 10);
+                } else {
+                    JOptionPane.showMessageDialog(AltaAlumno, "No se seleccionó ninguna fila en la tabla", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+            }
 
             AltaAlumno.dispose();
         }
+
+
     }//GEN-LAST:event_btnAgregarAlumnoActionPerformed
 
     private void txtCedulaAlumnoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaAlumnoKeyReleased
         metodostxt.TxtColorLabelKeyReleased(txtCedulaAlumno, lblCedulaAlumno);
     }//GEN-LAST:event_txtCedulaAlumnoKeyReleased
 
+    private void btnNuevoAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoAlumnoActionPerformed
+        //Limpiar alumno
+        btnAgregarAlumno.setText("Agregar");
+        lmTitulo.setText("Nuevo alumno");
+
+        txtCodigoAlumno.setText("");
+        txtNombreAlumno.setText("");
+        txtApellidoAlumno.setText("");
+        txtCedulaAlumno.setText("");
+        dcFechaNacimientoAlumno.setDate(null);
+        txtEdadAlumno.setText("");
+        dcFechaInscripcionAlumno.setDate(new Date());
+        cbSexoAlumno.setSelectedIndex(0);
+        txtTelefonoAlumno.setText("");
+        txtEmailAlumno.setText("");
+        taObsAlumno.setText("");
+        cbEstadoAlumno.setSelectedIndex(1);
+        lblNombreAlumno.setForeground(Color.WHITE);
+        lblApellidoAlumno.setForeground(Color.WHITE);
+        lblCedulaAlumno.setForeground(Color.WHITE);
+
+        AltaAlumno.setLocationRelativeTo(this);
+        AltaAlumno.setVisible(true);
+    }//GEN-LAST:event_btnNuevoAlumnoActionPerformed
+
+    private void btnEliminarAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarAlumnoActionPerformed
+        int filasel = tbPoderantes.getSelectedRow();
+        Toolkit.getDefaultToolkit().beep();
+        if (filasel != -1) {
+            int confirmado = JOptionPane.showConfirmDialog(this, "¿Deseas eliminar de la lista al alumno seleccionado?", "Confirmación", JOptionPane.YES_OPTION);
+            if (JOptionPane.YES_OPTION == confirmado) {
+                modeltablaPoderantes = (DefaultTableModel) tbPoderantes.getModel();
+                modeltablaPoderantes.removeRow(tbPoderantes.getSelectedRow());
+                btnModificar.setEnabled(false);
+                btnEliminarAlumno.setEnabled(false);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            txtBuscar.requestFocus();
+        }
+    }//GEN-LAST:event_btnEliminarAlumnoActionPerformed
+
+    private void txtCodigoAlumnoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodigoAlumnoKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCodigoAlumnoKeyReleased
+
+    private void txtCodigoAlumnoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodigoAlumnoKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCodigoAlumnoKeyTyped
+
     private void AlumnosACargo() {
         int codigo = Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "");
         String sentencia = "CALL SP_ApoderadoAlumnosConsulta(" + codigo + ")";
         //Cargar el array con titles de la tabla
-        String titlesJtabla[] = new String[tbAlumnosACargo.getColumnCount()];
+        String titlesJtabla[] = new String[tbPoderantes.getColumnCount()];
         for (int i = 0; i < titlesJtabla.length; i++) {
-            titlesJtabla[i] = tbAlumnosACargo.getColumnName(i);
+            titlesJtabla[i] = tbPoderantes.getColumnName(i);
         }
 
-        tbAlumnosACargo.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, null));
-        metodos.AnchuraColumna(tbAlumnosACargo);
+        tbPoderantes.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, null));
+        metodos.AnchuraColumna(tbPoderantes);
     }
 
     public boolean ComprobarCamposAlumnos() {
@@ -1637,35 +1782,35 @@ public final class ABMApoderado extends javax.swing.JDialog {
         }
 
         try {
-            if (dcFechaNacimiento.getDate().after(new Date()) == true) {
+            if (dcFechaNacimientoAlumno.getDate().after(new Date()) == true) {
                 Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(AltaAlumno, "La fecha de nacimiento no puede ser mayor a la fecha actual", "Advertencia", JOptionPane.WARNING_MESSAGE);
-                dcFechaNacimiento.requestFocus();
+                dcFechaNacimientoAlumno.requestFocus();
                 return false;
             }
         } catch (NullPointerException e) {
         }
 
-        if (txtEdad.getText().equals("") == false) {
-            if (Integer.parseInt(txtEdad.getText()) <= 2) {
+        if (txtEdadAlumno.getText().equals("") == false) {
+            if (Integer.parseInt(txtEdadAlumno.getText()) <= 2) {
                 Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(AltaAlumno, "El alumno debe tener más de 2 años", "Advertencia", JOptionPane.WARNING_MESSAGE);
-                dcFechaNacimiento.requestFocus();
+                dcFechaNacimientoAlumno.requestFocus();
                 return false;
             }
         }
 
-        if (dcFechaNacimiento.getDate() == null) {
+        if (dcFechaNacimientoAlumno.getDate() == null) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(AltaAlumno, "Ingrese una fecha de nacimiento válida", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            dcFechaNacimiento.requestFocus();
+            dcFechaNacimientoAlumno.requestFocus();
             return false;
         }
 
-        if (dcFechaInscripcion.getDate() == null) {
+        if (dcFechaInscripcionAlumno.getDate() == null) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(AltaAlumno, "Ingrese una fecha de inscripción válida", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            dcFechaInscripcion.requestFocus();
+            dcFechaInscripcionAlumno.requestFocus();
             return false;
         }
         return true;
@@ -1718,16 +1863,18 @@ public final class ABMApoderado extends javax.swing.JDialog {
     private org.edisoncor.gui.button.ButtonSeven btnAgregarAlumno;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnEliminarAlumno;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnModificar;
+    private javax.swing.JButton btnModificarAlumno;
     private javax.swing.JButton btnNuevo;
     private javax.swing.JButton btnNuevoAlumno;
     private javax.swing.JComboBox cbCampoBuscar;
-    private javax.swing.JComboBox<String> cbEstado;
+    private javax.swing.JComboBox<String> cbEstadoAlumno;
     private javax.swing.JComboBox<String> cbSexo;
     private javax.swing.JComboBox<String> cbSexoAlumno;
-    private com.toedter.calendar.JDateChooser dcFechaInscripcion;
-    private com.toedter.calendar.JDateChooser dcFechaNacimiento;
+    private com.toedter.calendar.JDateChooser dcFechaInscripcionAlumno;
+    private com.toedter.calendar.JDateChooser dcFechaNacimientoAlumno;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1738,7 +1885,6 @@ public final class ABMApoderado extends javax.swing.JDialog {
     private javax.swing.JPanel jpPrincipal;
     private javax.swing.JPanel jpTabla;
     private javax.swing.JTabbedPane jtpEdicion;
-    private org.edisoncor.gui.label.LabelMetric labelMetric1;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;
     private javax.swing.JLabel lblApellido;
@@ -1748,20 +1894,22 @@ public final class ABMApoderado extends javax.swing.JDialog {
     private javax.swing.JLabel lblCedulaAlumno;
     private javax.swing.JLabel lblCodigo;
     private javax.swing.JLabel lblDireccion;
-    private javax.swing.JLabel lblEdad;
+    private javax.swing.JLabel lblEdadAlumno;
     private javax.swing.JLabel lblEmail;
     private javax.swing.JLabel lblEmailAlumno;
-    private javax.swing.JLabel lblEstado;
+    private javax.swing.JLabel lblEstadoAlumno;
     private javax.swing.JLabel lblFechaInscripcion;
     private javax.swing.JLabel lblFechaNacimiento;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblNombreAlumno;
+    private javax.swing.JLabel lblNombreAlumno1;
     private javax.swing.JLabel lblObs;
     private javax.swing.JLabel lblObsAlumno;
     private javax.swing.JLabel lblSexo;
     private javax.swing.JLabel lblSexoAlumno;
     private javax.swing.JLabel lblTelefono;
     private javax.swing.JLabel lblTelefonoAlumno;
+    private org.edisoncor.gui.label.LabelMetric lmTitulo;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel2;
     private org.edisoncor.gui.panel.Panel pnAltaAlumno;
@@ -1771,7 +1919,7 @@ public final class ABMApoderado extends javax.swing.JDialog {
     private javax.swing.JScrollPane scpObsAlumno;
     private javax.swing.JTextArea taObs;
     private javax.swing.JTextArea taObsAlumno;
-    private javax.swing.JTable tbAlumnosACargo;
+    private javax.swing.JTable tbPoderantes;
     private javax.swing.JTable tbPrincipal;
     private javax.swing.JTextField txtApellido;
     private javax.swing.JTextField txtApellidoAlumno;
@@ -1779,8 +1927,9 @@ public final class ABMApoderado extends javax.swing.JDialog {
     private javax.swing.JTextField txtCedula;
     private javax.swing.JTextField txtCedulaAlumno;
     private javax.swing.JTextField txtCodigo;
+    private javax.swing.JTextField txtCodigoAlumno;
     private javax.swing.JTextField txtDireccion;
-    private javax.swing.JTextField txtEdad;
+    private javax.swing.JTextField txtEdadAlumno;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtEmailAlumno;
     private javax.swing.JTextField txtNombre;

@@ -39,11 +39,6 @@ public final class ABMPerfil extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-        //Permiso Roles de usuario
-        btnNuevo.setVisible(metodos.PermisoRol(Alias, "PERFIL", "ALTA"));
-        btnModificar.setVisible(metodos.PermisoRol(Alias, "PERFIL", "MODIFICAR"));
-        btnEliminar.setVisible(metodos.PermisoRol(Alias, "PERFIL", "BAJA"));
-
         TablaConsultaPerfilAll(); //Trae todos los registros
         TablaConsultaAllModulos();
 
@@ -432,7 +427,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
                     .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
         jpBotonesLayout.setVerticalGroup(
             jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -519,7 +514,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
         jScrollPane3.setViewportView(tbPerfilModulos);
 
         lblTituloPerfilModulos.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        lblTituloPerfilModulos.setText("Módulos del perfil:");
+        lblTituloPerfilModulos.setText("Módulos del perfil: (Aun no funciona guardar)");
 
         taDescripcion.setColumns(20);
         taDescripcion.setRows(5);
@@ -543,14 +538,14 @@ public final class ABMPerfil extends javax.swing.JDialog {
                     .addGroup(jpEdicionLayout.createSequentialGroup()
                         .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE))
+                        .addComponent(jLabel2))
                     .addComponent(txtDenominacion)
                     .addComponent(jScrollPane1))
                 .addGap(18, 18, 18)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpEdicionLayout.createSequentialGroup()
                         .addComponent(lblTituloPerfilModulos, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 120, Short.MAX_VALUE))
+                        .addGap(0, 104, Short.MAX_VALUE))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -653,7 +648,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel2Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
-                .addComponent(labelMetric2, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(labelMetric2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panel2Layout.setVerticalGroup(

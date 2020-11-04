@@ -33,11 +33,6 @@ public final class ABMModulo extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-        //Permiso Roles de usuario
-        btnNuevo.setVisible(metodos.PermisoRol(Alias, "MODULO", "ALTA"));
-        btnModificar.setVisible(metodos.PermisoRol(Alias, "MODULO", "MODIFICAR"));
-        btnEliminar.setVisible(metodos.PermisoRol(Alias, "MODULO", "BAJA"));
-
         TablaConsultaBDAll(); //Trae todos los registros
         txtBuscar.requestFocus();
 

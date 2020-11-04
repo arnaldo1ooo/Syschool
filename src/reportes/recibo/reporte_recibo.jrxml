@@ -23,7 +23,7 @@
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="Mes" class="java.lang.String"/>
-	<field name="Monto" class="java.lang.String">
+	<field name="Importe" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="Subtotal" class="java.lang.String"/>
@@ -34,12 +34,12 @@
 	<title>
 		<band height="97" splitType="Stretch">
 			<textField pattern="EEEEE dd MMMMM yyyy">
-				<reportElement x="0" y="0" width="116" height="20" uuid="0e79e0b6-91d5-4ae2-a83e-4e83973a3623"/>
+				<reportElement x="0" y="0" width="132" height="20" uuid="0e79e0b6-91d5-4ae2-a83e-4e83973a3623"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Top">
-				<reportElement stretchType="RelativeToTallestObject" x="123" y="0" width="294" height="60" uuid="a54e9de7-5a39-4c21-8916-70e8a66ded04"/>
+				<reportElement stretchType="RelativeToTallestObject" x="132" y="0" width="275" height="60" uuid="a54e9de7-5a39-4c21-8916-70e8a66ded04"/>
 				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
 			</image>
 			<staticText>
@@ -67,7 +67,7 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="51" splitType="Stretch">
+		<band height="47" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="5" width="115" height="20" uuid="1d7f2547-a758-4e9a-93c0-1e7fbba734ac"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -76,21 +76,21 @@
 				<text><![CDATA[Nombre y Apellido:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="118" y="5" width="151" height="20" uuid="0339bb59-fbf3-499c-9b4d-da5417ceb5a1"/>
+				<reportElement x="118" y="5" width="173" height="20" uuid="0339bb59-fbf3-499c-9b4d-da5417ceb5a1"/>
 				<textElement verticalAlignment="Middle">
 					<font size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{APODERADO}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="45" y="25" width="70" height="20" uuid="dbde3206-1f44-471f-bcd5-10155ece3c62"/>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="0" y="25" width="115" height="20" uuid="dbde3206-1f44-471f-bcd5-10155ece3c62"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[N° de cédula:]]></text>
+				<text><![CDATA[Número de cédula:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="118" y="25" width="151" height="20" uuid="834ef35f-7721-4cc3-9299-dd6070c1edc8"/>
+				<reportElement x="118" y="25" width="173" height="20" uuid="834ef35f-7721-4cc3-9299-dd6070c1edc8"/>
 				<textElement verticalAlignment="Middle">
 					<font size="11"/>
 				</textElement>
@@ -149,14 +149,14 @@
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Monto (Gs)]]></text>
+				<text><![CDATA[Importe (Gs)]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="484" y="2" width="71" height="20" uuid="48ce7dfc-16bb-45f3-84ec-3de8cce80657"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Importe (Gs)]]></text>
+				<text><![CDATA[Subtotal (Gs)]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="142" y="2" width="105" height="20" uuid="d47981d4-2a90-4d00-9168-26e246a850fd"/>
@@ -183,7 +183,7 @@
 			<textField>
 				<reportElement x="407" y="6" width="67" height="20" uuid="69edba30-4559-4ec8-9833-1fe56ed73356"/>
 				<textElement verticalAlignment="Top"/>
-				<textFieldExpression><![CDATA[$F{Monto}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{Importe}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="484" y="6" width="71" height="20" uuid="ffb8fc22-eb98-45d4-bf64-83e15830763f"/>

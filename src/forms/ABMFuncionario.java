@@ -978,7 +978,7 @@ public final class ABMFuncionario extends javax.swing.JDialog {
     }//GEN-LAST:event_txtSalarioKeyReleased
 
     private void txtSalarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSalarioKeyTyped
-        metodostxt.TxtCantidadCaracteresKeyTyped(txtSalario, 11);
+       metodostxt.SoloNumeroDecimalKeyTyped(evt, txtSalario);
     }//GEN-LAST:event_txtSalarioKeyTyped
 
     private void txtCedulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyReleased

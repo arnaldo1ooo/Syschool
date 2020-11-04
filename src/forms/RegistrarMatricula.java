@@ -45,7 +45,8 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
 
         //Obtener año
         Calendar c2 = new GregorianCalendar();
-        txtPeriodo.setText(c2.get(Calendar.YEAR) + "");
+        int periodo = c2.get(Calendar.YEAR) + 1;
+        txtPeriodo.setText(periodo + "");
 
         //Metodos
         CargarComboBoxes();
@@ -417,7 +418,11 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
         txtPeriodo.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         txtPeriodo.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtPeriodo.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtPeriodo.setEnabled(false);
+        txtPeriodo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtPeriodoKeyTyped(evt);
+            }
+        });
 
         lblCodigo6.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblCodigo6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -671,6 +676,13 @@ public final class RegistrarMatricula extends javax.swing.JDialog {
     private void chbNoMatriculadosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chbNoMatriculadosItemStateChanged
         TablaAllAlumno(chbNoMatriculados.isSelected());
     }//GEN-LAST:event_chbNoMatriculadosItemStateChanged
+
+    private void txtPeriodoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPeriodoKeyTyped
+        metodostxt.SoloNumeroEnteroKeyTyped(evt);
+
+        //Cantidad de caracteres
+        metodostxt.TxtCantidadCaracteresKeyTyped(txtPeriodo, 4);
+    }//GEN-LAST:event_txtPeriodoKeyTyped
 
     List<Component> ordenTabulador;
 

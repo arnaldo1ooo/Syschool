@@ -64,6 +64,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
         //Llamar Metodos
         GenerarNumpago();
         CargarComboBoxes();
+        Limpiar();
         TablaAllConcepto();
         TablaAllApoderado();
 
@@ -83,13 +84,13 @@ public final class RegistrarPago extends javax.swing.JDialog {
     }
 
     public void TablaAllConcepto() {//Realiza la consulta de los productos que tenemos en la base de datos
-        String sentencia = "CALL SP_ConceptoConsulta()";
-        String titlesJtabla[] = {"Código", "Descripción", "Monto", "N° de pagos"};
+        String sentencia = "SELECT con_codigo, con_descripcion, con_tipoimporte, con_importe, con_numpagos, con_tipopago FROM concepto ORDER BY con_descripcion;";
+        String titlesJtabla[] = {"Código", "Descripción", "Tipo importe", "Importe", "N° de pagos", "Tipo de pago"};
         tbAllConcepto.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, null));
         double costo;
         for (int i = 0; i < tbAllConcepto.getRowCount(); i++) {
-            costo = Double.parseDouble(tbAllConcepto.getValueAt(i, 2) + "");
-            tbAllConcepto.setValueAt(metodostxt.DoubleAFormatoSudamerica(costo), i, 2);
+            costo = Double.parseDouble(tbAllConcepto.getValueAt(i, 3) + "");
+            tbAllConcepto.setValueAt(metodostxt.DoubleAFormatoSudamerica(costo), i, 3);
         }
         metodos.AnchuraColumna(tbAllConcepto);
     }
@@ -101,7 +102,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 int alumno = metodoscombo.ObtenerIDSelectComboBox(cbApoderado);
                 DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
                 String fechapago = formatoFecha.format(dcFechaPago.getDate());
-                double importe = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
+                double importe = metodostxt.DoubleAFormatoAmericano(txtImporteRecibido.getText());
 
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo pago?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
@@ -240,22 +241,27 @@ public final class RegistrarPago extends javax.swing.JDialog {
         tablemodelConceptoAPagar.setRowCount(0);
         btnAnadir.setEnabled(false);
         btnEliminar.setEnabled(false);
-        txtImporte.setEnabled(false);
-        txtImporte.setText("0");
-        txtImporte.setForeground(Color.BLACK);
+        txtImporteRecibido.setEnabled(false);
+        txtImporteRecibido.setText("0");
+        txtImporteRecibido.setForeground(Color.BLACK);
         txtVuelto.setText("0");
         txtTotalAPagar.setText("0");
         tbAllConcepto.clearSelection();
+
+        modeltablePoderantes = (DefaultTableModel) tbPoderantes.getModel();
+        modeltablePoderantes.setRowCount(0);
     }
 
     private boolean ComprobarCampos() {
         if (cbApoderado.getSelectedIndex() == -1) {
+            Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Seleccione el apoderado", "Advertencia", JOptionPane.WARNING_MESSAGE);
             cbApoderado.requestFocus();
             return false;
         }
 
         if (dcFechaPago.getDate() == null) {
+            Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Complete la fecha de pago", "Advertencia", JOptionPane.WARNING_MESSAGE);
             dcFechaPago.requestFocus();
             return false;
@@ -268,19 +274,19 @@ public final class RegistrarPago extends javax.swing.JDialog {
             return false;
         }
 
-        if (txtImporte.getText().equals("")) {
+        if (txtImporteRecibido.getText().equals("")) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Ingrese el importe", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtImporte.requestFocus();
+            txtImporteRecibido.requestFocus();
             return false;
         }
 
-        double importe = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
+        double importe = metodostxt.DoubleAFormatoAmericano(txtImporteRecibido.getText());
         double totalventa = metodostxt.DoubleAFormatoAmericano(txtTotalAPagar.getText());
-        if (totalventa > importe || txtImporte.getText().equals("")) {
+        if (totalventa > importe || txtImporteRecibido.getText().equals("")) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(null, "El importe debe ser mayor al total del pago", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtImporte.requestFocus();
+            txtImporteRecibido.requestFocus();
             return false;
         }
 
@@ -331,7 +337,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
         panel3 = new org.edisoncor.gui.panel.Panel();
         lbl4 = new javax.swing.JLabel();
         txtNumCuotasAPagar = new javax.swing.JTextField();
-        panel4 = new org.edisoncor.gui.panel.Panel();
+        pnCuotasPagadas = new org.edisoncor.gui.panel.Panel();
         lbl5 = new javax.swing.JLabel();
         lblNumCuotasPagados = new javax.swing.JLabel();
         lblCedula6 = new javax.swing.JLabel();
@@ -352,13 +358,8 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lblCancelado = new javax.swing.JLabel();
         btnAgregar2 = new org.edisoncor.gui.button.ButtonSeven();
         buttonSeven2 = new org.edisoncor.gui.button.ButtonSeven();
-        panel5 = new org.edisoncor.gui.panel.Panel();
-        lbl7 = new javax.swing.JLabel();
-        txtConcepto = new javax.swing.JTextField();
-        txtMonto = new javax.swing.JTextField();
-        lbl9 = new javax.swing.JLabel();
+        pnCuotasAPagar = new org.edisoncor.gui.panel.Panel();
         lbl3 = new javax.swing.JLabel();
-        lblCedula10 = new javax.swing.JLabel();
         pnMesesAPagar = new org.edisoncor.gui.panel.Panel();
         lblEne = new javax.swing.JLabel();
         lblFeb = new javax.swing.JLabel();
@@ -379,6 +380,11 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lblPoderantesBasico2 = new javax.swing.JLabel();
         lblPoderantesMedio = new javax.swing.JLabel();
         lblPoderantesBasico = new javax.swing.JLabel();
+        lbl7 = new javax.swing.JLabel();
+        txtConcepto = new javax.swing.JTextField();
+        lblImporte = new javax.swing.JLabel();
+        txtImporte = new javax.swing.JTextField();
+        lblCedula10 = new javax.swing.JLabel();
         BuscadorApoderado = new javax.swing.JDialog();
         panel6 = new org.edisoncor.gui.panel.Panel();
         jLabel12 = new javax.swing.JLabel();
@@ -392,7 +398,6 @@ public final class RegistrarPago extends javax.swing.JDialog {
             }
         };
         lbCantRegistrosApoderado = new javax.swing.JLabel();
-        panelRoundTranslucido1 = new org.edisoncor.gui.panel.PanelRoundTranslucido();
         jpPrincipal = new javax.swing.JPanel();
         jpBotones = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JButton();
@@ -418,7 +423,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lblNumPago = new org.edisoncor.gui.label.LabelMetric();
         jPanel3 = new javax.swing.JPanel();
         lblTituloTotalCompra1 = new javax.swing.JLabel();
-        txtImporte = new javax.swing.JTextField();
+        txtImporteRecibido = new javax.swing.JTextField();
         txtVuelto = new javax.swing.JTextField();
         lblTituloTotalCompra2 = new javax.swing.JLabel();
         lblTotalMoneda = new javax.swing.JLabel();
@@ -451,11 +456,11 @@ public final class RegistrarPago extends javax.swing.JDialog {
         AgregarPago.setTitle("Agregar pago");
         AgregarPago.setLocation(new java.awt.Point(0, 0));
         AgregarPago.setModal(true);
-        AgregarPago.setPreferredSize(new java.awt.Dimension(690, 365));
         AgregarPago.setResizable(false);
-        AgregarPago.setSize(new java.awt.Dimension(690, 365));
+        AgregarPago.setSize(new java.awt.Dimension(700, 382));
         AgregarPago.setType(java.awt.Window.Type.POPUP);
 
+        panel3.setPreferredSize(new java.awt.Dimension(700, 382));
         panel3.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 panel3KeyReleased(evt);
@@ -469,6 +474,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
 
         txtNumCuotasAPagar.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         txtNumCuotasAPagar.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtNumCuotasAPagar.setToolTipText("");
         txtNumCuotasAPagar.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtNumCuotasAPagar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -484,7 +490,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
             }
         });
 
-        panel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pnCuotasPagadas.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         lbl5.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lbl5.setForeground(new java.awt.Color(255, 255, 255));
@@ -622,12 +628,12 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lblCancelado.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblCancelado.setText("CANCELADO");
 
-        javax.swing.GroupLayout panel4Layout = new javax.swing.GroupLayout(panel4);
-        panel4.setLayout(panel4Layout);
-        panel4Layout.setHorizontalGroup(
-            panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout pnCuotasPagadasLayout = new javax.swing.GroupLayout(pnCuotasPagadas);
+        pnCuotasPagadas.setLayout(pnCuotasPagadasLayout);
+        pnCuotasPagadasLayout.setHorizontalGroup(
+            pnCuotasPagadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(pnMesesPagados, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(panel4Layout.createSequentialGroup()
+            .addGroup(pnCuotasPagadasLayout.createSequentialGroup()
                 .addGap(41, 41, 41)
                 .addComponent(lbl5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -640,11 +646,11 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 .addComponent(lblCancelado)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        panel4Layout.setVerticalGroup(
-            panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel4Layout.createSequentialGroup()
+        pnCuotasPagadasLayout.setVerticalGroup(
+            pnCuotasPagadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnCuotasPagadasLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                .addGroup(pnCuotasPagadasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(lbl5)
                     .addComponent(lblNumCuotasPagados)
                     .addComponent(lblCedula6)
@@ -671,55 +677,12 @@ public final class RegistrarPago extends javax.swing.JDialog {
             }
         });
 
-        panel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        lbl7.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        lbl7.setForeground(new java.awt.Color(255, 255, 255));
-        lbl7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lbl7.setText("Concepto:");
-
-        txtConcepto.setEditable(false);
-        txtConcepto.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        txtConcepto.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtConcepto.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtConcepto.setEnabled(false);
-        txtConcepto.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtConceptoKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtConceptoKeyTyped(evt);
-            }
-        });
-
-        txtMonto.setEditable(false);
-        txtMonto.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        txtMonto.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtMonto.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtMonto.setEnabled(false);
-        txtMonto.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtMontoKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtMontoKeyTyped(evt);
-            }
-        });
-
-        lbl9.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        lbl9.setForeground(new java.awt.Color(255, 255, 255));
-        lbl9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lbl9.setText("Monto:");
+        pnCuotasAPagar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         lbl3.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lbl3.setForeground(new java.awt.Color(255, 255, 255));
         lbl3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lbl3.setText("Cuotas a pagar");
-
-        lblCedula10.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        lblCedula10.setForeground(new java.awt.Color(255, 255, 255));
-        lblCedula10.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblCedula10.setText("Guaranies");
 
         lblEne.setFont(new java.awt.Font("sansserif", 0, 11)); // NOI18N
         lblEne.setForeground(new java.awt.Color(255, 255, 255));
@@ -836,44 +799,24 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout panel5Layout = new javax.swing.GroupLayout(panel5);
-        panel5.setLayout(panel5Layout);
-        panel5Layout.setHorizontalGroup(
-            panel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout pnCuotasAPagarLayout = new javax.swing.GroupLayout(pnCuotasAPagar);
+        pnCuotasAPagar.setLayout(pnCuotasAPagarLayout);
+        pnCuotasAPagarLayout.setHorizontalGroup(
+            pnCuotasAPagarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(pnMesesAPagar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(panel5Layout.createSequentialGroup()
-                .addGroup(panel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panel5Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(lbl7, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(2, 2, 2)
-                        .addComponent(txtConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(28, 28, 28)
-                        .addComponent(lbl9)
-                        .addGap(2, 2, 2)
-                        .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(2, 2, 2)
-                        .addComponent(lblCedula10))
-                    .addGroup(panel5Layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addComponent(lbl3)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(pnCuotasAPagarLayout.createSequentialGroup()
+                .addGap(39, 39, 39)
+                .addComponent(lbl3)
+                .addContainerGap(518, Short.MAX_VALUE))
         );
-        panel5Layout.setVerticalGroup(
-            panel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel5Layout.createSequentialGroup()
+        pnCuotasAPagarLayout.setVerticalGroup(
+            pnCuotasAPagarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnCuotasAPagarLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(lbl7)
-                    .addComponent(txtConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbl9)
-                    .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblCedula10))
-                .addGap(18, 18, 18)
                 .addComponent(lbl3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(pnMesesAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(79, 79, 79))
+                .addGap(125, 125, 125))
         );
 
         lbl10.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
@@ -920,56 +863,116 @@ public final class RegistrarPago extends javax.swing.JDialog {
         lblPoderantesBasico.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblPoderantesBasico.setText("NO");
 
+        lbl7.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        lbl7.setForeground(new java.awt.Color(255, 255, 255));
+        lbl7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbl7.setText("Concepto:");
+
+        txtConcepto.setEditable(false);
+        txtConcepto.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        txtConcepto.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txtConcepto.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtConcepto.setEnabled(false);
+        txtConcepto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtConceptoKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtConceptoKeyTyped(evt);
+            }
+        });
+
+        lblImporte.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        lblImporte.setForeground(new java.awt.Color(255, 255, 255));
+        lblImporte.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblImporte.setText("Importe:");
+
+        txtImporte.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        txtImporte.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtImporte.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtImporte.setEnabled(false);
+        txtImporte.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtImporteKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtImporteKeyTyped(evt);
+            }
+        });
+
+        lblCedula10.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        lblCedula10.setForeground(new java.awt.Color(255, 255, 255));
+        lblCedula10.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCedula10.setText("Guaranies");
+
         javax.swing.GroupLayout panel3Layout = new javax.swing.GroupLayout(panel3);
         panel3.setLayout(panel3Layout);
         panel3Layout.setHorizontalGroup(
             panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel3Layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel3Layout.createSequentialGroup()
-                        .addComponent(lbl4)
+                        .addGap(18, 18, 18)
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(panel3Layout.createSequentialGroup()
+                                .addComponent(lbl4)
+                                .addGap(2, 2, 2)
+                                .addComponent(txtNumCuotasAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(35, 35, 35)
+                                .addComponent(lbl10)
+                                .addGap(2, 2, 2)
+                                .addComponent(txtSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(2, 2, 2)
+                                .addComponent(lbl8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(lblPoderantesBasico2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lblPoderantesMedio2, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(lblPoderantesBasico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lblPoderantesMedio, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(pnCuotasPagadas, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(pnCuotasAPagar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panel3Layout.createSequentialGroup()
+                        .addGap(229, 229, 229)
+                        .addComponent(btnAgregar2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(buttonSeven2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panel3Layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(lbl7, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(2, 2, 2)
-                        .addComponent(txtNumCuotasAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(35, 35, 35)
-                        .addComponent(lbl10)
+                        .addComponent(txtConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(lblImporte)
                         .addGap(2, 2, 2)
-                        .addComponent(txtSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtImporte, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(2, 2, 2)
-                        .addComponent(lbl8)
-                        .addGap(57, 57, 57)
-                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblPoderantesBasico2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblPoderantesMedio2, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblPoderantesBasico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblPoderantesMedio, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(panel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(panel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(0, 19, Short.MAX_VALUE))
-            .addGroup(panel3Layout.createSequentialGroup()
-                .addGap(233, 233, 233)
-                .addComponent(btnAgregar2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(buttonSeven2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lblCedula10)))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
         panel3Layout.setVerticalGroup(
             panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(panel5, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(10, Short.MAX_VALUE)
+                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lbl7)
+                    .addComponent(txtConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblImporte)
+                    .addComponent(txtImporte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCedula10))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pnCuotasAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26)
-                .addComponent(panel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pnCuotasPagadas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(lbl4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtNumCuotasAPagar)
-                    .addComponent(lbl10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtSubtotal)
-                    .addComponent(lbl8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbl4)
+                    .addComponent(txtNumCuotasAPagar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl10)
+                    .addComponent(txtSubtotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbl8)
                     .addGroup(panel3Layout.createSequentialGroup()
                         .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblPoderantesBasico2)
@@ -982,14 +985,14 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAgregar2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(buttonSeven2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addGap(63, 63, 63))
         );
 
         javax.swing.GroupLayout AgregarPagoLayout = new javax.swing.GroupLayout(AgregarPago.getContentPane());
         AgregarPago.getContentPane().setLayout(AgregarPagoLayout);
         AgregarPagoLayout.setHorizontalGroup(
             AgregarPagoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         AgregarPagoLayout.setVerticalGroup(
             AgregarPagoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1105,25 +1108,14 @@ public final class RegistrarPago extends javax.swing.JDialog {
             .addComponent(panel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout panelRoundTranslucido1Layout = new javax.swing.GroupLayout(panelRoundTranslucido1);
-        panelRoundTranslucido1.setLayout(panelRoundTranslucido1Layout);
-        panelRoundTranslucido1Layout.setHorizontalGroup(
-            panelRoundTranslucido1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        panelRoundTranslucido1Layout.setVerticalGroup(
-            panelRoundTranslucido1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-
-        setTitle("Ventana Registrar Compra");
+        setTitle("Ventana Registrar Pagos");
         setBackground(new java.awt.Color(45, 62, 80));
-        setPreferredSize(new java.awt.Dimension(950, 575));
+        setPreferredSize(new java.awt.Dimension(1244, 575));
         setResizable(false);
-        setSize(new java.awt.Dimension(950, 575));
+        setSize(new java.awt.Dimension(1244, 575));
 
         jpPrincipal.setBackground(new java.awt.Color(233, 255, 255));
-        jpPrincipal.setPreferredSize(new java.awt.Dimension(1580, 478));
+        jpPrincipal.setPreferredSize(new java.awt.Dimension(1244, 575));
 
         jpBotones.setBackground(new java.awt.Color(233, 255, 255));
         jpBotones.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder()));
@@ -1293,24 +1285,31 @@ public final class RegistrarPago extends javax.swing.JDialog {
                         .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(dcFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(87, 87, 87)
                 .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblPoderantes)
-                    .addComponent(scAllConcepto1, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15))
+                    .addGroup(jpDatosVentaLayout.createSequentialGroup()
+                        .addComponent(lblPoderantes)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(scAllConcepto1))
+                .addContainerGap())
         );
         jpDatosVentaLayout.setVerticalGroup(
             jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpDatosVentaLayout.createSequentialGroup()
                 .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpDatosVentaLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(btnBuscarApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jpDatosVentaLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lblPoderantes)
-                            .addComponent(lblApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(2, 2, 2)
                         .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jpDatosVentaLayout.createSequentialGroup()
+                                .addComponent(lblPoderantes)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(scAllConcepto1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jpDatosVentaLayout.createSequentialGroup()
+                                .addComponent(lblApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(2, 2, 2)
                                 .addComponent(cbApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
@@ -1319,13 +1318,8 @@ public final class RegistrarPago extends javax.swing.JDialog {
                                 .addGap(2, 2, 2)
                                 .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                                     .addComponent(txtCedulaApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(dcFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(scAllConcepto1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                    .addGroup(jpDatosVentaLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(btnBuscarApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                                    .addComponent(dcFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panel2.setColorPrimario(new java.awt.Color(0, 153, 153));
@@ -1375,23 +1369,23 @@ public final class RegistrarPago extends javax.swing.JDialog {
 
         lblTituloTotalCompra1.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblTituloTotalCompra1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblTituloTotalCompra1.setText("IMPORTE");
+        lblTituloTotalCompra1.setText("IMPORTE RECIBIDO");
         lblTituloTotalCompra1.setFocusable(false);
 
-        txtImporte.setFont(new java.awt.Font("sansserif", 1, 22)); // NOI18N
-        txtImporte.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtImporte.setEnabled(false);
-        txtImporte.addActionListener(new java.awt.event.ActionListener() {
+        txtImporteRecibido.setFont(new java.awt.Font("sansserif", 1, 22)); // NOI18N
+        txtImporteRecibido.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtImporteRecibido.setEnabled(false);
+        txtImporteRecibido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtImporteActionPerformed(evt);
+                txtImporteRecibidoActionPerformed(evt);
             }
         });
-        txtImporte.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtImporteRecibido.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtImporteKeyReleased(evt);
+                txtImporteRecibidoKeyReleased(evt);
             }
             public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtImporteKeyTyped(evt);
+                txtImporteRecibidoKeyTyped(evt);
             }
         });
 
@@ -1458,7 +1452,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(txtImporte, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtImporteRecibido, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(3, 3, 3)
                         .addComponent(lblTotalMoneda1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lblTituloTotalCompra1))
@@ -1488,7 +1482,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
                     .addComponent(lblTituloTotalCompra))
                 .addGap(2, 2, 2)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(txtImporte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtImporteRecibido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblTotalMoneda1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtVuelto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblTotalMoneda2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1529,7 +1523,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Codigo", "Concepto", "Cuotas pagadas", "Cuotas a pagar", "Mes", "Monto", "Subtotal"
+                "Codigo", "Concepto", "Cuotas pagadas", "Cuotas a pagar", "Mes", "Importe", "Subtotal"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -1583,11 +1577,11 @@ public final class RegistrarPago extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Codigo", "Concepto", "Monto", "N° de pagos"
+                "Codigo", "Concepto", "Tipo de importe", "Importe", "N° de pagos", "Tipo de pago"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -1614,24 +1608,22 @@ public final class RegistrarPago extends javax.swing.JDialog {
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(scAllConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(scAllConcepto, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnAnadir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 343, Short.MAX_VALUE))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(scConceptoAPagar)
-                        .addContainerGap())))
+                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(scConceptoAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1694,20 +1686,20 @@ public final class RegistrarPago extends javax.swing.JDialog {
         jpPrincipalLayout.setHorizontalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(400, 400, 400))
             .addGroup(jpPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
+                    .addGroup(jpPrincipalLayout.createSequentialGroup()
                         .addComponent(jpDatosVenta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(panel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
-            .addGroup(jpPrincipalLayout.createSequentialGroup()
-                .addGap(266, 266, 266)
-                .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1730,14 +1722,14 @@ public final class RegistrarPago extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 950, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
-        getAccessibleContext().setAccessibleName("RegistrarCompra");
+        getAccessibleContext().setAccessibleName("RegistrarPago");
 
         pack();
         setLocationRelativeTo(null);
@@ -1745,14 +1737,83 @@ public final class RegistrarPago extends javax.swing.JDialog {
 
 
     private void btnAnadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnadirActionPerformed
-//SI EL APODERADO NO TIENE ALUMNOS A SU CARGO
+        //Verificar si se selecciono un apoderado
+        if (cbApoderado.getSelectedIndex() == -1) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "Seleccione el apoderado", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            cbApoderado.requestFocus();
+            return;
+        }
+
+        //SI EL APODERADO NO TIENE ALUMNOS A SU CARGO
         if (tbPoderantes.getRowCount() == 0) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "El Apoderado seleccionado no tiene ningún alumno a su cargo", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-//VERIFICAR CANTIDAD DE PODERANTES DEL BASICO Y MEDIO
+        //Si no se selecciono a un apoderado
+        if (cbApoderado.getSelectedIndex() == -1) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "Seleccione un apoderado", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            cbApoderado.requestFocus();
+            return;
+        }
+
+        //Si no se seleccionó ningun concepto
+        if (tbAllConcepto.getSelectedRowCount() == 0) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "Seleccione el concepto a agregar", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            txtBuscar.requestFocus();
+            return;
+        }
+
+        //Ver si el concepto a agregar ya fue agregado
+        String codconceptoselect = tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 0) + "";
+        String codagregado;
+        for (int fila = 0; fila < tbConceptoAPagar.getRowCount(); fila++) {
+            codagregado = tbConceptoAPagar.getValueAt(fila, 0) + "";
+            if (codconceptoselect.equals(codagregado)) {
+                Toolkit.getDefaultToolkit().beep();
+                JOptionPane.showMessageDialog(this, "Este pago ya fue agregado", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+        }
+
+        String tipoimporte = tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 2) + "";
+        switch (tipoimporte) {
+            case "FIJO":
+                //pnCuotasAPagar.setVisible(true);
+                //pnCuotasPagadas.setVisible(true);
+                txtImporte.setEnabled(false);
+                break;
+            case "VARIABLE":
+                //pnCuotasAPagar.setVisible(false);
+                //pnCuotasPagadas.setVisible(false);
+                txtImporte.setEnabled(true);
+                break;
+            default:
+                System.out.println("No existe en el sistema el tipo de importe seleccionado");
+                break;
+        }
+
+        String tipopago = tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 5) + "";
+        switch (tipopago) {
+            case "UNICO":
+                txtNumCuotasAPagar.setText("1");
+                
+                txtNumCuotasAPagar.setEnabled(false);
+                break;
+            case "MENSUAL":
+                txtNumCuotasAPagar.setText("0");
+                txtNumCuotasAPagar.setEnabled(true);
+                break;
+            default:
+                System.out.println("No existe en el sistema el tipo de pago seleccionado");
+                break;
+        }
+
+        //Verificar cantidad de poderantes del basico y medio
         String cantbasico = "NO";
         int cantmedio = 0;
         String nivel;
@@ -1761,8 +1822,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
             nivel = tbPoderantes.getValueAt(i, 2) + "";
             if (nivel.equals("NO MATRICULADO")) {
                 Toolkit.getDefaultToolkit().beep();
-                JOptionPane.showMessageDialog(this, "Existe uno o más Poderantes no matriculados, no se puede realizar el pago",
-                        "Advertencia", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Existe uno o más Poderantes no matriculados, no se puede realizar el pago", "Advertencia", JOptionPane.WARNING_MESSAGE);
                 con.DesconectarBasedeDatos();
                 return;
             } else {
@@ -1787,96 +1847,75 @@ public final class RegistrarPago extends javax.swing.JDialog {
         }
         con.DesconectarBasedeDatos();
 
-        String codconceptoselect = tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 0) + "";
-        for (int f = 0; f < tbConceptoAPagar.getRowCount(); f++) {
-            String codagregado = tbConceptoAPagar.getValueAt(f, 0) + "";
-            if (codconceptoselect.equals(codagregado)) {
-                Toolkit.getDefaultToolkit().beep();
-                JOptionPane.showMessageDialog(null, "Este pago ya fue agregado", "Advertencia", JOptionPane.WARNING_MESSAGE);
-                return;
+        //Cargar valores del concepto a ventana agregar pago
+        txtConcepto.setText(tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 1) + "");
+        txtImporte.setText(tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 3) + "");
+        lblNumTotalCuotas.setText(tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 4) + "");
+        txtSubtotal.setText("0");
+        numactual = 0;
+
+        try {
+            int codconcepto = Integer.parseInt(tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 0) + "");
+            //Obtener numero de cuotas pagados
+            int codapoderado = metodoscombo.ObtenerIDSelectComboBox(cbApoderado);
+            con = con.ObtenerRSSentencia("SELECT SUM(pagcon_numcuotas) AS sumanumcuotas "
+                    + "FROM pago, pago_concepto "
+                    + "WHERE pagcon_concepto = '" + codconcepto + "' AND pag_apoderado = '" + codapoderado + "' "
+                    + "AND YEAR(pag_fechapago) = '" + lblAnhoActual.getText() + "' AND pag_codigo = pagcon_pago");
+            while (con.rs.next()) {
+                lblNumCuotasPagados.setText(con.rs.getInt("sumanumcuotas") + "");
             }
-        }
-
-        if (cbApoderado.getSelectedIndex() == -1) {
-            Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(null, "Seleccione un apoderado", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            cbApoderado.requestFocus();
-            return;
-        }
-
-        if (tbAllConcepto.getSelectedRowCount() > 0) {
-            txtConcepto.setText(tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 1) + "");
-            txtMonto.setText(tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 2) + "");
-            lblNumTotalCuotas.setText(tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 3) + "");
-            txtNumCuotasAPagar.setText("");
-            txtSubtotal.setText("0");
-            numactual = 0;
-
-            try {
-                int codconcepto = Integer.parseInt(tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 0) + "");
-                //Obtener numero de cuotas pagados
-                int codapoderado = metodoscombo.ObtenerIDSelectComboBox(cbApoderado);
-                con = con.ObtenerRSSentencia("SELECT SUM(pagcon_numcuotas) AS sumanumcuotas "
-                        + "FROM pago, pago_concepto "
-                        + "WHERE pagcon_concepto = '" + codconcepto + "' AND pag_apoderado = '" + codapoderado + "' "
-                        + "AND YEAR(pag_fechapago) = '" + lblAnhoActual.getText() + "' AND pag_codigo = pagcon_pago");
-                while (con.rs.next()) {
-                    lblNumCuotasPagados.setText(con.rs.getInt("sumanumcuotas") + "");
-                }
-                //Obtener meses a pagar
-                con = con.ObtenerRSSentencia("SELECT con_ene, con_feb, con_mar, con_abr, con_may, con_jun, con_jul, "
-                        + "con_ago, con_sep, con_oct, con_nov, con_dic FROM concepto WHERE con_codigo = '" + codconcepto + "'");
-                //Recorrer los meses
-                int numcuotaspagados = Integer.parseInt(lblNumCuotasPagados.getText());
-                Component[] compMesesAPagar = pnMesesAPagar.getComponents();
-                Component[] compMesesPagados = pnMesesPagados.getComponents();
-                ImageIcon iconoX = new ImageIcon(getClass().getResource("/iconos/Iconos20x20/0.png"));
-                ImageIcon iconoOK = new ImageIcon(getClass().getResource("/iconos/Iconos20x20/1.png"));
-                JLabel labelactual;
-                if (con.rs.next()) {
-                    for (int i = 0; i < compMesesAPagar.length; i++) {
-                        //Meses a pagar
-                        if (compMesesAPagar[i] instanceof JLabel) { //Si es Jlabel 
-                            labelactual = ((JLabel) compMesesAPagar[i]);
-                            labelactual.setIcon(new ImageIcon(getClass().getResource("/iconos/Iconos20x20/" + con.rs.getInt(i + 1) + ".png")));
-                            labelactual.setEnabled(con.rs.getBoolean(i + 1));
-                        }
-                        //Meses pagados
-                        if (compMesesPagados[i] instanceof JLabel) { //Si es Jlabel
-                            labelactual = ((JLabel) compMesesPagados[i]);
-                            labelactual.setEnabled(con.rs.getBoolean(i + 1));
-                            labelactual.setIcon(iconoX);
-                            if (numcuotaspagados > 0) {
-                                if (labelactual.isEnabled() && labelactual.getIcon().toString().equals(iconoX.toString())) {
-                                    labelactual.setIcon(iconoOK);
-                                    numcuotaspagados = numcuotaspagados - 1;
-                                }
+            //Obtener meses a pagar
+            con = con.ObtenerRSSentencia("SELECT con_ene, con_feb, con_mar, con_abr, con_may, con_jun, con_jul, "
+                    + "con_ago, con_sep, con_oct, con_nov, con_dic FROM concepto WHERE con_codigo = '" + codconcepto + "'");
+            //Recorrer los meses
+            int numcuotaspagados = Integer.parseInt(lblNumCuotasPagados.getText());
+            Component[] compMesesAPagar = pnMesesAPagar.getComponents();
+            Component[] compMesesPagados = pnMesesPagados.getComponents();
+            ImageIcon iconoX = new ImageIcon(getClass().getResource("/iconos/Iconos20x20/0.png"));
+            ImageIcon iconoOK = new ImageIcon(getClass().getResource("/iconos/Iconos20x20/1.png"));
+            JLabel labelactual;
+            if (con.rs.next()) {
+                for (int i = 0; i < compMesesAPagar.length; i++) {
+                    //Meses a pagar
+                    if (compMesesAPagar[i] instanceof JLabel) { //Si es Jlabel 
+                        labelactual = ((JLabel) compMesesAPagar[i]);
+                        labelactual.setIcon(new ImageIcon(getClass().getResource("/iconos/Iconos20x20/" + con.rs.getInt(i + 1) + ".png")));
+                        labelactual.setEnabled(con.rs.getBoolean(i + 1));
+                    }
+                    //Meses pagados
+                    if (compMesesPagados[i] instanceof JLabel) { //Si es Jlabel
+                        labelactual = ((JLabel) compMesesPagados[i]);
+                        labelactual.setEnabled(con.rs.getBoolean(i + 1));
+                        labelactual.setIcon(iconoX);
+                        if (numcuotaspagados > 0) {
+                            if (labelactual.isEnabled() && labelactual.getIcon().toString().equals(iconoX.toString())) {
+                                labelactual.setIcon(iconoOK);
+                                numcuotaspagados = numcuotaspagados - 1;
                             }
                         }
                     }
                 }
-            } catch (SQLException e) {
-                System.out.println("error rs ");
-                e.printStackTrace();
             }
-            con.DesconectarBasedeDatos();
-
-            if (lblNumCuotasPagados.getText().equals(lblNumTotalCuotas.getText())) { //Si todas las cuotas ya fueron pagadas
-                txtNumCuotasAPagar.setEnabled(false);
-                btnAgregar2.setEnabled(false);
-                lblCancelado.setVisible(true);
-            } else {
-                txtNumCuotasAPagar.setEnabled(true);
-                btnAgregar2.setEnabled(true);
-                lblCancelado.setVisible(false);
-            }
-
-            AgregarPago.setLocationRelativeTo(null); //Centrar
-            AgregarPago.setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(null, "Seleccione el concepto a agregar", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtBuscar.requestFocus();
+        } catch (SQLException e) {
+            System.out.println("error rs ");
+            e.printStackTrace();
         }
+        con.DesconectarBasedeDatos();
+
+        if (lblNumCuotasPagados.getText().equals(lblNumTotalCuotas.getText())) { //Si todas las cuotas ya fueron pagadas
+            txtNumCuotasAPagar.setEnabled(false);
+            btnAgregar2.setEnabled(false);
+            lblCancelado.setVisible(true);
+        } else {
+            btnAgregar2.setEnabled(true);
+            lblCancelado.setVisible(false);
+        }
+
+        IconMesesAPagar();
+        
+        AgregarPago.setLocationRelativeTo(this); //Centrar
+        AgregarPago.setVisible(true);
     }//GEN-LAST:event_btnAnadirActionPerformed
 
     private void SumarSubtotal() {
@@ -1894,8 +1933,8 @@ public final class RegistrarPago extends javax.swing.JDialog {
             SumarSubtotal();
 
             if (tbConceptoAPagar.getRowCount() <= 0) {
-                txtImporte.setEnabled(false);
-                txtImporte.setText("");
+                txtImporteRecibido.setEnabled(false);
+                txtImporteRecibido.setText("");
                 txtVuelto.setText("");
                 btnEliminar.setEnabled(false);
             }
@@ -1931,41 +1970,41 @@ public final class RegistrarPago extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtVueltoActionPerformed
 
-    private void txtImporteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyTyped
-        metodostxt.TxtCantidadCaracteresKeyTyped(txtImporte, 11);
-        metodostxt.SoloNumeroDecimalKeyTyped(evt, txtImporte);
-    }//GEN-LAST:event_txtImporteKeyTyped
+    private void txtImporteRecibidoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteRecibidoKeyTyped
+        metodostxt.TxtCantidadCaracteresKeyTyped(txtImporteRecibido, 11);
+        metodostxt.SoloNumeroDecimalKeyTyped(evt, txtImporteRecibido);
+    }//GEN-LAST:event_txtImporteRecibidoKeyTyped
 
     private void CalcularVuelto() {
-        double importe = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
+        double importe = metodostxt.DoubleAFormatoAmericano(txtImporteRecibido.getText());
         double totalAPagar = metodostxt.DoubleAFormatoAmericano(txtTotalAPagar.getText());
         if (totalAPagar > importe) {
-            txtImporte.setForeground(Color.RED);
+            txtImporteRecibido.setForeground(Color.RED);
             txtVuelto.setText("0");
         } else {
-            txtImporte.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtImporte.getText()));
+            txtImporteRecibido.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtImporteRecibido.getText()));
             double vuelto = importe - totalAPagar;
             vuelto = metodostxt.FormatearATresDecimales(vuelto);
             txtVuelto.setText(metodostxt.DoubleAFormatoSudamerica(vuelto));
-            txtImporte.setForeground(new Color(0, 153, 51)); //Verde
+            txtImporteRecibido.setForeground(new Color(0, 153, 51)); //Verde
         }
     }
 
-    private void txtImporteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyReleased
-        if (txtImporte.getText().equals("") == false) {
-            txtImporte.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtImporte.getText()));
+    private void txtImporteRecibidoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteRecibidoKeyReleased
+        if (txtImporteRecibido.getText().equals("") == false) {
+            txtImporteRecibido.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtImporteRecibido.getText()));
             CalcularVuelto();
         }
 
-    }//GEN-LAST:event_txtImporteKeyReleased
+    }//GEN-LAST:event_txtImporteRecibidoKeyReleased
 
     private void txtTotalAPagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTotalAPagarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTotalAPagarActionPerformed
 
-    private void txtImporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtImporteActionPerformed
+    private void txtImporteRecibidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtImporteRecibidoActionPerformed
         btnGuardar.doClick();
-    }//GEN-LAST:event_txtImporteActionPerformed
+    }//GEN-LAST:event_txtImporteRecibidoActionPerformed
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
         metodos.FiltroJTable(txtBuscar.getText(), 1, tbAllConcepto);
@@ -2046,11 +2085,15 @@ public final class RegistrarPago extends javax.swing.JDialog {
 
     int numactual = 0;
     private void txtNumCuotasAPagarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNumCuotasAPagarKeyReleased
+        IconMesesAPagar();
+    }//GEN-LAST:event_txtNumCuotasAPagarKeyReleased
+
+    private void IconMesesAPagar() throws NumberFormatException, HeadlessException {
         if (txtNumCuotasAPagar.getText().equals("") == false) {
             int numCuotasAPagar = Integer.parseInt(txtNumCuotasAPagar.getText());
             int numCuotasPagados = Integer.parseInt(lblNumCuotasPagados.getText());
             int numTotalCuotas = Integer.parseInt(lblNumTotalCuotas.getText());
-
+            
             if (numCuotasAPagar > (numTotalCuotas - numCuotasPagados)) {
                 Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(null, "El número de cuotas a pagar no puede ser mayor al número de cuotas faltantes",
@@ -2059,9 +2102,9 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 txtSubtotal.setText("0");
                 return;
             }
-
-            double monto = metodostxt.DoubleAFormatoAmericano(txtMonto.getText());
-
+            
+            double importe = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
+            
             //Sumar cantidad de poderantes basicos y medio
             int numpoderantes = 0;
             if (lblPoderantesBasico.getText().equals("SI")) {
@@ -2070,9 +2113,9 @@ public final class RegistrarPago extends javax.swing.JDialog {
             if (lblPoderantesMedio.getText().equals("0") == false) {
                 numpoderantes = numpoderantes + Integer.parseInt(lblPoderantesMedio.getText());
             }
-            monto = monto * numpoderantes;
-
-            txtSubtotal.setText(metodostxt.DoubleAFormatoSudamerica(numCuotasAPagar * monto));
+            importe = importe * numpoderantes;
+            
+            txtSubtotal.setText(metodostxt.DoubleAFormatoSudamerica(numCuotasAPagar * importe));
             if (numactual != Integer.parseInt(txtNumCuotasAPagar.getText())) { //Si el numero ingresado no es el mismo
                 numactual = Integer.parseInt(txtNumCuotasAPagar.getText());
                 //Recorrer los meses y poner checks sin pagar
@@ -2111,15 +2154,19 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 }
             }
         }
-    }//GEN-LAST:event_txtNumCuotasAPagarKeyReleased
+    }
 
-    private void txtMontoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMontoKeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtMontoKeyReleased
+    private void txtImporteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyReleased
+        txtImporte.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtImporte.getText()));
+        
+        double importe = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
+        int numcuotas = Integer.parseInt(txtNumCuotasAPagar.getText());
+        txtSubtotal.setText(metodostxt.DoubleAFormatoSudamerica(importe * numcuotas));
+    }//GEN-LAST:event_txtImporteKeyReleased
 
-    private void txtMontoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMontoKeyTyped
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtMontoKeyTyped
+    private void txtImporteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyTyped
+        metodostxt.SoloNumeroDecimalKeyTyped(evt, txtImporte);
+    }//GEN-LAST:event_txtImporteKeyTyped
 
     private void buttonSeven2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSeven2ActionPerformed
         AgregarPago.dispose();
@@ -2134,8 +2181,16 @@ public final class RegistrarPago extends javax.swing.JDialog {
     }//GEN-LAST:event_txtSubtotalKeyTyped
 
     private void btnAgregar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregar2ActionPerformed
-        if (txtNumCuotasAPagar.getText().equals("")) {
-            JOptionPane.showMessageDialog(null, "El número de cuotas a pagar no puede ser vacío", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        if (txtNumCuotasAPagar.getText().equals("") || txtNumCuotasAPagar.getText().equals("0")) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(AgregarPago, "El número de cuotas a pagar no puede ser vacío o 0", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            txtNumCuotasAPagar.requestFocus();
+            return;
+        }
+
+        if (txtImporte.getText().equals("") || txtImporte.getText().equals("0")) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(AgregarPago, "El importe no puede ser vacío o 0", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtNumCuotasAPagar.requestFocus();
             return;
         }
@@ -2168,6 +2223,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
             }
         }
         String meses;
+
         if (mes2.equals("")) {
             meses = mes1;
         } else {
@@ -2175,7 +2231,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
         }
 
         int numcuotas = Integer.parseInt(txtNumCuotasAPagar.getText());
-        String monto = txtMonto.getText();
+        String importe = txtImporte.getText();
         String subtotal = txtSubtotal.getText();
 
         if (numcuotas <= 0) {
@@ -2184,19 +2240,19 @@ public final class RegistrarPago extends javax.swing.JDialog {
             return;
         }
 
-        tablemodelConceptoAPagar.addRow(new Object[]{codigo, concepto, numcuotastotalpagados, numcuotas, meses, monto, subtotal});
+        tablemodelConceptoAPagar.addRow(new Object[]{codigo, concepto, numcuotastotalpagados, numcuotas, meses, importe, subtotal});
         tbConceptoAPagar.setModel(tablemodelConceptoAPagar);
         //metodos.AnchuraColumna(tbConceptoAPagar);
 
         SumarSubtotal();
 
         if (tbConceptoAPagar.getRowCount() > 0) {
-            txtImporte.setEnabled(true);
+            txtImporteRecibido.setEnabled(true);
         } else {
-            txtImporte.setEnabled(false);
+            txtImporteRecibido.setEnabled(false);
         }
 
-        txtImporte.requestFocus();
+        txtImporteRecibido.requestFocus();
         AgregarPago.dispose();
     }//GEN-LAST:event_btnAgregar2ActionPerformed
 
@@ -2248,7 +2304,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
         ordenTabulador = new ArrayList<>();
         ordenTabulador.add(cbApoderado);
         ordenTabulador.add(dcFechaPago);
-        ordenTabulador.add(txtImporte);
+        ordenTabulador.add(txtImporteRecibido);
         ordenTabulador.add(btnGuardar);
         setFocusTraversalPolicy(new PersonalizadoFocusTraversalPolicy());
 
@@ -2311,7 +2367,6 @@ public final class RegistrarPago extends javax.swing.JDialog {
     private javax.swing.JLabel lbl5;
     private javax.swing.JLabel lbl7;
     private javax.swing.JLabel lbl8;
-    private javax.swing.JLabel lbl9;
     private javax.swing.JLabel lblAbr;
     private javax.swing.JLabel lblAbr2;
     private javax.swing.JLabel lblAgo;
@@ -2330,6 +2385,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
     private javax.swing.JLabel lblFeb;
     private javax.swing.JLabel lblFeb2;
     private javax.swing.JLabel lblFechaPago;
+    private javax.swing.JLabel lblImporte;
     private javax.swing.JLabel lblJul;
     private javax.swing.JLabel lblJul2;
     private javax.swing.JLabel lblJun;
@@ -2361,11 +2417,10 @@ public final class RegistrarPago extends javax.swing.JDialog {
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel2;
     private org.edisoncor.gui.panel.Panel panel3;
-    private org.edisoncor.gui.panel.Panel panel4;
-    private org.edisoncor.gui.panel.Panel panel5;
     private org.edisoncor.gui.panel.Panel panel6;
     private org.edisoncor.gui.panel.Panel panel7;
-    private org.edisoncor.gui.panel.PanelRoundTranslucido panelRoundTranslucido1;
+    private org.edisoncor.gui.panel.Panel pnCuotasAPagar;
+    private org.edisoncor.gui.panel.Panel pnCuotasPagadas;
     private org.edisoncor.gui.panel.Panel pnMesesAPagar;
     private org.edisoncor.gui.panel.Panel pnMesesPagados;
     private javax.swing.JScrollPane scAllConcepto;
@@ -2381,7 +2436,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
     private javax.swing.JTextField txtCedulaApoderado;
     private javax.swing.JTextField txtConcepto;
     private javax.swing.JTextField txtImporte;
-    private javax.swing.JTextField txtMonto;
+    private javax.swing.JTextField txtImporteRecibido;
     private javax.swing.JTextField txtNumCuotasAPagar;
     private javax.swing.JTextField txtSubtotal;
     private javax.swing.JTextField txtTotalAPagar;

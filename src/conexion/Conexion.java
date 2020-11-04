@@ -151,13 +151,17 @@ public class Conexion {
         return NumColumnsRS;
     }
 
+    DefaultTableModel modelotabla;
+    ResultSetMetaData mdrs;
+    int numColumns;
+    Object[] registro;
     public DefaultTableModel ConsultaTableBD(String sentencia, String titlesJtabla[], JComboBox ElComboCampos) {
-        DefaultTableModel modelotabla = new DefaultTableModel(null, titlesJtabla);
-        Conexion con = ObtenerRSSentencia(sentencia);
+        modelotabla = new DefaultTableModel(null, titlesJtabla);
+        con = ObtenerRSSentencia(sentencia);
         try {
-            ResultSetMetaData mdrs = con.rs.getMetaData();
-            int numColumns = mdrs.getColumnCount();
-            Object[] registro = new Object[numColumns]; //el numero es la cantidad de columnas del rs
+            mdrs = con.rs.getMetaData();
+            numColumns = mdrs.getColumnCount();
+            registro = new Object[numColumns]; //el numero es la cantidad de columnas del rs
             while (con.rs.next()) {
                 for (int c = 0; c < numColumns; c++) {
                     registro[c] = (con.rs.getString(c + 1));

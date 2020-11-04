@@ -352,7 +352,7 @@ public final class RegistrarGasto extends javax.swing.JDialog {
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
                         .addComponent(lblPrivilegio, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(9, 9, 9))))
             .addGroup(jpPrincipalLayout.createSequentialGroup()
                 .addGap(75, 75, 75)

@@ -129,11 +129,11 @@ public class Metodos {
     }
 
     public void FiltroJTable(String cadenaABuscar, int columnaABuscar, JTable ElJTable) {
+        //System.out.println("Metodo FiltroJTable:  cadena: " + cadenaABuscar + ", columna: " + columnaABuscar);
         TableRowSorter modelFiltrado = new TableRowSorter<>(ElJTable.getModel());
         modelFiltrado.setRowFilter(RowFilter.regexFilter("(?i)" + cadenaABuscar, columnaABuscar));
         ElJTable.setRowSorter(modelFiltrado);
         ElJTable.repaint();
-        //System.out.println("FiltroJTable:  cadena: " + cadenaABuscar + ", columna: " + columnaABuscar);
     }
 
     public void ConsultaFiltroTablaBD(JTable LaTabla, String titlesJtabla[], String campoconsulta[], String nombresp, String filtro, JComboBox cbCampoBuscar) {
@@ -346,24 +346,24 @@ public class Metodos {
         }
     }
 
-        public String MayusCadaPrimeraLetra(String laCadena) {
+    public String MayusCadaPrimeraLetra(String laCadena) {
         if (laCadena == null || laCadena.isEmpty()) {
             return "";
         } else {
             char[] caracteres = laCadena.toCharArray();
             caracteres[0] = Character.toUpperCase(caracteres[0]);
-            
+
             // el -2 es para evitar una excepción al caernos del arreglo
-            for (int i = 0; i < laCadena.length()- 2; i++){ 
+            for (int i = 0; i < laCadena.length() - 2; i++) {
                 // Es 'palabra'
-                if (caracteres[i] == ' ' || caracteres[i] == '.' || caracteres[i] == ','){ //Separadores puede ser espacio . o ,
+                if (caracteres[i] == ' ' || caracteres[i] == '.' || caracteres[i] == ',') { //Separadores puede ser espacio . o ,
                     caracteres[i + 1] = Character.toUpperCase(caracteres[i + 1]); // Reemplazamos
                 }
             }
             return new String(caracteres);
         }
     }
-    
+
     public String SiStringEsNull(String laCadena) {
         if (laCadena.equals("null")) {
             laCadena = "";
