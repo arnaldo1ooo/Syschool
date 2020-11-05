@@ -15,6 +15,8 @@ import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import utilidades.Metodos;
@@ -180,7 +182,7 @@ public final class ABMConcepto extends javax.swing.JDialog {
         cbTipoImporte.setSelectedItem(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 2) + ""));
         txtImporte.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 3) + ""));
         cbTipoPago.setSelectedItem(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 4) + ""));
-                sfNumPagos.setValue(Integer.parseInt(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 5) + "")));
+        sfNumPagos.setValue(Integer.parseInt(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 5) + "")));
         chbEne.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 6) + "") == 1));
         chbFeb.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 7) + "") == 1));
         chbMar.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 8) + "") == 1));
@@ -274,41 +276,15 @@ public final class ABMConcepto extends javax.swing.JDialog {
 
         //Si cantidad de meses seleccionados es mayor o menor a cantidad de cuotas
         int cantmes = 0;
-        if (chbEne.isSelected()) {
-            cantmes = cantmes + 1;
-        }
-        if (chbFeb.isSelected()) {
-            cantmes = cantmes + 1;
-        }
-        if (chbMar.isSelected()) {
-            cantmes = cantmes + 1;
-        }
-        if (chbAbr.isSelected()) {
-            cantmes = cantmes + 1;
-        }
-        if (chbMay.isSelected()) {
-            cantmes = cantmes + 1;
-        }
-        if (chbJun.isSelected()) {
-            cantmes = cantmes + 1;
-        }
-        if (chbJul.isSelected()) {
-            cantmes = cantmes + 1;
-        }
-        if (chbAgo.isSelected()) {
-            cantmes = cantmes + 1;
-        }
-        if (chbSep.isSelected()) {
-            cantmes = cantmes + 1;
-        }
-        if (chbOct.isSelected()) {
-            cantmes = cantmes + 1;
-        }
-        if (chbNov.isSelected()) {
-            cantmes = cantmes + 1;
-        }
-        if (chbDic.isSelected()) {
-            cantmes = cantmes + 1;
+        Component[] comMesesAPagar = pnMesesAPagar.getComponents();
+        JCheckBox chActual;
+        for (int i = 0; i < comMesesAPagar.length; i++) {
+            if (comMesesAPagar[i] instanceof JCheckBox) { //Si es Checkbox
+                chActual = ((JCheckBox) comMesesAPagar[i]);
+                if (chActual.isSelected()) {
+                    cantmes = cantmes + 1;
+                }
+            }
         }
 
         if (cantmes > sfNumPagos.getValue()) {
