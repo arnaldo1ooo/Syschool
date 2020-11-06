@@ -61,7 +61,7 @@ public class MetodosTXT {
     public void TxtColorLabelKeyReleased(JTextField ElTXT, JLabel ElLabel) {
         if (ElTXT.getText().equals("")) {
             if (ElLabel.getForeground() == Color.RED) { //Si esta en rojo, y es vacio entonces no hace nada
-                
+
             }
             //ElLabel.setForeground(new Color(0, 0, 0)); //Negro
         } else { //Si es distinto a vacio
@@ -282,61 +282,83 @@ public class MetodosTXT {
         return ElNumeroDouble;
     }
 
-    //Poner los puntos de miles al Integer
-    public String IntegerPuntosMiles(Integer elNumInteger) {
-        String elNumString = elNumInteger + "";
-        String ElNumConPuntos = "";
-        int longitud = elNumString.length();
-        if (longitud == 1 || longitud == 2 || longitud == 3) {
-            ElNumConPuntos = elNumString;
-            return ElNumConPuntos;
-        }
-        if (longitud == 4) {
-            String sub1 = elNumString.substring(0, 1);
-            String sub2 = elNumString.substring(1, 4);
-            ElNumConPuntos = sub1 + "." + sub2;
-            return ElNumConPuntos;
-        }
-        if (longitud == 5) {
-            String sub1 = elNumString.substring(0, 2);
-            String sub2 = elNumString.substring(2, 5);
-            ElNumConPuntos = sub1 + "." + sub2;
-            return ElNumConPuntos;
-        }
+    public int StringSinPuntosMiles(String elNumString) {
+        elNumString = elNumString.replace(".", "");
+        int elNumInt = Integer.parseInt(elNumString);
 
-        if (longitud == 6) {
-            String sub1 = elNumString.substring(0, 3);
-            String sub2 = elNumString.substring(3, 6);
-            ElNumConPuntos = sub1 + "." + sub2;
-            return ElNumConPuntos;
-        }
-
-        if (longitud == 7) {
-            String sub1 = elNumString.substring(0, 1);
-            String sub2 = elNumString.substring(1, 4);
-            String sub3 = elNumString.substring(4, 7);
-            ElNumConPuntos = sub1 + "." + sub2 + "." + sub3;
-            return ElNumConPuntos;
-        }
-
-        if (longitud == 8) {
-            String sub1 = elNumString.substring(0, 2);
-            String sub2 = elNumString.substring(2, 5);
-            String sub3 = elNumString.substring(5, 8);
-            ElNumConPuntos = sub1 + "." + sub2 + "." + sub3;
-            return ElNumConPuntos;
-        }
-
-        if (longitud == 9) {
-            String sub1 = elNumString.substring(0, 3);
-            String sub2 = elNumString.substring(3, 6);
-            String sub3 = elNumString.substring(6, 9);
-            ElNumConPuntos = sub1 + "." + sub2 + "." + sub3;
-            return ElNumConPuntos;
-        }
-        return ElNumConPuntos;
+        return elNumInt;
     }
 
+    //Poner los puntos de miles al Integer
+    public String StringPuntosMiles(String elNumString) {
+        elNumString = elNumString.replace(".", "");
+        String ElNumConPuntos = "";
+        String sub1;
+        String sub2;
+        String sub3;
+                
+        String longitud = elNumString.length() + "";
+        switch (longitud) {
+            case "1":
+                ElNumConPuntos = elNumString;
+                return ElNumConPuntos;
+            //break;
+            case "2":
+                ElNumConPuntos = elNumString;
+                return ElNumConPuntos;
+            //break;
+            case "3":
+                ElNumConPuntos = elNumString;
+                return ElNumConPuntos;
+            //break;
+            case "4":
+                sub1 = elNumString.substring(0, 1);
+                sub2 = elNumString.substring(1, 4);
+                ElNumConPuntos = sub1 + "." + sub2;
+                return ElNumConPuntos;
+            //break;
+            case "5":
+                sub1 = elNumString.substring(0, 2);
+                sub2 = elNumString.substring(2, 5);
+                ElNumConPuntos = sub1 + "." + sub2;
+                return ElNumConPuntos;
+            //break;
+            case "6":
+                sub1 = elNumString.substring(0, 3);
+                sub2 = elNumString.substring(3, 6);
+                ElNumConPuntos = sub1 + "." + sub2;
+                return ElNumConPuntos;
+            //break;
+            case "7":
+                sub1 = elNumString.substring(0, 1);
+                sub2 = elNumString.substring(1, 4);
+                sub3 = elNumString.substring(4, 7);
+                ElNumConPuntos = sub1 + "." + sub2 + "." + sub3;
+                return ElNumConPuntos;
+            //break;
+            case "8":
+                sub1 = elNumString.substring(0, 2);
+                sub2 = elNumString.substring(2, 5);
+                sub3 = elNumString.substring(5, 8);
+                ElNumConPuntos = sub1 + "." + sub2 + "." + sub3;
+                return ElNumConPuntos;
+            //break;
+            case "9":
+                sub1 = elNumString.substring(0, 3);
+                sub2 = elNumString.substring(3, 6);
+                sub3 = elNumString.substring(6, 9);
+                ElNumConPuntos = sub1 + "." + sub2 + "." + sub3;
+                return ElNumConPuntos;
+            //break;
+
+            default:
+                System.out.println("longitud invalida: " + longitud);
+                return ElNumConPuntos;
+        }
+       
+    }
+    
+    
     //Formatear double para que tenga solo dos numeros despues de la coma, y la coma es punto
     public double FormatearATresDecimales(double ElDouble) {
         String elDoubleString = "";

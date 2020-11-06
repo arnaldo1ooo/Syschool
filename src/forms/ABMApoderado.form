@@ -40,7 +40,6 @@
                       <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace max="32767" attributes="0"/>
                               <Component id="btnAgregarAlumno" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="121" max="-2" attributes="0"/>
                               <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
@@ -983,7 +982,7 @@
                                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                       <Component id="txtCedula" alignment="0" min="-2" pref="259" max="-2" attributes="0"/>
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="txtCodigo" min="-2" pref="85" max="-2" attributes="0"/>
+                                          <Component id="txtCodigoApoderado" min="-2" pref="85" max="-2" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="jLabel2" max="-2" attributes="0"/>
                                       </Group>
@@ -1025,7 +1024,7 @@
                               </Group>
                               <Group type="103" alignment="0" groupAlignment="2" attributes="0">
                                   <Component id="lblCodigo" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="txtCodigo" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtCodigoApoderado" alignment="2" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel2" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1082,7 +1081,7 @@
                     <Property name="focusable" type="boolean" value="false"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="txtCodigo">
+                <Component class="javax.swing.JTextField" name="txtCodigoApoderado">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="SansSerif" size="12" style="0"/>
@@ -1417,7 +1416,7 @@
                             <Column editable="true" title="C&#xf3;digo" type="java.lang.Object"/>
                             <Column editable="true" title="Nombre" type="java.lang.Object"/>
                             <Column editable="true" title="Apellido" type="java.lang.Object"/>
-                            <Column editable="true" title="C&#xe9;dula" type="java.lang.Object"/>
+                            <Column editable="true" title="N&#xb0; de C&#xe9;dula" type="java.lang.Object"/>
                             <Column editable="true" title="Fecha de nac." type="java.lang.Object"/>
                             <Column editable="true" title="Fecha de inscr." type="java.lang.Object"/>
                             <Column editable="true" title="Sexo" type="java.lang.Object"/>
@@ -1572,6 +1571,7 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGuardarActionPerformed"/>
                 <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="btnGuardarKeyPressed"/>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="btnGuardarKeyReleased"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnCancelar">

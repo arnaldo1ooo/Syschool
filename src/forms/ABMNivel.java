@@ -25,7 +25,7 @@ import utilidades.MetodosCombo;
  *
  * @author Arnaldo Cantero
  */
-public final class ABMNivel extends javax.swing.JDialog {
+public class ABMNivel extends javax.swing.JDialog {
 
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();

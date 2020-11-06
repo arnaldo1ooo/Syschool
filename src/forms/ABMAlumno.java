@@ -34,7 +34,7 @@ import utilidades.MetodosTXT;
  *
  * @author Arnaldo Cantero
  */
-public final class ABMAlumno extends javax.swing.JDialog {
+public class ABMAlumno extends javax.swing.JDialog {
 
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
@@ -90,7 +90,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
                 String codigo = txtCodigo.getText();
                 String nombre = metodos.MayusCadaPrimeraLetra(txtNombre.getText());
                 String apellido = metodos.MayusCadaPrimeraLetra(txtApellido.getText());
-                String cedula = txtCedula.getText();
+                String cedula = metodostxt.StringSinPuntosMiles(txtCedula.getText()) + "";
                 SimpleDateFormat formatofecha = new SimpleDateFormat("yyyy-MM-dd");
                 String fechanacimiento = formatofecha.format(dcFechaNacimiento.getDate());
                 String fechainscripcion = formatofecha.format(dcFechaInscripcion.getDate());
@@ -176,6 +176,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
         txtNombre.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1) + ""));
         txtApellido.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 2) + ""));
         txtCedula.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 3) + ""));
+        txtCedula.setText(metodostxt.StringPuntosMiles(txtCedula.getText()));
         try {
             Date fechaParseada;
             fechaParseada = new SimpleDateFormat("dd/MM/yyyy")
@@ -651,7 +652,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
         jpBotonesLayout.setHorizontalGroup(
             jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpBotonesLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(7, Short.MAX_VALUE)
                 .addGroup(jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -829,6 +830,9 @@ public final class ABMAlumno extends javax.swing.JDialog {
         txtCedula.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtCedula.setEnabled(false);
         txtCedula.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCedulaKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtCedulaKeyTyped(evt);
             }
@@ -894,7 +898,7 @@ public final class ABMAlumno extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jpEdicionLayout.createSequentialGroup()
                         .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jpEdicionLayout.createSequentialGroup()
                         .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(dcFechaNacimiento, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
@@ -1274,6 +1278,10 @@ public final class ABMAlumno extends javax.swing.JDialog {
             BuscadorApoderado.dispose();
         }
     }//GEN-LAST:event_tbApoderadoKeyReleased
+
+    private void txtCedulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyReleased
+        txtCedula.setText(metodostxt.StringPuntosMiles(txtCedula.getText()));
+    }//GEN-LAST:event_txtCedulaKeyReleased
 
     List<Component> ordenTabulador;
 

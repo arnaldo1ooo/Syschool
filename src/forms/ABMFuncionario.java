@@ -12,12 +12,14 @@ import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import static login.Login.Alias;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
@@ -27,18 +29,19 @@ import utilidades.MetodosTXT;
  *
  * @author Arnaldo Cantero
  */
-public final class ABMFuncionario extends javax.swing.JDialog {
-
+public class ABMFuncionario extends javax.swing.JDialog {
+    
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
     MetodosCombo metodoscombo = new MetodosCombo();
+    DefaultTableModel modelTableFuncionarios;
     String nombreTablaBD = "Funcionario";
-
+    
     public ABMFuncionario(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
-
+        
         txtBuscar.requestFocus();
 
         //Poner fecha actual
@@ -52,7 +55,7 @@ public final class ABMFuncionario extends javax.swing.JDialog {
         btnNuevo.setVisible(metodos.PermisoRol(Alias, "FUNCIONARIO", "ALTA"));
         btnModificar.setVisible(metodos.PermisoRol(Alias, "FUNCIONARIO", "MODIFICAR"));
         btnEliminar.setVisible(metodos.PermisoRol(Alias, "FUNCIONARIO", "BAJA"));
-
+        
         OrdenTabulador();
     }
 
@@ -61,14 +64,14 @@ public final class ABMFuncionario extends javax.swing.JDialog {
         //Carga los combobox con las consultas
         metodoscombo.CargarComboBox(cbCargo, "SELECT car_codigo, car_descripcion FROM cargo ORDER BY car_descripcion", -1);
     }
-
+    
     public void RegistroNuevoModificar() {
         if (ComprobarCampos() == true) {
             String codigo = txtCodigo.getText();
             String nombre = metodos.MayusCadaPrimeraLetra(txtNombre.getText());
             String apellido = metodos.MayusCadaPrimeraLetra(txtApellido.getText());
             SimpleDateFormat formatofecha = new SimpleDateFormat("yyyy-MM-dd");
-            String cedula = txtCedula.getText();
+            String cedula = metodostxt.StringSinPuntosMiles(txtCedula.getText()) + "";
             String fechaingreso = formatofecha.format(dcFechaIngreso.getDate());
             String sexo = cbSexo.getSelectedItem().toString();
             String telefono = txtTelefono.getText();
@@ -77,27 +80,27 @@ public final class ABMFuncionario extends javax.swing.JDialog {
             String obs = taObs.getText();
             int estado = cbEstado.getSelectedIndex();
             int cargo = metodoscombo.ObtenerIDSelectComboBox(cbCargo);
-
+            
             if (codigo.equals("")) {
                 //NUEVO REGISTRO
-                int confirmado = JOptionPane.showConfirmDialog(this, "¿Está seguro crear este nuevo registro?", "Confirmación", JOptionPane.YES_OPTION);
+                int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de crear este nuevo registro?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
                     String sentencia = "CALL SP_" + nombreTablaBD + "Alta ('" + nombre + "','" + apellido + "','" + cedula
                             + "','" + fechaingreso + "','" + sexo + "','" + telefono + "','" + salario + "','" + email + "','" + obs + "','" + estado + "','" + cargo + "')";
                     con.EjecutarABM(sentencia, true);
-
+                    
                     TablaConsultaBDAll(); //Actualizar tabla                  
                     ModoEdicion(false);
                     Limpiar();
                 }
             } else {
                 //MODIFICAR REGISTRO
-                int confirmado = JOptionPane.showConfirmDialog(this, "¿Está seguro de modificar este registro?", "Confirmación", JOptionPane.YES_OPTION);
+                int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar este registro?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
                     String sentencia = "CALL SP_" + nombreTablaBD + "Modificar(" + codigo + ",'" + nombre + "','" + apellido + "','" + cedula
                             + "','" + fechaingreso + "','" + sexo + "','" + telefono + "','" + salario + "','" + email + "','" + obs + "','" + estado + "','" + cargo + "')";
                     con.EjecutarABM(sentencia, true);
-
+                    
                     TablaConsultaBDAll(); //Actualizar tabla                  
                     ModoEdicion(false);
                     Limpiar();
@@ -105,17 +108,17 @@ public final class ABMFuncionario extends javax.swing.JDialog {
             }
         }
     }
-
+    
     private void RegistroEliminar() {
         int filasel = tbPrincipal.getSelectedRow();
         String codigo = tbPrincipal.getModel().getValueAt(filasel, 0) + "";
-
+        
         if (filasel != -1) {
             int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea eliminar este funcionario?, tambien se ELIMINARÁN los pagos salariales del mismo", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
                 String sentencia = "CALL SP_" + nombreTablaBD + "Eliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
-
+                
                 TablaConsultaBDAll();
                 ModoEdicion(false);
                 Limpiar();
@@ -126,56 +129,70 @@ public final class ABMFuncionario extends javax.swing.JDialog {
             txtBuscar.requestFocus();
         }
     }
-
+    
     public void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
+        modelTableFuncionarios = (DefaultTableModel) tbPrincipal.getModel();//Cargamos campos de jtable al modeltable
+        modelTableFuncionarios.setRowCount(0); //Vacia la tabla
+
         String sentencia = "CALL SP_" + nombreTablaBD + "Consulta";
-        String titlesJtabla[] = {"Código", "Nombre", "Apellido", "N° de cédula", "Fecha de ingreso", "Sexo",
-            "Telefono", "Salario", "Email", "Observación", "Estado", "Cargo"}; //Debe tener la misma cantidad que los campos a consultar
-
-        tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
-
-        double salario;
-        for (int i = 0; i < tbPrincipal.getRowCount(); i++) {
-            salario = Double.parseDouble(tbPrincipal.getValueAt(i, 7) + "");
-            tbPrincipal.setValueAt(metodostxt.DoubleAFormatoSudamerica(salario), i, 7);
+        
+        con = con.ObtenerRSSentencia(sentencia);
+        
+        try {
+            String codigo, nombre, apellido, cedula, fechaing, sexo, telefono, salario, email, obs, estado, cargo;
+            while (con.rs.next()) {
+                codigo = con.rs.getString("fun_codigo");
+                nombre = con.rs.getString("fun_nombre");
+                apellido = con.rs.getString("fun_apellido");
+                cedula = metodostxt.StringPuntosMiles(con.rs.getString("fun_cedula"));
+                fechaing = con.rs.getString("fechaingreso");
+                sexo = con.rs.getString("fun_sexo");
+                telefono = con.rs.getString("fun_telefono");
+                salario = metodostxt.DoubleAFormatoSudamerica(Double.parseDouble(con.rs.getString("fun_salario")));
+                email = con.rs.getString("fun_email");
+                obs = con.rs.getString("fun_obs");
+                estado = con.rs.getString("estado");
+                cargo = con.rs.getString("car_descripcion");
+                
+                modelTableFuncionarios.addRow(new Object[]{codigo, nombre, apellido, cedula, fechaing, sexo, telefono, salario, email, obs, estado, cargo});
+            }
+            tbPrincipal.setModel(modelTableFuncionarios);
+            metodos.AnchuraColumna(tbPrincipal);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-        metodos.AnchuraColumna(tbPrincipal);
-
+        con.DesconectarBasedeDatos();
+        
         if (tbPrincipal.getModel().getRowCount() == 1) {
             lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registro encontrado");
         } else {
             lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registros encontrados");
         }
     }
-
+    
     private void ModoVistaPrevia() {
         txtCodigo.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "");
         txtNombre.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1) + "");
         txtApellido.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 2) + "");
         txtCedula.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 3) + "");
         try {
-            java.util.Date fechaParseada = new SimpleDateFormat("dd/MM/yyyy")
-                    .parse(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 4) + "");
+            java.util.Date fechaParseada = new SimpleDateFormat("dd/MM/yyyy").parse(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 4) + "");
             dcFechaIngreso.setDate(fechaParseada);
         } catch (ParseException e) {
             System.out.println("Error al parsear fecha");
         }
-
+        
         cbSexo.setSelectedItem(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 5) + "");
         txtTelefono.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 6) + "");
         txtSalario.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 7) + "");
         txtEmail.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 8) + "");
         taObs.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 9) + "");
-
-        String estado = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 10) + "";
-        cbEstado.setSelectedItem(estado);
-
+        cbEstado.setSelectedItem(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 10) + "");
+        
         String cargo = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 11) + "";
-        System.out.println("cargo " + cargo);
         metodoscombo.setSelectedNombreItem(cbCargo, cargo);
     }
-
+    
     private void ModoEdicion(boolean valor) {
         txtBuscar.setEnabled(!valor);
         tbPrincipal.setEnabled(!valor);
@@ -195,10 +212,10 @@ public final class ABMFuncionario extends javax.swing.JDialog {
         btnEliminar.setEnabled(false);
         btnGuardar.setEnabled(valor);
         btnCancelar.setEnabled(valor);
-
+        
         txtNombre.requestFocus();
     }
-
+    
     private void Limpiar() {
         txtCodigo.setText("");
         txtNombre.setText("");
@@ -215,16 +232,16 @@ public final class ABMFuncionario extends javax.swing.JDialog {
         lblFechaIngreso.setForeground(new Color(102, 102, 102));
         lblNombre.setForeground(new Color(102, 102, 102));
         lblApellido.setForeground(new Color(102, 102, 102));
-
+        
         txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
     }
-
+    
     public boolean ComprobarCampos() {
         if (metodostxt.ValidarCampoVacioTXT(txtNombre, lblNombre) == false) {
             return false;
         }
-
+        
         if (metodostxt.ValidarCampoVacioTXT(txtApellido, lblApellido) == false) {
             return false;
         }
@@ -319,7 +336,7 @@ public final class ABMFuncionario extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Codigo", "Nombre", "Apellido", "N° de cédula", "Fecha de ingreso", "Sexo", "Teléfono", "Salario (Gs)", "Email", "Obs", "Estado", "Cargo"
             }
         ));
         tbPrincipal.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -435,7 +452,7 @@ public final class ABMFuncionario extends javax.swing.JDialog {
         jpBotonesLayout.setHorizontalGroup(
             jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpBotonesLayout.createSequentialGroup()
-                .addContainerGap(9, Short.MAX_VALUE)
+                .addContainerGap(13, Short.MAX_VALUE)
                 .addGroup(jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -880,7 +897,7 @@ public final class ABMFuncionario extends javax.swing.JDialog {
 //--------------------------Eventos de componentes----------------------------//
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
         metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
-
+        
         btnModificar.setEnabled(false);
         btnEliminar.setEnabled(false);
     }//GEN-LAST:event_txtBuscarKeyReleased
@@ -917,7 +934,7 @@ public final class ABMFuncionario extends javax.swing.JDialog {
         if (tbPrincipal.isEnabled() == true) {
             btnModificar.setEnabled(true);
             btnEliminar.setEnabled(true);
-
+            
             ModoVistaPrevia();
         }
     }//GEN-LAST:event_tbPrincipalMousePressed
@@ -978,11 +995,11 @@ public final class ABMFuncionario extends javax.swing.JDialog {
     }//GEN-LAST:event_txtSalarioKeyReleased
 
     private void txtSalarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSalarioKeyTyped
-       metodostxt.SoloNumeroDecimalKeyTyped(evt, txtSalario);
+        metodostxt.SoloNumeroDecimalKeyTyped(evt, txtSalario);
     }//GEN-LAST:event_txtSalarioKeyTyped
 
     private void txtCedulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyReleased
-
+        txtCedula.setText(metodostxt.StringPuntosMiles(txtCedula.getText()));
     }//GEN-LAST:event_txtCedulaKeyReleased
 
     private void txtCedulaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyTyped
@@ -992,9 +1009,9 @@ public final class ABMFuncionario extends javax.swing.JDialog {
     private void txtApellidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtApellidoActionPerformed
-
+    
     List<Component> ordenTabulador;
-
+    
     private void OrdenTabulador() {
         ordenTabulador = new ArrayList<>();
         ordenTabulador.add(txtNombre);
@@ -1009,31 +1026,31 @@ public final class ABMFuncionario extends javax.swing.JDialog {
         ordenTabulador.add(cbEstado);
         ordenTabulador.add(btnGuardar);
         setFocusTraversalPolicy(new PersonalizadoFocusTraversalPolicy());
-
+        
     }
-
+    
     private class PersonalizadoFocusTraversalPolicy extends FocusTraversalPolicy {
-
+        
         public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
             int currentPosition = ordenTabulador.indexOf(aComponent);
             currentPosition = (currentPosition + 1) % ordenTabulador.size();
             return (Component) ordenTabulador.get(currentPosition);
         }
-
+        
         public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
             int currentPosition = ordenTabulador.indexOf(aComponent);
             currentPosition = (ordenTabulador.size() + currentPosition - 1) % ordenTabulador.size();
             return (Component) ordenTabulador.get(currentPosition);
         }
-
+        
         public Component getFirstComponent(Container cntnr) {
             return (Component) ordenTabulador.get(0);
         }
-
+        
         public Component getLastComponent(Container cntnr) {
             return (Component) ordenTabulador.get(ordenTabulador.size() - 1);
         }
-
+        
         public Component getDefaultComponent(Container cntnr) {
             return (Component) ordenTabulador.get(0);
         }

@@ -24,8 +24,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import static login.Login.Alias;
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
@@ -34,7 +32,7 @@ import utilidades.MetodosTXT;
  *
  * @author Lic. Arnaldo Cantero
  */
-public final class RegistrarPagoSalario extends javax.swing.JDialog {
+public class RegistrarPagoSalario extends javax.swing.JDialog {
 
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
@@ -592,7 +590,7 @@ public final class RegistrarPagoSalario extends javax.swing.JDialog {
                     + "WHERE fun_codigo = '" + idfuncionario + "' AND fun_cargo=car_codigo";
             con = con.ObtenerRSSentencia(sentencia);
             while (con.rs.next()) {
-                txtCedula.setText(metodostxt.IntegerPuntosMiles(con.rs.getInt("fun_cedula")));
+                txtCedula.setText(metodostxt.StringPuntosMiles(con.rs.getString("fun_cedula")));
                 txtSalario.setText(metodostxt.DoubleAFormatoSudamerica(con.rs.getDouble("fun_salario")));
                 txtCargo.setText(con.rs.getString("car_descripcion"));
             }

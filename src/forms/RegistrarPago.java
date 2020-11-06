@@ -42,7 +42,7 @@ import utilidades.ColorearJTable;
  *
  * @author Lic. Arnaldo Cantero
  */
-public final class RegistrarPago extends javax.swing.JDialog {
+public class RegistrarPago extends javax.swing.JDialog {
 
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
@@ -1801,7 +1801,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
         switch (tipopago) {
             case "UNICO":
                 txtNumCuotasAPagar.setText("1");
-                
+
                 txtNumCuotasAPagar.setEnabled(false);
                 break;
             case "MENSUAL":
@@ -1913,7 +1913,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
         }
 
         IconMesesAPagar();
-        
+
         AgregarPago.setLocationRelativeTo(this); //Centrar
         AgregarPago.setVisible(true);
     }//GEN-LAST:event_btnAnadirActionPerformed
@@ -2036,7 +2036,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 modeltablePoderantes.setRowCount(0); //Vacia la tabla
                 while (con.rs.next()) {
                     nomapealumno = con.rs.getString("nomapealumno");
-                    cedula = metodostxt.IntegerPuntosMiles(con.rs.getInt("alu_cedula"));
+                    cedula = metodostxt.StringPuntosMiles(con.rs.getString("alu_cedula"));
                     nivel = con.rs.getString("nivel");
                     codnivel = con.rs.getString("niv_codigo");
 
@@ -2052,7 +2052,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 con = con.ObtenerRSSentencia("SELECT apo_cedula FROM apoderado WHERE apo_codigo='"
                         + metodoscombo.ObtenerIDSelectComboBox(cbApoderado) + "'");
                 while (con.rs.next()) {
-                    txtCedulaApoderado.setText(metodostxt.IntegerPuntosMiles(con.rs.getInt("apo_cedula")));
+                    txtCedulaApoderado.setText(metodostxt.StringPuntosMiles(con.rs.getString("apo_cedula")));
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -2093,7 +2093,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
             int numCuotasAPagar = Integer.parseInt(txtNumCuotasAPagar.getText());
             int numCuotasPagados = Integer.parseInt(lblNumCuotasPagados.getText());
             int numTotalCuotas = Integer.parseInt(lblNumTotalCuotas.getText());
-            
+
             if (numCuotasAPagar > (numTotalCuotas - numCuotasPagados)) {
                 Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(null, "El número de cuotas a pagar no puede ser mayor al número de cuotas faltantes",
@@ -2102,9 +2102,9 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 txtSubtotal.setText("0");
                 return;
             }
-            
+
             double importe = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
-            
+
             //Sumar cantidad de poderantes basicos y medio
             int numpoderantes = 0;
             if (lblPoderantesBasico.getText().equals("SI")) {
@@ -2114,7 +2114,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
                 numpoderantes = numpoderantes + Integer.parseInt(lblPoderantesMedio.getText());
             }
             importe = importe * numpoderantes;
-            
+
             txtSubtotal.setText(metodostxt.DoubleAFormatoSudamerica(numCuotasAPagar * importe));
             if (numactual != Integer.parseInt(txtNumCuotasAPagar.getText())) { //Si el numero ingresado no es el mismo
                 numactual = Integer.parseInt(txtNumCuotasAPagar.getText());
@@ -2158,7 +2158,7 @@ public final class RegistrarPago extends javax.swing.JDialog {
 
     private void txtImporteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyReleased
         txtImporte.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtImporte.getText()));
-        
+
         double importe = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
         int numcuotas = Integer.parseInt(txtNumCuotasAPagar.getText());
         txtSubtotal.setText(metodostxt.DoubleAFormatoSudamerica(importe * numcuotas));

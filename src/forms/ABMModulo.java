@@ -17,13 +17,12 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
-import static login.Login.Alias;
 
 /**
  *
  * @author Arnaldo Cantero
  */
-public final class ABMModulo extends javax.swing.JDialog {
+public class ABMModulo extends javax.swing.JDialog {
 
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();

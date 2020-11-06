@@ -35,7 +35,7 @@ import utilidades.MetodosTXT;
  *
  * @author Arnaldo Cantero
  */
-public final class ABMUsuario extends javax.swing.JDialog {
+public class ABMUsuario extends javax.swing.JDialog {
 
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();

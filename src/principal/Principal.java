@@ -106,7 +106,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                     case "USUARIO":
                         btnUsuario.setEnabled(true);
                         meUsuario.setEnabled(true);
-                        MeitPerfil.setEnabled(true);
+                        meitPerfil.setEnabled(true);
                         meitModulo.setEnabled(true);
                         meitRol.setEnabled(true);
                         break;
@@ -206,12 +206,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meReporte = new javax.swing.JMenu();
         jMenuItem7 = new javax.swing.JMenuItem();
         meUsuario = new javax.swing.JMenu();
-        MeitPerfil = new javax.swing.JMenuItem();
-        jSeparator7 = new javax.swing.JPopupMenu.Separator();
-        meitModulo = new javax.swing.JMenuItem();
-        jSeparator6 = new javax.swing.JPopupMenu.Separator();
-        meitRol = new javax.swing.JMenuItem();
-        jSeparator18 = new javax.swing.JPopupMenu.Separator();
         jMenuItem18 = new javax.swing.JMenuItem();
         meConfiguracion = new javax.swing.JMenu();
         jMenuItem6 = new javax.swing.JMenuItem();
@@ -219,6 +213,12 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meiDocenteEncargado = new javax.swing.JMenuItem();
         jSeparator22 = new javax.swing.JPopupMenu.Separator();
         meitConcepto = new javax.swing.JMenuItem();
+        jSeparator18 = new javax.swing.JPopupMenu.Separator();
+        meitPerfil = new javax.swing.JMenuItem();
+        jSeparator6 = new javax.swing.JPopupMenu.Separator();
+        meitModulo = new javax.swing.JMenuItem();
+        jSeparator7 = new javax.swing.JPopupMenu.Separator();
+        meitRol = new javax.swing.JMenuItem();
         meSalir = new javax.swing.JMenu();
         jMenuItem19 = new javax.swing.JMenuItem();
 
@@ -670,36 +670,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meUsuario.setMinimumSize(new java.awt.Dimension(150, 70));
         meUsuario.setPreferredSize(new java.awt.Dimension(150, 70));
 
-        MeitPerfil.setText("Perfiles");
-        MeitPerfil.setEnabled(false);
-        MeitPerfil.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MeitPerfilActionPerformed(evt);
-            }
-        });
-        meUsuario.add(MeitPerfil);
-        meUsuario.add(jSeparator7);
-
-        meitModulo.setText("Modulos");
-        meitModulo.setEnabled(false);
-        meitModulo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                meitModuloActionPerformed(evt);
-            }
-        });
-        meUsuario.add(meitModulo);
-        meUsuario.add(jSeparator6);
-
-        meitRol.setText("Roles");
-        meitRol.setEnabled(false);
-        meitRol.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                meitRolActionPerformed(evt);
-            }
-        });
-        meUsuario.add(meitRol);
-        meUsuario.add(jSeparator18);
-
         jMenuItem18.setText("Cambiar contraseña");
         jMenuItem18.setEnabled(false);
         jMenuItem18.addActionListener(new java.awt.event.ActionListener() {
@@ -746,6 +716,36 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             }
         });
         meConfiguracion.add(meitConcepto);
+        meConfiguracion.add(jSeparator18);
+
+        meitPerfil.setText("Perfiles");
+        meitPerfil.setEnabled(false);
+        meitPerfil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meitPerfilActionPerformed(evt);
+            }
+        });
+        meConfiguracion.add(meitPerfil);
+        meConfiguracion.add(jSeparator6);
+
+        meitModulo.setText("Modulos");
+        meitModulo.setEnabled(false);
+        meitModulo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meitModuloActionPerformed(evt);
+            }
+        });
+        meConfiguracion.add(meitModulo);
+        meConfiguracion.add(jSeparator7);
+
+        meitRol.setText("Roles");
+        meitRol.setEnabled(false);
+        meitRol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meitRolActionPerformed(evt);
+            }
+        });
+        meConfiguracion.add(meitRol);
 
         jMenuBar1.add(meConfiguracion);
 
@@ -789,10 +789,10 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         abmmodulos.setVisible(true);
     }//GEN-LAST:event_meitModuloActionPerformed
 
-    private void MeitPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MeitPerfilActionPerformed
+    private void meitPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitPerfilActionPerformed
         ABMPerfil abmperfil = new ABMPerfil(this, true);
         abmperfil.setVisible(true);
-    }//GEN-LAST:event_MeitPerfilActionPerformed
+    }//GEN-LAST:event_meitPerfilActionPerformed
 
 
     private void meitRolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitRolActionPerformed
@@ -988,7 +988,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem MeitPerfil;
     private javax.swing.JButton btnAlumno;
     private javax.swing.JButton btnApoderado;
     private javax.swing.JButton btnFuncionario;
@@ -1039,6 +1038,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenuItem meitAnularPagoSalario;
     private javax.swing.JMenuItem meitConcepto;
     private javax.swing.JMenuItem meitModulo;
+    private javax.swing.JMenuItem meitPerfil;
     private javax.swing.JMenuItem meitRegistrarGasto;
     private javax.swing.JMenuItem meitRegistrarMatricula;
     private javax.swing.JMenuItem meitRegistrarPago;

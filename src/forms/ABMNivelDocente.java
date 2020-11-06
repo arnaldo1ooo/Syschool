@@ -11,7 +11,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
 
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,14 +19,13 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
-import static login.Login.Alias;
 import utilidades.MetodosCombo;
 
 /**
  *
  * @author Arnaldo Cantero
  */
-public final class ABMNivelDocente extends javax.swing.JDialog {
+public class ABMNivelDocente extends javax.swing.JDialog {
 
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();

@@ -25,7 +25,7 @@ import utilidades.MetodosTXT;
  *
  * @author Lic. Arnaldo Cantero
  */
-public final class RegistrarGasto extends javax.swing.JDialog {
+public class RegistrarGasto extends javax.swing.JDialog {
 
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();

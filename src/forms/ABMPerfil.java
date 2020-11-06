@@ -17,23 +17,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
-import static login.Login.Alias;
 import utilidades.MetodosCombo;
 
 /**
  *
  * @author Arnaldo Cantero
  */
-public final class ABMPerfil extends javax.swing.JDialog {
+public class ABMPerfil extends javax.swing.JDialog {
 
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
     MetodosCombo metodoscombo = new MetodosCombo();
-    DefaultTableModel dtmPerfilModulos;
+    DefaultTableModel tablemodelPerfilModulos;
 
     public ABMPerfil(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -49,12 +49,18 @@ public final class ABMPerfil extends javax.swing.JDialog {
 
     private void TablaConsultaAllModulos() {
         try {
-            dtmPerfilModulos = (DefaultTableModel) tbPerfilModulos.getModel();
+            tablemodelPerfilModulos = (DefaultTableModel) tbPerfilModulos.getModel();
             con = con.ObtenerRSSentencia("CALL SP_ModuloConsulta()");
             while (con.rs.next()) {
-                dtmPerfilModulos.addRow(new Object[]{con.rs.getString("mo_codigo"), con.rs.getString("mo_denominacion")});
+                tablemodelPerfilModulos.addRow(new Object[]{con.rs.getString("mo_codigo"), con.rs.getString("mo_denominacion")});
             }
-        } catch (SQLException e) {
+
+            tbPerfilModulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            tbPerfilModulos.getColumnModel().getColumn(0).setPreferredWidth(70);
+            tbPerfilModulos.getColumnModel().getColumn(1).setPreferredWidth(tbPerfilModulos.getWidth() - 135);
+            tbPerfilModulos.getColumnModel().getColumn(2).setPreferredWidth(50);
+        } catch (SQLException | NullPointerException e) {
+            e.printStackTrace();
         }
         con.DesconectarBasedeDatos();
     }
@@ -63,13 +69,12 @@ public final class ABMPerfil extends javax.swing.JDialog {
     public void RegistroNuevoModificar() {
         try {
             if (ComprobarCampos() == true) {
-                String codigo = txtCodigo.getText();
+                String codigoperfil = txtCodigo.getText();
                 String denominacion = txtDenominacion.getText().toUpperCase();
                 String descripcion = metodos.MayusPrimeraLetra(taDescripcion.getText());
 
                 if (txtCodigo.getText().equals("")) { //NUEVO REGISTRO
-                    int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo perfil?",
-                            "Confirmación", JOptionPane.YES_OPTION);
+                    int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo perfil?", "Confirmación", JOptionPane.YES_OPTION);
                     if (JOptionPane.YES_OPTION == confirmado) {
                         String sentencia = "CALL SP_PerfilAlta ('" + denominacion + "','" + descripcion + "')";
                         con.EjecutarABM(sentencia, true);
@@ -91,41 +96,36 @@ public final class ABMPerfil extends javax.swing.JDialog {
                                 con.EjecutarABM("CALL SP_Perfil_ModuloAlta('" + ultimoidperfil + "','" + idmodulo + "')", false);
                             }
                         }
-
-                        TablaConsultaPerfilAll(); //Actualizar tabla
-                        ModoEdicion(false);
-                        Limpiar();
                     }
                 } else { //MODIFICAR REGISTRO
                     int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar este regitro?", "Confirmación", JOptionPane.YES_OPTION);
                     if (JOptionPane.YES_OPTION == confirmado) {
-                        String sentencia = "CALL SP_PerfilModificar('" + codigo + "','" + denominacion + "','" + descripcion + "')";
+                        String sentencia = "CALL SP_PerfilModificar('" + codigoperfil + "','" + denominacion + "','" + descripcion + "')";
                         con.EjecutarABM(sentencia, true);
 
                         //Agregar o eliminar nuevo perfil_modulo
-                        String idmodulo;
+                        String codmodulo;
                         boolean estado;
                         for (int i = 0; i < tbPerfilModulos.getRowCount(); i++) {
-                            idmodulo = tbPerfilModulos.getValueAt(i, 0) + "";
+                            codmodulo = tbPerfilModulos.getValueAt(i, 0) + "";
                             estado = (Boolean) tbPerfilModulos.getValueAt(i, 2);
-                            con = con.ObtenerRSSentencia("SELECT permo_codigo FROM perfil_modulo WHERE permo_perfil='" + txtCodigo.getText()
-                                    + "' AND permo_modulo='" + idmodulo + "'");
+                            con = con.ObtenerRSSentencia("SELECT permo_codigo FROM perfil_modulo WHERE permo_perfil='" + codigoperfil + "' AND permo_modulo='" + codmodulo + "'");
                             if (con.rs.next()) {
                                 if (estado == false) {
-                                    con.EjecutarABM("CALL SP_Perfil_ModuloEliminar('" + txtCodigo.getText() + "','" + idmodulo + "'", false);
+                                    con.EjecutarABM("CALL SP_Perfil_ModuloEliminar('" + codigoperfil + "','" + codmodulo + "')", false);
                                 }
                             } else {
-                                con.EjecutarABM("CALL SP_Perfil_ModuloAlta('" + txtCodigo.getText() + "','" + idmodulo + "')", false);
+                                con.EjecutarABM("CALL SP_Perfil_ModuloAlta('" + codigoperfil + "','" + codmodulo + "')", false);
                             }
                         }
-
-                        TablaConsultaPerfilAll(); //Actualizar tabla
-                        ModoEdicion(false);
-                        Limpiar();
                     }
                 }
+                TablaConsultaPerfilAll(); //Actualizar tabla
+                ModoEdicion(false);
+                Limpiar();
             }
-        } catch (SQLException e) {
+        } catch (SQLException | NullPointerException e) {
+            e.printStackTrace();
         }
         con.DesconectarBasedeDatos();
     }
@@ -133,10 +133,10 @@ public final class ABMPerfil extends javax.swing.JDialog {
     private void RegistroEliminar() {
         int filasel = tbPrincipal.getSelectedRow();
         if (filasel != -1) {
-            int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro eliminar este nivel?, tambien se ELIMINARÁN las matriculas con este nivel", "Confirmación", JOptionPane.YES_OPTION);
+            int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro eliminar este perfil?", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
                 String codigo = tbPrincipal.getValueAt(filasel, 0) + "";
-                String sentencia = "CALL SP_NivelEliminar(" + codigo + ")";
+                String sentencia = "CALL SP_PerfilEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
                 TablaConsultaPerfilAll(); //Actualizar tabla
@@ -199,6 +199,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
         tbPrincipal.setEnabled(!valor);
         txtDenominacion.setEnabled(valor);
         taDescripcion.setEnabled(valor);
+        tbPerfilModulos.setEnabled(valor);
 
         btnNuevo.setEnabled(!valor);
         btnModificar.setEnabled(false);
@@ -206,7 +207,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
         btnGuardar.setEnabled(valor);
         btnCancelar.setEnabled(valor);
 
-        taDescripcion.requestFocus();
+        txtDenominacion.requestFocus();
     }
 
     private void Limpiar() {
@@ -270,7 +271,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
         panel2 = new org.edisoncor.gui.panel.Panel();
         labelMetric2 = new org.edisoncor.gui.label.LabelMetric();
 
-        setTitle("Ventana niveles");
+        setTitle("Ventana perfiles");
         setBackground(new java.awt.Color(45, 62, 80));
         setResizable(false);
 
@@ -304,7 +305,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Código", "Denominación", "Descripción"
             }
         ));
         tbPrincipal.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -483,7 +484,6 @@ public final class ABMPerfil extends javax.swing.JDialog {
             }
         });
 
-        tbPerfilModulos.setFont(new java.awt.Font("sansserif", 0, 11)); // NOI18N
         tbPerfilModulos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -514,7 +514,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
         jScrollPane3.setViewportView(tbPerfilModulos);
 
         lblTituloPerfilModulos.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        lblTituloPerfilModulos.setText("Módulos del perfil: (Aun no funciona guardar)");
+        lblTituloPerfilModulos.setText("Módulos del perfil:");
 
         taDescripcion.setColumns(20);
         taDescripcion.setRows(5);
@@ -545,7 +545,7 @@ public final class ABMPerfil extends javax.swing.JDialog {
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpEdicionLayout.createSequentialGroup()
                         .addComponent(lblTituloPerfilModulos, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 104, Short.MAX_VALUE))
+                        .addGap(0, 141, Short.MAX_VALUE))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -664,19 +664,19 @@ public final class ABMPerfil extends javax.swing.JDialog {
         jpPrincipalLayout.setHorizontalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jpPrincipalLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addComponent(jpTabla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(216, 216, 216))
+            .addGroup(jpPrincipalLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jtpEdicion)
+                    .addGroup(jpPrincipalLayout.createSequentialGroup()
+                        .addComponent(jpTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -699,14 +699,14 @@ public final class ABMPerfil extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 747, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE)
         );
 
-        getAccessibleContext().setAccessibleName("Encargados");
+        getAccessibleContext().setAccessibleName("Perfiles");
 
         pack();
         setLocationRelativeTo(null);

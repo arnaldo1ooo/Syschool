@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import utilidades.Metodos;
@@ -27,7 +26,7 @@ import static login.Login.Alias;
  *
  * @author Arnaldo Cantero
  */
-public final class ABMConcepto extends javax.swing.JDialog {
+public class ABMConcepto extends javax.swing.JDialog {
 
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
