@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import static login.Login.Alias;
+import static login.Login.codUsuario;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 
@@ -33,7 +33,8 @@ public class Pago extends javax.swing.JDialog {
             btnEliminar.setVisible(eliminar);
         } else {
             //Permiso Roles de usuario
-            btnEliminar.setVisible(metodos.PermisoRol(Alias, "PAGO", "BAJA"));
+            String permisos = metodos.PermisoRol(codUsuario, "PAGO");
+            btnEliminar.setVisible(permisos.contains("B"));
         }
     }
 

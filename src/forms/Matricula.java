@@ -9,7 +9,7 @@ import conexion.Conexion;
 import java.awt.Toolkit;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
-import static login.Login.Alias;
+import static login.Login.codUsuario;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 
@@ -31,7 +31,8 @@ public class Matricula extends javax.swing.JDialog {
             btnEliminar.setVisible(eliminar);
         } else {
             //Permiso Roles de usuario
-            btnEliminar.setVisible(metodos.PermisoRol(Alias, "GASTO", "BAJA"));
+            String permisos = metodos.PermisoRol(codUsuario, "MATRICULA");
+            btnEliminar.setVisible(permisos.contains("B"));
         }
     }
 

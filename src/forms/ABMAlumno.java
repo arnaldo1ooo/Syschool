@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import javax.swing.JOptionPane;
-import static login.Login.Alias;
+import static login.Login.codUsuario;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
@@ -55,21 +55,23 @@ public class ABMAlumno extends javax.swing.JDialog {
         txtBuscar.requestFocus();
 
         //Permiso Roles de usuario
-        btnNuevo.setVisible(metodos.PermisoRol(Alias, "ALUMNO", "ALTA"));
-        btnModificar.setVisible(metodos.PermisoRol(Alias, "ALUMNO", "MODIFICAR"));
-        btnEliminar.setVisible(metodos.PermisoRol(Alias, "ALUMNO", "BAJA"));
+        //Permiso Roles de usuario
+        String permisos = metodos.PermisoRol(codUsuario, "ALUMNO");
+        btnNuevo.setVisible(permisos.contains("A"));
+        btnModificar.setVisible(permisos.contains("M"));
+        btnEliminar.setVisible(permisos.contains("B"));
 
         OrdenTabulador();
     }
 
     //--------------------------METODOS----------------------------//
-    public void CargarComboBoxes() {
+    private void CargarComboBoxes() {
         //Carga los combobox con las consultas
         metodoscombo.CargarComboBox(cbApoderado, "SELECT apo_codigo, CONCAT(apo_nombre,' ', apo_apellido) AS nomape "
                 + "FROM apoderado ORDER BY apo_nombre", -1);
     }
 
-    public void TablaAllApoderado() {//Realiza la consulta de los productos que tenemos en la base de datos
+    private void TablaAllApoderado() {//Realiza la consulta de los productos que tenemos en la base de datos
         String sentencia = "CALL SP_ApoderadoConsulta";
         String titlesJtabla[] = {"Código", "N° de cédula", "Nombre", "Apellido", "Sexo", "Dirección", "Teléfono", "Email", "Observación"};
 
@@ -155,7 +157,7 @@ public class ABMAlumno extends javax.swing.JDialog {
         }
     }
 
-    public void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
+    private void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
         String sentencia = "CALL SP_" + nombreTablaBD + "Consulta";
         String titlesJtabla[] = {"Código", "Nombre", "Apellido", "N° de cédula", "Fecha de nacimiento", "Fecha de inscripcion", "Sexo",
             "Telefono", "Email", "Observación", "Apoderado", "Estado"}; //Debe tener la misma cantidad que los campos a consultar
@@ -654,20 +656,20 @@ public class ABMAlumno extends javax.swing.JDialog {
             .addGroup(jpBotonesLayout.createSequentialGroup()
                 .addContainerGap(7, Short.MAX_VALUE)
                 .addGroup(jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jpBotonesLayout.setVerticalGroup(
             jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpBotonesLayout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(btnNuevo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnNuevo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnModificar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnModificar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnEliminar)
                 .addGap(26, 26, 26))
         );
 
@@ -773,7 +775,9 @@ public class ABMAlumno extends javax.swing.JDialog {
         lblObs.setFocusable(false);
 
         taObs.setColumns(20);
+        taObs.setLineWrap(true);
         taObs.setRows(5);
+        taObs.setWrapStyleWord(true);
         taObs.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         taObs.setEnabled(false);
         taObs.setPreferredSize(new java.awt.Dimension(212, 62));

@@ -490,9 +490,9 @@
                   <Group type="102" attributes="0">
                       <EmptySpace pref="7" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="btnNuevo" alignment="1" max="32767" attributes="0"/>
-                          <Component id="btnEliminar" alignment="1" max="32767" attributes="0"/>
                           <Component id="btnModificar" alignment="1" max="32767" attributes="0"/>
+                          <Component id="btnEliminar" alignment="1" max="32767" attributes="0"/>
+                          <Component id="btnNuevo" alignment="1" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -502,11 +502,11 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
-                      <Component id="btnNuevo" max="32767" attributes="0"/>
+                      <Component id="btnNuevo" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="btnModificar" max="32767" attributes="0"/>
+                      <Component id="btnModificar" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="btnEliminar" max="32767" attributes="0"/>
+                      <Component id="btnEliminar" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -909,7 +909,9 @@
                     <Component class="javax.swing.JTextArea" name="taObs">
                       <Properties>
                         <Property name="columns" type="int" value="20"/>
+                        <Property name="lineWrap" type="boolean" value="true"/>
                         <Property name="rows" type="int" value="5"/>
+                        <Property name="wrapStyleWord" type="boolean" value="true"/>
                         <Property name="disabledTextColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                           <Color blue="0" green="0" red="0" type="rgb"/>
                         </Property>

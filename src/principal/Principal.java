@@ -10,6 +10,7 @@ import forms.ABMNivel;
 import forms.ABMNivelDocente;
 import forms.ABMPerfil;
 import forms.ABMUsuario;
+import forms.ABMUsuarioRol;
 import forms.Configuracion;
 import forms.Gasto;
 import forms.Matricula;
@@ -32,7 +33,8 @@ import login.Login;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 //Variables globales
-import static login.Login.Alias;
+import static login.Login.codUsuario;
+import static login.Login.alias;
 //
 
 /**
@@ -50,23 +52,13 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         initComponents();
         this.setExtendedState(Principal.MAXIMIZED_BOTH);//Maximizar ventana
         ObtenerHorayFecha();
-        lbAlias.setText(Alias);
-        PerfilesUsuario(Alias);
-        PermisoModulos(Alias);
-
-        //Roles de usuario 
-        meitRegistrarMatricula.setEnabled(metodos.PermisoRol(Alias, "MATRICULA", "ALTA")); //Si el usuario Alias tiene rol de NUEVO COMPRA
-        meitAnularMatricula.setEnabled(metodos.PermisoRol(Alias, "MATRICULA", "BAJA"));
-        meitRegistrarPago.setEnabled(metodos.PermisoRol(Alias, "PAGO", "ALTA"));
-        meitAnularPago.setEnabled(metodos.PermisoRol(Alias, "PAGO", "BAJA"));
-        meitRegistrarPagoSalario.setEnabled(metodos.PermisoRol(Alias, "PAGO_SALARIO", "ALTA"));
-        meitAnularPagoSalario.setEnabled(metodos.PermisoRol(Alias, "PAGO_SALARIO", "BAJA"));
-        meitRegistrarGasto.setEnabled(metodos.PermisoRol(Alias, "GASTO", "ALTA"));
-        meitAnularGasto.setEnabled(metodos.PermisoRol(Alias, "GASTO", "BAJA"));
+        lbAlias.setText(alias);
+        PerfilesUsuario(codUsuario);
+        PermisoModulos(codUsuario);
     }
 
-    private void PermisoModulos(String ElAlias) {
-        con = con.ObtenerRSSentencia("CALL SP_UsuarioModuloConsulta('" + ElAlias + "')");
+    private void PermisoModulos(String codUsuario) {
+        con = con.ObtenerRSSentencia("CALL SP_UsuarioModuloConsulta('" + codUsuario + "')");
         String modulo;
         try {
             while (con.rs.next()) {
@@ -74,6 +66,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                 switch (modulo) {
                     case "NIVEL":
                         btnNivel.setEnabled(true);
+                        meiDocenteEncargado.setEnabled(true);
                         break;
                     case "APODERADO":
                         btnApoderado.setEnabled(true);
@@ -130,25 +123,20 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         }
     }
 
-    private void PerfilesUsuario(String alias) {
-        String consulta = "SELECT per_codigo, per_denominacion "
-                + "FROM usuario,perfil,usuario_perfil "
-                + "WHERE usu_alias = '" + alias + "' AND usuper_usuario = usu_codigo AND usuper_perfil = per_codigo "
-                + "ORDER BY per_denominacion";
+    private void PerfilesUsuario(String codUsuario) {
+        String consulta = "CALL SP_UsuarioPerfilConsulta(" + codUsuario + ")";
         con = con.ObtenerRSSentencia(consulta);
         try {
             String perfil = "";
-            int numfila = 1;
             while (con.rs.next()) {
-                if (numfila == 1) {
+                if (perfil.equals("")) {
                     perfil = con.rs.getString("per_denominacion");
                 } else {
                     perfil = perfil + ", " + con.rs.getString("per_denominacion");
                 }
-                numfila = numfila + 1;
             }
             lblPerfil.setText(perfil);
-        } catch (SQLException ex) {
+        } catch (SQLException | NullPointerException ex) {
             Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
         }
         con.DesconectarBasedeDatos();
@@ -206,6 +194,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meReporte = new javax.swing.JMenu();
         jMenuItem7 = new javax.swing.JMenuItem();
         meUsuario = new javax.swing.JMenu();
+        meitRol = new javax.swing.JMenuItem();
+        jSeparator7 = new javax.swing.JPopupMenu.Separator();
         jMenuItem18 = new javax.swing.JMenuItem();
         meConfiguracion = new javax.swing.JMenu();
         jMenuItem6 = new javax.swing.JMenuItem();
@@ -217,8 +207,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meitPerfil = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         meitModulo = new javax.swing.JMenuItem();
-        jSeparator7 = new javax.swing.JPopupMenu.Separator();
-        meitRol = new javax.swing.JMenuItem();
         meSalir = new javax.swing.JMenu();
         jMenuItem19 = new javax.swing.JMenuItem();
 
@@ -522,7 +510,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         meitRegistrarMatricula.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoRegistrar.png"))); // NOI18N
         meitRegistrarMatricula.setText("Registrar matricula");
-        meitRegistrarMatricula.setEnabled(false);
         meitRegistrarMatricula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 meitRegistrarMatriculaActionPerformed(evt);
@@ -533,7 +520,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         meitAnularMatricula.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoEliminar25.png"))); // NOI18N
         meitAnularMatricula.setText("Anular matricula");
-        meitAnularMatricula.setEnabled(false);
         meitAnularMatricula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 meitAnularMatriculaActionPerformed(evt);
@@ -556,7 +542,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         meitRegistrarPago.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoRegistrar.png"))); // NOI18N
         meitRegistrarPago.setText("Registrar pago");
-        meitRegistrarPago.setEnabled(false);
         meitRegistrarPago.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 meitRegistrarPagoActionPerformed(evt);
@@ -567,7 +552,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         meitAnularPago.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoEliminar25.png"))); // NOI18N
         meitAnularPago.setText("Anular pago");
-        meitAnularPago.setEnabled(false);
         meitAnularPago.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 meitAnularPagoActionPerformed(evt);
@@ -590,7 +574,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         meitRegistrarPagoSalario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoRegistrar.png"))); // NOI18N
         meitRegistrarPagoSalario.setText("Registrar pago de salario");
-        meitRegistrarPagoSalario.setEnabled(false);
         meitRegistrarPagoSalario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 meitRegistrarPagoSalarioActionPerformed(evt);
@@ -601,7 +584,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         meitAnularPagoSalario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoEliminar25.png"))); // NOI18N
         meitAnularPagoSalario.setText("Anular pago de salario");
-        meitAnularPagoSalario.setEnabled(false);
         meitAnularPagoSalario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 meitAnularPagoSalarioActionPerformed(evt);
@@ -624,7 +606,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         meitRegistrarGasto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoRegistrar.png"))); // NOI18N
         meitRegistrarGasto.setText("Registrar gasto");
-        meitRegistrarGasto.setEnabled(false);
         meitRegistrarGasto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 meitRegistrarGastoActionPerformed(evt);
@@ -635,7 +616,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         meitAnularGasto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoEliminar25.png"))); // NOI18N
         meitAnularGasto.setText("Anular gasto");
-        meitAnularGasto.setEnabled(false);
         meitAnularGasto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 meitAnularGastoActionPerformed(evt);
@@ -669,6 +649,16 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meUsuario.setMaximumSize(new java.awt.Dimension(150, 32767));
         meUsuario.setMinimumSize(new java.awt.Dimension(150, 70));
         meUsuario.setPreferredSize(new java.awt.Dimension(150, 70));
+
+        meitRol.setText("Roles de usuario");
+        meitRol.setEnabled(false);
+        meitRol.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meitRolActionPerformed(evt);
+            }
+        });
+        meUsuario.add(meitRol);
+        meUsuario.add(jSeparator7);
 
         jMenuItem18.setText("Cambiar contraseña");
         jMenuItem18.setEnabled(false);
@@ -736,16 +726,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             }
         });
         meConfiguracion.add(meitModulo);
-        meConfiguracion.add(jSeparator7);
-
-        meitRol.setText("Roles");
-        meitRol.setEnabled(false);
-        meitRol.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                meitRolActionPerformed(evt);
-            }
-        });
-        meConfiguracion.add(meitRol);
 
         jMenuBar1.add(meConfiguracion);
 
@@ -791,12 +771,15 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
     private void meitPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitPerfilActionPerformed
         ABMPerfil abmperfil = new ABMPerfil(this, true);
+        abmperfil.setLocationRelativeTo(this); //Centrar
         abmperfil.setVisible(true);
     }//GEN-LAST:event_meitPerfilActionPerformed
 
 
     private void meitRolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitRolActionPerformed
-
+        ABMUsuarioRol abmusuariorol = new ABMUsuarioRol(this, true);
+        abmusuariorol.setLocationRelativeTo(this); //Centrar
+        abmusuariorol.setVisible(true);
     }//GEN-LAST:event_meitRolActionPerformed
 
     private void ObtenerFechayHora() {
@@ -821,16 +804,19 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
         Configuracion conf = new Configuracion(this, true);
+        conf.setLocationRelativeTo(this); //Centrar
         conf.setVisible(true);
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void btnPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagoActionPerformed
         Pago pago = new Pago(this, false);
+        pago.setLocationRelativeTo(this); //Centrar
         pago.setVisible(true);
     }//GEN-LAST:event_btnPagoActionPerformed
 
     private void btnFuncionarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFuncionarioActionPerformed
         ABMFuncionario abmempleado = new ABMFuncionario(this, true);
+        abmempleado.setLocationRelativeTo(this); //Centrar
         abmempleado.setVisible(true);
     }//GEN-LAST:event_btnFuncionarioActionPerformed
 

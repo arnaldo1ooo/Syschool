@@ -37,10 +37,7 @@ public class ABMNivelDocente extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-        /*//Permiso Roles de usuario
-        btnNuevo.setVisible(metodos.PermisoRol(Alias, "NIVEL_DOCENTE", "ALTA"));
-        btnModificar.setVisible(metodos.PermisoRol(Alias, "NIVEL_DOCENTE", "MODIFICAR"));
-        btnEliminar.setVisible(metodos.PermisoRol(Alias, "NIVEL_DOCENTE", "BAJA"));*/
+
         CargarComboBoxes();
         ConsultaDocentes(); //Trae todos los registros
         txtBuscar.requestFocus();
@@ -49,7 +46,7 @@ public class ABMNivelDocente extends javax.swing.JDialog {
     }
 
 //--------------------------METODOS----------------------------//
-    public void CargarComboBoxes() {
+    private void CargarComboBoxes() {
         //Carga los combobox con las consultas
         metodoscombo.CargarComboBox(cbNivel, "SELECT niv_codigo, "
                 + "CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
@@ -114,7 +111,7 @@ public class ABMNivelDocente extends javax.swing.JDialog {
         }
     }
 
-    public void ConsultaDocentes() {//Realiza la consulta de los productos que tenemos en la base de datos
+    private void ConsultaDocentes() {//Realiza la consulta de los productos que tenemos en la base de datos
         String sentencia = "SELECT nivfun_codigo, CONCAT(fun_nombre,' ', fun_apellido) AS docente, nivfun_periodo "
                 + "FROM nivel_docente, funcionario "
                 + "WHERE nivfun_docente = fun_codigo AND nivfun_nivel = '" + metodoscombo.ObtenerIDSelectComboBox(cbNivel) + "'";
@@ -374,9 +371,9 @@ public class ABMNivelDocente extends javax.swing.JDialog {
             .addGroup(jpBotonesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(10, Short.MAX_VALUE))
         );
         jpBotonesLayout.setVerticalGroup(

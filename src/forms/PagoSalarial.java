@@ -9,7 +9,7 @@ import conexion.Conexion;
 import java.awt.Toolkit;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
-import static login.Login.Alias;
+import static login.Login.codUsuario;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 
@@ -32,7 +32,8 @@ public class PagoSalarial extends javax.swing.JDialog {
             btnEliminar.setVisible(eliminar);
         } else {
             //Permiso Roles de usuario
-            btnEliminar.setVisible(metodos.PermisoRol(Alias, "PAGO_SALARIO", "BAJA"));
+            String permisos = metodos.PermisoRol(codUsuario, "PAGO_SALARIO");
+            btnEliminar.setVisible(permisos.contains("B"));
         }
     }
 

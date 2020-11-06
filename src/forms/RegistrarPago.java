@@ -30,7 +30,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import static login.Login.Alias;
+import static login.Login.codUsuario;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import utilidades.Metodos;
@@ -71,7 +71,8 @@ public class RegistrarPago extends javax.swing.JDialog {
         txtCedulaApoderado.setText("");
 
         //Permiso Roles de usuario
-        btnGuardar.setVisible(metodos.PermisoRol(Alias, "PAGO", "ALTA"));
+        String permisos = metodos.PermisoRol(codUsuario, "PAGO");
+        btnGuardar.setVisible(permisos.contains("A"));
 
         OrdenTabulador();
     }

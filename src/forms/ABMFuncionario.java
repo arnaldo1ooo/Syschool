@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import static login.Login.Alias;
+import static login.Login.codUsuario;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
@@ -30,18 +30,18 @@ import utilidades.MetodosTXT;
  * @author Arnaldo Cantero
  */
 public class ABMFuncionario extends javax.swing.JDialog {
-    
+
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
     MetodosCombo metodoscombo = new MetodosCombo();
     DefaultTableModel modelTableFuncionarios;
     String nombreTablaBD = "Funcionario";
-    
+
     public ABMFuncionario(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
-        
+
         txtBuscar.requestFocus();
 
         //Poner fecha actual
@@ -52,19 +52,20 @@ public class ABMFuncionario extends javax.swing.JDialog {
         CargarComboBoxes();
 
         //Permiso Roles de usuario
-        btnNuevo.setVisible(metodos.PermisoRol(Alias, "FUNCIONARIO", "ALTA"));
-        btnModificar.setVisible(metodos.PermisoRol(Alias, "FUNCIONARIO", "MODIFICAR"));
-        btnEliminar.setVisible(metodos.PermisoRol(Alias, "FUNCIONARIO", "BAJA"));
-        
+        String permisos = metodos.PermisoRol(codUsuario, "FUNCIONARIO");
+        btnNuevo.setVisible(permisos.contains("A"));
+        btnModificar.setVisible(permisos.contains("M"));
+        btnEliminar.setVisible(permisos.contains("B"));
+
         OrdenTabulador();
     }
 
     //--------------------------METODOS----------------------------//
-    public void CargarComboBoxes() {
+    private void CargarComboBoxes() {
         //Carga los combobox con las consultas
         metodoscombo.CargarComboBox(cbCargo, "SELECT car_codigo, car_descripcion FROM cargo ORDER BY car_descripcion", -1);
     }
-    
+
     public void RegistroNuevoModificar() {
         if (ComprobarCampos() == true) {
             String codigo = txtCodigo.getText();
@@ -80,7 +81,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
             String obs = taObs.getText();
             int estado = cbEstado.getSelectedIndex();
             int cargo = metodoscombo.ObtenerIDSelectComboBox(cbCargo);
-            
+
             if (codigo.equals("")) {
                 //NUEVO REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de crear este nuevo registro?", "Confirmación", JOptionPane.YES_OPTION);
@@ -88,7 +89,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
                     String sentencia = "CALL SP_" + nombreTablaBD + "Alta ('" + nombre + "','" + apellido + "','" + cedula
                             + "','" + fechaingreso + "','" + sexo + "','" + telefono + "','" + salario + "','" + email + "','" + obs + "','" + estado + "','" + cargo + "')";
                     con.EjecutarABM(sentencia, true);
-                    
+
                     TablaConsultaBDAll(); //Actualizar tabla                  
                     ModoEdicion(false);
                     Limpiar();
@@ -100,7 +101,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
                     String sentencia = "CALL SP_" + nombreTablaBD + "Modificar(" + codigo + ",'" + nombre + "','" + apellido + "','" + cedula
                             + "','" + fechaingreso + "','" + sexo + "','" + telefono + "','" + salario + "','" + email + "','" + obs + "','" + estado + "','" + cargo + "')";
                     con.EjecutarABM(sentencia, true);
-                    
+
                     TablaConsultaBDAll(); //Actualizar tabla                  
                     ModoEdicion(false);
                     Limpiar();
@@ -108,17 +109,17 @@ public class ABMFuncionario extends javax.swing.JDialog {
             }
         }
     }
-    
+
     private void RegistroEliminar() {
         int filasel = tbPrincipal.getSelectedRow();
         String codigo = tbPrincipal.getModel().getValueAt(filasel, 0) + "";
-        
+
         if (filasel != -1) {
             int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea eliminar este funcionario?, tambien se ELIMINARÁN los pagos salariales del mismo", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
                 String sentencia = "CALL SP_" + nombreTablaBD + "Eliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
-                
+
                 TablaConsultaBDAll();
                 ModoEdicion(false);
                 Limpiar();
@@ -129,15 +130,15 @@ public class ABMFuncionario extends javax.swing.JDialog {
             txtBuscar.requestFocus();
         }
     }
-    
-    public void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
+
+    private void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
         modelTableFuncionarios = (DefaultTableModel) tbPrincipal.getModel();//Cargamos campos de jtable al modeltable
         modelTableFuncionarios.setRowCount(0); //Vacia la tabla
 
         String sentencia = "CALL SP_" + nombreTablaBD + "Consulta";
-        
+
         con = con.ObtenerRSSentencia(sentencia);
-        
+
         try {
             String codigo, nombre, apellido, cedula, fechaing, sexo, telefono, salario, email, obs, estado, cargo;
             while (con.rs.next()) {
@@ -153,7 +154,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
                 obs = con.rs.getString("fun_obs");
                 estado = con.rs.getString("estado");
                 cargo = con.rs.getString("car_descripcion");
-                
+
                 modelTableFuncionarios.addRow(new Object[]{codigo, nombre, apellido, cedula, fechaing, sexo, telefono, salario, email, obs, estado, cargo});
             }
             tbPrincipal.setModel(modelTableFuncionarios);
@@ -162,14 +163,14 @@ public class ABMFuncionario extends javax.swing.JDialog {
             e.printStackTrace();
         }
         con.DesconectarBasedeDatos();
-        
+
         if (tbPrincipal.getModel().getRowCount() == 1) {
             lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registro encontrado");
         } else {
             lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registros encontrados");
         }
     }
-    
+
     private void ModoVistaPrevia() {
         txtCodigo.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "");
         txtNombre.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1) + "");
@@ -181,18 +182,18 @@ public class ABMFuncionario extends javax.swing.JDialog {
         } catch (ParseException e) {
             System.out.println("Error al parsear fecha");
         }
-        
+
         cbSexo.setSelectedItem(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 5) + "");
         txtTelefono.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 6) + "");
         txtSalario.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 7) + "");
         txtEmail.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 8) + "");
         taObs.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 9) + "");
         cbEstado.setSelectedItem(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 10) + "");
-        
+
         String cargo = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 11) + "";
         metodoscombo.setSelectedNombreItem(cbCargo, cargo);
     }
-    
+
     private void ModoEdicion(boolean valor) {
         txtBuscar.setEnabled(!valor);
         tbPrincipal.setEnabled(!valor);
@@ -212,10 +213,10 @@ public class ABMFuncionario extends javax.swing.JDialog {
         btnEliminar.setEnabled(false);
         btnGuardar.setEnabled(valor);
         btnCancelar.setEnabled(valor);
-        
+
         txtNombre.requestFocus();
     }
-    
+
     private void Limpiar() {
         txtCodigo.setText("");
         txtNombre.setText("");
@@ -232,16 +233,16 @@ public class ABMFuncionario extends javax.swing.JDialog {
         lblFechaIngreso.setForeground(new Color(102, 102, 102));
         lblNombre.setForeground(new Color(102, 102, 102));
         lblApellido.setForeground(new Color(102, 102, 102));
-        
+
         txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
     }
-    
+
     public boolean ComprobarCampos() {
         if (metodostxt.ValidarCampoVacioTXT(txtNombre, lblNombre) == false) {
             return false;
         }
-        
+
         if (metodostxt.ValidarCampoVacioTXT(txtApellido, lblApellido) == false) {
             return false;
         }
@@ -454,20 +455,20 @@ public class ABMFuncionario extends javax.swing.JDialog {
             .addGroup(jpBotonesLayout.createSequentialGroup()
                 .addContainerGap(13, Short.MAX_VALUE)
                 .addGroup(jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jpBotonesLayout.setVerticalGroup(
             jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpBotonesLayout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(btnNuevo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnNuevo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnModificar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnModificar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnEliminar)
                 .addGap(26, 26, 26))
         );
 
@@ -591,7 +592,9 @@ public class ABMFuncionario extends javax.swing.JDialog {
         lblObs.setText("Obs:");
 
         taObs.setColumns(20);
+        taObs.setLineWrap(true);
         taObs.setRows(5);
+        taObs.setWrapStyleWord(true);
         taObs.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         taObs.setEnabled(false);
         taObs.setPreferredSize(new java.awt.Dimension(212, 62));
@@ -897,7 +900,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
 //--------------------------Eventos de componentes----------------------------//
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
         metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
-        
+
         btnModificar.setEnabled(false);
         btnEliminar.setEnabled(false);
     }//GEN-LAST:event_txtBuscarKeyReleased
@@ -934,7 +937,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
         if (tbPrincipal.isEnabled() == true) {
             btnModificar.setEnabled(true);
             btnEliminar.setEnabled(true);
-            
+
             ModoVistaPrevia();
         }
     }//GEN-LAST:event_tbPrincipalMousePressed
@@ -1009,9 +1012,9 @@ public class ABMFuncionario extends javax.swing.JDialog {
     private void txtApellidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtApellidoActionPerformed
-    
+
     List<Component> ordenTabulador;
-    
+
     private void OrdenTabulador() {
         ordenTabulador = new ArrayList<>();
         ordenTabulador.add(txtNombre);
@@ -1026,31 +1029,31 @@ public class ABMFuncionario extends javax.swing.JDialog {
         ordenTabulador.add(cbEstado);
         ordenTabulador.add(btnGuardar);
         setFocusTraversalPolicy(new PersonalizadoFocusTraversalPolicy());
-        
+
     }
-    
+
     private class PersonalizadoFocusTraversalPolicy extends FocusTraversalPolicy {
-        
+
         public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
             int currentPosition = ordenTabulador.indexOf(aComponent);
             currentPosition = (currentPosition + 1) % ordenTabulador.size();
             return (Component) ordenTabulador.get(currentPosition);
         }
-        
+
         public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
             int currentPosition = ordenTabulador.indexOf(aComponent);
             currentPosition = (ordenTabulador.size() + currentPosition - 1) % ordenTabulador.size();
             return (Component) ordenTabulador.get(currentPosition);
         }
-        
+
         public Component getFirstComponent(Container cntnr) {
             return (Component) ordenTabulador.get(0);
         }
-        
+
         public Component getLastComponent(Container cntnr) {
             return (Component) ordenTabulador.get(ordenTabulador.size() - 1);
         }
-        
+
         public Component getDefaultComponent(Container cntnr) {
             return (Component) ordenTabulador.get(0);
         }

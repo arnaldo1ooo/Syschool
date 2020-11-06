@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
-import static login.Login.Alias;
+import static login.Login.codUsuario;
 
 /**
  *
@@ -37,9 +37,10 @@ public class ABMConcepto extends javax.swing.JDialog {
         initComponents();
 
         //Permiso Roles de usuario
-        btnNuevo.setVisible(metodos.PermisoRol(Alias, "CONCEPTO", "ALTA"));
-        btnModificar.setVisible(metodos.PermisoRol(Alias, "CONCEPTO", "MODIFICAR"));
-        btnEliminar.setVisible(metodos.PermisoRol(Alias, "CONCEPTO", "BAJA"));
+        String permisos = metodos.PermisoRol(codUsuario, "CONCEPTO");
+        btnNuevo.setVisible(permisos.contains("A"));
+        btnModificar.setVisible(permisos.contains("M"));
+        btnEliminar.setVisible(permisos.contains("B"));
 
         TablaConsultaBDAll(); //Trae todos los registros
         txtBuscar.requestFocus();
@@ -513,9 +514,9 @@ public class ABMConcepto extends javax.swing.JDialog {
             .addGroup(jpBotonesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(10, Short.MAX_VALUE))
         );
         jpBotonesLayout.setVerticalGroup(

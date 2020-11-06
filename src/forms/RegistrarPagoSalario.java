@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import static login.Login.Alias;
+import static login.Login.codUsuario;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
@@ -57,7 +57,8 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
         cbMes.setSelectedIndex(mesActual);
 
         //Permiso Roles de usuario
-        btnGuardar.setVisible(metodos.PermisoRol(Alias, "PAGO_SALARIO", "ALTA"));
+        String permisos = metodos.PermisoRol(codUsuario, "PAGO_SALARIO");
+        btnGuardar.setVisible(permisos.contains("A"));
 
         OrdenTabulador();
     }

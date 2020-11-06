@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import javax.swing.JOptionPane;
-import static login.Login.Alias;
+import static login.Login.codUsuario;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
@@ -53,7 +53,8 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         TablaAllAlumno(false);
 
         //Permiso Roles de usuario
-        btnGuardar.setVisible(metodos.PermisoRol(Alias, "MATRICULA", "ALTA"));
+        String permisos = metodos.PermisoRol(codUsuario, "MATRICULA");
+        btnGuardar.setVisible(permisos.contains("A"));
 
         OrdenTabulador();
     }

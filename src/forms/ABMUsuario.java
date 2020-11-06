@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import static login.Login.Alias;
+import static login.Login.codUsuario;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
@@ -41,24 +41,26 @@ public class ABMUsuario extends javax.swing.JDialog {
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
     MetodosCombo metodoscombo = new MetodosCombo();
-    DefaultTableModel dtmPerfiles;
-    DefaultTableModel dtmRoles;
-    DefaultTableModel dtmPerfilModulos;
+    DefaultTableModel tablemodelPerfiles;
+    DefaultTableModel tablemodelRoles;
+    DefaultTableModel tablemodelPerfilModulos;
 
     public ABMUsuario(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
 
+        txtBuscar.requestFocus();
+        
+//Permiso Roles de usuario
+        String permisos = metodos.PermisoRol(codUsuario, "USUARIO");
+        btnNuevo.setVisible(permisos.contains("A"));
+        btnModificar.setVisible(permisos.contains("M"));
+        btnEliminar.setVisible(permisos.contains("B"));
+
         //Metodos
         TablaConsultaUsuarios(); //Trae todos los registros
         TablaAllPerfiles();
-
-        txtBuscar.requestFocus();
-        //Permiso Roles de usuario
-        btnNuevo.setVisible(metodos.PermisoRol(Alias, "USUARIO", "ALTA"));
-        btnModificar.setVisible(metodos.PermisoRol(Alias, "USUARIO", "MODIFICAR"));
-        btnEliminar.setVisible(metodos.PermisoRol(Alias, "USUARIO", "BAJA"));
-
+        
         OrdenTabulador();
     }
 
@@ -148,7 +150,7 @@ public class ABMUsuario extends javax.swing.JDialog {
         }
     }
 
-    public void TablaConsultaUsuarios() {//Realiza la consulta de los productos que tenemos en la base de datos
+    private void TablaConsultaUsuarios() {//Realiza la consulta de los productos que tenemos en la base de datos
         String sentencia = "CALL SP_UsuarioConsulta";
         String titlesJtabla[] = {"Código", "Nombre", "Apellido", "Alias", "Contraseña", "Fecha de creación"}; //Debe tener la misma cantidad que titlesconsulta
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
@@ -161,14 +163,14 @@ public class ABMUsuario extends javax.swing.JDialog {
         }
     }
 
-    public void TablaAllPerfiles() {
+    private void TablaAllPerfiles() {
         try {
             String sentencia = "SELECT per_codigo, per_denominacion, per_descripcion FROM perfil ORDER BY per_denominacion";
             con = con.ObtenerRSSentencia(sentencia);
-            dtmPerfiles = (DefaultTableModel) tbPerfiles.getModel();
-            dtmPerfiles.setRowCount(0);
+            tablemodelPerfiles = (DefaultTableModel) tbPerfiles.getModel();
+            tablemodelPerfiles.setRowCount(0);
             while (con.rs.next()) {
-                dtmPerfiles.addRow(new Object[]{con.rs.getString("per_codigo"), con.rs.getString("per_denominacion"),
+                tablemodelPerfiles.addRow(new Object[]{con.rs.getString("per_codigo"), con.rs.getString("per_denominacion"),
                     false, con.rs.getString("per_descripcion")});
             }
         } catch (SQLException e) {
@@ -205,14 +207,14 @@ public class ABMUsuario extends javax.swing.JDialog {
 
     public void TablaRolesDelUsu() {
         try {
-            dtmRoles = (DefaultTableModel) tbRoles.getModel();
-            dtmRoles.setRowCount(0);
+            tablemodelRoles = (DefaultTableModel) tbRoles.getModel();
+            tablemodelRoles.setRowCount(0);
             //Se obtienen los modulos de los perfiles del usuario seleccionado
             String codususelect = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "";
             String sentencia = "CALL SP_UsuarioPerfilModulosConsulta('" + codususelect + "')";
             con = con.ObtenerRSSentencia(sentencia);
             while (con.rs.next()) {
-                dtmRoles.addRow(new Object[]{
+                tablemodelRoles.addRow(new Object[]{
                     con.rs.getString("mo_denominacion"),});
             }
 
@@ -517,10 +519,10 @@ public class ABMUsuario extends javax.swing.JDialog {
 
         TablaAllPerfiles(); //Recargar tabla
         //Vaciar tabla
-        dtmPerfilModulos = (DefaultTableModel) tbPerfilModulos.getModel();
-        dtmPerfilModulos.setRowCount(0);
-        dtmRoles = (DefaultTableModel) tbRoles.getModel();
-        dtmRoles.setRowCount(0);
+        tablemodelPerfilModulos = (DefaultTableModel) tbPerfilModulos.getModel();
+        tablemodelPerfilModulos.setRowCount(0);
+        tablemodelRoles = (DefaultTableModel) tbRoles.getModel();
+        tablemodelRoles.setRowCount(0);
     }
 
     public boolean ComprobarCampos() {
@@ -743,22 +745,22 @@ public class ABMUsuario extends javax.swing.JDialog {
         jpBotonesLayout.setHorizontalGroup(
             jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpBotonesLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(10, Short.MAX_VALUE)
                 .addGroup(jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jpBotonesLayout.setVerticalGroup(
             jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpBotonesLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnNuevo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnModificar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1280,8 +1282,8 @@ public class ABMUsuario extends javax.swing.JDialog {
 
     private void tbPerfilesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPerfilesMousePressed
         if (tbPerfiles.isEnabled()) {
-            dtmPerfilModulos = (DefaultTableModel) tbPerfilModulos.getModel();
-            dtmPerfilModulos.setRowCount(0);
+            tablemodelPerfilModulos = (DefaultTableModel) tbPerfilModulos.getModel();
+            tablemodelPerfilModulos.setRowCount(0);
             String codperfil = tbPerfiles.getValueAt(tbPerfiles.getSelectedRow(), 0) + "";
             lblTituloPerfilModulos.setText("Módulos del perfil: " + tbPerfiles.getValueAt(tbPerfiles.getSelectedRow(), 1));
             String sentencia = "SELECT mo_codigo, mo_denominacion FROM perfil_modulo, modulo WHERE permo_perfil = '" + codperfil
@@ -1289,7 +1291,7 @@ public class ABMUsuario extends javax.swing.JDialog {
             con = con.ObtenerRSSentencia(sentencia);
             try {
                 while (con.rs.next()) {
-                    dtmPerfilModulos.addRow(new Object[]{con.rs.getString("mo_codigo"), con.rs.getString("mo_denominacion")});
+                    tablemodelPerfilModulos.addRow(new Object[]{con.rs.getString("mo_codigo"), con.rs.getString("mo_denominacion")});
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

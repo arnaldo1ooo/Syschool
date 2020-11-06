@@ -16,9 +16,9 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import static login.Login.codUsuario;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
-import static login.Login.Alias;
 import utilidades.MetodosCombo;
 
 /**
@@ -37,9 +37,10 @@ public class ABMNivel extends javax.swing.JDialog {
         initComponents();
 
         //Permiso Roles de usuario
-        btnNuevo.setVisible(metodos.PermisoRol(Alias, "NIVEL", "ALTA"));
-        btnModificar.setVisible(metodos.PermisoRol(Alias, "NIVEL", "MODIFICAR"));
-        btnEliminar.setVisible(metodos.PermisoRol(Alias, "NIVEL", "BAJA"));
+        String permisos = metodos.PermisoRol(codUsuario, "NIVEL");
+        btnNuevo.setVisible(permisos.contains("A"));
+        btnModificar.setVisible(permisos.contains("M"));
+        btnEliminar.setVisible(permisos.contains("B"));
 
         TablaConsultaBDAll(); //Trae todos los registros
         txtBuscar.requestFocus();
@@ -101,7 +102,7 @@ public class ABMNivel extends javax.swing.JDialog {
         }
     }
 
-    public void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
+    private void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
         String sentencia = "CALL SP_NivelConsulta";
         String titlesJtabla[] = {"Código", "Descripción", "Sección", "Turno", "Tipo"};
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
@@ -354,9 +355,9 @@ public class ABMNivel extends javax.swing.JDialog {
             .addGroup(jpBotonesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(10, Short.MAX_VALUE))
         );
         jpBotonesLayout.setVerticalGroup(

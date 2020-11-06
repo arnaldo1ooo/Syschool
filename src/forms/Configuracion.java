@@ -6,7 +6,6 @@
 package forms;
 
 import conexion.Conexion;
-import java.awt.Toolkit;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 

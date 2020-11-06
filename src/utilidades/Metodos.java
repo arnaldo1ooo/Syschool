@@ -319,23 +319,43 @@ public class Metodos {
         }
     }
 
-    public boolean PermisoRol(String ElAlias, String modulo, String elRol) {
-        con = con.ObtenerRSSentencia("CALL SP_UsuarioRolConsulta('" + ElAlias + "','" + modulo + "')");
-        String rol;
-        boolean tienepermiso = false;
+    public String PermisoRol(String codUsuario, String modulo) {
+        con = con.ObtenerRSSentencia("CALL SP_UsuarioRolConsulta('" + codUsuario + "','" + modulo + "')");
+
+        String permisos = "";
+        String roldenominacion;
+        String aliasusuario;
         try {
+
             while (con.rs.next()) {
-                rol = con.rs.getString("rol_denominacion");
-                if (rol.equals(elRol)) {
-                    System.out.println("El usuario (" + ElAlias + ") tiene permiso para " + elRol + " en el modulo " + modulo);
-                    tienepermiso = true;
+                roldenominacion = con.rs.getString("rol_denominacion");
+                aliasusuario = con.rs.getString("usu_alias");
+                switch (roldenominacion) {
+                    case "ALTA":
+                        permisos = permisos.concat("A");
+                        break;
+
+                    case "MODIFICAR":
+                        permisos = permisos.concat("M");
+                        break;
+
+                    case "BAJA":
+                        permisos = permisos.concat("B");
+                        break;
+
+                    default:
+                        System.out.println("No coincide ninguno");
+                        break;
                 }
+                System.out.println("El usuario " + aliasusuario + " en el modulo " + modulo + " tiene permiso para " + roldenominacion
+                );
+
             }
         } catch (SQLException ex) {
             System.out.println("Error al verificar roles del usuario " + ex);
         }
         con.DesconectarBasedeDatos();
-        return tienepermiso;
+        return permisos;
     }
 
     public String MayusPrimeraLetra(String laCadena) {

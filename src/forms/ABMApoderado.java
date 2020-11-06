@@ -26,7 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
-import static login.Login.Alias;
+import static login.Login.codUsuario;
 
 /**
  *
@@ -44,9 +44,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         initComponents();
 
         //Permiso Roles de usuario
-        btnNuevo.setVisible(metodos.PermisoRol(Alias, "APODERADO", "ALTA"));
-        btnModificar.setVisible(metodos.PermisoRol(Alias, "APODERADO", "MODIFICAR"));
-        btnEliminar.setVisible(metodos.PermisoRol(Alias, "APODERADO", "BAJA"));
+        //Permiso Roles de usuario
+        String permisos = metodos.PermisoRol(codUsuario, "APODERADO");
+        btnNuevo.setVisible(permisos.contains("A"));
+        btnModificar.setVisible(permisos.contains("M"));
+        btnEliminar.setVisible(permisos.contains("B"));
 
         TablaConsultaBDAll(); //Trae todos los registros
         txtBuscar.requestFocus();
@@ -1039,7 +1041,9 @@ public class ABMApoderado extends javax.swing.JDialog {
         lblObs.setFocusable(false);
 
         taObs.setColumns(20);
+        taObs.setLineWrap(true);
         taObs.setRows(5);
+        taObs.setWrapStyleWord(true);
         taObs.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         taObs.setEnabled(false);
         taObs.addKeyListener(new java.awt.event.KeyAdapter() {

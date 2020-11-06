@@ -287,9 +287,9 @@
                   <Group type="102" attributes="0">
                       <EmptySpace pref="10" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="btnNuevo" alignment="1" max="32767" attributes="0"/>
-                          <Component id="btnEliminar" alignment="1" max="32767" attributes="0"/>
-                          <Component id="btnModificar" alignment="1" max="32767" attributes="0"/>
+                          <Component id="btnModificar" alignment="1" min="-2" pref="135" max="-2" attributes="0"/>
+                          <Component id="btnEliminar" alignment="0" min="-2" pref="135" max="-2" attributes="0"/>
+                          <Component id="btnNuevo" alignment="0" min="-2" pref="135" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -299,11 +299,11 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnNuevo" max="32767" attributes="0"/>
+                      <Component id="btnNuevo" min="-2" pref="52" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="btnModificar" max="32767" attributes="0"/>
+                      <Component id="btnModificar" min="-2" pref="52" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="btnEliminar" max="32767" attributes="0"/>
+                      <Component id="btnEliminar" min="-2" pref="52" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>

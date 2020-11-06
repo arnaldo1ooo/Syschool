@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
-import static login.Login.Alias;
+import static login.Login.codUsuario;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
@@ -40,7 +40,7 @@ public class RegistrarGasto extends javax.swing.JDialog {
         //Si es gasto operacional o administrativo
         try {
             con = con.ObtenerRSSentencia("SELECT per_denominacion FROM usuario,perfil,usuario_perfil "
-                    + "WHERE usu_alias = '" + Alias + "' AND usuper_usuario = usu_codigo AND usuper_perfil = per_codigo "
+                    + "WHERE usu_codigo = '" + codUsuario + "' AND usuper_usuario = usu_codigo AND usuper_perfil = per_codigo "
                     + "ORDER BY per_denominacion");
             while (con.rs.next()) {
                 if (con.rs.getString("per_denominacion").equals("DIRECTORA")) {
@@ -58,13 +58,14 @@ public class RegistrarGasto extends javax.swing.JDialog {
         Limpiar();
 
         //Permiso Roles de usuario
-        btnGuardar.setVisible(metodos.PermisoRol(Alias, "GASTO", "ALTA"));
+        String permisos = metodos.PermisoRol(codUsuario, "GASTO");
+        btnGuardar.setVisible(permisos.contains("A"));
 
         OrdenTabulador();
     }
 
 //--------------------------METODOS----------------------------//
-    public void CargarComboBoxes() {
+    private void CargarComboBoxes() {
         //Carga los combobox con las consultas
         metodoscombo.CargarComboBox(cbTipoGasto, "SELECT tipgas_codigo, tipgas_descripcion "
                 + "FROM tipo_gasto WHERE tipgas_tipo='" + tipogasto + "' ORDER BY tipgas_descripcion", -1);

@@ -69,7 +69,7 @@ public class ABMPerfil extends javax.swing.JDialog {
     public void RegistroNuevoModificar() {
         try {
             if (ComprobarCampos() == true) {
-                String codigoperfil = txtCodigo.getText();
+                String codperfil = txtCodigo.getText();
                 String denominacion = txtDenominacion.getText().toUpperCase();
                 String descripcion = metodos.MayusPrimeraLetra(taDescripcion.getText());
 
@@ -100,7 +100,7 @@ public class ABMPerfil extends javax.swing.JDialog {
                 } else { //MODIFICAR REGISTRO
                     int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar este regitro?", "Confirmación", JOptionPane.YES_OPTION);
                     if (JOptionPane.YES_OPTION == confirmado) {
-                        String sentencia = "CALL SP_PerfilModificar('" + codigoperfil + "','" + denominacion + "','" + descripcion + "')";
+                        String sentencia = "CALL SP_PerfilModificar('" + codperfil + "','" + denominacion + "','" + descripcion + "')";
                         con.EjecutarABM(sentencia, true);
 
                         //Agregar o eliminar nuevo perfil_modulo
@@ -109,13 +109,15 @@ public class ABMPerfil extends javax.swing.JDialog {
                         for (int i = 0; i < tbPerfilModulos.getRowCount(); i++) {
                             codmodulo = tbPerfilModulos.getValueAt(i, 0) + "";
                             estado = (Boolean) tbPerfilModulos.getValueAt(i, 2);
-                            con = con.ObtenerRSSentencia("SELECT permo_codigo FROM perfil_modulo WHERE permo_perfil='" + codigoperfil + "' AND permo_modulo='" + codmodulo + "'");
+                            con = con.ObtenerRSSentencia("SELECT permo_codigo FROM perfil_modulo WHERE permo_perfil='" + codperfil + "' AND permo_modulo='" + codmodulo + "'");
                             if (con.rs.next()) {
                                 if (estado == false) {
-                                    con.EjecutarABM("CALL SP_Perfil_ModuloEliminar('" + codigoperfil + "','" + codmodulo + "')", false);
+                                    con.EjecutarABM("CALL SP_Perfil_ModuloEliminar('" + codperfil + "','" + codmodulo + "')", false);
                                 }
                             } else {
-                                con.EjecutarABM("CALL SP_Perfil_ModuloAlta('" + codigoperfil + "','" + codmodulo + "')", false);
+                                if (estado == true) {
+                                    con.EjecutarABM("CALL SP_Perfil_ModuloAlta('" + codperfil + "','" + codmodulo + "')", false);
+                                }
                             }
                         }
                     }
@@ -150,7 +152,7 @@ public class ABMPerfil extends javax.swing.JDialog {
         }
     }
 
-    public void TablaConsultaPerfilAll() {//Realiza la consulta de los productos que tenemos en la base de datos
+    private void TablaConsultaPerfilAll() {//Realiza la consulta de los productos que tenemos en la base de datos
         String sentencia = "CALL SP_PerfilConsulta";
         String titlesJtabla[] = {"Código", "Denominación", "Descripción"};
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
@@ -425,9 +427,9 @@ public class ABMPerfil extends javax.swing.JDialog {
             .addGroup(jpBotonesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(10, Short.MAX_VALUE))
         );
         jpBotonesLayout.setVerticalGroup(
@@ -516,8 +518,10 @@ public class ABMPerfil extends javax.swing.JDialog {
         lblTituloPerfilModulos.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         lblTituloPerfilModulos.setText("Módulos del perfil:");
 
-        taDescripcion.setColumns(20);
+        taDescripcion.setColumns(1);
+        taDescripcion.setLineWrap(true);
         taDescripcion.setRows(5);
+        taDescripcion.setWrapStyleWord(true);
         taDescripcion.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         taDescripcion.setEnabled(false);
         jScrollPane1.setViewportView(taDescripcion);
