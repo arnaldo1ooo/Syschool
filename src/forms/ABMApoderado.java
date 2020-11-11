@@ -27,6 +27,7 @@ import javax.swing.table.DefaultTableModel;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 import static login.Login.codUsuario;
+import utilidades.MetodosCombo;
 
 /**
  *
@@ -37,6 +38,7 @@ public class ABMApoderado extends javax.swing.JDialog {
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
+    MetodosCombo metodoscombo = new MetodosCombo();
     DefaultTableModel modelTablaPoderantes;
 
     public ABMApoderado(java.awt.Frame parent, Boolean modal) {
@@ -52,6 +54,9 @@ public class ABMApoderado extends javax.swing.JDialog {
 
         TablaConsultaBDAll(); //Trae todos los registros
         txtBuscar.requestFocus();
+
+        //Cambiar color de disabled combo
+        metodoscombo.CambiarColorDisabledCombo(cbSexo, Color.BLACK);
 
         OrdenTabulador();
     }
@@ -88,8 +93,8 @@ public class ABMApoderado extends javax.swing.JDialog {
             } else { //MODIFICAR REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar este apoderado?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
-                    String sentencia = "CALL SP_ApoderadoModificar('" + codigo + "','" + cedula + "','" + nombre + "','"
-                            + apellido + "','" + sexo + "','" + direccion + "','" + telefono + "','" + email + "','" + obs + "')";
+                    String sentencia = "CALL SP_ApoderadoModificar('" + codigo + "','" + cedula + "','" + nombre + "','" + apellido + "','" + sexo + "','" + direccion
+                            + "','" + telefono + "','" + email + "','" + obs + "')";
                     con.EjecutarABM(sentencia, false);
 
                     NuevoModificarAlumno();
@@ -146,7 +151,7 @@ public class ABMApoderado extends javax.swing.JDialog {
                 idapoderado = Integer.parseInt(txtCodigoApoderado.getText());
             }
 
-            estadoalumno = tbPoderantes.getValueAt(i, 10) + "";           
+            estadoalumno = tbPoderantes.getValueAt(i, 10) + "";
             switch (estadoalumno) {
                 case "ACTIVO":
                     estadoalumno = "1";
@@ -192,7 +197,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         }
     }
 
-    public void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
+    private void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
         String sentencia = "CALL SP_ApoderadoConsulta";
         String titlesJtabla[] = {"Código", "N° de Cédula", "Nombre", "Apellido", "Sexo", "Dirección", "Teléfono", "Email", "Observación"};
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
@@ -290,16 +295,13 @@ public class ABMApoderado extends javax.swing.JDialog {
 
         if (txtCodigoApoderado.getText().equals("")) {
             try {
-                con = con.ObtenerRSSentencia("SELECT apo_cedula FROM apoderado "
-                        + "WHERE apo_cedula='" + txtCedula.getText() + "'");
+                con = con.ObtenerRSSentencia("SELECT apo_cedula FROM apoderado WHERE apo_cedula='" + txtCedula.getText() + "'");
                 if (con.rs.next() == true) { //Si ya existe el numero de cedula en la tabla
                     System.out.println("El N° de cédula ingresado ya existe!");
                     Toolkit.getDefaultToolkit().beep();
                     JOptionPane.showMessageDialog(null, "El N° de cédula ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
                     lblCedula.setForeground(Color.RED);
                     lblCedula.requestFocus();
-                    con.DesconectarBasedeDatos();
-                    Toolkit.getDefaultToolkit().beep();
                     return false;
                 }
             } catch (SQLException e) {
@@ -307,6 +309,7 @@ public class ABMApoderado extends javax.swing.JDialog {
             } catch (NullPointerException e) {
                 System.out.println("La CI ingresada no existe en la bd, aprobado: " + e);
             }
+            con.DesconectarBasedeDatos();
         }
         return true;
     }
@@ -802,16 +805,14 @@ public class ABMApoderado extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(582, 582, 582))
                     .addComponent(scPrincipal, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
-                                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(lblBuscarCampo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))

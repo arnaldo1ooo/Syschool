@@ -51,6 +51,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -61,6 +62,7 @@ public class Metodos {
     Conexion con = new Conexion();
     MetodosTXT metodostxt = new MetodosTXT();
     public int CantRegistros = 0;
+    static Logger log_historial = Logger.getLogger(Metodos.class.getName());
 
     public void AnchuraColumna(JTable LaTabla) {
         LaTabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //Desactiva el autoresize
@@ -133,7 +135,7 @@ public class Metodos {
         TableRowSorter modelFiltrado = new TableRowSorter<>(ElJTable.getModel());
         modelFiltrado.setRowFilter(RowFilter.regexFilter("(?i)" + cadenaABuscar, columnaABuscar));
         ElJTable.setRowSorter(modelFiltrado);
-        ElJTable.repaint();
+        //ElJTable.repaint();
     }
 
     public void ConsultaFiltroTablaBD(JTable LaTabla, String titlesJtabla[], String campoconsulta[], String nombresp, String filtro, JComboBox cbCampoBuscar) {
@@ -186,9 +188,10 @@ public class Metodos {
             conexion.close();
             st.close();
             rs.close();
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, ex);
-            ex.printStackTrace();
+        } catch (SQLException e) {
+            log_historial.error("Error 1005: " + e);
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e);
         }
     }
 
@@ -217,10 +220,10 @@ public class Metodos {
                 valor = valor.replace(".", ",");
             }
             con.DesconectarBasedeDatos();
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Error al intentar obtener cambio " + ex);
-            System.out.println("Error al intentar obtener cambio " + ex);
-            ex.printStackTrace();
+        } catch (SQLException e) {
+            log_historial.error("Error 1006: " + e);
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al intentar obtener cambio " + e);
         }
         return valor;
     }
@@ -237,7 +240,8 @@ public class Metodos {
                 }
             }
         } catch (NumberFormatException e) {
-            System.out.println("Error al sumar columna " + e);
+            log_historial.error("Error 1007: " + e);
+            e.printStackTrace();
         }
         return totalDouble;
     }
@@ -281,9 +285,9 @@ public class Metodos {
                 //Exportar a pdf
                 //JasperExportManager.exportReportToPdfFile(jprint, "C:/ss.pdf"); 
             }
-        } catch (JRException ex) {
-            System.out.println("Error  al GenerarReporteJTABLE ");
-            ex.printStackTrace();
+        } catch (JRException e) {
+            log_historial.error("Error 1008: " + e);
+            e.printStackTrace();
         }
     }
 
@@ -313,9 +317,9 @@ public class Metodos {
 
                 con.DesconectarBasedeDatos();
             }
-        } catch (JRException ex) {
-            System.out.println("Error  al GenerarReporteSQL");
-            ex.printStackTrace();
+        } catch (JRException e) {
+            log_historial.error("Error 1009: " + e);
+            e.printStackTrace();
         }
     }
 
@@ -351,8 +355,9 @@ public class Metodos {
                 );
 
             }
-        } catch (SQLException ex) {
-            System.out.println("Error al verificar roles del usuario " + ex);
+        } catch (SQLException e) {
+            log_historial.error("Error 1010: " + e);
+            e.printStackTrace();
         }
         con.DesconectarBasedeDatos();
         return permisos;
@@ -397,8 +402,9 @@ public class Metodos {
         try {
             ficheroAEjecutar.open(elFile);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null,
-                    e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            log_historial.error("Error 1011: " + e);
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

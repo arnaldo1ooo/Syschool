@@ -61,14 +61,17 @@ public class ABMAlumno extends javax.swing.JDialog {
         btnModificar.setVisible(permisos.contains("M"));
         btnEliminar.setVisible(permisos.contains("B"));
 
+        //Cambiar color de disabled combo
+        metodoscombo.CambiarColorDisabledCombo(cbSexo, Color.BLACK);
+        metodoscombo.CambiarColorDisabledCombo(cbEstado, Color.BLACK);
+
         OrdenTabulador();
     }
 
     //--------------------------METODOS----------------------------//
     private void CargarComboBoxes() {
         //Carga los combobox con las consultas
-        metodoscombo.CargarComboBox(cbApoderado, "SELECT apo_codigo, CONCAT(apo_nombre,' ', apo_apellido) AS nomape "
-                + "FROM apoderado ORDER BY apo_nombre", -1);
+        metodoscombo.CargarComboBox(cbApoderado, "SELECT apo_codigo, CONCAT(apo_nombre,' ', apo_apellido) AS nomape FROM apoderado ORDER BY apo_nombre", -1);
     }
 
     private void TablaAllApoderado() {//Realiza la consulta de los productos que tenemos en la base de datos

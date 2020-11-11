@@ -32,6 +32,7 @@ public class MetodosImagen {
 
     JFileChooser fc;
     Boolean fcEstaCargado = false;
+    static org.apache.log4j.Logger log_historial = org.apache.log4j.Logger.getLogger(MetodosImagen.class.getName());
 
     public void CargarImagenDesdeFC(JLabel ElLabel) {
         CambiarLookSwing("windows"); //Cambiamos el look a Windows
@@ -100,12 +101,16 @@ public class MetodosImagen {
 
                     System.out.println("Guardando imagen... " + rutadestino);
                     ImageIO.write(biImagen, fileextension, new File(rutadestino));
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(null, "Error al guardar imagen... " + ex, "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(null, "Error al guardar imagen... " + e, "Error", JOptionPane.ERROR_MESSAGE);
+                    log_historial.error("Error 1022: " + e);
+                    e.printStackTrace();
                 }
             }
         } catch (HeadlessException | IOException e) {
             System.out.println("Error al Guardar Imagen del registro" + e);
+            log_historial.error("Error 1023: " + e);
+            e.printStackTrace();
         }
     }
 
@@ -148,6 +153,8 @@ public class MetodosImagen {
                 ruta = rutaimagen + ".png";
             }
         } catch (Exception e) {
+            log_historial.warn("Error 1024: " + e);
+            e.printStackTrace();
             try {
                 imagenInterna = new ImageIcon(getClass().getResource(rutaimagen + ".jpg")).getImage();
                 if (imagenInterna != null) { //Si jpg existe
@@ -155,6 +162,8 @@ public class MetodosImagen {
                 }
             } catch (Exception e2) {
                 imagenInterna = new ImageIcon(ruta).getImage(); //Si no existe ninguno se pone la imagen por defecto
+                log_historial.warn("Error 1025: " + e);
+                e.printStackTrace();
             }
         }
 
@@ -192,6 +201,8 @@ public class MetodosImagen {
             }
         } catch (Exception e) {
             System.out.println("Error al querer eliminar imagen " + e);
+            log_historial.error("Error 1026: " + e);
+            e.printStackTrace();
         }
     }
 
@@ -204,8 +215,9 @@ public class MetodosImagen {
         }
         try {
             javax.swing.UIManager.setLookAndFeel(look);
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            log_historial.error("Error 1027: " + e);
+            e.printStackTrace();
         }
     }
 
@@ -230,11 +242,10 @@ public class MetodosImagen {
             }
             con.DesconectarBasedeDatos();
 
-        } catch (SQLException ex) {
-            Logger.getLogger(MetodosImagen.class
-                    .getName()).log(Level.SEVERE, null, ex);
-            System.out.println(
-                    "No se pudo obtener el idultimoproducto: " + idultimoproducto);
+        } catch (SQLException e) {
+            System.out.println("No se pudo obtener el idultimoproducto: " + idultimoproducto);
+            log_historial.error("Error 1028: " + e);
+            e.printStackTrace();
         }
         return idultimoproducto;
     }

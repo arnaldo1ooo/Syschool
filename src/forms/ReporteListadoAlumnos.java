@@ -6,23 +6,15 @@
 package forms;
 
 import conexion.Conexion;
-import java.awt.Color;
-import java.awt.Toolkit;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import org.apache.log4j.Logger;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 
@@ -35,6 +27,7 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
     MetodosCombo metodoscombo = new MetodosCombo();
     Metodos metodos = new Metodos();
     Conexion conexion = new Conexion();
+    static Logger log_historial = Logger.getLogger(ReporteListadoAlumnos.class.getName());
 
     public ReporteListadoAlumnos(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -45,7 +38,7 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
     }
 
     //--------------------------METODOS----------------------------//
-    public void CargarComboBoxes() {
+    private void CargarComboBoxes() {
         //Carga los combobox con las consultas
         metodoscombo.CargarComboBox(cbNivel, "SELECT niv_codigo, "
                 + "CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
@@ -76,9 +69,8 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
                 lblTipoNivel.setText("-");
             }
             conexion.DesconectarBasedeDatos();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
+        } catch (SQLException | NullPointerException e) {
+            log_historial.error("Error 10254: " + e);
             e.printStackTrace();
         }
     }
@@ -90,8 +82,6 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
         jpPrincipal = new javax.swing.JPanel();
         panel3 = new org.edisoncor.gui.panel.Panel();
         labelMetric2 = new org.edisoncor.gui.label.LabelMetric();
-        jpBotones = new javax.swing.JPanel();
-        btnGenerarReporte = new org.edisoncor.gui.button.ButtonSeven();
         panel1 = new org.edisoncor.gui.panel.Panel();
         lblNivel = new javax.swing.JLabel();
         cbNivel = new javax.swing.JComboBox<>();
@@ -112,6 +102,7 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
         lblDocente = new javax.swing.JLabel();
         lblTipoNivel = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
+        btnGenerarReporte = new org.edisoncor.gui.button.ButtonSeven();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -141,35 +132,6 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(labelMetric2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(7, Short.MAX_VALUE))
-        );
-
-        jpBotones.setBackground(new java.awt.Color(233, 255, 255));
-        jpBotones.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder()));
-        jpBotones.setPreferredSize(new java.awt.Dimension(100, 50));
-
-        btnGenerarReporte.setBackground(new java.awt.Color(0, 153, 153));
-        btnGenerarReporte.setText("Generar reporte");
-        btnGenerarReporte.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGenerarReporteActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jpBotonesLayout = new javax.swing.GroupLayout(jpBotones);
-        jpBotones.setLayout(jpBotonesLayout);
-        jpBotonesLayout.setHorizontalGroup(
-            jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpBotonesLayout.createSequentialGroup()
-                .addContainerGap(115, Short.MAX_VALUE)
-                .addComponent(btnGenerarReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(111, 111, 111))
-        );
-        jpBotonesLayout.setVerticalGroup(
-            jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jpBotonesLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnGenerarReporte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(10, Short.MAX_VALUE))
         );
 
         panel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -227,7 +189,7 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(cbNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(dyAnho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         panel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -317,7 +279,7 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cbOrdenar, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel4Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 248, Short.MAX_VALUE)
                         .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(8, 8, 8)))
                 .addContainerGap())
@@ -350,15 +312,19 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
         jLabel11.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         jLabel11.setText("FILTRAR POR:");
 
+        btnGenerarReporte.setBackground(new java.awt.Color(0, 153, 153));
+        btnGenerarReporte.setText("Generar reporte");
+        btnGenerarReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarReporteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpPrincipalLayout = new javax.swing.GroupLayout(jpPrincipal);
         jpPrincipal.setLayout(jpPrincipalLayout);
         jpPrincipalLayout.setHorizontalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
-                .addContainerGap(205, Short.MAX_VALUE)
-                .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(191, 191, 191))
             .addGroup(jpPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -368,6 +334,10 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
                         .addComponent(jLabel11)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(jpPrincipalLayout.createSequentialGroup()
+                .addGap(306, 306, 306)
+                .addComponent(btnGenerarReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -379,9 +349,9 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26))
+                .addGap(18, 18, 18)
+                .addComponent(btnGenerarReporte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -392,7 +362,7 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 554, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -466,20 +436,14 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ReporteListadoAlumnos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ReporteListadoAlumnos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ReporteListadoAlumnos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ReporteListadoAlumnos.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException e) {
+            log_historial.error("Error 10255: " + e);
+            e.printStackTrace();
         }
-        //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 ReporteListadoAlumnos dialog = new ReporteListadoAlumnos(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -499,7 +463,6 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
     private javax.swing.JComboBox cbOrdenar;
     private com.toedter.calendar.JYearChooser dyAnho;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JPanel jpBotones;
     private javax.swing.JPanel jpPrincipal;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;

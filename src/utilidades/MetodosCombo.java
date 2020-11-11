@@ -14,17 +14,21 @@ import javax.swing.JComboBox;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 /**
  *
  * @author Lic. Arnaldo Cantero
  */
+
+
 public class MetodosCombo {
 
     private int codigo;
     private String descripcion;
     Conexion con = new Conexion();
+    static Logger log_historial = Logger.getLogger(MetodosCombo.class.getName());
 
     public MetodosCombo() { //No borrar
     }
@@ -77,47 +81,53 @@ public class MetodosCombo {
         }
     }
 
-    public void CargarComboBox(JComboBox ElCombo, String sentencia, int CodItemDefault) {
+    public void CargarComboBox(JComboBox elCombo, String sentencia, int codItemDefault) {
+        System.out.println("Cargar combo (" + elCombo.getName() + "): " + sentencia);
         try {
-            ElCombo.removeAllItems(); //Vaciamos el combo
-            AutoCompleteDecorator.decorate(ElCombo);
-            System.out.println("Cargar combo (" + ElCombo.getName() + "): " + sentencia);
+            elCombo.removeAllItems(); //Vaciamos el combo
+            AutoCompleteDecorator.decorate(elCombo);
             con = con.ObtenerRSSentencia(sentencia);
+
             while (con.rs.next()) {
-                ElCombo.addItem(new MetodosCombo(con.rs.getInt(1), con.rs.getString(2)));
+                elCombo.addItem(new MetodosCombo(con.rs.getInt(1), con.rs.getString(2)));
+
+                //Seleccionado por defecto
+                try {
+                    if (codItemDefault == con.rs.getInt(1) && codItemDefault >= 0) {
+                        elCombo.setSelectedItem(con.rs.getString(2));
+                    }
+                } catch (NullPointerException e) {
+                    log_historial.warn("Error 1012: " + e);
+                    e.printStackTrace();
+                }
             }
 
-            //Seleccionado por defecto
-            if (ElCombo.getItemCount() > 0 && CodItemDefault >= 0) {
-                MetodosCombo item;
-                for (int i = 0; i < ElCombo.getItemCount(); i++) {
-                    item = (MetodosCombo) ElCombo.getItemAt(i);
-                    if (item.getCodigo() == CodItemDefault) {
-                        ElCombo.setSelectedIndex(i);
-                        break;
-                    }
-                }
-            } else {
-                if (ElCombo.getItemCount() > 0) {
-                    ElCombo.setSelectedIndex(-1);
-                }
+            if (elCombo.getItemCount() > 0 || codItemDefault == -1) {
+                elCombo.setSelectedIndex(-1);
             }
-            ElCombo.setMaximumRowCount(ElCombo.getModel().getSize()); //Hace que se despliegue en toda la pantalla vertical el combo
-            AnadirScrollHorizontal(ElCombo);
-        } catch (NumberFormatException | SQLException e) {
-            System.out.println("Error al cargar combo: " + sentencia + ",   ERROR: " + e
-            );
+
+            elCombo.setMaximumRowCount(elCombo.getModel().getSize()); //Hace que se despliegue en toda la pantalla vertical el combo
+            AddScrollHorizontalCombo(elCombo);
+        } catch (NumberFormatException e) {
+            log_historial.error("Error al cargar combo: " + e);
+            e.printStackTrace();
+        } catch (SQLException e) {
+            log_historial.error("Error al cargar combo: " + e);
+            e.printStackTrace();
         }
+
+        CambiarColorDisabledCombo(elCombo, Color.BLACK);
+        con.DesconectarBasedeDatos();
+    }
+
+    public void CambiarColorDisabledCombo(JComboBox elCombo, Color elColor) {
         //Cambiar color de texto del combo cuando esta disabled
-        ElCombo.setRenderer(new DefaultListCellRenderer() {
-            @Override
+        elCombo.setRenderer(new DefaultListCellRenderer() {
             public void paint(Graphics g) {
-                setForeground(Color.BLACK);
+                setForeground(elColor);
                 super.paint(g);
             }
         });
-
-        con.DesconectarBasedeDatos();
     }
 
     public int ObtenerIDSelectComboBox(JComboBox<MetodosCombo> ElCombo) {
@@ -125,12 +135,13 @@ public class MetodosCombo {
         try {
             codigoitemselect = ElCombo.getItemAt(ElCombo.getSelectedIndex()).getCodigo();
         } catch (Exception e) {
-            System.out.println("ObtenerIdCombo: No se selecciono ningun item en el combo: " + e);
+            log_historial.error("ObtenerIdCombo: No se selecciono ningun item en el combo: " + e);
+            e.printStackTrace();
         }
         return codigoitemselect;
     }
 
-    private void AnadirScrollHorizontal(JComboBox ElCombo) {
+    private void AddScrollHorizontalCombo(JComboBox ElCombo) {
         if (ElCombo.getItemCount() == 0) {
             return;
         }

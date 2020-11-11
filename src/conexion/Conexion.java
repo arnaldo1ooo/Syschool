@@ -93,28 +93,19 @@ public class Conexion {
 
             }
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Conexion.class
-                    .getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(
-                    null, "Error1 al conecta al BD, Verifique los datos de la conexion a la BD");
-            System.out.println(
-                    "Error1 al conecta al BD, Verifique los datos de la conexion a la BD  " + ex.getMessage());
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Error1 al conecta al BD, Verifique los datos de la conexion a la BD");
+            System.out.println("Error1 al conecta al BD, Verifique los datos de la conexion a la BD  " + ex.getMessage());
             conexion = null;
         } catch (SQLException ex) {
-            Logger.getLogger(Conexion.class
-                    .getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(
-                    null, "Error2 al conecta al BD, Verifique los datos de la conexion a la BD");
-            System.out.println(
-                    "Error2 al conecta al BD, Verifique los datos de la conexion a la BD  " + ex.getMessage());
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Error2 al conecta al BD, Verifique los datos de la conexion a la BD");
+            System.out.println("Error2 al conecta al BD, Verifique los datos de la conexion a la BD  " + ex.getMessage());
             conexion = null;
         } catch (Exception ex) {
-            Logger.getLogger(Conexion.class
-                    .getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(
-                    null, "Error3 al conecta al BD, Verifique los datos de la conexion a la BD");
-            System.out.println(
-                    "Error3 al conecta al BD, Verifique los datos de la conexion a la BD  " + ex.getMessage());
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Error3 al conecta al BD, Verifique los datos de la conexion a la BD");
+            System.out.println("Error3 al conecta al BD, Verifique los datos de la conexion a la BD  " + ex.getMessage());
             conexion = null;
         }
         return conexion;
@@ -155,6 +146,7 @@ public class Conexion {
     ResultSetMetaData mdrs;
     int numColumns;
     Object[] registro;
+
     public DefaultTableModel ConsultaTableBD(String sentencia, String titlesJtabla[], JComboBox ElComboCampos) {
         modelotabla = new DefaultTableModel(null, titlesJtabla);
         con = ObtenerRSSentencia(sentencia);
@@ -221,16 +213,16 @@ public class Conexion {
     public void EjecutarABM(String sentencia, boolean conAviso) {
         //Ejecuta consultas de Altas, Bajas y Modificaciones
         try {
+            System.out.println("EjecutarABM: " + sentencia);
             connection = Conexion.ConectarBasedeDatos();
             st = connection.createStatement();
-            System.out.println("EjecutarABM: " + sentencia);
             st.executeUpdate(sentencia);
             connection.close();
             st.close();
-            
+
             if (conAviso == true) {
                 Toolkit.getDefaultToolkit().beep(); //BEEP
-                JOptionPane.showMessageDialog(null, "Se realizó correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "La operación se realizó correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Metodos.class.getName() + " Sentencia: " + sentencia).log(Level.SEVERE, null, ex);

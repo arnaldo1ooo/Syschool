@@ -105,6 +105,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                         break;
                     case "REPORTE":
                         meReporte.setEnabled(true);
+                        meitReporteAlumnos.setEnabled(true);
                         break;
                     case "CONCEPTO":
                         meitConcepto.setEnabled(true);
@@ -192,7 +193,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         jSeparator20 = new javax.swing.JPopupMenu.Separator();
         meitAnularGasto = new javax.swing.JMenuItem();
         meReporte = new javax.swing.JMenu();
-        jMenuItem7 = new javax.swing.JMenuItem();
+        meitReporteAlumnos = new javax.swing.JMenuItem();
         meUsuario = new javax.swing.JMenu();
         meitRol = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
@@ -631,14 +632,14 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meReporte.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         meReporte.setPreferredSize(new java.awt.Dimension(150, 70));
 
-        jMenuItem7.setText("Reporte de listado de alumnos");
-        jMenuItem7.setEnabled(false);
-        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+        meitReporteAlumnos.setText("Reporte de listado de alumnos");
+        meitReporteAlumnos.setEnabled(false);
+        meitReporteAlumnos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem7ActionPerformed(evt);
+                meitReporteAlumnosActionPerformed(evt);
             }
         });
-        meReporte.add(jMenuItem7);
+        meReporte.add(meitReporteAlumnos);
 
         jMenuBar1.add(meReporte);
 
@@ -840,11 +841,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItem18ActionPerformed
 
-    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+    private void meitReporteAlumnosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitReporteAlumnosActionPerformed
         ReporteListadoAlumnos reportenivel = new ReporteListadoAlumnos(this, true);
         reportenivel.setLocationRelativeTo(this); //Centrar
         reportenivel.setVisible(true);
-    }//GEN-LAST:event_jMenuItem7ActionPerformed
+    }//GEN-LAST:event_meitReporteAlumnosActionPerformed
 
     private void meitRegistrarPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitRegistrarPagoActionPerformed
         RegistrarPago registrarpago = new RegistrarPago(this, true);
@@ -989,7 +990,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenuItem jMenuItem18;
     private javax.swing.JMenuItem jMenuItem19;
     private javax.swing.JMenuItem jMenuItem6;
-    private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JPopupMenu.Separator jSeparator17;
     private javax.swing.JPopupMenu.Separator jSeparator18;
     private javax.swing.JPopupMenu.Separator jSeparator19;
@@ -1029,6 +1029,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenuItem meitRegistrarMatricula;
     private javax.swing.JMenuItem meitRegistrarPago;
     private javax.swing.JMenuItem meitRegistrarPagoSalario;
+    private javax.swing.JMenuItem meitReporteAlumnos;
     private javax.swing.JMenuItem meitRol;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.PanelImage piPrincipal;

@@ -93,7 +93,7 @@ public class ABMPerfil extends javax.swing.JDialog {
                             idmodulo = tbPerfilModulos.getValueAt(i, 0) + "";
                             estado = (Boolean) tbPerfilModulos.getValueAt(i, 2);
                             if (estado == true) {
-                                con.EjecutarABM("CALL SP_Perfil_ModuloAlta('" + ultimoidperfil + "','" + idmodulo + "')", false);
+                                con.EjecutarABM("CALL SP_PerfilModuloAlta('" + ultimoidperfil + "','" + idmodulo + "')", false);
                             }
                         }
                     }
@@ -112,11 +112,11 @@ public class ABMPerfil extends javax.swing.JDialog {
                             con = con.ObtenerRSSentencia("SELECT permo_codigo FROM perfil_modulo WHERE permo_perfil='" + codperfil + "' AND permo_modulo='" + codmodulo + "'");
                             if (con.rs.next()) {
                                 if (estado == false) {
-                                    con.EjecutarABM("CALL SP_Perfil_ModuloEliminar('" + codperfil + "','" + codmodulo + "')", false);
+                                    con.EjecutarABM("CALL SP_PerfilModuloEliminar('" + codperfil + "','" + codmodulo + "')", false);
                                 }
                             } else {
                                 if (estado == true) {
-                                    con.EjecutarABM("CALL SP_Perfil_ModuloAlta('" + codperfil + "','" + codmodulo + "')", false);
+                                    con.EjecutarABM("CALL SP_PerfilModuloAlta('" + codperfil + "','" + codmodulo + "')", false);
                                 }
                             }
                         }

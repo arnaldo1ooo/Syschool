@@ -1738,47 +1738,8 @@ public class RegistrarPago extends javax.swing.JDialog {
 
 
     private void btnAnadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnadirActionPerformed
-        //Verificar si se selecciono un apoderado
-        if (cbApoderado.getSelectedIndex() == -1) {
-            Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(this, "Seleccione el apoderado", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            cbApoderado.requestFocus();
+        if (ComprobarAgregar() == false) {
             return;
-        }
-
-        //SI EL APODERADO NO TIENE ALUMNOS A SU CARGO
-        if (tbPoderantes.getRowCount() == 0) {
-            Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(this, "El Apoderado seleccionado no tiene ningún alumno a su cargo", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        //Si no se selecciono a un apoderado
-        if (cbApoderado.getSelectedIndex() == -1) {
-            Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(this, "Seleccione un apoderado", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            cbApoderado.requestFocus();
-            return;
-        }
-
-        //Si no se seleccionó ningun concepto
-        if (tbAllConcepto.getSelectedRowCount() == 0) {
-            Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(this, "Seleccione el concepto a agregar", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtBuscar.requestFocus();
-            return;
-        }
-
-        //Ver si el concepto a agregar ya fue agregado
-        String codconceptoselect = tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 0) + "";
-        String codagregado;
-        for (int fila = 0; fila < tbConceptoAPagar.getRowCount(); fila++) {
-            codagregado = tbConceptoAPagar.getValueAt(fila, 0) + "";
-            if (codconceptoselect.equals(codagregado)) {
-                Toolkit.getDefaultToolkit().beep();
-                JOptionPane.showMessageDialog(this, "Este pago ya fue agregado", "Advertencia", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
         }
 
         String tipoimporte = tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 2) + "";
@@ -1918,6 +1879,48 @@ public class RegistrarPago extends javax.swing.JDialog {
         AgregarPago.setLocationRelativeTo(this); //Centrar
         AgregarPago.setVisible(true);
     }//GEN-LAST:event_btnAnadirActionPerformed
+
+    private boolean ComprobarAgregar() throws HeadlessException {
+        //Verificar si se selecciono un apoderado
+        if (cbApoderado.getSelectedIndex() == -1) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "Seleccione el apoderado", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            cbApoderado.requestFocus();
+            return false;
+        }
+        //SI EL APODERADO NO TIENE ALUMNOS A SU CARGO
+        if (tbPoderantes.getRowCount() == 0) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "El Apoderado seleccionado no tiene ningún alumno a su cargo", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        //Si no se selecciono a un apoderado
+        if (cbApoderado.getSelectedIndex() == -1) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "Seleccione un apoderado", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            cbApoderado.requestFocus();
+            return false;
+        }
+        //Si no se seleccionó ningun concepto
+        if (tbAllConcepto.getSelectedRowCount() == 0) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "Seleccione el concepto a agregar", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            txtBuscar.requestFocus();
+            return false;
+        }
+        //Ver si el concepto a agregar ya fue agregado
+        String codconceptoselect = tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 0) + "";
+        String codagregado;
+        for (int fila = 0; fila < tbConceptoAPagar.getRowCount(); fila++) {
+            codagregado = tbConceptoAPagar.getValueAt(fila, 0) + "";
+            if (codconceptoselect.equals(codagregado)) {
+                Toolkit.getDefaultToolkit().beep();
+                JOptionPane.showMessageDialog(this, "Este pago ya fue agregado", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        }
+        return true;
+    }
 
     private void SumarSubtotal() {
         //Suma la colmna subtotal

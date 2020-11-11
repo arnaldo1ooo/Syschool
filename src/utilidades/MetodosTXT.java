@@ -12,8 +12,12 @@ import java.math.BigDecimal;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import org.apache.log4j.Logger;
+import static utilidades.Metodos.log_historial;
 
 public class MetodosTXT {
+
+    static Logger log_historial = Logger.getLogger(MetodosTXT.class.getName());
 
     public void FiltroCaracteresProhibidos(java.awt.event.KeyEvent evt) {
         // Verificar si la tecla pulsada no es '
@@ -153,47 +157,55 @@ public class MetodosTXT {
                 int longitud = elNumero.length();
 
                 switch (longitud) {
-                    case 4:
+                    case 4 -> {
                         sub1 = elNumero.substring(0, 1);
                         sub2 = elNumero.substring(1, 4);
                         elNumeroModi = sub1 + "." + sub2;
                         return elNumeroModi;
-                    case 5:
+                    }
+                    case 5 -> {
                         sub1 = elNumero.substring(0, 2);
                         sub2 = elNumero.substring(2, 5);
                         elNumeroModi = sub1 + "." + sub2;
                         return elNumeroModi;
-                    case 6:
+                    }
+                    case 6 -> {
                         sub1 = elNumero.substring(0, 3);
                         sub2 = elNumero.substring(3, 6);
                         elNumeroModi = sub1 + "." + sub2;
                         return elNumeroModi;
-                    case 7:
+                    }
+                    case 7 -> {
                         sub1 = elNumero.substring(0, 1);
                         sub2 = elNumero.substring(1, 4);
                         sub3 = elNumero.substring(4, 7);
                         elNumeroModi = sub1 + "." + sub2 + "." + sub3;
                         return elNumeroModi;
-                    case 8:
+                    }
+                    case 8 -> {
                         sub1 = elNumero.substring(0, 2);
                         sub2 = elNumero.substring(2, 5);
                         sub3 = elNumero.substring(5, 8);
                         elNumeroModi = sub1 + "." + sub2 + "." + sub3;
                         return elNumeroModi;
-                    case 9:
+                    }
+                    case 9 -> {
                         sub1 = elNumero.substring(0, 3);
                         sub2 = elNumero.substring(3, 6);
                         sub3 = elNumero.substring(6, 9);
                         elNumeroModi = sub1 + "." + sub2 + "." + sub3;
                         return elNumeroModi;
-                    default:
-                        //JOptionPane.showMessageDialog(null, "Ninguno", "Error", JOptionPane.ERROR_MESSAGE);
-                        break;
+                    }
+                    default -> {
+                        JOptionPane.showMessageDialog(null, "Ninguno", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         } catch (NumberFormatException e) {
             elNumeroModi = elNumero;
             System.out.println("El Numero (" + elNumero + ") no es valido, error en el metodo DoubleFormatoSudamericaKeyReleased  " + e);
+            log_historial.warn("Error 1017: " + e);
+            e.printStackTrace();
         }
         return elNumeroModi;
     }
@@ -261,6 +273,7 @@ public class MetodosTXT {
             }
         } catch (NumberFormatException e) {
             System.out.println("El Numero " + elDoubleAmericano + "  no es valido, error al convertir a formato sudamericano " + e);
+            log_historial.error("Error 1018: " + e);
             e.printStackTrace();
         }
         return elDoubleSudamerica;
@@ -278,6 +291,8 @@ public class MetodosTXT {
             ElNumeroDouble = Double.parseDouble(ElNumero);
         } catch (NumberFormatException e) {
             System.out.println("Error DoubleAFormatoAmericano " + e);
+            log_historial.error("Error 1019: " + e);
+            e.printStackTrace();
         }
         return ElNumeroDouble;
     }
@@ -296,7 +311,7 @@ public class MetodosTXT {
         String sub1;
         String sub2;
         String sub3;
-                
+
         String longitud = elNumString.length() + "";
         switch (longitud) {
             case "1":
@@ -355,10 +370,9 @@ public class MetodosTXT {
                 System.out.println("longitud invalida: " + longitud);
                 return ElNumConPuntos;
         }
-       
+
     }
-    
-    
+
     //Formatear double para que tenga solo dos numeros despues de la coma, y la coma es punto
     public double FormatearATresDecimales(double ElDouble) {
         String elDoubleString = "";
@@ -369,6 +383,8 @@ public class MetodosTXT {
             elNumeroDouble = Double.parseDouble(elDoubleString);
         } catch (NumberFormatException e) {
             System.out.println("Error al poner DosDecimales al numero " + ElDouble + "   " + e);
+            log_historial.error("Error 1020: " + e);
+            e.printStackTrace();
         }
         return elNumeroDouble;
     }
@@ -390,6 +406,8 @@ public class MetodosTXT {
             return true;
         } catch (NumberFormatException e) {
             System.out.println("Error al validar double, no valido: " + elDouble);
+            log_historial.error("Error 1021: " + e);
+            e.printStackTrace();
             return false;
         }
     }
@@ -408,6 +426,9 @@ public class MetodosTXT {
                 return true;
             } catch (NumberFormatException e) {
                 System.out.println("Error al validar double, no valido: " + ElTXTString);
+                log_historial.error("Error 1022: " + e);
+                e.printStackTrace();
+
                 ElTitulo.setForeground(Color.RED);
                 Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(null, "Valor no válido, complete el campo con titulo en rojo", "Error", JOptionPane.ERROR_MESSAGE);

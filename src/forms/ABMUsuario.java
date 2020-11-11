@@ -41,16 +41,13 @@ public class ABMUsuario extends javax.swing.JDialog {
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
     MetodosCombo metodoscombo = new MetodosCombo();
-    DefaultTableModel tablemodelPerfiles;
-    DefaultTableModel tablemodelRoles;
-    DefaultTableModel tablemodelPerfilModulos;
 
     public ABMUsuario(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
 
         txtBuscar.requestFocus();
-        
+
 //Permiso Roles de usuario
         String permisos = metodos.PermisoRol(codUsuario, "USUARIO");
         btnNuevo.setVisible(permisos.contains("A"));
@@ -59,8 +56,7 @@ public class ABMUsuario extends javax.swing.JDialog {
 
         //Metodos
         TablaConsultaUsuarios(); //Trae todos los registros
-        TablaAllPerfiles();
-        
+
         OrdenTabulador();
     }
 
@@ -80,12 +76,7 @@ public class ABMUsuario extends javax.swing.JDialog {
                 if (JOptionPane.YES_OPTION == confirmado) { //NUEVO REGISTRO
                     String sentencia = "CALL SP_UsuarioAlta ('" + nombre + "','" + apellido + "','"
                             + alias + "','" + pass + "','" + fechacreacion + "')";
-                    con.EjecutarABM(sentencia, false);
-                    NuevoModificarPerfilUsuario();
-                    NuevoModificarRolesUsuario();
-
-                    Toolkit.getDefaultToolkit().beep();
-                    JOptionPane.showMessageDialog(this, "Registro creado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+                    con.EjecutarABM(sentencia, true);
 
                     TablaConsultaUsuarios(); //Actualizar tabla
                     ModoEdicion(false);
@@ -96,12 +87,7 @@ public class ABMUsuario extends javax.swing.JDialog {
                 if (JOptionPane.YES_OPTION == confirmado) {
                     String sentencia = "CALL SP_UsuarioModificar(" + codigo + ",'" + nombre + "','" + apellido + "','" + alias
                             + "','" + pass + "','" + fechacreacion + "')";
-                    con.EjecutarABM(sentencia, false);
-                    NuevoModificarPerfilUsuario();
-                    NuevoModificarRolesUsuario();
-
-                    Toolkit.getDefaultToolkit().beep();
-                    JOptionPane.showMessageDialog(this, "Registro modificado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+                    con.EjecutarABM(sentencia, true);
 
                     TablaConsultaUsuarios(); //Actualizar tabla
                     ModoEdicion(false);
@@ -112,41 +98,17 @@ public class ABMUsuario extends javax.swing.JDialog {
     }
 
     private void RegistroEliminar() {
-        int filasel;
         String codigo;
-        try {
-            filasel = tbPrincipal.getSelectedRow();
-            if (filasel == -1) {
-                JOptionPane.showMessageDialog(null, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
-                txtBuscar.requestFocus();
-            } else {
-                int confirmado = javax.swing.JOptionPane.showConfirmDialog(null, "¿Realmente desea eliminar este registro?", "Confirmación", JOptionPane.YES_OPTION);
-                if (confirmado == JOptionPane.YES_OPTION) {
-                    codigo = (String) tbPrincipal.getModel().getValueAt(filasel, 0);
-                    try {
-                        Connection con;
-                        con = Conexion.ConectarBasedeDatos();
-                        String sentence;
-                        sentence = "CALL SP_UsuarioEliminar(" + codigo + ")";
-                        PreparedStatement pst;
-                        pst = con.prepareStatement(sentence);
-                        pst.executeUpdate();
-                        JOptionPane.showMessageDialog(null, "Registro eliminado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
-
-                        con.close();
-                        pst.close();
-                    } catch (SQLException ex) {
-                        JOptionPane.showMessageDialog(null, ex);
-                        JOptionPane.showMessageDialog(null, "Error al intentar eliminar el registro", "Error", JOptionPane.INFORMATION_MESSAGE);
-                    }
-                } else {
-                    ModoEdicion(false);
-                    Limpiar();
-                    JOptionPane.showMessageDialog(null, "Cancelado correctamente", "Información", JOptionPane.ERROR_MESSAGE);
-                }
+        if (tbPrincipal.getSelectedRow() == -1) {
+            JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            txtBuscar.requestFocus();
+        } else {
+            int confirmado = JOptionPane.showConfirmDialog(null, "¿Realmente desea eliminar este registro?", "Confirmación", JOptionPane.YES_OPTION);
+            if (confirmado == JOptionPane.YES_OPTION) {
+                codigo = tbPrincipal.getModel().getValueAt(tbPrincipal.getSelectedRow(), 0) + "";
+                String sentencia = "CALL SP_UsuarioEliminar(" + codigo + ")";
+                con.EjecutarABM(sentencia, true);
             }
-        } catch (HeadlessException e) {
-            System.out.println("Error al intentar eliminar registro" + e);
         }
     }
 
@@ -163,301 +125,6 @@ public class ABMUsuario extends javax.swing.JDialog {
         }
     }
 
-    private void TablaAllPerfiles() {
-        try {
-            String sentencia = "SELECT per_codigo, per_denominacion, per_descripcion FROM perfil ORDER BY per_denominacion";
-            con = con.ObtenerRSSentencia(sentencia);
-            tablemodelPerfiles = (DefaultTableModel) tbPerfiles.getModel();
-            tablemodelPerfiles.setRowCount(0);
-            while (con.rs.next()) {
-                tablemodelPerfiles.addRow(new Object[]{con.rs.getString("per_codigo"), con.rs.getString("per_denominacion"),
-                    false, con.rs.getString("per_descripcion")});
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        con.DesconectarBasedeDatos();
-    }
-
-    public void TablaPerfilesDelUsu() {
-        //Poner todos en false
-        for (int i = 0; i < tbPerfiles.getRowCount(); i++) {
-            tbPerfiles.setValueAt(false, i, 2);
-        }
-
-        try {
-            String codususelect = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "";
-            String sentencia = "CALL SP_UsuarioPerfilConsulta('" + codususelect + "')";
-            con = con.ObtenerRSSentencia(sentencia);
-            String perfil;
-            while (con.rs.next()) {
-                for (int i = 0; i < tbPerfiles.getRowCount(); i++) {
-                    perfil = tbPerfiles.getValueAt(i, 1) + "";
-                    if (perfil.equals(con.rs.getString("per_denominacion"))) {
-                        tbPerfiles.setValueAt(true, i, 2);
-
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        con.DesconectarBasedeDatos();
-    }
-
-    public void TablaRolesDelUsu() {
-        try {
-            tablemodelRoles = (DefaultTableModel) tbRoles.getModel();
-            tablemodelRoles.setRowCount(0);
-            //Se obtienen los modulos de los perfiles del usuario seleccionado
-            String codususelect = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "";
-            String sentencia = "CALL SP_UsuarioPerfilModulosConsulta('" + codususelect + "')";
-            con = con.ObtenerRSSentencia(sentencia);
-            while (con.rs.next()) {
-                tablemodelRoles.addRow(new Object[]{
-                    con.rs.getString("mo_denominacion"),});
-            }
-
-            //Se obtienen los estados de los roles
-            String modulo;
-            sentencia = "CALL SP_UsuarioRolesPorUsuario('" + codususelect + "')";
-            con = con.ObtenerRSSentencia(sentencia);
-            while (con.rs.next()) {
-                for (int i = 0; i < tbRoles.getRowCount(); i++) {
-                    modulo = tbRoles.getValueAt(i, 0) + "";
-                    if (con.rs.getString("modulo").equals(modulo)) {
-                        tbRoles.setValueAt(con.rs.getBoolean("estadoalta"), i, 1);
-                        tbRoles.setValueAt(con.rs.getBoolean("estadomodificar"), i, 2);
-                        tbRoles.setValueAt(con.rs.getBoolean("estadobaja"), i, 3);
-                        tbRoles.setValueAt(con.rs.getInt("codalta"), i, 4);
-                        tbRoles.setValueAt(con.rs.getInt("codmodificar"), i, 5);
-                        tbRoles.setValueAt(con.rs.getInt("codbaja"), i, 6);
-                    }
-                }
-            }
-
-            //Se obtienen los codigos de los roles faltantes
-            for (int i = 0; i < tbRoles.getRowCount(); i++) {
-                if (tbRoles.getValueAt(i, 4) == null) {
-                    modulo = tbRoles.getValueAt(i, 0) + "";
-                    sentencia = "SELECT rol_codigo, rol_denominacion FROM rol, modulo WHERE mo_denominacion='" + modulo + "' AND rol_modulo=mo_codigo";
-                    con = con.ObtenerRSSentencia(sentencia);
-                    while (con.rs.next()) {
-                        switch (con.rs.getString("rol_denominacion")) {
-                            case "ALTA":
-                                tbRoles.setValueAt(con.rs.getString("rol_codigo"), i, 4);
-                                break;
-                            case "MODIFICAR":
-                                tbRoles.setValueAt(con.rs.getString("rol_codigo"), i, 5);
-                                break;
-                            case "BAJA":
-                                tbRoles.setValueAt(con.rs.getString("rol_codigo"), i, 6);
-                                break;
-                            default:
-                                JOptionPane.showMessageDialog(this, "No se encontró", "Error", JOptionPane.ERROR_MESSAGE);
-                                break;
-                        }
-                    }
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        con.DesconectarBasedeDatos();
-    }
-
-    private void NuevoModificarPerfilUsuario() {
-        //Perfiles de usuario
-        try {
-            String codusuario = "";
-            String codperfil;
-            boolean estado;
-            String sentencia;
-
-            if (txtCodigo.getText().equals("")) { //Si es nuevo
-                //Obtener el id del ultimo usuario registrado
-                try {
-                    sentencia = "SELECT MAX(usu_codigo) AS id FROM usuario";
-                    con = con.ObtenerRSSentencia(sentencia);
-                    while (con.rs.next()) {
-                        codusuario = con.rs.getString("id");
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                con.DesconectarBasedeDatos();
-                //Recorer la tabla y registrar
-                for (int i = 0; i < tbPerfiles.getRowCount(); i++) {
-                    codperfil = tbPerfiles.getValueAt(i, 0) + "";
-                    estado = (Boolean) tbPerfiles.getValueAt(i, 2);
-
-                    if (estado == true) {
-                        sentencia = "INSERT INTO usuario_perfil VALUES(usuper_codigo,'" + codusuario + "','" + codperfil + "')";
-                        con.EjecutarABM(sentencia, false);
-                    }
-                }
-            } else { //Si es modificar
-                codusuario = txtCodigo.getText();
-                for (int i = 0; i < tbPerfiles.getRowCount(); i++) {
-                    //Validar si usuperfil ya esta registrado
-                    codperfil = tbPerfiles.getValueAt(i, 0) + "";
-                    estado = (Boolean) tbPerfiles.getValueAt(i, 2);
-                    sentencia = "SELECT usuper_codigo FROM usuario_perfil "
-                            + "WHERE usuper_usuario='" + codusuario + "' AND usuper_perfil='" + codperfil + "'";
-                    con = con.ObtenerRSSentencia(sentencia);
-                    if (con.rs.next()) { //Si existe
-                        if (estado == false) {
-                            sentencia = "DELETE FROM usuario_perfil WHERE usuper_usuario='" + codusuario + "' "
-                                    + "AND usuper_perfil='" + codperfil + "'";
-                            con.EjecutarABM(sentencia, false);
-
-                            //Borrar todos los roles del usuario
-                            sentencia = "DELETE FROM usuario_rol WHERE usurol_usuario='" + codusuario + "'";
-                            con.EjecutarABM(sentencia, false);
-                            Toolkit.getDefaultToolkit().beep();
-                            JOptionPane.showMessageDialog(this, "Se modificó los perfiles del usuario, por ende se eliminaron los roles del usuario", "Advertencia", JOptionPane.WARNING_MESSAGE);
-                        }
-                    } else { //Si no existe
-                        if (estado == true) {
-                            sentencia = "INSERT INTO usuario_perfil VALUES(usuper_codigo,'" + codusuario + "','" + codperfil + "')";
-                            con.EjecutarABM(sentencia, false);
-                        }
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        con.DesconectarBasedeDatos();
-    }
-
-    private void NuevoModificarRolesUsuario() {
-        //Roles de usuario
-        try {
-            boolean estadoAlta;
-            String codRolAlta;
-            boolean estadoModificar;
-            String codRolModificar;
-            boolean estadoBaja;
-            String codRolBaja;
-            String codusuario = "";
-            String sentencia;
-
-            if (txtCodigo.getText().equals("")) { //Si es nuevo
-                //Obtener el id del ultimo usuario registrado
-                try {
-                    sentencia = "SELECT MAX(usu_codigo) AS id FROM usuario";
-                    con = con.ObtenerRSSentencia(sentencia);
-                    while (con.rs.next()) {
-                        codusuario = con.rs.getString("id");
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                con.DesconectarBasedeDatos();
-
-                for (int i = 0; i < tbRoles.getRowCount(); i++) {
-                    //RolAlta
-                    estadoAlta = (Boolean) tbRoles.getValueAt(i, 1);
-                    codRolAlta = tbRoles.getValueAt(i, 4) + "";
-                    if (estadoAlta == true) {
-                        sentencia = "INSERT INTO usuario_rol VALUES(usurol_codigo,'" + codusuario + "','" + codRolAlta + "')";
-                        con.EjecutarABM(sentencia, false);
-                    }
-                    //RolModificar
-                    estadoModificar = (Boolean) tbRoles.getValueAt(i, 2);
-                    codRolModificar = tbRoles.getValueAt(i, 5) + "";
-                    if (estadoModificar == true) {
-                        sentencia = "INSERT INTO usuario_rol VALUES(usurol_codigo,'" + codusuario + "','" + codRolModificar + "')";
-                        con.EjecutarABM(sentencia, false);
-                    }
-                    //RolBaja
-                    estadoBaja = (Boolean) tbRoles.getValueAt(i, 3);
-                    codRolBaja = tbRoles.getValueAt(i, 6) + "";
-                    if (estadoBaja == true) {
-                        sentencia = "INSERT INTO usuario_rol VALUES(usurol_codigo,'" + codusuario + "','" + codRolBaja + "')";
-                        con.EjecutarABM(sentencia, false);
-                    }
-                }
-            } else { //Si es modificar
-                for (int i = 0; i < tbRoles.getRowCount(); i++) {
-                    codusuario = txtCodigo.getText();
-
-                    if (tbRoles.getValueAt(i, 1) != null) {
-                        estadoAlta = (Boolean) tbRoles.getValueAt(i, 1);
-                    } else {
-                        estadoAlta = false;
-                    }
-
-                    codRolAlta = tbRoles.getValueAt(i, 4) + "";
-                    sentencia = "SELECT usurol_codigo FROM usuario_rol WHERE usurol_usuario='" + codusuario
-                            + "' AND usurol_rol='" + codRolAlta + "'";
-                    con = con.ObtenerRSSentencia(sentencia);
-                    if (con.rs.next()) { //Si existe
-                        if (estadoAlta == false) {
-                            sentencia = "DELETE FROM usuario_rol WHERE usurol_usuario='" + codusuario + "' "
-                                    + "AND usurol_rol='" + codRolAlta + "'";
-                            con.EjecutarABM(sentencia, false);
-                        }
-                    } else { //Si no existe
-                        if (estadoAlta == true) {
-                            sentencia = "INSERT INTO usuario_rol VALUES(usurol_codigo,'" + codusuario + "','" + codRolAlta + "')";
-                            con.EjecutarABM(sentencia, false);
-                        }
-                    }
-                    //Si existe rol modificar
-                    if (tbRoles.getValueAt(i, 2) != null) {
-                        estadoModificar = (Boolean) tbRoles.getValueAt(i, 2);
-                    } else {
-                        estadoModificar = false;
-                    }
-                    codRolModificar = tbRoles.getValueAt(i, 5) + "";
-                    sentencia = "SELECT usurol_codigo FROM usuario_rol WHERE usurol_usuario='" + codusuario
-                            + "' AND usurol_rol='" + codRolModificar + "'";
-                    con = con.ObtenerRSSentencia(sentencia);
-                    if (con.rs.next()) { //Si existe
-                        if (estadoModificar == false) {
-                            sentencia = "DELETE FROM usuario_rol WHERE usurol_usuario='" + codusuario + "' "
-                                    + "AND usurol_rol='" + codRolModificar + "'";
-                            con.EjecutarABM(sentencia, false);
-                        }
-                    } else { //Si no existe
-                        if (estadoModificar == true) {
-                            sentencia = "INSERT INTO usuario_rol VALUES(usurol_codigo,'" + codusuario + "','" + codRolModificar + "')";
-                            con.EjecutarABM(sentencia, false);
-                        }
-                    }
-                    //Si existe rol baja
-                    if (tbRoles.getValueAt(i, 3) != null) {
-                        estadoBaja = (Boolean) tbRoles.getValueAt(i, 3);
-                    } else {
-                        estadoBaja = false;
-                    }
-                    codRolBaja = tbRoles.getValueAt(i, 6) + "";
-                    sentencia = "SELECT usurol_codigo FROM usuario_rol WHERE usurol_usuario='" + codusuario
-                            + "' AND usurol_rol='" + codRolBaja + "'";
-                    con = con.ObtenerRSSentencia(sentencia);
-                    if (con.rs.next()) { //Si existe
-                        if (estadoBaja == false) {
-                            sentencia = "DELETE FROM usuario_rol WHERE usurol_usuario='" + codusuario + "' "
-                                    + "AND usurol_rol='" + codRolBaja + "'";
-                            con.EjecutarABM(sentencia, false);
-                        }
-                    } else { //Si no existe
-                        if (estadoBaja == true) {
-                            sentencia = "INSERT INTO usuario_rol VALUES(usurol_codigo,'" + codusuario + "','" + codRolBaja + "')";
-                            con.EjecutarABM(sentencia, false);
-                        }
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        con.DesconectarBasedeDatos();
-    }
-
     private void ModoVistaPrevia() {
         txtCodigo.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0).toString());
         txtNombre.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1).toString());
@@ -471,13 +138,9 @@ public class ABMUsuario extends javax.swing.JDialog {
             fechacreacion = formato.parse(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 5).toString());
 
         } catch (ParseException ex) {
-            Logger.getLogger(ABMUsuario.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ABMUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
         dcFechaCreacion.setDate(fechacreacion);
-
-        TablaPerfilesDelUsu();
-        TablaRolesDelUsu();
     }
 
     private void ModoEdicion(boolean valor) {
@@ -493,9 +156,6 @@ public class ABMUsuario extends javax.swing.JDialog {
         btnEliminar.setEnabled(false);
         btnGuardar.setEnabled(valor);
         btnCancelar.setEnabled(valor);
-
-        tbPerfiles.setEnabled(valor);
-        tbRoles.setEnabled(valor);
 
         txtNombre.requestFocus();
     }
@@ -516,13 +176,6 @@ public class ABMUsuario extends javax.swing.JDialog {
 
         txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
-
-        TablaAllPerfiles(); //Recargar tabla
-        //Vaciar tabla
-        tablemodelPerfilModulos = (DefaultTableModel) tbPerfilModulos.getModel();
-        tablemodelPerfilModulos.setRowCount(0);
-        tablemodelRoles = (DefaultTableModel) tbRoles.getModel();
-        tablemodelRoles.setRowCount(0);
     }
 
     public boolean ComprobarCampos() {
@@ -565,16 +218,6 @@ public class ABMUsuario extends javax.swing.JDialog {
         btnNuevo = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
-        jtpEdicion = new javax.swing.JTabbedPane();
-        jpPerfiles = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tbPerfiles = new javax.swing.JTable();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        tbPerfilModulos = new javax.swing.JTable();
-        lblTituloPerfilModulos = new javax.swing.JLabel();
-        jpRoles = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tbRoles = new javax.swing.JTable();
         jpBotones2 = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
@@ -764,177 +407,6 @@ public class ABMUsuario extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        jtpEdicion.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        jtpEdicion.setName(""); // NOI18N
-
-        jpPerfiles.setBackground(new java.awt.Color(233, 255, 255));
-        jpPerfiles.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-
-        tbPerfiles.setFont(new java.awt.Font("sansserif", 0, 13)); // NOI18N
-        tbPerfiles.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Código", "Perfil", "Estado", "Descripción"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class, java.lang.Object.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, true, true
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tbPerfiles.setEnabled(false);
-        tbPerfiles.setRowHeight(25);
-        tbPerfiles.setShowHorizontalLines(true);
-        tbPerfiles.getTableHeader().setReorderingAllowed(false);
-        tbPerfiles.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                tbPerfilesMousePressed(evt);
-            }
-        });
-        jScrollPane2.setViewportView(tbPerfiles);
-
-        tbPerfilModulos.setFont(new java.awt.Font("sansserif", 0, 13)); // NOI18N
-        tbPerfilModulos.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Código", "Módulo"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tbPerfilModulos.setEnabled(false);
-        tbPerfilModulos.setRowHeight(20);
-        tbPerfilModulos.setRowSelectionAllowed(false);
-        tbPerfilModulos.getTableHeader().setReorderingAllowed(false);
-        jScrollPane3.setViewportView(tbPerfilModulos);
-        if (tbPerfilModulos.getColumnModel().getColumnCount() > 0) {
-            tbPerfilModulos.getColumnModel().getColumn(0).setResizable(false);
-            tbPerfilModulos.getColumnModel().getColumn(0).setPreferredWidth(20);
-            tbPerfilModulos.getColumnModel().getColumn(1).setResizable(false);
-            tbPerfilModulos.getColumnModel().getColumn(1).setPreferredWidth(50);
-        }
-
-        lblTituloPerfilModulos.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        lblTituloPerfilModulos.setText("Módulos del perfil:");
-
-        javax.swing.GroupLayout jpPerfilesLayout = new javax.swing.GroupLayout(jpPerfiles);
-        jpPerfiles.setLayout(jpPerfilesLayout);
-        jpPerfilesLayout.setHorizontalGroup(
-            jpPerfilesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPerfilesLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 588, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                .addGroup(jpPerfilesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblTituloPerfilModulos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jpPerfilesLayout.setVerticalGroup(
-            jpPerfilesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jpPerfilesLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblTituloPerfilModulos)
-                .addGap(4, 4, 4)
-                .addGroup(jpPerfilesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jtpEdicion.addTab("Perfiles", jpPerfiles);
-
-        jpRoles.setBackground(new java.awt.Color(233, 255, 255));
-        jpRoles.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
-
-        tbRoles.setFont(new java.awt.Font("sansserif", 0, 13)); // NOI18N
-        tbRoles.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Módulo", "Alta", "Modificar", "Baja", "AltaCodigo", "ModificarCodigo", "BajaCodigo"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, true, true, true, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tbRoles.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_NEXT_COLUMN);
-        tbRoles.setEnabled(false);
-        tbRoles.setRowHeight(25);
-        tbRoles.setRowSelectionAllowed(false);
-        tbRoles.setShowHorizontalLines(true);
-        tbRoles.getTableHeader().setResizingAllowed(false);
-        tbRoles.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(tbRoles);
-        if (tbRoles.getColumnModel().getColumnCount() > 0) {
-            tbRoles.getColumnModel().getColumn(0).setResizable(false);
-            tbRoles.getColumnModel().getColumn(0).setPreferredWidth(50);
-            tbRoles.getColumnModel().getColumn(1).setResizable(false);
-            tbRoles.getColumnModel().getColumn(1).setPreferredWidth(10);
-            tbRoles.getColumnModel().getColumn(2).setResizable(false);
-            tbRoles.getColumnModel().getColumn(2).setPreferredWidth(10);
-            tbRoles.getColumnModel().getColumn(3).setResizable(false);
-            tbRoles.getColumnModel().getColumn(3).setPreferredWidth(10);
-            tbRoles.getColumnModel().getColumn(4).setResizable(false);
-            tbRoles.getColumnModel().getColumn(4).setPreferredWidth(0);
-            tbRoles.getColumnModel().getColumn(5).setResizable(false);
-            tbRoles.getColumnModel().getColumn(5).setPreferredWidth(0);
-            tbRoles.getColumnModel().getColumn(6).setResizable(false);
-            tbRoles.getColumnModel().getColumn(6).setPreferredWidth(0);
-        }
-
-        javax.swing.GroupLayout jpRolesLayout = new javax.swing.GroupLayout(jpRoles);
-        jpRoles.setLayout(jpRolesLayout);
-        jpRolesLayout.setHorizontalGroup(
-            jpRolesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jpRolesLayout.createSequentialGroup()
-                .addGap(112, 112, 112)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 617, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(118, Short.MAX_VALUE))
-        );
-        jpRolesLayout.setVerticalGroup(
-            jpRolesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jpRolesLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        jtpEdicion.addTab("Roles", jpRoles);
-
         jpBotones2.setBackground(new java.awt.Color(233, 255, 255));
         jpBotones2.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
 
@@ -1095,29 +567,21 @@ public class ABMUsuario extends javax.swing.JDialog {
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lblCodigo)
-                    .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblNombre)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblApellido)
-                    .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(40, 40, 40)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblAlias)
-                    .addComponent(txtAlias, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblPass, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtPass, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 223, Short.MAX_VALUE)
+                    .addComponent(txtApellido)
+                    .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(238, 238, 238)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lblFechaCreacion)
-                    .addComponent(dcFechaCreacion, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblPass)
+                    .addComponent(lblAlias)
+                    .addComponent(txtAlias)
+                    .addComponent(txtPass)
+                    .addComponent(dcFechaCreacion, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panel1Layout.setVerticalGroup(
@@ -1126,20 +590,32 @@ public class ABMUsuario extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(lblCodigo)
-                    .addComponent(lblNombre)
-                    .addComponent(lblApellido)
-                    .addComponent(lblAlias)
-                    .addComponent(lblPass)
-                    .addComponent(lblFechaCreacion))
+                    .addComponent(lblAlias))
                 .addGap(2, 2, 2)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtAlias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dcFechaCreacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(txtAlias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel1Layout.createSequentialGroup()
+                        .addComponent(lblNombre)
+                        .addGap(2, 2, 2)
+                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panel1Layout.createSequentialGroup()
+                        .addComponent(lblPass)
+                        .addGap(2, 2, 2)
+                        .addComponent(txtPass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel1Layout.createSequentialGroup()
+                        .addComponent(lblApellido)
+                        .addGap(2, 2, 2)
+                        .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panel1Layout.createSequentialGroup()
+                        .addComponent(lblFechaCreacion)
+                        .addGap(2, 2, 2)
+                        .addComponent(dcFechaCreacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jpPrincipalLayout = new javax.swing.GroupLayout(jpPrincipal);
@@ -1148,19 +624,18 @@ public class ABMUsuario extends javax.swing.JDialog {
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jpPrincipalLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addComponent(jpTabla, javax.swing.GroupLayout.PREFERRED_SIZE, 691, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap()
+                        .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jpTabla, javax.swing.GroupLayout.PREFERRED_SIZE, 691, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 851, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(270, 270, 270))
+                    .addGroup(jpPrincipalLayout.createSequentialGroup()
+                        .addGap(261, 261, 261)
+                        .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(8, Short.MAX_VALUE))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1172,14 +647,10 @@ public class ABMUsuario extends javax.swing.JDialog {
                     .addComponent(jpTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
-
-        jtpEdicion.getAccessibleContext().setAccessibleName("");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1189,7 +660,7 @@ public class ABMUsuario extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 625, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 558, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         getAccessibleContext().setAccessibleName("Inventario");
@@ -1280,26 +751,6 @@ public class ABMUsuario extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_tbPrincipalMouseReleased
 
-    private void tbPerfilesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPerfilesMousePressed
-        if (tbPerfiles.isEnabled()) {
-            tablemodelPerfilModulos = (DefaultTableModel) tbPerfilModulos.getModel();
-            tablemodelPerfilModulos.setRowCount(0);
-            String codperfil = tbPerfiles.getValueAt(tbPerfiles.getSelectedRow(), 0) + "";
-            lblTituloPerfilModulos.setText("Módulos del perfil: " + tbPerfiles.getValueAt(tbPerfiles.getSelectedRow(), 1));
-            String sentencia = "SELECT mo_codigo, mo_denominacion FROM perfil_modulo, modulo WHERE permo_perfil = '" + codperfil
-                    + "' AND permo_modulo=mo_codigo ORDER BY mo_denominacion";
-            con = con.ObtenerRSSentencia(sentencia);
-            try {
-                while (con.rs.next()) {
-                    tablemodelPerfilModulos.addRow(new Object[]{con.rs.getString("mo_codigo"), con.rs.getString("mo_denominacion")});
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            con.DesconectarBasedeDatos();
-        }
-    }//GEN-LAST:event_tbPerfilesMousePressed
-
     List<Component> ordenTabulador;
 
     private void OrdenTabulador() {
@@ -1351,16 +802,10 @@ public class ABMUsuario extends javax.swing.JDialog {
     private javax.swing.JComboBox cbCampoBuscar;
     private com.toedter.calendar.JDateChooser dcFechaCreacion;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel jpBotones;
     private javax.swing.JPanel jpBotones2;
-    private javax.swing.JPanel jpPerfiles;
     private javax.swing.JPanel jpPrincipal;
-    private javax.swing.JPanel jpRoles;
     private javax.swing.JPanel jpTabla;
-    private javax.swing.JTabbedPane jtpEdicion;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;
     private javax.swing.JLabel lblAlias;
@@ -1370,14 +815,10 @@ public class ABMUsuario extends javax.swing.JDialog {
     private javax.swing.JLabel lblFechaCreacion;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblPass;
-    private javax.swing.JLabel lblTituloPerfilModulos;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel2;
     private javax.swing.JScrollPane scPrincipal;
-    private javax.swing.JTable tbPerfilModulos;
-    private javax.swing.JTable tbPerfiles;
     private javax.swing.JTable tbPrincipal;
-    private javax.swing.JTable tbRoles;
     private javax.swing.JTextField txtAlias;
     private javax.swing.JTextField txtApellido;
     private javax.swing.JTextField txtBuscar;
