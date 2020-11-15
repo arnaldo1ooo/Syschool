@@ -108,10 +108,7 @@ public class MetodosCombo {
 
             elCombo.setMaximumRowCount(elCombo.getModel().getSize()); //Hace que se despliegue en toda la pantalla vertical el combo
             AddScrollHorizontalCombo(elCombo);
-        } catch (NumberFormatException e) {
-            log_historial.error("Error al cargar combo: " + e);
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (NumberFormatException | SQLException e) {
             log_historial.error("Error al cargar combo: " + e);
             e.printStackTrace();
         }
@@ -136,7 +133,6 @@ public class MetodosCombo {
             codigoitemselect = ElCombo.getItemAt(ElCombo.getSelectedIndex()).getCodigo();
         } catch (Exception e) {
             log_historial.error("ObtenerIdCombo: No se selecciono ningun item en el combo: " + e);
-            e.printStackTrace();
         }
         return codigoitemselect;
     }

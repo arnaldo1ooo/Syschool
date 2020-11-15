@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
+import java.awt.Toolkit;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -161,14 +162,15 @@ public class ABMNivelDocente extends javax.swing.JDialog {
     }
 
     public boolean ComprobarCampos() {
-        System.out.println("docente " + cbDocente.getSelectedItem());
         if (cbDocente.getSelectedItem().toString().equals("SIN ESPECIFICAR")) {
+            Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Seleccione el docente", "Advertencia", JOptionPane.WARNING_MESSAGE);
             cbDocente.requestFocus();
             return false;
         }
 
         if (dyAnho.getYear() < c2.get(Calendar.YEAR)) {
+            Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "El periodo no puede ser menor al año actual", "Advertencia", JOptionPane.WARNING_MESSAGE);
             dyAnho.requestFocus();
             return false;

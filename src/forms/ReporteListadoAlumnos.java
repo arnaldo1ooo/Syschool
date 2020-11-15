@@ -6,17 +6,17 @@
 package forms;
 
 import conexion.Conexion;
+import java.awt.Toolkit;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JOptionPane;
-import javax.swing.RowSorter;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-import org.apache.log4j.Logger;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
+import utilidades.MetodosTXT;
 
 /**
  *
@@ -26,15 +26,17 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
 
     MetodosCombo metodoscombo = new MetodosCombo();
     Metodos metodos = new Metodos();
-    Conexion conexion = new Conexion();
-    static Logger log_historial = Logger.getLogger(ReporteListadoAlumnos.class.getName());
+    MetodosTXT metodostxt = new MetodosTXT();
+    Conexion con = new Conexion();
+    DefaultTableModel modelTableListadoAlumnos;
+    int totalMasc, totalFem;
+    static org.apache.log4j.Logger log_historial = org.apache.log4j.Logger.getLogger(ReporteListadoAlumnos.class.getName());
 
     public ReporteListadoAlumnos(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
 
         CargarComboBoxes();
-
     }
 
     //--------------------------METODOS----------------------------//
@@ -47,28 +49,61 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
     }
 
     private void ConsultaListadoAlumnos() {
+        modelTableListadoAlumnos = (DefaultTableModel) tbPrincipal.getModel();//Cargamos campos de jtable al modeltable
+        modelTableListadoAlumnos.setRowCount(0); //Vacia la tabla
         String sentencia = "CALL SP_ReporteListadoAlumnos('" + metodoscombo.ObtenerIDSelectComboBox(cbNivel) + "', '" + dyAnho.getYear() + "')";
         String titlesJtabla[] = {"Apellido, Nombre", "Cédula", "Sexo", "Edad"};
 
-        tbPrincipal.setModel(conexion.ConsultaTableBD(sentencia, titlesJtabla, cbOrdenar));
+        //Carga el combobox con los titulos de la tabla, solo si esta vacio
+        if (cbOrdenar != null && cbOrdenar.getItemCount() == 0) {
+            javax.swing.DefaultComboBoxModel modelCombo = new javax.swing.DefaultComboBoxModel(titlesJtabla);
+            cbOrdenar.setModel(modelCombo);
+        }
 
-        metodos.AnchuraColumna(tbPrincipal);
-        lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
+        con = con.ObtenerRSSentencia(sentencia);
+
+        try {
+            String nomape, sexo;
+            int cedula, edad;
+            totalMasc = 0;
+            totalFem = 0;
+            while (con.rs.next()) {
+                nomape = con.rs.getString("nomape");
+                cedula = (con.rs.getInt("alu_cedula"));
+                sexo = con.rs.getString("alu_sexo");
+                if (sexo.equals("MASCULINO")) {
+                    totalMasc = totalMasc + 1;
+                }
+                if (sexo.equals("FEMENINO")) {
+                    totalFem = totalFem + 1;
+                }
+                edad = con.rs.getInt("edad");
+
+                modelTableListadoAlumnos.addRow(new Object[]{nomape, cedula, sexo, edad});
+            }
+            con.DesconectarBasedeDatos();
+            tbPrincipal.setModel(modelTableListadoAlumnos);
+            metodos.AnchuraColumna(tbPrincipal);
+            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
+        } catch (SQLException e) {
+            log_historial.error("Error 1099: " + e);
+            e.printStackTrace();
+        }
 
         //Obtener docente y tipo de nivel
         try {
-            conexion = conexion.ObtenerRSSentencia("SELECT CONCAT(fun_nombre,' ', fun_apellido) AS docente, niv_tipo FROM nivel_docente, nivel, funcionario "
+            con = con.ObtenerRSSentencia("SELECT CONCAT(fun_nombre,' ', fun_apellido) AS docente, niv_tipo FROM nivel_docente, nivel, funcionario "
                     + "WHERE  fun_codigo = nivfun_docente AND niv_codigo = nivfun_nivel AND "
                     + "nivfun_nivel = '" + metodoscombo.ObtenerIDSelectComboBox(cbNivel) + "' AND nivfun_periodo = '" + dyAnho.getYear() + "'");
 
-            if (conexion.rs.next() == true) {
-                lblDocente.setText(conexion.rs.getString(1));
-                lblTipoNivel.setText(conexion.rs.getString(2));
+            if (con.rs.next() == true) {
+                lblDocente.setText(con.rs.getString(1));
+                lblTipoNivel.setText(con.rs.getString(2));
             } else {
                 lblDocente.setText("-");
                 lblTipoNivel.setText("-");
             }
-            conexion.DesconectarBasedeDatos();
+            con.DesconectarBasedeDatos();
         } catch (SQLException | NullPointerException e) {
             log_historial.error("Error 10254: " + e);
             e.printStackTrace();
@@ -213,9 +248,24 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Apellido, Nombre", "Cédula", "Sexo", "Edad"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbPrincipal.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbPrincipal.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbPrincipal.setEnabled(false);
@@ -370,7 +420,8 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
 
     private void btnGenerarReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarReporteActionPerformed
         if (tbPrincipal.getRowCount() <= 0) {
-            JOptionPane.showMessageDialog(null, "No existe ningún registro en la tabla", "Error", JOptionPane.ERROR_MESSAGE);
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "No existe ningún registro en la tabla", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -383,21 +434,40 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
         parametros.clear();
         parametros.put("LOGO", logo);
         parametros.put("ORDEN", cbOrdenar.getSelectedItem().toString());
-        parametros.put("CANTOTAL", tbPrincipal.getRowCount());
+        parametros.put("DOCENTE", lblDocente.getText());
+        parametros.put("NIVEL", cbNivel.getSelectedItem().toString());
+        parametros.put("PERIODO", dyAnho.getValue() + "");
+        parametros.put("TIPO_NIVEL", lblTipoNivel.getText());
+        parametros.put("ORDENADOPOR", cbOrdenar.getSelectedItem() + "");
+        parametros.put("TOTAL_MASC", totalMasc + "");
+        parametros.put("TOTAL_FEM", totalFem + "");
+        parametros.put("TOTAL", tbPrincipal.getRowCount() + "");
 
         rutajasper = "/reportes/reporte_listadoalumnos.jasper";
 
-        metodos.GenerarReporteJTABLE(rutajasper, parametros, tbPrincipal.getModel());
+        //Crea una tabla auxiliar en donde se carga los registros ordenados por cierta en la tabla principal
+        JTable tableAuxiliar = new JTable();; //tabla auxiliar
+        DefaultTableModel tablemodelAuxiliar = new DefaultTableModel(); //tablemodel de la tabla auxiliar
+        tablemodelAuxiliar.setRowCount(0); // Vaciar filas del modelo
+        //Establecer el número y el nombre de las columnas en el tablemodel auxiliar
+        for (int i = 0; i < tbPrincipal.getColumnCount(); i++) {
+            tablemodelAuxiliar.addColumn(tbPrincipal.getColumnName(i));
+        }
+        //Cargamos los registros ordenados al modelo auxiliar
+        for (int i = 0; i < tbPrincipal.getRowCount(); i++) {
+            Object fila[] = new Object[tbPrincipal.getColumnCount()];
+            for (int j = 0; j < tbPrincipal.getColumnCount(); j++) {
+                fila[j] = tbPrincipal.getValueAt(i, j);
+            }
+            tablemodelAuxiliar.addRow(fila);
+        }
+        tableAuxiliar.setModel(tablemodelAuxiliar); // Asignamos el tablemodel auxiliar a la tabla auxiliar
+
+        metodos.GenerarReporteJTABLE(rutajasper, parametros, tableAuxiliar.getModel());
     }//GEN-LAST:event_btnGenerarReporteActionPerformed
 
     private void cbOrdenarItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbOrdenarItemStateChanged
-        if (tbPrincipal.getRowSorter() == null) {
-            RowSorter<TableModel> sorter = new TableRowSorter<>(tbPrincipal.getModel());
-            tbPrincipal.setRowSorter(sorter);
-            tbPrincipal.getRowSorter().toggleSortOrder(cbOrdenar.getSelectedIndex());
-            System.out.println("Tipo de columna " + tbPrincipal.getColumnClass(cbOrdenar.getSelectedIndex()));
-            System.out.println("Orden " + tbPrincipal.getRowSorter());
-        }
+        metodos.OrdenarColumna(tbPrincipal, cbOrdenar.getSelectedIndex());
     }//GEN-LAST:event_cbOrdenarItemStateChanged
 
     private void tbPrincipalMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPrincipalMousePressed

@@ -108,48 +108,57 @@ public class MetodosTXT {
                 int longitud = parteEnteraString.length();
 
                 switch (longitud) {
-                    case 1:
+                    case 1 -> {
                         return elNumero;
-                    case 2:
+                    }
+                    case 2 -> {
                         return elNumero;
-                    case 3:
+                    }
+                    case 3 -> {
                         return elNumero;
-                    case 4:
+                    }
+                    case 4 -> {
                         sub1 = parteEnteraString.substring(0, 1);
                         sub2 = parteEnteraString.substring(1, 4);
                         elNumeroModi = sub1 + "." + sub2 + parteDecimal;
                         return elNumeroModi;
-                    case 5:
+                    }
+                    case 5 -> {
                         sub1 = parteEnteraString.substring(0, 2);
                         sub2 = parteEnteraString.substring(2, 5);
                         elNumeroModi = sub1 + "." + sub2 + parteDecimal;
                         return elNumeroModi;
-                    case 6:
+                    }
+                    case 6 -> {
                         sub1 = parteEnteraString.substring(0, 3);
                         sub2 = parteEnteraString.substring(3, 6);
                         elNumeroModi = sub1 + "." + sub2 + parteDecimal;
                         return elNumeroModi;
-                    case 7:
+                    }
+                    case 7 -> {
                         sub1 = parteEnteraString.substring(0, 1);
                         sub2 = parteEnteraString.substring(1, 4);
                         sub3 = parteEnteraString.substring(4, 7);
                         elNumeroModi = sub1 + "." + sub2 + "." + sub3 + parteDecimal;
                         return elNumeroModi;
-                    case 8:
+                    }
+                    case 8 -> {
                         sub1 = parteEnteraString.substring(0, 2);
                         sub2 = parteEnteraString.substring(2, 5);
                         sub3 = parteEnteraString.substring(5, 8);
                         elNumeroModi = sub1 + "." + sub2 + "." + sub3 + parteDecimal;
                         return elNumeroModi;
-                    case 9:
+                    }
+                    case 9 -> {
                         sub1 = parteEnteraString.substring(0, 3);
                         sub2 = parteEnteraString.substring(3, 6);
                         sub3 = parteEnteraString.substring(6, 9);
                         elNumeroModi = sub1 + "." + sub2 + "." + sub3 + parteDecimal;
                         return elNumeroModi;
-                    default:
+                    }
+                    default -> {
                         //JOptionPane.showMessageDialog(null, "Ninguno", "Error", JOptionPane.ERROR_MESSAGE);
-                        break;
+                    }
                 }
             } else { //Si no es decimal
                 elNumero = elNumero.replace(".", "");
@@ -197,7 +206,7 @@ public class MetodosTXT {
                         return elNumeroModi;
                     }
                     default -> {
-                        JOptionPane.showMessageDialog(null, "Ninguno", "Error", JOptionPane.ERROR_MESSAGE);
+                        //JOptionPane.showMessageDialog(null, "Ninguno", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }

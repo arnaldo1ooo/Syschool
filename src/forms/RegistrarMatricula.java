@@ -117,6 +117,13 @@ public class RegistrarMatricula extends javax.swing.JDialog {
     }
 
     private boolean ComprobarCampos() {
+        if (cbNivel.getSelectedIndex() == -1) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "Seleccione el nivel", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            cbNivel.requestFocus();
+            return false;
+        }
+
         if (cbAlumno.getSelectedIndex() == -1) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Seleccione el alumno/a", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -147,6 +154,7 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         cbAlumno.setSelectedIndex(-1);
         dcFechaMatricula.setDate(new Date());
         cbNivel.setSelectedIndex(0);
+
     }
 
 //--------------------------iniComponent()No tocar----------------------------//
@@ -187,8 +195,6 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         lblRucCedula3 = new javax.swing.JLabel();
         lblRucCedula4 = new javax.swing.JLabel();
         lblUltimaMatriculacion = new javax.swing.JLabel();
-        lblRucCedula5 = new javax.swing.JLabel();
-        lblUltimoNivel = new javax.swing.JLabel();
 
         BuscadorAlumno.setTitle("Buscador de alumnos");
         BuscadorAlumno.setModal(true);
@@ -521,21 +527,9 @@ public class RegistrarMatricula extends javax.swing.JDialog {
 
         lblUltimaMatriculacion.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         lblUltimaMatriculacion.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblUltimaMatriculacion.setText("20XX");
+        lblUltimaMatriculacion.setText("Nivel X (20XX)");
         lblUltimaMatriculacion.setToolTipText("");
         lblUltimaMatriculacion.setFocusable(false);
-
-        lblRucCedula5.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        lblRucCedula5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblRucCedula5.setText("Último nivel matriculado:");
-        lblRucCedula5.setToolTipText("");
-        lblRucCedula5.setFocusable(false);
-
-        lblUltimoNivel.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        lblUltimoNivel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblUltimoNivel.setText("Nivel");
-        lblUltimoNivel.setToolTipText("");
-        lblUltimoNivel.setFocusable(false);
 
         javax.swing.GroupLayout jpPrincipalLayout = new javax.swing.GroupLayout(jpPrincipal);
         jpPrincipal.setLayout(jpPrincipalLayout);
@@ -550,18 +544,14 @@ public class RegistrarMatricula extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jpDatosVenta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addComponent(lblRucCedula4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblUltimaMatriculacion, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblRucCedula5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblUltimoNivel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jpPrincipalLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
                         .addComponent(lblRucCedula3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblAlumnoActual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(lblAlumnoActual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
+                        .addComponent(lblRucCedula4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblUltimaMatriculacion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jpPrincipalLayout.setVerticalGroup(
@@ -573,13 +563,9 @@ public class RegistrarMatricula extends javax.swing.JDialog {
                     .addComponent(lblRucCedula3, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
                     .addComponent(lblAlumnoActual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(2, 2, 2)
-                .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(lblRucCedula4, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
-                        .addComponent(lblUltimaMatriculacion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(lblRucCedula5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lblUltimoNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblRucCedula4, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
+                    .addComponent(lblUltimaMatriculacion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(12, 12, 12)
                 .addComponent(jpDatosVenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -658,18 +644,15 @@ public class RegistrarMatricula extends javax.swing.JDialog {
                     + "FROM matricula, nivel WHERE mat_alumno='" + metodoscombo.ObtenerIDSelectComboBox(cbAlumno) + "' "
                     + "AND mat_nivel=niv_codigo ORDER BY mat_periodo DESC LIMIT 1");
             if (con.rs.next()) {
-                lblUltimaMatriculacion.setText(con.rs.getString("mat_periodo"));
-                lblUltimoNivel.setText(con.rs.getString("nivel"));
+                lblUltimaMatriculacion.setText(con.rs.getString("nivel") + " (" + con.rs.getString("mat_periodo") + ")");
             } else {
                 lblUltimaMatriculacion.setText("Nunca");
-                lblUltimoNivel.setText("-");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
             lblAlumnoActual.setText("");
             lblUltimaMatriculacion.setText("");
-            lblUltimoNivel.setText("");
         }
         con.DesconectarBasedeDatos();
     }//GEN-LAST:event_cbAlumnoItemStateChanged
@@ -752,9 +735,7 @@ public class RegistrarMatricula extends javax.swing.JDialog {
     private javax.swing.JLabel lblRucCedula;
     private javax.swing.JLabel lblRucCedula3;
     private javax.swing.JLabel lblRucCedula4;
-    private javax.swing.JLabel lblRucCedula5;
     private javax.swing.JLabel lblUltimaMatriculacion;
-    private javax.swing.JLabel lblUltimoNivel;
     private org.edisoncor.gui.panel.Panel panel2;
     private org.edisoncor.gui.panel.Panel panel6;
     private javax.swing.JScrollPane scAlumnos;

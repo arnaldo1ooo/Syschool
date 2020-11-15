@@ -27,7 +27,6 @@ public class Matricula extends javax.swing.JDialog {
         ConsultaMatriculaPorPeriodo(cbFiltroPeriodo.getSelectedItem().toString());
 
         if (eliminar == false) {
-            //Oculta los botones si no es para eliminar pago
             btnEliminar.setVisible(eliminar);
         } else {
             //Permiso Roles de usuario
@@ -284,10 +283,10 @@ public class Matricula extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtBuscar.requestFocus();
         } else {
-            int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea anular este pago?", "Confirmación", JOptionPane.YES_OPTION);
+            int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea anular esta matricula?", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
                 String codigo = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0).toString();
-                //Elimina el pago (Primero se debe eliminar los conceptos del pago)
+
                 String sentencia = "CALL SP_MatriculaEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 

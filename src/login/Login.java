@@ -5,15 +5,12 @@
 package login;
 
 import conexion.Conexion;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.FocusTraversalPolicy;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
 import utilidades.PlaceHolder;
 
 public class Login extends javax.swing.JFrame {
@@ -23,13 +20,13 @@ public class Login extends javax.swing.JFrame {
     public static String alias;
     private String pass;
     Conexion con = new Conexion();
+    static Logger log_historial = Logger.getLogger(Login.class.getName());
 
     public Login() {
         initComponents();
 
         lblError.setVisible(false);
-        PlaceHolder placeholder;
-        placeholder = new PlaceHolder("Alias", txtAlias);
+        PlaceHolder placeholder = new PlaceHolder("Alias", txtAlias);
         placeholder = new PlaceHolder("Contraseña", txtPass);
     }
 
@@ -50,20 +47,21 @@ public class Login extends javax.swing.JFrame {
                 splash.setVisible(true);
                 dispose(); //Cerrar jdialog
             } else {
+                Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(this, "Nombre de usuario o contraseña incorrecta!");
                 txtAlias.requestFocus();
                 txtPass.setText("");
 
                 lblError.setVisible(true);
             }
-        } catch (SQLException e) {
-        } catch (NullPointerException e) {
+        } catch (SQLException | NullPointerException e) {
+            log_historial.error("Error 1072: " + e);
             e.printStackTrace();
         }
         con.DesconectarBasedeDatos();
     }
 
-    @SuppressWarnings("unchecked")
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -277,7 +275,7 @@ public class Login extends javax.swing.JFrame {
     }
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        int opcion = JOptionPane.showConfirmDialog(null, "¿Realmente desea salir?", "Advertencia!", JOptionPane.YES_NO_OPTION);
+        int opcion = JOptionPane.showConfirmDialog(this, "¿Realmente desea salir?", "Advertencia!", JOptionPane.YES_NO_OPTION);
         if (opcion == JOptionPane.YES_OPTION) {
             this.dispose();
         }
@@ -326,61 +324,16 @@ public class Login extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException e) {
+            log_historial.error("Error 1078: " + e);
+            e.printStackTrace();
         }
-        //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                //UIManager.setLookAndFeel(new SyntheticaBlackEyeLookAndFeel());
-                new Login().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            //UIManager.setLookAndFeel(new SyntheticaBlackEyeLookAndFeel());
+            new Login().setVisible(true);
         });
-    }
-
-    List<Component> ordenTabulador;
-
-    private void OrdenTabulador() {
-        ordenTabulador = new ArrayList<>();
-        ordenTabulador.add(txtAlias);
-        ordenTabulador.add(txtPass);
-        ordenTabulador.add(btnIniciarSesion);
-        setFocusTraversalPolicy(new Login.PersonalizadoFocusTraversalPolicy());
-    }
-
-    private class PersonalizadoFocusTraversalPolicy extends FocusTraversalPolicy {
-
-        public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
-            int currentPosition = ordenTabulador.indexOf(aComponent);
-            currentPosition = (currentPosition + 1) % ordenTabulador.size();
-            return (Component) ordenTabulador.get(currentPosition);
-        }
-
-        public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
-            int currentPosition = ordenTabulador.indexOf(aComponent);
-            currentPosition = (ordenTabulador.size() + currentPosition - 1) % ordenTabulador.size();
-            return (Component) ordenTabulador.get(currentPosition);
-        }
-
-        public Component getFirstComponent(Container cntnr) {
-            return (Component) ordenTabulador.get(0);
-        }
-
-        public Component getLastComponent(Container cntnr) {
-            return (Component) ordenTabulador.get(ordenTabulador.size() - 1);
-        }
-
-        public Component getDefaultComponent(Container cntnr) {
-            return (Component) ordenTabulador.get(0);
-        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

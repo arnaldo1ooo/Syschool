@@ -20,13 +20,11 @@ public class Pago extends javax.swing.JDialog {
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
+    DefaultTableModel modeltablePago;
 
     public Pago(javax.swing.JFrame parent, boolean eliminar) {
         super(parent);
         initComponents();
-
-        CargarFiltroAnho();
-        ConsultaPagosPorAnho(cbFiltroAnho.getSelectedItem() + "");
 
         if (eliminar == false) {
             //Oculta los botones si no es para eliminar pago
@@ -36,45 +34,44 @@ public class Pago extends javax.swing.JDialog {
             String permisos = metodos.PermisoRol(codUsuario, "PAGO");
             btnEliminar.setVisible(permisos.contains("B"));
         }
+
+        ConsultaPagos();
     }
 
-    private void CargarFiltroAnho() {
-        try {
-            cbFiltroAnho.addItem("TODOS");
-            con = con.ObtenerRSSentencia("SELECT YEAR(pag_fechapago) AS anho FROM pago GROUP BY(pag_fechapago) ORDER BY pag_fechapago DESC");
-            while (con.rs.next()) {
-                cbFiltroAnho.addItem(con.rs.getString("anho"));
+    private void ConsultaPagos() {
+        modeltablePago = (DefaultTableModel) tbPrincipal.getModel();
+        modeltablePago.setRowCount(0); //Vacia tabla
+        //Cargar Combo Buscar
+        if (cbCampoBuscar.getItemCount() == 0) {
+            for (int i = 0; i < modeltablePago.getColumnCount(); i++) {
+                cbCampoBuscar.addItem(modeltablePago.getColumnName(i));
             }
-            if (cbFiltroAnho.getItemCount() == 1) {
-                cbFiltroAnho.setSelectedIndex(0);
-            } else {
-                cbFiltroAnho.setSelectedIndex(1);
-            }
+            cbCampoBuscar.setSelectedIndex(1);
+        }
 
-        } catch (SQLException e) {
+        try {
+            String sentencia = "CALL SP_PagoConsulta()";
+            con = con.ObtenerRSSentencia(sentencia);
+            int codigo, periodo;
+            String apoderado, fechapago, numpago;
+            double importe, total;
+            while (con.rs.next()) {
+                codigo = con.rs.getInt("pag_codigo");
+                numpago = con.rs.getString("pag_numpago");
+                apoderado = con.rs.getString("nomape");
+                fechapago = con.rs.getString("fechapago");
+                importe = metodostxt.FormatearATresDecimales(con.rs.getDouble("pag_importe"));
+                total = metodostxt.FormatearATresDecimales(con.rs.getDouble("totalpago"));
+                periodo = con.rs.getInt("pag_periodo");
+
+                modeltablePago.addRow(new Object[]{codigo, numpago, apoderado, fechapago, importe, total, periodo});
+            }
+            con.DesconectarBasedeDatos();
+            tbPrincipal.setModel(modeltablePago);
+            metodos.AnchuraColumna(tbPrincipal);
+        } catch (SQLException | NullPointerException e) {
             e.printStackTrace();
         }
-        con.DesconectarBasedeDatos();
-    }
-
-    private void ConsultaPagosPorAnho(String anho) {
-        String sentencia = "CALL SP_PagoConsultaPorAnho('" + anho + "')";
-        String titlesJtabla[] = {"Código", "N° de pago", "Apoderado", "Fecha de pago", "Importe", "Total"};
-        tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
-
-        double importe;
-        double total;
-        for (int i = 0; i < tbPrincipal.getRowCount(); i++) {
-            importe = Double.parseDouble(tbPrincipal.getValueAt(i, 4) + "");
-            importe = metodostxt.FormatearATresDecimales(importe);
-            tbPrincipal.setValueAt(metodostxt.DoubleAFormatoSudamerica(importe), i, 4);
-
-            total = Double.parseDouble(tbPrincipal.getValueAt(i, 5) + "");
-            total = metodostxt.FormatearATresDecimales(total);
-            tbPrincipal.setValueAt(metodostxt.DoubleAFormatoSudamerica(total), i, 5);
-        }
-        metodos.AnchuraColumna(tbPrincipal);
-        cbCampoBuscar.setSelectedIndex(1);
 
         if (tbPrincipal.getModel().getRowCount() == 1) {
             lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registro encontrado");
@@ -83,7 +80,7 @@ public class Pago extends javax.swing.JDialog {
         }
     }
 
-    private void ConceptosDelPago() {
+    private void ConsultaConceptoPagos() {
         int codPagoSelect = Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0).toString());
         String sentencia = "CALL SP_PagoConceptosConsulta(" + codPagoSelect + ")";
         String titlesJtabla[] = {"Concepto", "N° de cuotas pagadas", "Meses", "Monto", "Subtotal"};
@@ -101,7 +98,7 @@ public class Pago extends javax.swing.JDialog {
             subtotal = metodostxt.FormatearATresDecimales(subtotal);
             tbConceptosPagados.setValueAt(metodostxt.DoubleAFormatoSudamerica(subtotal), i, 4);
         }
-        metodos.AnchuraColumna(tbConceptosPagados);
+        //metodos.AnchuraColumna(tbConceptosPagados);
 
         if (tbConceptosPagados.getModel().getRowCount() == 1) {
             lbCantRegistrosProductos.setText(tbConceptosPagados.getModel().getRowCount() + " Registro encontrado");
@@ -143,8 +140,6 @@ public class Pago extends javax.swing.JDialog {
         panel3 = new org.edisoncor.gui.panel.Panel();
         labelMetric2 = new org.edisoncor.gui.label.LabelMetric();
         btnEliminar = new javax.swing.JButton();
-        cbFiltroAnho = new javax.swing.JComboBox();
-        lblBuscarCampo1 = new javax.swing.JLabel();
         lblBuscarCampo2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -233,9 +228,24 @@ public class Pago extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Codigo", "N° de pago", "Apoderado", "Fecha de pago", "Importe", "Total", "Periodo"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Double.class, java.lang.Double.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbPrincipal.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbPrincipal.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbPrincipal.setGridColor(new java.awt.Color(0, 153, 204));
@@ -299,16 +309,6 @@ public class Pago extends javax.swing.JDialog {
             }
         });
 
-        cbFiltroAnho.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbFiltroAnhoItemStateChanged(evt);
-            }
-        });
-
-        lblBuscarCampo1.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        lblBuscarCampo1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblBuscarCampo1.setText("Filtrar por año");
-
         lblBuscarCampo2.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         lblBuscarCampo2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblBuscarCampo2.setText("Buscar por");
@@ -319,7 +319,7 @@ public class Pago extends javax.swing.JDialog {
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(351, Short.MAX_VALUE)
                 .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(344, 344, 344))
             .addGroup(panel1Layout.createSequentialGroup()
@@ -330,42 +330,28 @@ public class Pago extends javax.swing.JDialog {
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(panel1Layout.createSequentialGroup()
+                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblBuscarCampo2)
+                                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(scPrincipal, javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(panel1Layout.createSequentialGroup()
                                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(15, 15, 15)))
-                        .addGap(10, 10, 10))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panel1Layout.createSequentialGroup()
-                                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(249, 249, 249))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
-                                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblBuscarCampo2)
-                                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(36, 36, 36)))
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
-                                .addComponent(lblBuscarCampo1)
-                                .addGap(60, 60, 60))
-                            .addGroup(panel1Layout.createSequentialGroup()
-                                .addComponent(cbFiltroAnho, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(10, 10, 10))))))
+                        .addGap(10, 10, 10))))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addComponent(panel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(lblBuscarCampo2)
-                    .addComponent(lblBuscarCampo1))
+                .addComponent(lblBuscarCampo2)
                 .addGap(2, 2, 2)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(cbFiltroAnho, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -396,14 +382,15 @@ public class Pago extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tbPrincipalMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPrincipalMousePressed
-        int filaselect = tbPrincipal.getSelectedRow();
         if (tbPrincipal.getRowCount() > 0) {
-            ConceptosDelPago();
+            ConsultaConceptoPagos();
         }
     }//GEN-LAST:event_tbPrincipalMousePressed
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
         metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
+
+        tbConceptosPagados.setModel(new DefaultTableModel()); //Vaciar tabla
     }//GEN-LAST:event_txtBuscarKeyReleased
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
@@ -430,7 +417,7 @@ public class Pago extends javax.swing.JDialog {
                     return;
                 }
 
-                ConsultaPagosPorAnho(cbFiltroAnho.getSelectedItem() + ""); //Actualizar tabla
+                ConsultaPagos();
                 tbConceptosPagados.setModel(new DefaultTableModel()); //Vaciar tabla
                 Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(this, "Pago anulado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -440,17 +427,13 @@ public class Pago extends javax.swing.JDialog {
 
     private void tbPrincipalKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbPrincipalKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            ConceptosDelPago();
+            ConsultaConceptoPagos();
         }
     }//GEN-LAST:event_tbPrincipalKeyReleased
 
     private void tbPrincipalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPrincipalMouseClicked
 
     }//GEN-LAST:event_tbPrincipalMouseClicked
-
-    private void cbFiltroAnhoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFiltroAnhoItemStateChanged
-        ConsultaPagosPorAnho(cbFiltroAnho.getSelectedItem() + "");
-    }//GEN-LAST:event_cbFiltroAnhoItemStateChanged
 
     public static void main(String args[]) {
 
@@ -473,12 +456,10 @@ public class Pago extends javax.swing.JDialog {
     private org.edisoncor.gui.util.BrightPassFilter brightPassFilter1;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JComboBox cbCampoBuscar;
-    private javax.swing.JComboBox cbFiltroAnho;
     private javax.swing.JLabel jLabel10;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;
     private javax.swing.JLabel lbCantRegistrosProductos;
-    private javax.swing.JLabel lblBuscarCampo1;
     private javax.swing.JLabel lblBuscarCampo2;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel3;

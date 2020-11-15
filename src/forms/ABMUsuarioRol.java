@@ -36,6 +36,8 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
 
         CargarComboBoxes();
         Limpiar();
+
+
     }
 
     //--------------------------METODOS----------------------------//
@@ -422,7 +424,7 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
             .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
         );
 
-        getAccessibleContext().setAccessibleName("Encargados");
+        getAccessibleContext().setAccessibleName("");
 
         pack();
         setLocationRelativeTo(null);

@@ -1,178 +1,70 @@
-10/11/2020 14:30:47 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:72) â Error 1001: Column 'moo_denominacion' not found.
-10/11/2020 14:30:47 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:73) â Error 1001: 0
-10/11/2020 14:30:47 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:74) â Error 1001: java.sql.SQLException: Column 'moo_denominacion' not found.
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:72) â Error 1001: java.sql.SQLException: Column 'moo_denominacion' not found.
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:129)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:97)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:89)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:63)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at com.mysql.cj.jdbc.result.ResultSetImpl.findColumn(ResultSetImpl.java:581)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at com.mysql.cj.jdbc.result.ResultSetImpl.getString(ResultSetImpl.java:967)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at forms.ABMUsuarioRol.ConsultaModulosUsuario(ABMUsuarioRol.java:61)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at forms.ABMUsuarioRol.cbUsuarioItemStateChanged(ABMUsuarioRol.java:460)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at forms.ABMUsuarioRol$8.itemStateChanged(ABMUsuarioRol.java:377)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.JComboBox.fireItemStateChanged(JComboBox.java:1227)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.JComboBox.selectedItemChanged(JComboBox.java:1288)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.JComboBox.contentsChanged(JComboBox.java:1335)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.AbstractListModel.fireContentsChanged(AbstractListModel.java:123)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.DefaultComboBoxModel.setSelectedItem(DefaultComboBoxModel.java:94)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.DefaultComboBoxModel.addElement(DefaultComboBoxModel.java:132)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.JComboBox.addItem(JComboBox.java:716)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at utilidades.MetodosCombo.CargarComboBox(MetodosCombo.java:88)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at forms.ABMUsuarioRol.CargarComboBoxes(ABMUsuarioRol.java:44)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at forms.ABMUsuarioRol.<init>(ABMUsuarioRol.java:37)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at principal.Principal.meitRolActionPerformed(Principal.java:780)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at principal.Principal$24.actionPerformed(Principal.java:657)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1967)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2308)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:405)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.AbstractButton.doClick(AbstractButton.java:369)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1020)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1064)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6636)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3342)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.processEvent(Component.java:6401)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Container.processEvent(Container.java:2263)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:5012)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2321)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4844)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4919)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4548)
-10/11/2020 14:36:56 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4489)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2307)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2764)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4844)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:772)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:721)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:715)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.AccessController.doPrivileged(AccessController.java:391)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:95)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:743)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.AccessController.doPrivileged(AccessController.java:391)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
-10/11/2020 14:36:57 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:72) â Error 1001: java.sql.SQLException: Column 'moo_denominacion' not found.
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:129)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:97)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:89)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:63)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at com.mysql.cj.jdbc.result.ResultSetImpl.findColumn(ResultSetImpl.java:581)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at com.mysql.cj.jdbc.result.ResultSetImpl.getString(ResultSetImpl.java:967)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at forms.ABMUsuarioRol.ConsultaModulosUsuario(ABMUsuarioRol.java:61)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at forms.ABMUsuarioRol.cbUsuarioItemStateChanged(ABMUsuarioRol.java:460)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at forms.ABMUsuarioRol$8.itemStateChanged(ABMUsuarioRol.java:377)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.JComboBox.fireItemStateChanged(JComboBox.java:1227)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.JComboBox.selectedItemChanged(JComboBox.java:1288)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.JComboBox.contentsChanged(JComboBox.java:1335)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.AbstractListModel.fireContentsChanged(AbstractListModel.java:123)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.DefaultComboBoxModel.setSelectedItem(DefaultComboBoxModel.java:94)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.JComboBox.setSelectedItem(JComboBox.java:579)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.JComboBox.setSelectedIndex(JComboBox.java:624)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.plaf.basic.BasicComboPopup$Handler.mouseReleased(BasicComboPopup.java:907)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.AWTEventMulticaster.mouseReleased(AWTEventMulticaster.java:298)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6636)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3342)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.plaf.basic.BasicComboPopup$1.processMouseEvent(BasicComboPopup.java:551)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.processEvent(Component.java:6401)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Container.processEvent(Container.java:2263)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:5012)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2321)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4844)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4919)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4548)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4489)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2307)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2764)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4844)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:772)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:721)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:715)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.AccessController.doPrivileged(AccessController.java:391)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:95)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:743)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.AccessController.doPrivileged(AccessController.java:391)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:117)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.WaitDispatchSupport$2.run(WaitDispatchSupport.java:190)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.WaitDispatchSupport$4.run(WaitDispatchSupport.java:235)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.WaitDispatchSupport$4.run(WaitDispatchSupport.java:233)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.AccessController.doPrivileged(AccessController.java:312)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.WaitDispatchSupport.enter(WaitDispatchSupport.java:233)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Dialog.show(Dialog.java:1070)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.show(Component.java:1717)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.setVisible(Component.java:1664)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Window.setVisible(Window.java:1023)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Dialog.setVisible(Dialog.java:1005)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at principal.Principal.meitRolActionPerformed(Principal.java:782)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at principal.Principal$24.actionPerformed(Principal.java:657)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1967)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2308)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:405)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.AbstractButton.doClick(AbstractButton.java:369)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.plaf.basic.BasicMenuItemUI.doClick(BasicMenuItemUI.java:1020)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.plaf.basic.BasicMenuItemUI$Handler.mouseReleased(BasicMenuItemUI.java:1064)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6636)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3342)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.processEvent(Component.java:6401)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Container.processEvent(Container.java:2263)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:5012)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2321)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4844)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4919)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4548)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4489)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2307)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2764)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4844)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:772)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:721)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:715)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.AccessController.doPrivileged(AccessController.java:391)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:95)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:743)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.AccessController.doPrivileged(AccessController.java:391)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
-10/11/2020 14:36:58 ERROR [AWT-EventQueue-0] (ABMUsuarioRol.java:75) â 	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
-10/11/2020 17:03:14 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 17:03:14 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 17:03:14 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 17:03:14 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 17:03:14 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 17:03:14 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 17:03:14 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 17:03:14 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 17:03:14 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 17:03:14 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 23:27:50 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 23:27:50 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 23:27:50 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 23:27:50 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 23:27:51 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 23:27:51 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 23:27:51 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 23:27:51 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 23:27:51 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
-10/11/2020 23:27:51 ERROR [AWT-EventQueue-0] (MetodosCombo.java:138) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@43e823db for object net.sf.jasperreports.engine.fill.JRTemplateText@678e3b89
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@7ff4bb4c for object net.sf.jasperreports.engine.fill.JRTemplateText@5281f076
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRFillTextField.java:490) â created net.sf.jasperreports.engine.fill.JRTemplateText@7ff4bb4c for (null, null)
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@43e823db for object net.sf.jasperreports.engine.fill.JRTemplateText@7d06d080
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@7ff4bb4c for object net.sf.jasperreports.engine.fill.JRTemplateText@1a35362d
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRFillTextField.java:490) â created net.sf.jasperreports.engine.fill.JRTemplateText@7ff4bb4c for (null, null)
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@43e823db for object net.sf.jasperreports.engine.fill.JRTemplateText@c710491
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@43e823db for object net.sf.jasperreports.engine.fill.JRTemplateText@512e5729
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@7d2384d for object net.sf.jasperreports.engine.fill.JRTemplateText@1ae71f5c
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRFillTextField.java:490) â created net.sf.jasperreports.engine.fill.JRTemplateText@7d2384d for (null, null)
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@7d2384d for object net.sf.jasperreports.engine.fill.JRTemplateText@2950d673
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRFillTextField.java:490) â created net.sf.jasperreports.engine.fill.JRTemplateText@7d2384d for (null, null)
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DelayedFillActions.java:228) â 3 running delayed actions on {type: BAND, group: null, band: 73215565}
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRVerticalFiller.java:478) â Fill 3: column header at 164
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateLine@41108899 for object net.sf.jasperreports.engine.fill.JRTemplateLine@2d011a44
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateLine@41108899 for object net.sf.jasperreports.engine.fill.JRTemplateLine@e3587d2
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@19d8d7a3 for object net.sf.jasperreports.engine.fill.JRTemplateText@2c8a64b7
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@19d8d7a3 for object net.sf.jasperreports.engine.fill.JRTemplateText@346dc1b
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@19d8d7a3 for object net.sf.jasperreports.engine.fill.JRTemplateText@2630250d
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@19d8d7a3 for object net.sf.jasperreports.engine.fill.JRTemplateText@4993d0e
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@19d8d7a3 for object net.sf.jasperreports.engine.fill.JRTemplateText@7bc95ef6
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@19d8d7a3 for object net.sf.jasperreports.engine.fill.JRTemplateText@4edaf390
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DelayedFillActions.java:228) â 3 running delayed actions on {type: BAND, group: null, band: 477987960}
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRVerticalFiller.java:757) â Fill 3: detail at 188
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@49019f0f for object net.sf.jasperreports.engine.fill.JRTemplateText@6965bf0b
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRFillTextField.java:490) â created net.sf.jasperreports.engine.fill.JRTemplateText@49019f0f for (null, null)
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@36c9c3b1 for object net.sf.jasperreports.engine.fill.JRTemplateText@24598e64
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRFillTextField.java:490) â created net.sf.jasperreports.engine.fill.JRTemplateText@36c9c3b1 for (null, null)
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@36c9c3b1 for object net.sf.jasperreports.engine.fill.JRTemplateText@15565af7
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRFillTextField.java:490) â created net.sf.jasperreports.engine.fill.JRTemplateText@36c9c3b1 for (null, null)
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@49019f0f for object net.sf.jasperreports.engine.fill.JRTemplateText@c096dbe
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRFillTextField.java:490) â created net.sf.jasperreports.engine.fill.JRTemplateText@49019f0f for (null, null)
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@4fe1c988 for object net.sf.jasperreports.engine.fill.JRTemplateText@48d016d3
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRFillTextField.java:490) â created net.sf.jasperreports.engine.fill.JRTemplateText@4fe1c988 for (null, {java.lang.Integer, null,null,null,null})
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@49019f0f for object net.sf.jasperreports.engine.fill.JRTemplateText@20129b03
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRFillTextField.java:490) â created net.sf.jasperreports.engine.fill.JRTemplateText@49019f0f for (null, null)
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DelayedFillActions.java:228) â 3 running delayed actions on {type: BAND, group: null, band: 695035222}
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRVerticalFiller.java:1176) â Fill 3: summary at 215
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@705dc854 for object net.sf.jasperreports.engine.fill.JRTemplateText@734ec14
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateRectangle@1ef8c0c0 for object net.sf.jasperreports.engine.fill.JRTemplateRectangle@401715d1
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@7063a725 for object net.sf.jasperreports.engine.fill.JRTemplateText@8b9f58e
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRFillTextField.java:490) â created net.sf.jasperreports.engine.fill.JRTemplateText@7063a725 for (null, null)
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRVerticalFiller.java:1080) â Fill 3: column footer at 255
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DelayedFillActions.java:228) â 3 running delayed actions on {type: BAND, group: null, band: 894838575}
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRVerticalFiller.java:1149) â Fill 3: page footer at 278
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DelayedFillActions.java:228) â 3 running delayed actions on {type: BAND, group: null, band: 874914700}
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DelayedFillActions.java:228) â 3 running delayed actions on {type: BAND, group: null, band: 1877270807}
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DelayedFillActions.java:228) â 3 running delayed actions on {type: COLUMN, group: null, band: 0}
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DelayedFillActions.java:228) â 3 running delayed actions on {type: PAGE, group: null, band: 0}
+15/11/2020 15:30:28 DEBUG [null subreports #1] (DelayedFillActions.java:228) â 3 running delayed actions on {type: REPORT, group: null, band: 0}
+15/11/2020 15:30:28 DEBUG [null subreports #1] (JRBaseFiller.java:633) â Fill 3: ended
+15/11/2020 15:30:28 DEBUG [null subreports #1] (AbstractThreadSubreportRunner.java:225) â Fill 3: notifying of completion
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (AbstractThreadSubreportRunner.java:115) â Fill 3: notified of fill result
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (JRFillSubreport.java:963) â Fill 1: subreport 3 finished
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateRectangle@6dbacba7
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (JRFillSubreport.java:1067) â empty rectangle, generate option: null
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:342) â 2 moving actions from page net.sf.jasperreports.engine.base.JRBasePrintPage@17d317da, index 0 to page net.sf.jasperreports.engine.base.JRBasePrintPage@35d0e384, index 0
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:529) â 1 moving master actions from 2, source page net.sf.jasperreports.engine.base.JRBasePrintPage@35d0e384, index 0, destination page net.sf.jasperreports.engine.base.JRBasePrintPage@35d0e384, index 0
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateLine@b77fe4b
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateRectangle@6dbacba7 for object net.sf.jasperreports.engine.fill.JRTemplateRectangle@6aa4c5fd
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (JRFillSubreport.java:1067) â empty rectangle, generate option: null
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:342) â 3 moving actions from page net.sf.jasperreports.engine.base.JRBasePrintPage@58dad7ee, index 0 to page net.sf.jasperreports.engine.base.JRBasePrintPage@35d0e384, index 0
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:529) â 1 moving master actions from 3, source page net.sf.jasperreports.engine.base.JRBasePrintPage@35d0e384, index 0, destination page net.sf.jasperreports.engine.base.JRBasePrintPage@35d0e384, index 0
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:228) â 1 running delayed actions on {type: BAND, group: null, band: 1675362683}
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:228) â 1 running delayed actions on {type: COLUMN, group: null, band: 0}
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:228) â 1 running delayed actions on {type: PAGE, group: null, band: 0}
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:228) â 1 running delayed actions on {type: REPORT, group: null, band: 0}
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:228) â 1 running delayed actions on {type: MASTER, group: null, band: 0}
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (JRBaseFiller.java:633) â Fill 1: ended
+15/11/2020 15:30:28 DEBUG [AWT-EventQueue-0] (ThreadPoolSubreportRunnerFactory.java:91) â shutting down java.util.concurrent.ThreadPoolExecutor@37f58bd8[Running, pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 2]

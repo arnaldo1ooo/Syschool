@@ -21,6 +21,7 @@ import forms.RegistrarMatricula;
 import forms.RegistrarPago;
 import forms.RegistrarPagoSalario;
 import forms.ReporteListadoAlumnos;
+import forms.ReportePagos;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -46,12 +47,12 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
-    Thread hilo;
+    //Thread hilo;
 
     public Principal() {
         initComponents();
         this.setExtendedState(Principal.MAXIMIZED_BOTH);//Maximizar ventana
-        ObtenerHorayFecha();
+        //ObtenerHorayFecha();
         lbAlias.setText(alias);
         PerfilesUsuario(codUsuario);
         PermisoModulos(codUsuario);
@@ -64,58 +65,52 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             while (con.rs.next()) {
                 modulo = con.rs.getString("mo_denominacion");
                 switch (modulo) {
-                    case "NIVEL":
+                    case "NIVEL" -> {
                         btnNivel.setEnabled(true);
                         meiDocenteEncargado.setEnabled(true);
-                        break;
-                    case "APODERADO":
+                    }
+                    case "APODERADO" ->
                         btnApoderado.setEnabled(true);
-                        break;
-                    case "ALUMNO":
+                    case "ALUMNO" ->
                         btnAlumno.setEnabled(true);
-                        break;
-                    case "MATRICULA":
+                    case "MATRICULA" -> {
                         btnMatricula.setEnabled(true);
                         meMatricula.setEnabled(true);
-                        break;
-                    case "PAGO":
+                    }
+                    case "PAGO" -> {
                         btnPago.setEnabled(true);
                         mePago.setEnabled(true);
-                        break;
-                    case "PAGO_SALARIO":
+                    }
+                    case "PAGO_SALARIO" -> {
                         btnPagoSalario.setEnabled(true);
                         mePagoSalario.setEnabled(true);
-                        break;
-                    case "GASTO":
+                    }
+                    case "GASTO" -> {
                         btnGasto.setEnabled(true);
                         meGasto.setEnabled(true);
-                        break;
-                    case "CLIENTE":
+                    }
+                    case "CLIENTE" ->
                         btnPago.setEnabled(true);
-                        break;
-                    case "FUNCIONARIO":
+                    case "FUNCIONARIO" ->
                         btnFuncionario.setEnabled(true);
-                        break;
-                    case "USUARIO":
+                    case "USUARIO" -> {
                         btnUsuario.setEnabled(true);
                         meUsuario.setEnabled(true);
                         meitPerfil.setEnabled(true);
                         meitModulo.setEnabled(true);
                         meitRol.setEnabled(true);
-                        break;
-                    case "REPORTE":
+                    }
+                    case "REPORTE" -> {
                         meReporte.setEnabled(true);
                         meitReporteAlumnos.setEnabled(true);
-                        break;
-                    case "CONCEPTO":
+                        meitReportePagos.setEnabled(true);
+                    }
+                    case "CONCEPTO" ->
                         meitConcepto.setEnabled(true);
-                        break;
-                    case "CONFIGURACION":
+                    case "CONFIGURACION" ->
                         meConfiguracion.setEnabled(true);
-                        break;
-                    default:
+                    default ->
                         JOptionPane.showMessageDialog(this, "No se encontró " + modulo, "Error", JOptionPane.ERROR_MESSAGE);
-                        break;
                 }
             }
             con.DesconectarBasedeDatos();
@@ -143,11 +138,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         con.DesconectarBasedeDatos();
     }
 
-    private void ObtenerHorayFecha() {
+    /*private void ObtenerHorayFecha() {
         //Obtener fecha y hora
         hilo = new Thread(this);
         hilo.start();
-    }
+    }*/
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -194,6 +189,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meitAnularGasto = new javax.swing.JMenuItem();
         meReporte = new javax.swing.JMenu();
         meitReporteAlumnos = new javax.swing.JMenuItem();
+        jSeparator8 = new javax.swing.JPopupMenu.Separator();
+        meitReportePagos = new javax.swing.JMenuItem();
         meUsuario = new javax.swing.JMenu();
         meitRol = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
@@ -640,6 +637,16 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             }
         });
         meReporte.add(meitReporteAlumnos);
+        meReporte.add(jSeparator8);
+
+        meitReportePagos.setText("Reporte de pagos");
+        meitReportePagos.setEnabled(false);
+        meitReportePagos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meitReportePagosActionPerformed(evt);
+            }
+        });
+        meReporte.add(meitReportePagos);
 
         jMenuBar1.add(meReporte);
 
@@ -767,6 +774,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
     private void meitModuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitModuloActionPerformed
         ABMModulo abmmodulos = new ABMModulo(this, true);
+        abmmodulos.setLocationRelativeTo(this); //Centrar
         abmmodulos.setVisible(true);
     }//GEN-LAST:event_meitModuloActionPerformed
 
@@ -829,11 +837,13 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
     private void btnApoderadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApoderadoActionPerformed
         ABMApoderado abmapoderado = new ABMApoderado(this, true);
+        abmapoderado.setLocationRelativeTo(this); //Centrar
         abmapoderado.setVisible(true);
     }//GEN-LAST:event_btnApoderadoActionPerformed
 
     private void btnUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuarioActionPerformed
         ABMUsuario abmusuarios = new ABMUsuario(this, true);
+        abmusuarios.setLocationRelativeTo(this); //Centrar
         abmusuarios.setVisible(true);
     }//GEN-LAST:event_btnUsuarioActionPerformed
 
@@ -842,18 +852,20 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     }//GEN-LAST:event_jMenuItem18ActionPerformed
 
     private void meitReporteAlumnosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitReporteAlumnosActionPerformed
-        ReporteListadoAlumnos reportenivel = new ReporteListadoAlumnos(this, true);
-        reportenivel.setLocationRelativeTo(this); //Centrar
-        reportenivel.setVisible(true);
+        ReporteListadoAlumnos reporteListaAlumnos = new ReporteListadoAlumnos(this, true);
+        reporteListaAlumnos.setLocationRelativeTo(this); //Centrar
+        reporteListaAlumnos.setVisible(true);
     }//GEN-LAST:event_meitReporteAlumnosActionPerformed
 
     private void meitRegistrarPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitRegistrarPagoActionPerformed
         RegistrarPago registrarpago = new RegistrarPago(this, true);
+        registrarpago.setLocationRelativeTo(this); //Centrar
         registrarpago.setVisible(true);
     }//GEN-LAST:event_meitRegistrarPagoActionPerformed
 
     private void meitAnularPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitAnularPagoActionPerformed
         Pago pago = new Pago(this, true);
+        pago.setLocationRelativeTo(this); //Centrar
         pago.setVisible(true);
     }//GEN-LAST:event_meitAnularPagoActionPerformed
 
@@ -863,11 +875,13 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
     private void meitRegistrarGastoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitRegistrarGastoActionPerformed
         RegistrarGasto registrargasto = new RegistrarGasto(this, true);
+        registrargasto.setLocationRelativeTo(this); //Centrar
         registrargasto.setVisible(true);
     }//GEN-LAST:event_meitRegistrarGastoActionPerformed
 
     private void meitAnularGastoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitAnularGastoActionPerformed
         Gasto gasto = new Gasto(this, true);
+        gasto.setLocationRelativeTo(this); //Centrar
         gasto.setVisible(true);
     }//GEN-LAST:event_meitAnularGastoActionPerformed
 
@@ -877,16 +891,19 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
     private void btnGastoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGastoActionPerformed
         Gasto gasto = new Gasto(this, false);
+        gasto.setLocationRelativeTo(this); //Centrar
         gasto.setVisible(true);
     }//GEN-LAST:event_btnGastoActionPerformed
 
     private void meitRegistrarMatriculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitRegistrarMatriculaActionPerformed
         RegistrarMatricula registrarmatricula = new RegistrarMatricula(this, true);
+        registrarmatricula.setLocationRelativeTo(this); //Centrar
         registrarmatricula.setVisible(true);
     }//GEN-LAST:event_meitRegistrarMatriculaActionPerformed
 
     private void meitAnularMatriculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitAnularMatriculaActionPerformed
         Matricula matricula = new Matricula(this, true);
+        matricula.setLocationRelativeTo(this); //Centrar
         matricula.setVisible(true);
     }//GEN-LAST:event_meitAnularMatriculaActionPerformed
 
@@ -896,16 +913,19 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
     private void btnMatriculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMatriculaActionPerformed
         Matricula matricula = new Matricula(this, false);
+        matricula.setLocationRelativeTo(this); //Centrar
         matricula.setVisible(true);
     }//GEN-LAST:event_btnMatriculaActionPerformed
 
     private void meitRegistrarPagoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitRegistrarPagoSalarioActionPerformed
         RegistrarPagoSalario registrarpagosalario = new RegistrarPagoSalario(this, true);
+        registrarpagosalario.setLocationRelativeTo(this); //Centrar
         registrarpagosalario.setVisible(true);
     }//GEN-LAST:event_meitRegistrarPagoSalarioActionPerformed
 
     private void meitAnularPagoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitAnularPagoSalarioActionPerformed
         PagoSalarial pagosalarial = new PagoSalarial(this, true);
+        pagosalarial.setLocationRelativeTo(this); //Centrar
         pagosalarial.setVisible(true);
     }//GEN-LAST:event_meitAnularPagoSalarioActionPerformed
 
@@ -915,11 +935,13 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
     private void btnNivelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNivelActionPerformed
         ABMNivel abmnivel = new ABMNivel(this, true);
+        abmnivel.setLocationRelativeTo(this); //Centrar
         abmnivel.setVisible(true);
     }//GEN-LAST:event_btnNivelActionPerformed
 
     private void btnPagoSalarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagoSalarioActionPerformed
         PagoSalarial pagosalarial = new PagoSalarial(this, false);
+        pagosalarial.setLocationRelativeTo(this); //Centrar
         pagosalarial.setVisible(true);
     }//GEN-LAST:event_btnPagoSalarioActionPerformed
 
@@ -934,6 +956,12 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         abmconcepto.setLocationRelativeTo(this); //Centrar
         abmconcepto.setVisible(true);
     }//GEN-LAST:event_meitConceptoActionPerformed
+
+    private void meitReportePagosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitReportePagosActionPerformed
+        ReportePagos reportepagos = new ReportePagos(this, true);
+        reportepagos.setLocationRelativeTo(this);
+        reportepagos.setVisible(true);
+    }//GEN-LAST:event_meitReportePagosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -951,22 +979,9 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Principal.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Principal.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Principal.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Principal.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -999,6 +1014,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JPopupMenu.Separator jSeparator23;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
+    private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JLabel lbAlias;
     private javax.swing.JLabel lbFecha;
     private javax.swing.JLabel lbFechaTitulo;
@@ -1030,6 +1046,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenuItem meitRegistrarPago;
     private javax.swing.JMenuItem meitRegistrarPagoSalario;
     private javax.swing.JMenuItem meitReporteAlumnos;
+    private javax.swing.JMenuItem meitReportePagos;
     private javax.swing.JMenuItem meitRol;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.PanelImage piPrincipal;
@@ -1039,11 +1056,10 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     public void run() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
-        Thread current = Thread.currentThread();
-
+        /*Thread current = Thread.currentThread();
+        
         while (current == hilo) {
             ObtenerFechayHora();
-
-        }
+        }*/
     }
 }

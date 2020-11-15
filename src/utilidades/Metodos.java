@@ -27,19 +27,15 @@ import javax.swing.table.TableColumnModel;
 import conexion.Conexion;
 import java.awt.Desktop;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
-import javax.swing.JInternalFrame;
 import javax.swing.RowFilter;
+import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -51,7 +47,6 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -62,15 +57,14 @@ public class Metodos {
     Conexion con = new Conexion();
     MetodosTXT metodostxt = new MetodosTXT();
     public int CantRegistros = 0;
-    static Logger log_historial = Logger.getLogger(Metodos.class.getName());
+    static org.apache.log4j.Logger log_historial = org.apache.log4j.Logger.getLogger(Metodos.class.getName());
 
-    public void AnchuraColumna(JTable LaTabla) {
-        LaTabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //Desactiva el autoresize
-        TableColumnModel ModeloColumna = LaTabla.getColumnModel();
-        int anchoacumulado = 0;
-        int anchoadicional = 20;
-        int cantidadcolumns = LaTabla.getColumnCount();
-        int cantidadfilas = LaTabla.getRowCount();
+    public void AnchuraColumna(JTable laTabla) {
+        TableColumnModel tbColumnModel = laTabla.getColumnModel();
+        int anchoAcumulado = 0;
+        int anchoExtra = 20;
+        int cantColumns = laTabla.getColumnCount();
+        int cantFilas = laTabla.getRowCount();
         String nomheader; //Header = Cabecera
         TableColumn columnactual;
         Component componente;
@@ -78,44 +72,45 @@ public class Metodos {
         int anchoheaderenpixel;
 
         //Obtener tamano de String en pixeles
-        BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB); //Elegir el tipo de fuente que usa
+        BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics2d = img.createGraphics();
-        Font font = new Font("Tahoma", Font.PLAIN, 12); //Poner la fuente tipo y tamano que se usa en la tabla
+        Font font = laTabla.getFont(); //Poner la fuente tipo y tamano que se usa en la tabla
         FontMetrics fontmetrics = graphics2d.getFontMetrics(font);
-        //System.out.println(fm.stringWidth("Este es un ejemplo"));
         graphics2d.dispose();
 
-        for (int numdecolumna = 0; numdecolumna < cantidadcolumns; numdecolumna++) {
+        for (int columnIndex = 0; columnIndex < cantColumns; columnIndex++) {
             int anchomax = 50; // Min width 
-            columnactual = ModeloColumna.getColumn(numdecolumna);
-            for (int fila = 0; fila < cantidadfilas; fila++) {
-                renderer = LaTabla.getCellRenderer(fila, numdecolumna);
-                componente = LaTabla.prepareRenderer(renderer, fila, numdecolumna);
+            columnactual = tbColumnModel.getColumn(columnIndex);
+            for (int fila = 0; fila < cantFilas; fila++) {
+                renderer = laTabla.getCellRenderer(fila, columnIndex);
+                componente = laTabla.prepareRenderer(renderer, fila, columnIndex);
                 nomheader = columnactual.getHeaderValue().toString(); //Header es cabecera de la columna
                 anchoheaderenpixel = fontmetrics.stringWidth(nomheader);
-                anchomax = Math.max(componente.getPreferredSize().width + anchoadicional, anchomax);
-                if (anchomax <= anchoheaderenpixel || cantidadfilas == 0) { //Si el ancho del registtro mas largo de la columna es menor a la cabecera 
+                anchomax = Math.max(componente.getPreferredSize().width + anchoExtra, anchomax);
+                if (anchomax <= anchoheaderenpixel || cantFilas == 0) { //Si el ancho del registtro mas largo de la columna es menor a la cabecera 
                     anchomax = anchoheaderenpixel;
                 }
             }
-            if (cantidadfilas == 0) { //Si no hay ningun registro
+            if (cantFilas == 0) { //Si no hay ningun registro
                 nomheader = columnactual.getHeaderValue().toString();
                 anchoheaderenpixel = fontmetrics.stringWidth(nomheader);
-                anchomax = anchoheaderenpixel + anchoadicional;
+                anchomax = anchoheaderenpixel + anchoExtra;
             }
-            if (numdecolumna < (cantidadcolumns - 1)) { //Si no es la ultima columna
+            if (columnIndex < (cantColumns - 1)) { //Si no es la ultima columna
                 columnactual.setPreferredWidth(anchomax); //Asigna a la columna el ancho del registro mas largo de la columna 
-                anchoacumulado = anchoacumulado + anchomax; //Acumula el ancho de las columnas excepto el ultimo
+                anchoAcumulado = anchoAcumulado + anchomax; //Acumula el ancho de las columnas excepto el ultimo
             } else { //Ultima columna
-                int anchototal = (int) LaTabla.getParent().getSize().getWidth(); //Tamano total del scroll que contiene a la tabla
-                if ((anchoacumulado + anchomax) <= anchototal) {//Si la suma de la anchura de todas las columnas es menor o igual al ancho del scroll
-                    int resta = anchototal - anchoacumulado; //Resta entre el ancho total del scroll y el ancho sumado de las columnas anteriores
+                int anchototal = (int) laTabla.getParent().getSize().getWidth(); //Tamano total del scroll que contiene a la tabla
+                if ((anchoAcumulado + anchomax) <= anchototal) {//Si la suma de la anchura de todas las columnas es menor o igual al ancho del scroll
+                    int resta = anchototal - anchoAcumulado; //Resta entre el ancho total del scroll y el ancho sumado de las columnas anteriores
                     columnactual.setPreferredWidth(resta);
                 } else { //Si es mayor asigna el ancho del registro mas largo de la columna
                     columnactual.setPreferredWidth(anchomax);
                 }
             }
         }
+        laTabla.getTableHeader().setResizingAllowed(false); //Bloquear cambio de tamaño manual de columnas
+        laTabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //Desactiva el autoresize
     }
 
     public void CambiarColorAlternadoTabla(JTable LaTabla, final Color colorback1, final Color colorback2) {
@@ -195,7 +190,7 @@ public class Metodos {
         }
     }
 
-    public void CentrarventanaJInternalFrame(JInternalFrame LaVentana) {
+    /*public void CentrarventanaJInternalFrame(JInternalFrame LaVentana) {
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (int) ((dimension.getWidth() - LaVentana.getWidth()) / 2);
         int y = 0; //(int) ((dimension.getHeight() - LaVentana.getHeight()) / 2);
@@ -207,9 +202,9 @@ public class Metodos {
         int x = (int) ((dimension.getWidth() - LaVentana.getWidth()) / 2);
         int y = (int) ((dimension.getHeight() - LaVentana.getHeight()) / 2);
         LaVentana.setLocation(x, y);
-    }
+    }*/
 
-    public String ObtenerCotizacion(String de, String a) {
+ /*public String ObtenerCotizacion(String de, String a) {
         String valor = "";
         try {
             DecimalFormat df = new DecimalFormat("#.###");
@@ -226,8 +221,7 @@ public class Metodos {
             JOptionPane.showMessageDialog(null, "Error al intentar obtener cambio " + e);
         }
         return valor;
-    }
-
+    }*/
     public double SumarColumnaDouble(JTable LaTabla, int LaColumna) {
         double valor;
         double totalDouble = 0;
@@ -263,6 +257,7 @@ public class Metodos {
                 JasperReport jrReporte = (JasperReport) JRLoader.loadObject(isRutajasper);
                 //Carga el modelo de la tabla (Los titulos de la tabla deben coincidir con los fields del jasper)
                 JasperPrint jprint;
+
                 if (elTableModel != null) {
                     JRTableModelDataSource jrTableModel = new JRTableModelDataSource(elTableModel);
                     jprint = JasperFillManager.fillReport(jrReporte, parametros, jrTableModel);
@@ -408,11 +403,17 @@ public class Metodos {
         }
     }
 
-    public void OcultarColumna(JTable LaTabla, int NumColumna) {
-        if (LaTabla.getColumnCount() >= NumColumna) {
-            LaTabla.getColumnModel().getColumn(NumColumna).setMaxWidth(0);
-            LaTabla.getColumnModel().getColumn(NumColumna).setMinWidth(0);
-            LaTabla.getColumnModel().getColumn(NumColumna).setPreferredWidth(0);
+    public void OcultarColumna(JTable laTabla, int numColumna) {
+        if (laTabla.getColumnCount() >= numColumna) {
+            laTabla.getColumnModel().getColumn(numColumna).setMaxWidth(0);
+            laTabla.getColumnModel().getColumn(numColumna).setMinWidth(0);
+            laTabla.getColumnModel().getColumn(numColumna).setPreferredWidth(0);
         }
+    }
+
+    public void OrdenarColumna(JTable laTabla, int numColumna) {
+        RowSorter<TableModel> sorter = new TableRowSorter<>(laTabla.getModel());
+        laTabla.setRowSorter(sorter);
+        laTabla.getRowSorter().toggleSortOrder(numColumna);
     }
 }
