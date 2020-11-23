@@ -13,7 +13,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.apache.log4j.Logger;
-import static utilidades.Metodos.log_historial;
 
 public class MetodosTXT {
 

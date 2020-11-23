@@ -67,22 +67,22 @@ public class RegistrarGasto extends javax.swing.JDialog {
 //--------------------------METODOS----------------------------//
     private void CargarComboBoxes() {
         //Carga los combobox con las consultas
-        metodoscombo.CargarComboBox(cbTipoGasto, "SELECT tipgas_codigo, tipgas_descripcion "
-                + "FROM tipo_gasto WHERE tipgas_tipo='" + tipogasto + "' ORDER BY tipgas_descripcion", -1);
+        metodoscombo.CargarComboConsulta(cbConceptoGasto, "SELECT congas_codigo, congas_descripcion "
+                + "FROM concepto_gasto WHERE congas_tipo='" + tipogasto + "' ORDER BY congas_descripcion", -1);
     }
 
     public void RegistroNuevo() {
         if (ComprobarCampos() == true) {
-            int idtipogasto = metodoscombo.ObtenerIDSelectComboBox(cbTipoGasto);
+            int idconcepto = metodoscombo.ObtenerIDSelectCombo(cbConceptoGasto);
             double monto = metodostxt.DoubleAFormatoAmericano(txtMonto.getText());
-            String descripcion = txtDescripcion.getText();
+            String obs = txtObs.getText();
             DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
             String fecha = formatoFecha.format(dcFecha.getDate());
 
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo gasto?", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
                 //Registrar nuevo gasto
-                String sentencia = "CALL SP_GastoAlta('" + idtipogasto + "','" + monto + "','" + descripcion + "','" + fecha + "')";
+                String sentencia = "CALL SP_GastoAlta('" + idconcepto + "','" + monto + "','" + obs + "','" + fecha + "')";
                 con.EjecutarABM(sentencia, true);
 
                 Limpiar();
@@ -91,16 +91,16 @@ public class RegistrarGasto extends javax.swing.JDialog {
     }
 
     private void Limpiar() {
-        cbTipoGasto.setSelectedIndex(-1);
+        cbConceptoGasto.setSelectedIndex(-1);
         txtMonto.setText("");
-        txtDescripcion.setText("");
+        txtObs.setText("");
         dcFecha.setDate(new Date());
     }
 
     private boolean ComprobarCampos() {
-        if (cbTipoGasto.getSelectedIndex() == -1) {
+        if (cbConceptoGasto.getSelectedIndex() == -1) {
             JOptionPane.showMessageDialog(this, "Seleccione el tipo de gasto", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            cbTipoGasto.requestFocus();
+            cbConceptoGasto.requestFocus();
             return false;
         }
 
@@ -131,11 +131,11 @@ public class RegistrarGasto extends javax.swing.JDialog {
         btnCancelar = new javax.swing.JButton();
         panel1 = new org.edisoncor.gui.panel.Panel();
         lblRucCedula = new javax.swing.JLabel();
-        cbTipoGasto = new javax.swing.JComboBox<>();
+        cbConceptoGasto = new javax.swing.JComboBox<>();
         lblCodigo6 = new javax.swing.JLabel();
         txtMonto = new javax.swing.JTextField();
         lblFechaRegistro = new javax.swing.JLabel();
-        txtDescripcion = new javax.swing.JTextField();
+        txtObs = new javax.swing.JTextField();
         lblCodigo8 = new javax.swing.JLabel();
         lblFechaRegistro1 = new javax.swing.JLabel();
         dcFecha = new com.toedter.calendar.JDateChooser();
@@ -235,12 +235,12 @@ public class RegistrarGasto extends javax.swing.JDialog {
 
         lblRucCedula.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblRucCedula.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblRucCedula.setText("Tipo de gasto*:");
+        lblRucCedula.setText("Concepto*:");
         lblRucCedula.setToolTipText("");
 
-        cbTipoGasto.addItemListener(new java.awt.event.ItemListener() {
+        cbConceptoGasto.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbTipoGastoItemStateChanged(evt);
+                cbConceptoGastoItemStateChanged(evt);
             }
         });
 
@@ -265,13 +265,13 @@ public class RegistrarGasto extends javax.swing.JDialog {
         lblFechaRegistro.setText("Gs.");
         lblFechaRegistro.setToolTipText("");
 
-        txtDescripcion.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        txtDescripcion.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        txtDescripcion.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtObs.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        txtObs.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txtObs.setDisabledTextColor(new java.awt.Color(0, 0, 0));
 
         lblCodigo8.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblCodigo8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblCodigo8.setText("Descripcion:");
+        lblCodigo8.setText("Obs:");
 
         lblFechaRegistro1.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblFechaRegistro1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -287,28 +287,25 @@ public class RegistrarGasto extends javax.swing.JDialog {
         panel1Layout.setHorizontalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lblCodigo8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblRucCedula, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblFechaRegistro1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(2, 2, 2)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblRucCedula, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(txtObs, javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(dcFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(txtDescripcion, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panel1Layout.createSequentialGroup()
-                                .addComponent(cbTipoGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblCodigo6, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(2, 2, 2)
-                                .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cbConceptoGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblCodigo6, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(2, 2, 2)
-                        .addComponent(lblFechaRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblFechaRegistro)
+                .addGap(40, 40, 40)
+                .addComponent(lblFechaRegistro1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(dcFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(190, 190, 190))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -318,17 +315,16 @@ public class RegistrarGasto extends javax.swing.JDialog {
                     .addComponent(lblFechaRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblCodigo6, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbTipoGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblRucCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbConceptoGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblRucCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                        .addComponent(dcFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblFechaRegistro1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(txtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtObs, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblCodigo8, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(dcFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblFechaRegistro1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         lblPrivilegio.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -348,17 +344,17 @@ public class RegistrarGasto extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, 748, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
                         .addComponent(lblPrivilegio, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(9, 9, 9))))
-            .addGroup(jpPrincipalLayout.createSequentialGroup()
-                .addGap(75, 75, 75)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(190, 190, 190))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -372,16 +368,16 @@ public class RegistrarGasto extends javax.swing.JDialog {
                         .addComponent(jLabel2)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 526, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -408,14 +404,14 @@ public class RegistrarGasto extends javax.swing.JDialog {
         Limpiar();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
-    private void cbTipoGastoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbTipoGastoItemStateChanged
+    private void cbConceptoGastoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbConceptoGastoItemStateChanged
         try {
-            int codtipogasto = metodoscombo.ObtenerIDSelectComboBox(cbTipoGasto);
-            String sentencia = "SELECT tipgas_monto FROM tipo_gasto WHERE tipgas_codigo = '" + codtipogasto + "' AND tipgas_tipo = '" + tipogasto + "'";
+            int idConceptoGasto = metodoscombo.ObtenerIDSelectCombo(cbConceptoGasto);
+            String sentencia = "SELECT congas_monto FROM concepto_gasto WHERE congas_codigo = '" + idConceptoGasto + "' AND congas_tipo = '" + tipogasto + "'";
             con = con.ObtenerRSSentencia(sentencia);
             while (con.rs.next()) {
-                if (con.rs.getDouble("tipgas_monto") != 0) { //Si no es null
-                    txtMonto.setText(metodostxt.DoubleAFormatoSudamerica(con.rs.getDouble("tipgas_monto")));
+                if (con.rs.getDouble("congas_monto") != 0) { //Si no es null
+                    txtMonto.setText(metodostxt.DoubleAFormatoSudamerica(con.rs.getDouble("congas_monto")));
                 } else {
                     txtMonto.setText("");
                 }
@@ -424,7 +420,7 @@ public class RegistrarGasto extends javax.swing.JDialog {
             e.printStackTrace();
         }
         con.DesconectarBasedeDatos();
-    }//GEN-LAST:event_cbTipoGastoItemStateChanged
+    }//GEN-LAST:event_cbConceptoGastoItemStateChanged
 
     private void txtMontoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMontoKeyReleased
         txtMonto.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtMonto.getText()));
@@ -439,8 +435,8 @@ public class RegistrarGasto extends javax.swing.JDialog {
 
     private void OrdenTabulador() {
         ordenTabulador = new ArrayList<>();
-        ordenTabulador.add(cbTipoGasto);
-        ordenTabulador.add(txtDescripcion);
+        ordenTabulador.add(cbConceptoGasto);
+        ordenTabulador.add(txtObs);
         ordenTabulador.add(dcFecha);
         ordenTabulador.add(btnGuardar);
         setFocusTraversalPolicy(new PersonalizadoFocusTraversalPolicy());
@@ -476,7 +472,7 @@ public class RegistrarGasto extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnGuardar;
-    private static javax.swing.JComboBox<MetodosCombo> cbTipoGasto;
+    private static javax.swing.JComboBox<MetodosCombo> cbConceptoGasto;
     private com.toedter.calendar.JDateChooser dcFecha;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jpBotones;
@@ -490,7 +486,7 @@ public class RegistrarGasto extends javax.swing.JDialog {
     private javax.swing.JLabel lblRucCedula;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel2;
-    private javax.swing.JTextField txtDescripcion;
     private javax.swing.JTextField txtMonto;
+    private javax.swing.JTextField txtObs;
     // End of variables declaration//GEN-END:variables
 }

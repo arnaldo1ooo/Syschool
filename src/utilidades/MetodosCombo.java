@@ -14,6 +14,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
@@ -21,8 +22,6 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
  *
  * @author Lic. Arnaldo Cantero
  */
-
-
 public class MetodosCombo {
 
     private int codigo;
@@ -59,7 +58,7 @@ public class MetodosCombo {
         return this.descripcion;
     }
 
-    public void setSelectedNombreItem(JComboBox ElCombo, String nombreitem) {
+    public void SetSelectedNombreItem(JComboBox ElCombo, String nombreitem) {
         MetodosCombo item;
         for (int i = 0; i < ElCombo.getItemCount(); i++) {
             item = (MetodosCombo) ElCombo.getItemAt(i);
@@ -70,7 +69,7 @@ public class MetodosCombo {
         }
     }
 
-    public void setSelectedCodigoItem(JComboBox ElCombo, int codigoitem) {
+    public void SetSelectedCodigoItem(JComboBox ElCombo, int codigoitem) {
         MetodosCombo item;
         for (int i = 0; i < ElCombo.getItemCount(); i++) {
             item = (MetodosCombo) ElCombo.getItemAt(i);
@@ -81,16 +80,15 @@ public class MetodosCombo {
         }
     }
 
-    public void CargarComboBox(JComboBox elCombo, String sentencia, int codItemDefault) {
-        System.out.println("Cargar combo (" + elCombo.getName() + "): " + sentencia);
+    public void CargarComboConsulta(JComboBox elCombo, String consulta, int codItemDefault) {
+        System.out.println("Cargar combo (" + elCombo.getName() + "): " + consulta);
         try {
             elCombo.removeAllItems(); //Vaciamos el combo
             AutoCompleteDecorator.decorate(elCombo);
-            con = con.ObtenerRSSentencia(sentencia);
+            con = con.ObtenerRSSentencia(consulta);
 
             while (con.rs.next()) {
                 elCombo.addItem(new MetodosCombo(con.rs.getInt(1), con.rs.getString(2)));
-
                 //Seleccionado por defecto
                 try {
                     if (codItemDefault == con.rs.getInt(1) && codItemDefault >= 0) {
@@ -127,14 +125,14 @@ public class MetodosCombo {
         });
     }
 
-    public int ObtenerIDSelectComboBox(JComboBox<MetodosCombo> ElCombo) {
-        int codigoitemselect = -1;
+    public int ObtenerIDSelectCombo(JComboBox<MetodosCombo> elCombo) {
+        int coditemselect = -1;
         try {
-            codigoitemselect = ElCombo.getItemAt(ElCombo.getSelectedIndex()).getCodigo();
+            coditemselect = elCombo.getItemAt(elCombo.getSelectedIndex()).getCodigo();
         } catch (Exception e) {
-            log_historial.error("ObtenerIdCombo: No se selecciono ningun item en el combo: " + e);
+            log_historial.error("ObtenerIdCombo: No se selecciono ningun item en el combo: " + e + " codItemSelect:" + coditemselect);
         }
-        return codigoitemselect;
+        return coditemselect;
     }
 
     private void AddScrollHorizontalCombo(JComboBox ElCombo) {
@@ -149,5 +147,9 @@ public class MetodosCombo {
         JScrollPane scrollPane = (JScrollPane) popup.getComponent(0);
         scrollPane.setHorizontalScrollBar(new JScrollBar(JScrollBar.HORIZONTAL));
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    }
+
+    public void CargarTitulosACombo(JTable tbPrincipal, JComboBox cbCampoBuscar) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -5,9 +5,6 @@
  */
 package login;
 
-import conexion.Conexion;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import principal.Principal;
 
 /**
@@ -16,17 +13,25 @@ import principal.Principal;
  */
 public class SplashScreen extends javax.swing.JFrame implements Runnable {
 
-    private Thread tiempo = null;
-    Conexion con = new Conexion();
-
     public SplashScreen(java.awt.Frame parent, boolean modal) {
         initComponents();
-
-        tiempo = new Thread(this);
-        tiempo.start();
     }
 
-    @SuppressWarnings("unchecked")
+
+    public void run() {
+        try {
+            this.setLocationRelativeTo(null);
+            this.setVisible(true);
+            Thread.sleep(3000); //Esta en pantalla por 3 segundos
+            this.dispose(); //Desaparece
+            
+            Principal principal = new Principal();
+            principal.setVisible(true);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -120,46 +125,6 @@ public class SplashScreen extends javax.swing.JFrame implements Runnable {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SplashScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SplashScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SplashScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SplashScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                SplashScreen dialog = new SplashScreen(new javax.swing.JFrame(), true);
-
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.edisoncor.gui.label.LabelMetric lmCargando;
     private org.edisoncor.gui.panel.PanelCurves panelCurves1;
@@ -167,18 +132,4 @@ public class SplashScreen extends javax.swing.JFrame implements Runnable {
     private org.edisoncor.gui.panel.Panel pnPrincipal;
     private rojerusan.componentes.RSProgressMaterial rSProgressMaterial1;
     // End of variables declaration//GEN-END:variables
-
-    public void run() {
-        try {
-            //while (tiempo != null) {
-            Thread.sleep(3000);
-            this.dispose();
-
-            Principal principal = new Principal();
-            principal.setVisible(true);
-            //}
-        } catch (InterruptedException ex) {
-            Logger.getLogger(SplashScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 }

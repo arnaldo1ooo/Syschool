@@ -42,7 +42,7 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
     //--------------------------METODOS----------------------------//
     private void CargarComboBoxes() {
         //Carga los combobox con las consultas
-        metodoscombo.CargarComboBox(cbNivel, "SELECT niv_codigo, "
+        metodoscombo.CargarComboConsulta(cbNivel, "SELECT niv_codigo, "
                 + "CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
                 + "ELSE CONCAT(niv_descripcion,' \"', niv_seccion,'\"', ' ',niv_turno) END AS nivel "
                 + "FROM nivel ORDER BY niv_codigo", 1);
@@ -51,7 +51,7 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
     private void ConsultaListadoAlumnos() {
         modelTableListadoAlumnos = (DefaultTableModel) tbPrincipal.getModel();//Cargamos campos de jtable al modeltable
         modelTableListadoAlumnos.setRowCount(0); //Vacia la tabla
-        String sentencia = "CALL SP_ReporteListadoAlumnos('" + metodoscombo.ObtenerIDSelectComboBox(cbNivel) + "', '" + dyAnho.getYear() + "')";
+        String sentencia = "CALL SP_ReporteListadoAlumnos('" + metodoscombo.ObtenerIDSelectCombo(cbNivel) + "', '" + dyAnho.getYear() + "')";
         String titlesJtabla[] = {"Apellido, Nombre", "Cédula", "Sexo", "Edad"};
 
         //Carga el combobox con los titulos de la tabla, solo si esta vacio
@@ -94,7 +94,7 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
         try {
             con = con.ObtenerRSSentencia("SELECT CONCAT(fun_nombre,' ', fun_apellido) AS docente, niv_tipo FROM nivel_docente, nivel, funcionario "
                     + "WHERE  fun_codigo = nivfun_docente AND niv_codigo = nivfun_nivel AND "
-                    + "nivfun_nivel = '" + metodoscombo.ObtenerIDSelectComboBox(cbNivel) + "' AND nivfun_periodo = '" + dyAnho.getYear() + "'");
+                    + "nivfun_nivel = '" + metodoscombo.ObtenerIDSelectCombo(cbNivel) + "' AND nivfun_periodo = '" + dyAnho.getYear() + "'");
 
             if (con.rs.next() == true) {
                 lblDocente.setText(con.rs.getString(1));

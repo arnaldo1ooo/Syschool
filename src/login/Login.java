@@ -35,17 +35,17 @@ public class Login extends javax.swing.JFrame {
         alias = txtAlias.getText();
         pass = String.valueOf(txtPass.getPassword());
 
-        String sentencia = "CALL SP_LoginConsulta ('" + alias + "','" + pass + "') ";
-        con = con.ObtenerRSSentencia(sentencia);
-
         try {
+            String sentencia = "CALL SP_LoginConsulta ('" + alias + "','" + pass + "') ";
+            con = con.ObtenerRSSentencia(sentencia);
             if (con.rs.next()) {
                 codUsuario = con.rs.getString("usu_codigo");
                 nomapeUsuario = con.rs.getString("usu_nombre") + " " + con.rs.getString("usu_apellido");
 
+                this.dispose(); //Cerrar Ventana Login*/
                 SplashScreen splash = new SplashScreen(this, true);
-                splash.setVisible(true);
-                dispose(); //Cerrar jdialog
+                Thread hilo = new Thread(splash);
+                hilo.start(); //Iniciamos el nuevo hilo 
             } else {
                 Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(this, "Nombre de usuario o contraseña incorrecta!");
@@ -308,15 +308,7 @@ public class Login extends javax.swing.JFrame {
         Limpiar();
     }//GEN-LAST:event_btncancelarActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -335,6 +327,8 @@ public class Login extends javax.swing.JFrame {
             new Login().setVisible(true);
         });
     }
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCambiarPass;

@@ -9,11 +9,12 @@ import conexion.Conexion;
 import java.awt.Toolkit;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.text.ParseException;
+import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -42,6 +43,7 @@ public class ReportePagos extends javax.swing.JDialog {
 
         CargarComboBoxes();
 
+        lblTituloFecha.setVisible(false);
         //Obtener Fechas
         Calendar cal = Calendar.getInstance();
         cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), 1); //Primer dia del mes seleccionado
@@ -54,50 +56,61 @@ public class ReportePagos extends javax.swing.JDialog {
     //--------------------------METODOS----------------------------//
     private void CargarComboBoxes() {
         //Carga los combobox con las consultas
-        metodoscombo.CargarComboBox(cbConcepto, "SELECT con_codigo, con_descripcion FROM concepto ORDER BY con_descripcion", 1);
+        metodoscombo.CargarComboConsulta(cbConcepto, "SELECT con_codigo, con_descripcion FROM concepto ORDER BY con_descripcion", 1);
+        cbConcepto.addItem(new MetodosCombo(-1, "TODOS"));
+        cbConcepto.setMaximumRowCount(cbConcepto.getModel().getSize()); //Tamaño del combo
+        cbConcepto.setSelectedItem("TODOS");
     }
 
-    private void ConsultaListadoAlumnos() {
+    private void ConsultaPagos() {
         modelTablePagos = (DefaultTableModel) tbPrincipal.getModel();//Cargamos campos de jtable al modeltable
         modelTablePagos.setRowCount(0); //Vacia la tabla
-        String sentencia = "CALL SP_ReporteListadoAlumnos('" + metodoscombo.ObtenerIDSelectComboBox(cbConcepto) + "', '" + "" + "')";
-        String titlesJtabla[] = {"Apellido, Nombre", "Cédula", "Sexo", "Edad"};
 
         //Carga el combobox con los titulos de la tabla, solo si esta vacio
         if (cbOrdenar != null && cbOrdenar.getItemCount() == 0) {
-            javax.swing.DefaultComboBoxModel modelCombo = new javax.swing.DefaultComboBoxModel(titlesJtabla);
-            cbOrdenar.setModel(modelCombo);
+            for (int i = 0; i < tbPrincipal.getColumnCount(); i++) {
+                cbOrdenar.addItem(tbPrincipal.getColumnName(i));
+            }
+            cbOrdenar.setSelectedIndex(0);
+        }
+        SimpleDateFormat formatofecha = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatofecha2 = new SimpleDateFormat("dd/MM/yyyy");
+        String sentencia;
+        if (cbConcepto.getSelectedItem().toString().equals("TODOS")) {
+            sentencia = "CALL SP_ReportePagos('" + formatofecha.format(dcDesde.getDate()) + "','" + formatofecha.format(dcHasta.getDate()) + "','-1')";
+        } else {
+            sentencia = "CALL SP_ReportePagos('" + formatofecha.format(dcDesde.getDate()) + "','" + formatofecha.format(dcHasta.getDate()) + "','" + metodoscombo.ObtenerIDSelectCombo(cbConcepto) + "')";
         }
 
         con = con.ObtenerRSSentencia(sentencia);
 
         try {
-            String nomape, sexo;
-            int cedula, edad;
-            totalMasc = 0;
-            totalFem = 0;
+            String numpago, fechapago, concepto, monto;
             while (con.rs.next()) {
-                nomape = con.rs.getString("nomape");
-                cedula = (con.rs.getInt("alu_cedula"));
-                sexo = con.rs.getString("alu_sexo");
-                if (sexo.equals("MASCULINO")) {
-                    totalMasc = totalMasc + 1;
-                }
-                if (sexo.equals("FEMENINO")) {
-                    totalFem = totalFem + 1;
-                }
-                edad = con.rs.getInt("edad");
+                numpago = con.rs.getString("pag_numpago");
+                fechapago = formatofecha2.format(con.rs.getDate("pag_fechapago"));
+                concepto = con.rs.getString("con_descripcion");
+                monto = metodostxt.DoubleAFormatoSudamerica(con.rs.getDouble("pagcon_monto"));
 
-                modelTablePagos.addRow(new Object[]{nomape, cedula, sexo, edad});
+                modelTablePagos.addRow(new Object[]{numpago, fechapago, concepto, monto});
             }
-            con.DesconectarBasedeDatos();
             tbPrincipal.setModel(modelTablePagos);
             metodos.AnchuraColumna(tbPrincipal);
             lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
         } catch (SQLException e) {
-            log_historial.error("Error 10214: " + e);
+            log_historial.error("Error 10218: " + e);
             e.printStackTrace();
         }
+        con.DesconectarBasedeDatos();
+
+        lblTituloFecha.setVisible(true);
+     
+        String[] meses = {"Ene.", "Feb.", "Mar.", "Abr.", "May.", "Jun.","Jul.", "Ago.", "Sep.", "Oct.", "Nov.", "Dic"}; // primero creas el String array
+                // la inicializas en idioma español, país México:
+        DateFormatSymbols simbols = new DateFormatSymbols(new Locale("es", "MX"));  // con MX es sep, con ES (España) es sept.
+        simbols.setShortMonths(meses);// lo configuras así, después de inicializar symbols:
+        DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", simbols);
+        lblTituloFecha.setText("Pagos del " + dateFormat.format(dcDesde.getDate()) + " al " + dateFormat.format(dcHasta.getDate()));
     }
 
     @SuppressWarnings("unchecked")
@@ -126,6 +139,7 @@ public class ReportePagos extends javax.swing.JDialog {
             }
         };
         lbCantRegistros = new javax.swing.JLabel();
+        lblTituloFecha = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         btnGenerarReporte = new org.edisoncor.gui.button.ButtonSeven();
 
@@ -309,6 +323,10 @@ public class ReportePagos extends javax.swing.JDialog {
         lbCantRegistros.setText("0 Registros encontrados");
         lbCantRegistros.setPreferredSize(new java.awt.Dimension(57, 25));
 
+        lblTituloFecha.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        lblTituloFecha.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblTituloFecha.setText("Pagos del xx/xx/xx al xx/xx/xx");
+
         javax.swing.GroupLayout panel4Layout = new javax.swing.GroupLayout(panel4);
         panel4.setLayout(panel4Layout);
         panel4Layout.setHorizontalGroup(
@@ -320,11 +338,14 @@ public class ReportePagos extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel4Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbCantRegistros, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel4Layout.createSequentialGroup()
                                 .addComponent(lblBuscarCampo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cbOrdenar, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lbCantRegistros, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(cbOrdenar, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(panel4Layout.createSequentialGroup()
+                        .addComponent(lblTituloFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panel4Layout.setVerticalGroup(
@@ -333,7 +354,8 @@ public class ReportePagos extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addGroup(panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbOrdenar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblBuscarCampo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblBuscarCampo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblTituloFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(2, 2, 2)
                 .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -461,7 +483,7 @@ public class ReportePagos extends javax.swing.JDialog {
     }//GEN-LAST:event_tbPrincipalKeyReleased
 
     private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
-        // TODO add your handling code here:
+        ConsultaPagos();
     }//GEN-LAST:event_btnFiltrarActionPerformed
 
     private void cbConceptoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbConceptoItemStateChanged
@@ -521,6 +543,7 @@ public class ReportePagos extends javax.swing.JDialog {
     private javax.swing.JLabel lblDesde;
     private javax.swing.JLabel lblFechaPago;
     private javax.swing.JLabel lblHasta;
+    private javax.swing.JLabel lblTituloFecha;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel3;
     private org.edisoncor.gui.panel.Panel panel4;

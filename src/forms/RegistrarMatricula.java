@@ -62,9 +62,9 @@ public class RegistrarMatricula extends javax.swing.JDialog {
 //--------------------------METODOS----------------------------//
     public void CargarComboBoxes() {
         //Carga los combobox con las consultas
-        metodoscombo.CargarComboBox(cbAlumno, "SELECT alu_codigo, CONCAT(alu_nombre,' ', alu_apellido) AS nomape "
+        metodoscombo.CargarComboConsulta(cbAlumno, "SELECT alu_codigo, CONCAT(alu_nombre,' ', alu_apellido) AS nomape "
                 + "FROM alumno ORDER BY alu_nombre", -1);
-        metodoscombo.CargarComboBox(cbNivel, "SELECT niv_codigo, "
+        metodoscombo.CargarComboConsulta(cbNivel, "SELECT niv_codigo, "
                 + "CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
                 + "ELSE CONCAT(niv_descripcion,' \"', niv_seccion,'\"', ' ',niv_turno) END AS nivel "
                 + "FROM nivel ORDER BY niv_codigo", 1);
@@ -99,8 +99,8 @@ public class RegistrarMatricula extends javax.swing.JDialog {
 
     public void RegistroNuevo() {
         if (ComprobarCampos() == true) {
-            int alumno = metodoscombo.ObtenerIDSelectComboBox(cbAlumno);
-            int nivel = metodoscombo.ObtenerIDSelectComboBox(cbNivel);
+            int alumno = metodoscombo.ObtenerIDSelectCombo(cbAlumno);
+            int nivel = metodoscombo.ObtenerIDSelectCombo(cbNivel);
             DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
             String fecha = formatoFecha.format(dcFechaMatricula.getDate());
             String periodo = txtPeriodo.getText();
@@ -139,7 +139,7 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         }
 
         Boolean YaExisteEnLaBD = con.SiYaExisteEnLaBD("SELECT mat_codigo FROM matricula WHERE mat_alumno='"
-                + metodoscombo.ObtenerIDSelectComboBox(cbAlumno) + "' AND mat_periodo='" + txtPeriodo.getText() + "'");
+                + metodoscombo.ObtenerIDSelectCombo(cbAlumno) + "' AND mat_periodo='" + txtPeriodo.getText() + "'");
         if (YaExisteEnLaBD == true) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "El alumno/a " + cbAlumno.getSelectedItem().toString()
@@ -622,7 +622,7 @@ public class RegistrarMatricula extends javax.swing.JDialog {
     private void tbAlumnosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbAlumnosMousePressed
         if (evt.getClickCount() == 2) {
             int codselect = Integer.parseInt(tbAlumnos.getValueAt(tbAlumnos.getSelectedRow(), 0) + "");
-            metodoscombo.setSelectedCodigoItem(cbAlumno, codselect);
+            metodoscombo.SetSelectedCodigoItem(cbAlumno, codselect);
             BuscadorAlumno.dispose();
         }
     }//GEN-LAST:event_tbAlumnosMousePressed
@@ -630,7 +630,7 @@ public class RegistrarMatricula extends javax.swing.JDialog {
     private void tbAlumnosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbAlumnosKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             int codselect = Integer.parseInt(tbAlumnos.getValueAt(tbAlumnos.getSelectedRow(), 0) + "");
-            metodoscombo.setSelectedCodigoItem(cbAlumno, codselect);
+            metodoscombo.SetSelectedCodigoItem(cbAlumno, codselect);
             BuscadorAlumno.dispose();
         }
     }//GEN-LAST:event_tbAlumnosKeyReleased
@@ -641,7 +641,7 @@ public class RegistrarMatricula extends javax.swing.JDialog {
 
             con = con.ObtenerRSSentencia("SELECT mat_periodo, CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
                     + "ELSE CONCAT(niv_descripcion,' \"', niv_seccion,'\"', ' ',niv_turno) END AS nivel "
-                    + "FROM matricula, nivel WHERE mat_alumno='" + metodoscombo.ObtenerIDSelectComboBox(cbAlumno) + "' "
+                    + "FROM matricula, nivel WHERE mat_alumno='" + metodoscombo.ObtenerIDSelectCombo(cbAlumno) + "' "
                     + "AND mat_nivel=niv_codigo ORDER BY mat_periodo DESC LIMIT 1");
             if (con.rs.next()) {
                 lblUltimaMatriculacion.setText(con.rs.getString("nivel") + " (" + con.rs.getString("mat_periodo") + ")");
@@ -681,7 +681,7 @@ public class RegistrarMatricula extends javax.swing.JDialog {
 
     static void PonerAlumnoSeleccionado(int codseleccionado) {
         MetodosCombo metodoscombo = new MetodosCombo();
-        metodoscombo.setSelectedCodigoItem(cbAlumno, codseleccionado);
+        metodoscombo.SetSelectedCodigoItem(cbAlumno, codseleccionado);
     }
 
     private class PersonalizadoFocusTraversalPolicy extends FocusTraversalPolicy {

@@ -3,7 +3,8 @@ package principal;
 import conexion.Conexion;
 import forms.ABMAlumno;
 import forms.ABMApoderado;
-import forms.ABMConcepto;
+import forms.ABMConceptoGasto;
+import forms.ABMConceptoPago;
 import forms.ABMFuncionario;
 import forms.ABMModulo;
 import forms.ABMNivel;
@@ -42,7 +43,7 @@ import static login.Login.alias;
  *
  * @author Lic. Arnaldo Cantero
  */
-public class Principal extends javax.swing.JFrame implements Runnable {
+public class Principal extends javax.swing.JFrame /*implements Runnable*/ {
 
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
@@ -56,6 +57,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         lbAlias.setText(alias);
         PerfilesUsuario(codUsuario);
         PermisoModulos(codUsuario);
+
     }
 
     private void PermisoModulos(String codUsuario) {
@@ -67,12 +69,15 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                 switch (modulo) {
                     case "NIVEL" -> {
                         btnNivel.setEnabled(true);
+                        meNivel.setEnabled(true);
                         meiDocenteEncargado.setEnabled(true);
                     }
-                    case "APODERADO" ->
+                    case "APODERADO" -> {
                         btnApoderado.setEnabled(true);
-                    case "ALUMNO" ->
+                    }
+                    case "ALUMNO" -> {
                         btnAlumno.setEnabled(true);
+                    }
                     case "MATRICULA" -> {
                         btnMatricula.setEnabled(true);
                         meMatricula.setEnabled(true);
@@ -89,10 +94,12 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                         btnGasto.setEnabled(true);
                         meGasto.setEnabled(true);
                     }
-                    case "CLIENTE" ->
+                    case "CLIENTE" -> {
                         btnPago.setEnabled(true);
-                    case "FUNCIONARIO" ->
+                    }
+                    case "FUNCIONARIO" -> {
                         btnFuncionario.setEnabled(true);
+                    }
                     case "USUARIO" -> {
                         btnUsuario.setEnabled(true);
                         meUsuario.setEnabled(true);
@@ -105,12 +112,15 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                         meitReporteAlumnos.setEnabled(true);
                         meitReportePagos.setEnabled(true);
                     }
-                    case "CONCEPTO" ->
-                        meitConcepto.setEnabled(true);
-                    case "CONFIGURACION" ->
+
+                    case "CONFIGURACION" -> {
                         meConfiguracion.setEnabled(true);
-                    default ->
-                        JOptionPane.showMessageDialog(this, "No se encontró " + modulo, "Error", JOptionPane.ERROR_MESSAGE);
+                        meitConceptoPago.setEnabled(true);
+                        meitConceptoGasto.setEnabled(true);
+                    }
+                    default -> {
+                        //JOptionPane.showMessageDialog(this, "No se encontró " + modulo, "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
             con.DesconectarBasedeDatos();
@@ -195,12 +205,14 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meitRol = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         jMenuItem18 = new javax.swing.JMenuItem();
+        meNivel = new javax.swing.JMenu();
+        meiDocenteEncargado = new javax.swing.JMenuItem();
         meConfiguracion = new javax.swing.JMenu();
         jMenuItem6 = new javax.swing.JMenuItem();
-        jSeparator19 = new javax.swing.JPopupMenu.Separator();
-        meiDocenteEncargado = new javax.swing.JMenuItem();
         jSeparator22 = new javax.swing.JPopupMenu.Separator();
-        meitConcepto = new javax.swing.JMenuItem();
+        meitConceptoPago = new javax.swing.JMenuItem();
+        jSeparator24 = new javax.swing.JPopupMenu.Separator();
+        meitConceptoGasto = new javax.swing.JMenuItem();
         jSeparator18 = new javax.swing.JPopupMenu.Separator();
         meitPerfil = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
@@ -679,6 +691,29 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         jMenuBar1.add(meUsuario);
 
+        meNivel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoNivel.png"))); // NOI18N
+        meNivel.setText("NIVELES");
+        meNivel.setEnabled(false);
+        meNivel.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        meNivel.setPreferredSize(new java.awt.Dimension(190, 70));
+        meNivel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meNivelActionPerformed(evt);
+            }
+        });
+
+        meiDocenteEncargado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoDocente.png"))); // NOI18N
+        meiDocenteEncargado.setText("Docentes encargados");
+        meiDocenteEncargado.setEnabled(false);
+        meiDocenteEncargado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meiDocenteEncargadoActionPerformed(evt);
+            }
+        });
+        meNivel.add(meiDocenteEncargado);
+
+        jMenuBar1.add(meNivel);
+
         meConfiguracion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoConfiguracion70.png"))); // NOI18N
         meConfiguracion.setText("CONFIGURACIÓN");
         meConfiguracion.setEnabled(false);
@@ -693,27 +728,28 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             }
         });
         meConfiguracion.add(jMenuItem6);
-        meConfiguracion.add(jSeparator19);
-
-        meiDocenteEncargado.setText("Docentes encargados");
-        meiDocenteEncargado.setEnabled(false);
-        meiDocenteEncargado.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                meiDocenteEncargadoActionPerformed(evt);
-            }
-        });
-        meConfiguracion.add(meiDocenteEncargado);
         meConfiguracion.add(jSeparator22);
 
-        meitConcepto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoRegistrar.png"))); // NOI18N
-        meitConcepto.setText("Conceptos de pago");
-        meitConcepto.setEnabled(false);
-        meitConcepto.addActionListener(new java.awt.event.ActionListener() {
+        meitConceptoPago.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoRegistrar.png"))); // NOI18N
+        meitConceptoPago.setText("Conceptos de pago");
+        meitConceptoPago.setEnabled(false);
+        meitConceptoPago.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                meitConceptoActionPerformed(evt);
+                meitConceptoPagoActionPerformed(evt);
             }
         });
-        meConfiguracion.add(meitConcepto);
+        meConfiguracion.add(meitConceptoPago);
+        meConfiguracion.add(jSeparator24);
+
+        meitConceptoGasto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos25x25/IconoRegistrar.png"))); // NOI18N
+        meitConceptoGasto.setText("Conceptos de gasto");
+        meitConceptoGasto.setEnabled(false);
+        meitConceptoGasto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meitConceptoGastoActionPerformed(evt);
+            }
+        });
+        meConfiguracion.add(meitConceptoGasto);
         meConfiguracion.add(jSeparator18);
 
         meitPerfil.setText("Perfiles");
@@ -951,11 +987,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         abmniveldocente.setVisible(true);
     }//GEN-LAST:event_meiDocenteEncargadoActionPerformed
 
-    private void meitConceptoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitConceptoActionPerformed
-        ABMConcepto abmconcepto = new ABMConcepto(this, true);
+    private void meitConceptoPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitConceptoPagoActionPerformed
+        ABMConceptoPago abmconcepto = new ABMConceptoPago(this, true);
         abmconcepto.setLocationRelativeTo(this); //Centrar
         abmconcepto.setVisible(true);
-    }//GEN-LAST:event_meitConceptoActionPerformed
+    }//GEN-LAST:event_meitConceptoPagoActionPerformed
 
     private void meitReportePagosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitReportePagosActionPerformed
         ReportePagos reportepagos = new ReportePagos(this, true);
@@ -963,9 +999,15 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         reportepagos.setVisible(true);
     }//GEN-LAST:event_meitReportePagosActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+    private void meitConceptoGastoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitConceptoGastoActionPerformed
+        ABMConceptoGasto abmconceptogasto = new ABMConceptoGasto(this, true);
+        abmconceptogasto.setVisible(true);
+    }//GEN-LAST:event_meitConceptoGastoActionPerformed
+
+    private void meNivelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meNivelActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_meNivelActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -983,12 +1025,23 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+ /*java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Principal().setVisible(true);
             }
-        });
+        });*/
     }
+
+    /*public void run() {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        Thread current = Thread.currentThread();
+        
+        while (current == hilo) {
+            ObtenerFechayHora();
+        }
+    }*/
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlumno;
     private javax.swing.JButton btnApoderado;
@@ -1007,11 +1060,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JPopupMenu.Separator jSeparator17;
     private javax.swing.JPopupMenu.Separator jSeparator18;
-    private javax.swing.JPopupMenu.Separator jSeparator19;
     private javax.swing.JPopupMenu.Separator jSeparator20;
     private javax.swing.JPopupMenu.Separator jSeparator21;
     private javax.swing.JPopupMenu.Separator jSeparator22;
     private javax.swing.JPopupMenu.Separator jSeparator23;
+    private javax.swing.JPopupMenu.Separator jSeparator24;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JPopupMenu.Separator jSeparator8;
@@ -1028,6 +1081,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenu meConfiguracion;
     private javax.swing.JMenu meGasto;
     private javax.swing.JMenu meMatricula;
+    private javax.swing.JMenu meNivel;
     private javax.swing.JMenu mePago;
     private javax.swing.JMenu mePagoSalario;
     private javax.swing.JMenu meReporte;
@@ -1038,7 +1092,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenuItem meitAnularMatricula;
     private javax.swing.JMenuItem meitAnularPago;
     private javax.swing.JMenuItem meitAnularPagoSalario;
-    private javax.swing.JMenuItem meitConcepto;
+    private javax.swing.JMenuItem meitConceptoGasto;
+    private javax.swing.JMenuItem meitConceptoPago;
     private javax.swing.JMenuItem meitModulo;
     private javax.swing.JMenuItem meitPerfil;
     private javax.swing.JMenuItem meitRegistrarGasto;
@@ -1051,15 +1106,4 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.PanelImage piPrincipal;
     // End of variables declaration//GEN-END:variables
-
-    @Override
-    public void run() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-
-        /*Thread current = Thread.currentThread();
-        
-        while (current == hilo) {
-            ObtenerFechayHora();
-        }*/
-    }
 }

@@ -222,6 +222,7 @@ public class Metodos {
         }
         return valor;
     }*/
+    
     public double SumarColumnaDouble(JTable LaTabla, int LaColumna) {
         double valor;
         double totalDouble = 0;

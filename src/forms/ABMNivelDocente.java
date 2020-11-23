@@ -38,7 +38,6 @@ public class ABMNivelDocente extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-
         CargarComboBoxes();
         ConsultaDocentes(); //Trae todos los registros
         txtBuscar.requestFocus();
@@ -49,12 +48,12 @@ public class ABMNivelDocente extends javax.swing.JDialog {
 //--------------------------METODOS----------------------------//
     private void CargarComboBoxes() {
         //Carga los combobox con las consultas
-        metodoscombo.CargarComboBox(cbNivel, "SELECT niv_codigo, "
+        metodoscombo.CargarComboConsulta(cbNivel, "SELECT niv_codigo, "
                 + "CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
                 + "ELSE CONCAT(niv_descripcion,' \"', niv_seccion,'\"', ' ',niv_turno) END AS nivel "
                 + "FROM nivel ORDER BY niv_codigo", 1);
 
-        metodoscombo.CargarComboBox(cbDocente, "SELECT fun_codigo, CONCAT(fun_nombre, ' ', fun_apellido) AS nomapedocente "
+        metodoscombo.CargarComboConsulta(cbDocente, "SELECT fun_codigo, CONCAT(fun_nombre, ' ', fun_apellido) AS nomapedocente "
                 + "FROM funcionario, cargo WHERE car_descripcion = 'DOCENTE' AND fun_cargo = car_codigo ORDER BY fun_nombre", -1);
         cbDocente.addItem(new MetodosCombo(0, "SIN ESPECIFICAR"));
         cbDocente.setMaximumRowCount(cbDocente.getModel().getSize());
@@ -64,9 +63,9 @@ public class ABMNivelDocente extends javax.swing.JDialog {
     public void RegistroNuevoModificar() {
         if (ComprobarCampos() == true) {
             String codigo = txtCodigo.getText();
-            int docente = metodoscombo.ObtenerIDSelectComboBox(cbDocente);
-            int nivel = metodoscombo.ObtenerIDSelectComboBox(cbNivel);
-            int periodo = dyAnho.getYear();
+            int docente = metodoscombo.ObtenerIDSelectCombo(cbDocente);
+            int nivel = metodoscombo.ObtenerIDSelectCombo(cbNivel);
+            int periodo = dyPeriodo.getYear();
 
             if (txtCodigo.getText().equals("")) { //NUEVO REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo registro?", "Confirmación", JOptionPane.YES_OPTION);
@@ -115,7 +114,7 @@ public class ABMNivelDocente extends javax.swing.JDialog {
     private void ConsultaDocentes() {//Realiza la consulta de los productos que tenemos en la base de datos
         String sentencia = "SELECT nivfun_codigo, CONCAT(fun_nombre,' ', fun_apellido) AS docente, nivfun_periodo "
                 + "FROM nivel_docente, funcionario "
-                + "WHERE nivfun_docente = fun_codigo AND nivfun_nivel = '" + metodoscombo.ObtenerIDSelectComboBox(cbNivel) + "'";
+                + "WHERE nivfun_docente = fun_codigo AND nivfun_nivel = '" + metodoscombo.ObtenerIDSelectCombo(cbNivel) + "'";
         String titlesJtabla[] = {"Código", "Docente", "Periodo"};
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
         cbCampoBuscar.setSelectedIndex(1);
@@ -131,8 +130,8 @@ public class ABMNivelDocente extends javax.swing.JDialog {
     private void ModoVistaPrevia() {
         txtCodigo.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + ""));
         txtNivel.setText(cbNivel.getSelectedItem() + "");
-        metodoscombo.setSelectedNombreItem(cbDocente, tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1) + "");
-        dyAnho.setYear(Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 2) + ""));
+        metodoscombo.SetSelectedNombreItem(cbDocente, tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1) + "");
+        dyPeriodo.setYear(Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 2) + ""));
 
     }
 
@@ -141,7 +140,7 @@ public class ABMNivelDocente extends javax.swing.JDialog {
         txtBuscar.setEnabled(!valor);
         tbPrincipal.setEnabled(!valor);
         cbDocente.setEnabled(valor);
-        dyAnho.setEnabled(valor);
+        dyPeriodo.setEnabled(valor);
 
         btnNuevo.setEnabled(!valor);
         btnModificar.setEnabled(false);
@@ -153,9 +152,9 @@ public class ABMNivelDocente extends javax.swing.JDialog {
     private void Limpiar() {
         txtCodigo.setText("");
         txtNivel.setText("");
-        metodoscombo.setSelectedNombreItem(cbDocente, "SIN ESPECIFICAR");
+        metodoscombo.SetSelectedNombreItem(cbDocente, "SIN ESPECIFICAR");
 
-        dyAnho.setYear(c2.get(Calendar.YEAR));
+        dyPeriodo.setYear(c2.get(Calendar.YEAR));
 
         txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
@@ -169,10 +168,10 @@ public class ABMNivelDocente extends javax.swing.JDialog {
             return false;
         }
 
-        if (dyAnho.getYear() < c2.get(Calendar.YEAR)) {
+        if (dyPeriodo.getYear() < c2.get(Calendar.YEAR)) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "El periodo no puede ser menor al año actual", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            dyAnho.requestFocus();
+            dyPeriodo.requestFocus();
             return false;
         }
 
@@ -210,7 +209,7 @@ public class ABMNivelDocente extends javax.swing.JDialog {
         cbDocente = new javax.swing.JComboBox<>();
         lblRucCedula1 = new javax.swing.JLabel();
         txtNivel = new javax.swing.JTextField();
-        dyAnho = new com.toedter.calendar.JYearChooser();
+        dyPeriodo = new com.toedter.calendar.JYearChooser();
         jpBotones2 = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
@@ -439,8 +438,8 @@ public class ABMNivelDocente extends javax.swing.JDialog {
             }
         });
 
-        dyAnho.setBackground(new java.awt.Color(0, 153, 153));
-        dyAnho.setEnabled(false);
+        dyPeriodo.setBackground(new java.awt.Color(0, 153, 153));
+        dyPeriodo.setEnabled(false);
 
         javax.swing.GroupLayout jpEdicionLayout = new javax.swing.GroupLayout(jpEdicion);
         jpEdicion.setLayout(jpEdicionLayout);
@@ -464,7 +463,7 @@ public class ABMNivelDocente extends javax.swing.JDialog {
                 .addGap(39, 39, 39)
                 .addComponent(lblDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(dyAnho, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(dyPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(202, 202, 202))
         );
         jpEdicionLayout.setVerticalGroup(
@@ -476,7 +475,7 @@ public class ABMNivelDocente extends javax.swing.JDialog {
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dyAnho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(dyPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRucCedula1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -672,8 +671,21 @@ public class ABMNivelDocente extends javax.swing.JDialog {
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         Limpiar();
-        txtNivel.setText(cbNivel.getSelectedItem().toString());
         ModoEdicion(true);
+
+        if (cbNivel.getSelectedIndex() != -1) {
+            txtNivel.setText(cbNivel.getSelectedItem().toString());
+        } else {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "Seleccione un nivel", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            cbNivel.requestFocus();
+            return;
+        }
+
+        if (tbPrincipal.getRowCount() > 0) {
+            int periodo = Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getRowCount() - 1, 2) + "");
+            dyPeriodo.setValue(periodo + 1);
+        }
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
@@ -722,7 +734,7 @@ public class ABMNivelDocente extends javax.swing.JDialog {
 
     private void OrdenTabulador() {
         ordenTabulador = new ArrayList<>();
-        ordenTabulador.add(dyAnho);
+        ordenTabulador.add(dyPeriodo);
         ordenTabulador.add(btnGuardar);
         setFocusTraversalPolicy(new PersonalizadoFocusTraversalPolicy());
     }
@@ -763,7 +775,7 @@ public class ABMNivelDocente extends javax.swing.JDialog {
     private javax.swing.JComboBox cbCampoBuscar;
     private javax.swing.JComboBox<MetodosCombo> cbDocente;
     private javax.swing.JComboBox<MetodosCombo> cbNivel;
-    private com.toedter.calendar.JYearChooser dyAnho;
+    private com.toedter.calendar.JYearChooser dyPeriodo;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jpBotones;

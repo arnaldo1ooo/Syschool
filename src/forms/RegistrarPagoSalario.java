@@ -66,14 +66,14 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
 //--------------------------METODOS----------------------------//
     public void CargarComboBoxes() {
         //Carga los combobox con las consultas
-        metodoscombo.CargarComboBox(cbFuncionario, "SELECT fun_codigo, CONCAT(fun_nombre,' ',fun_apellido) AS nomape "
+        metodoscombo.CargarComboConsulta(cbFuncionario, "SELECT fun_codigo, CONCAT(fun_nombre,' ',fun_apellido) AS nomape "
                 + "FROM funcionario ORDER BY fun_nombre ", -1);
     }
 
     public void RegistroNuevo() {
         if (ComprobarCampos() == true) {
             String numpago = lblNumPago.getText();
-            int idfuncionario = metodoscombo.ObtenerIDSelectComboBox(cbFuncionario);
+            int idfuncionario = metodoscombo.ObtenerIDSelectCombo(cbFuncionario);
             double salario = metodostxt.DoubleAFormatoAmericano(txtSalario.getText());
 
             DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
@@ -585,7 +585,7 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
 
     private void cbFuncionarioItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFuncionarioItemStateChanged
         try {
-            int idfuncionario = metodoscombo.ObtenerIDSelectComboBox(cbFuncionario);
+            int idfuncionario = metodoscombo.ObtenerIDSelectCombo(cbFuncionario);
 
             String sentencia = "SELECT fun_cedula, fun_salario, car_descripcion FROM funcionario,cargo "
                     + "WHERE fun_codigo = '" + idfuncionario + "' AND fun_cargo=car_codigo";

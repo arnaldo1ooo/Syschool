@@ -63,7 +63,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
     //--------------------------METODOS----------------------------//
     private void CargarComboBoxes() {
         //Carga los combobox con las consultas
-        metodoscombo.CargarComboBox(cbCargo, "SELECT car_codigo, car_descripcion FROM cargo ORDER BY car_descripcion", -1);
+        metodoscombo.CargarComboConsulta(cbCargo, "SELECT car_codigo, car_descripcion FROM cargo ORDER BY car_descripcion", -1);
     }
 
     public void RegistroNuevoModificar() {
@@ -80,7 +80,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
             String email = txtEmail.getText();
             String obs = taObs.getText();
             int estado = cbEstado.getSelectedIndex();
-            int cargo = metodoscombo.ObtenerIDSelectComboBox(cbCargo);
+            int cargo = metodoscombo.ObtenerIDSelectCombo(cbCargo);
 
             if (codigo.equals("")) {
                 //NUEVO REGISTRO
@@ -132,6 +132,12 @@ public class ABMFuncionario extends javax.swing.JDialog {
     }
 
     private void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
+        if (cbCampoBuscar.getItemCount() == 0) {
+            for (int i = 0; i < tbPrincipal.getColumnCount(); i++) {
+                cbCampoBuscar.addItem(tbPrincipal.getColumnName(i));
+            }
+        }
+
         modelTableFuncionarios = (DefaultTableModel) tbPrincipal.getModel();//Cargamos campos de jtable al modeltable
         modelTableFuncionarios.setRowCount(0); //Vacia la tabla
 
@@ -191,7 +197,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
         cbEstado.setSelectedItem(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 10) + "");
 
         String cargo = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 11) + "";
-        metodoscombo.setSelectedNombreItem(cbCargo, cargo);
+        metodoscombo.SetSelectedNombreItem(cbCargo, cargo);
     }
 
     private void ModoEdicion(boolean valor) {

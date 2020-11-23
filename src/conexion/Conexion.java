@@ -87,7 +87,6 @@ public class Conexion {
             conexion = DriverManager.getConnection(servidor, usuarioDB, passDB);
             if (conexion != null) {
                 System.out.println("\nCONEXIÓN A " + nombreBD + ", EXITOSA..");
-
             }
         } catch (ClassNotFoundException | SQLException ex) {
             conexion = null;
@@ -175,21 +174,21 @@ public class Conexion {
             }
 
             switch (cantreg) {
-                case 0:
+                case 0 ->
                     System.out.println("ObtenerRSSentencia no trajo ningun resultado");
-                    //con.rs.beforeFirst(); //Ponemos antes del primer registro en el puntero
-                    break;
-                case 1:
+                //con.rs.beforeFirst(); //Ponemos antes del primer registro en el puntero
+                case 1 -> {
                     System.out.println("ObtenerRSSentencia trajo un resultado");
                     con.rs.beforeFirst(); //Ponemos antes del primer registro en el puntero
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     System.out.println("ObtenerRSSentencia trajo mas de un resultado");
                     con.rs.beforeFirst(); //Ponemos antes del primer registro en el puntero
-                    break;
-                default:
-                //aca se escribe lo que si o si se ejecuta
+                }
+                default -> {
+                }
             }
+            //aca se escribe lo que si o si se ejecuta
         } catch (SQLException | NullPointerException e) {
             log_historial.error("Error 1092: " + e);
             e.printStackTrace();

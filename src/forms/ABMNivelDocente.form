@@ -452,7 +452,7 @@
                           <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
                           <Component id="lblDescripcion" min="-2" pref="102" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="dyAnho" min="-2" pref="72" max="-2" attributes="0"/>
+                          <Component id="dyPeriodo" min="-2" pref="72" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="202" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -466,7 +466,7 @@
                               <Component id="jLabel2" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
                               <Component id="txtCodigo" alignment="2" min="-2" max="-2" attributes="0"/>
                               <Component id="lblCodigo" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                              <Component id="dyAnho" alignment="2" min="-2" max="-2" attributes="0"/>
+                              <Component id="dyPeriodo" alignment="2" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
@@ -579,7 +579,7 @@
                     <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtNivelKeyTyped"/>
                   </Events>
                 </Component>
-                <Component class="com.toedter.calendar.JYearChooser" name="dyAnho">
+                <Component class="com.toedter.calendar.JYearChooser" name="dyPeriodo">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="99" green="99" red="0" type="rgb"/>

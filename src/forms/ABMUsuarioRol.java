@@ -43,7 +43,7 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
     //--------------------------METODOS----------------------------//
     private void CargarComboBoxes() {
         //Carga los combobox con las consultas
-        metodoscombo.CargarComboBox(cbUsuario, "SELECT usu_codigo, CONCAT(usu_nombre,' ', usu_apellido) AS nomape FROM usuario ORDER BY usu_nombre", -1);
+        metodoscombo.CargarComboConsulta(cbUsuario, "SELECT usu_codigo, CONCAT(usu_nombre,' ', usu_apellido) AS nomape FROM usuario ORDER BY usu_nombre", -1);
     }
 
     String sentencia;
@@ -90,7 +90,7 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
     }
 
     public void RegistroGuardar() {
-        String idusuario = metodoscombo.ObtenerIDSelectComboBox(cbUsuario) + "";
+        String idusuario = metodoscombo.ObtenerIDSelectCombo(cbUsuario) + "";
         String idrolalta = tbModulosUsuario.getValueAt(tbModulosUsuario.getSelectedRow(), 2) + "";
         String idrolmodificar = tbModulosUsuario.getValueAt(tbModulosUsuario.getSelectedRow(), 3) + "";
         String idrolbaja = tbModulosUsuario.getValueAt(tbModulosUsuario.getSelectedRow(), 4) + "";
@@ -458,7 +458,7 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
 
     private void cbUsuarioItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbUsuarioItemStateChanged
         if (cbUsuario.getSelectedIndex() != -1) {
-            ConsultaModulosUsuario(metodoscombo.ObtenerIDSelectComboBox(cbUsuario) + "");
+            ConsultaModulosUsuario(metodoscombo.ObtenerIDSelectCombo(cbUsuario) + "");
         }
     }//GEN-LAST:event_cbUsuarioItemStateChanged
 
@@ -485,7 +485,7 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
             chbAlta.setSelected(false);
             chbModificar.setSelected(false);
             chbBaja.setSelected(false);
-            sentencia = "CALL SP_UsuarioRolConsulta('" + metodoscombo.ObtenerIDSelectComboBox(cbUsuario) + "','" + moduloselect + "')";
+            sentencia = "CALL SP_UsuarioRolConsulta('" + metodoscombo.ObtenerIDSelectCombo(cbUsuario) + "','" + moduloselect + "')";
             con = con.ObtenerRSSentencia(sentencia);
 
             while (con.rs.next()) {

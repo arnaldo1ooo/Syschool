@@ -80,7 +80,7 @@ public class RegistrarPago extends javax.swing.JDialog {
 //--------------------------METODOS----------------------------//
     private void CargarComboBoxes() {
         //Carga los combobox con las consultas
-        metodoscombo.CargarComboBox(cbApoderado, "SELECT apo_codigo, CONCAT(apo_nombre,' ', apo_apellido) AS nomape "
+        metodoscombo.CargarComboConsulta(cbApoderado, "SELECT apo_codigo, CONCAT(apo_nombre,' ', apo_apellido) AS nomape "
                 + "FROM apoderado ORDER BY apo_nombre", -1);
     }
     
@@ -100,7 +100,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         try {
             if (ComprobarCampos() == true) {
                 String numpago = lblNumPago.getText();
-                int alumno = metodoscombo.ObtenerIDSelectComboBox(cbApoderado);
+                int alumno = metodoscombo.ObtenerIDSelectCombo(cbApoderado);
                 DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
                 String fechapago = formatoFecha.format(dcFechaPago.getDate());
                 double importe = metodostxt.DoubleAFormatoAmericano(txtImporteRecibido.getText());
@@ -1744,8 +1744,6 @@ public class RegistrarPago extends javax.swing.JDialog {
             CargarDatosaAgregarPagos();
 
             //Si todas las cuotas ya fueron pagadas
-            System.out.println("lblNumCuotasPagados.getText() " + lblNumCuotasPagados.getText());
-            System.out.println("lblNumTotalCuotas.getText() " + lblNumTotalCuotas.getText());
             if (lblNumCuotasPagados.getText().equals(lblNumTotalCuotas.getText())) {
                 txtNumCuotasAPagar.setEnabled(false);
                 btnAgregar2.setEnabled(false);
@@ -1833,7 +1831,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         try {
             int codconcepto = Integer.parseInt(tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 0) + "");
             //Obtener numero de cuotas pagados
-            int codapoderado = metodoscombo.ObtenerIDSelectComboBox(cbApoderado);
+            int codapoderado = metodoscombo.ObtenerIDSelectCombo(cbApoderado);
             con = con.ObtenerRSSentencia("SELECT SUM(pagcon_numcuotas) AS sumanumcuotas "
                     + "FROM pago, pago_concepto "
                     + "WHERE pagcon_concepto = '" + codconcepto + "' AND pag_apoderado = '" + codapoderado + "' "
@@ -2029,7 +2027,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                     + "ELSE (CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
                     + "ELSE CONCAT(niv_descripcion,' \"', niv_seccion,'\"', ' ',niv_turno) END) END) AS nivel, niv_codigo "
                     + "FROM alumno LEFT OUTER JOIN matricula ON alu_codigo=mat_alumno LEFT OUTER JOIN nivel ON mat_nivel=niv_codigo "
-                    + "WHERE alu_apoderado='" + metodoscombo.ObtenerIDSelectComboBox(cbApoderado) + "' "
+                    + "WHERE alu_apoderado='" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' "
                     + "AND (mat_alumno IS NULL OR mat_alumno=alu_codigo) AND (mat_nivel IS NULL OR mat_nivel=niv_codigo) ORDER BY alu_nombre");
             
             try {
@@ -2054,7 +2052,7 @@ public class RegistrarPago extends javax.swing.JDialog {
 
                 //Obtener cedula del apoderado
                 con = con.ObtenerRSSentencia("SELECT apo_cedula FROM apoderado WHERE apo_codigo='"
-                        + metodoscombo.ObtenerIDSelectComboBox(cbApoderado) + "'");
+                        + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "'");
                 while (con.rs.next()) {
                     txtCedulaApoderado.setText(metodostxt.StringPuntosMiles(con.rs.getString("apo_cedula")));
                 }
@@ -2284,7 +2282,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     private void tbApoderadoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbApoderadoMousePressed
         if (evt.getClickCount() == 2) {
             int codselect = Integer.parseInt(tbApoderado.getValueAt(tbApoderado.getSelectedRow(), 0) + "");
-            metodoscombo.setSelectedCodigoItem(cbApoderado, codselect);
+            metodoscombo.SetSelectedCodigoItem(cbApoderado, codselect);
             BuscadorApoderado.dispose();
         }
     }//GEN-LAST:event_tbApoderadoMousePressed
@@ -2292,7 +2290,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     private void tbApoderadoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbApoderadoKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             int codselect = Integer.parseInt(tbApoderado.getValueAt(tbApoderado.getSelectedRow(), 0) + "");
-            metodoscombo.setSelectedCodigoItem(cbApoderado, codselect);
+            metodoscombo.SetSelectedCodigoItem(cbApoderado, codselect);
             BuscadorApoderado.dispose();
         }
     }//GEN-LAST:event_tbApoderadoKeyReleased
