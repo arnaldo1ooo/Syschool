@@ -17,21 +17,20 @@ public class SplashScreen extends javax.swing.JFrame implements Runnable {
         initComponents();
     }
 
-
     public void run() {
         try {
             this.setLocationRelativeTo(null);
             this.setVisible(true);
             Thread.sleep(3000); //Esta en pantalla por 3 segundos
             this.dispose(); //Desaparece
-            
+
             Principal principal = new Principal();
             principal.setVisible(true);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

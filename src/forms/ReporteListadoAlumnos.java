@@ -140,6 +140,7 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
         btnGenerarReporte = new org.edisoncor.gui.button.ButtonSeven();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Ventana de listado de alumnos");
 
         jpPrincipal.setBackground(new java.awt.Color(233, 255, 255));
         jpPrincipal.setPreferredSize(new java.awt.Dimension(1580, 478));
@@ -433,7 +434,6 @@ public class ReporteListadoAlumnos extends javax.swing.JDialog {
         parametros = new HashMap();
         parametros.clear();
         parametros.put("LOGO", logo);
-        parametros.put("ORDEN", cbOrdenar.getSelectedItem().toString());
         parametros.put("DOCENTE", lblDocente.getText());
         parametros.put("NIVEL", cbNivel.getSelectedItem().toString());
         parametros.put("PERIODO", dyAnho.getValue() + "");

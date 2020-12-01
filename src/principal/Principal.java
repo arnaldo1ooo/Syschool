@@ -30,7 +30,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import login.Login;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
@@ -43,17 +42,18 @@ import static login.Login.alias;
  *
  * @author Lic. Arnaldo Cantero
  */
-public class Principal extends javax.swing.JFrame /*implements Runnable*/ {
+public class Principal extends javax.swing.JFrame implements Runnable {
 
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
-    //Thread hilo;
+    Thread hilo;
 
     public Principal() {
         initComponents();
         this.setExtendedState(Principal.MAXIMIZED_BOTH);//Maximizar ventana
-        //ObtenerHorayFecha();
+        
+        ObtenerHorayFecha();
         lbAlias.setText(alias);
         PerfilesUsuario(codUsuario);
         PermisoModulos(codUsuario);
@@ -148,11 +148,11 @@ public class Principal extends javax.swing.JFrame /*implements Runnable*/ {
         con.DesconectarBasedeDatos();
     }
 
-    /*private void ObtenerHorayFecha() {
+    private void ObtenerHorayFecha() {
         //Obtener fecha y hora
         hilo = new Thread(this);
         hilo.start();
-    }*/
+    }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -430,7 +430,7 @@ public class Principal extends javax.swing.JFrame /*implements Runnable*/ {
         lbHora2.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
         lbHora3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        lbHora3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lbHora3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lbHora3.setText("Versión de la BD:");
         lbHora3.setFocusable(false);
         lbHora3.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
@@ -446,7 +446,7 @@ public class Principal extends javax.swing.JFrame /*implements Runnable*/ {
         piPrincipalLayout.setHorizontalGroup(
             piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(piPrincipalLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, piPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnPagoSalario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -458,16 +458,16 @@ public class Principal extends javax.swing.JFrame /*implements Runnable*/ {
                     .addComponent(btnMatricula, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnApoderado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 1144, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, piPrincipalLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbHora1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lbHora3, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lbHora1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbHora3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lbHora2, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
-                    .addComponent(lbHora4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lbHora2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbHora4, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         piPrincipalLayout.setVerticalGroup(
@@ -491,7 +491,7 @@ public class Principal extends javax.swing.JFrame /*implements Runnable*/ {
                 .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
                 .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbHora1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbHora2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -499,7 +499,7 @@ public class Principal extends javax.swing.JFrame /*implements Runnable*/ {
                 .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbHora3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbHora4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
@@ -866,9 +866,10 @@ public class Principal extends javax.swing.JFrame /*implements Runnable*/ {
     }//GEN-LAST:event_btnFuncionarioActionPerformed
 
     private void btnAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlumnoActionPerformed
-        ABMAlumno abmalumno = new ABMAlumno(this, true);
-        abmalumno.setLocationRelativeTo(this); //Centrar
-        abmalumno.setVisible(true);
+        ABMAlumno abmalumno2 = new ABMAlumno(this, true);
+        abmalumno2.setLocationRelativeTo(this); //Centrar
+        abmalumno2.pack(); //Establece el tamaño preferido de la ventana
+        abmalumno2.setVisible(true);
     }//GEN-LAST:event_btnAlumnoActionPerformed
 
     private void btnApoderadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApoderadoActionPerformed
@@ -1032,15 +1033,14 @@ public class Principal extends javax.swing.JFrame /*implements Runnable*/ {
         });*/
     }
 
-    /*public void run() {
+    public void run() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
         Thread current = Thread.currentThread();
-        
         while (current == hilo) {
             ObtenerFechayHora();
         }
-    }*/
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlumno;
@@ -1106,4 +1106,5 @@ public class Principal extends javax.swing.JFrame /*implements Runnable*/ {
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.PanelImage piPrincipal;
     // End of variables declaration//GEN-END:variables
+
 }

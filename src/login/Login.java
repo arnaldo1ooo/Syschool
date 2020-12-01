@@ -45,7 +45,7 @@ public class Login extends javax.swing.JFrame {
                 this.dispose(); //Cerrar Ventana Login*/
                 SplashScreen splash = new SplashScreen(this, true);
                 Thread hilo = new Thread(splash);
-                hilo.start(); //Iniciamos el nuevo hilo 
+                hilo.start(); //Iniciamos el nuevo hilo
             } else {
                 Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(this, "Nombre de usuario o contraseña incorrecta!");
@@ -327,8 +327,7 @@ public class Login extends javax.swing.JFrame {
             new Login().setVisible(true);
         });
     }
-    
-    
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCambiarPass;

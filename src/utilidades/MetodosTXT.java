@@ -31,7 +31,7 @@ public class MetodosTXT {
         //Declaramos una variable y le asignamos un evento
         char car = evt.getKeyChar();
         //Condicion que nos permite ingresar datos de tipo texto
-        if (((car < 'a' || car > 'z') && (car < 'A' || car > 'z')) && (car != (char) KeyEvent.VK_BACK_SPACE) && (car != (char) KeyEvent.VK_SPACE)) {
+        if (((car < 'a' || car > 'z') && (car < 'A' || car > 'z')) && (car != 'ñ') && (car != (char) KeyEvent.VK_BACK_SPACE) && (car != (char) KeyEvent.VK_SPACE)) {
             evt.consume();
         }
     }
@@ -220,6 +220,7 @@ public class MetodosTXT {
 
     //Convertir de Double americano a Double Sudamericano
     public String DoubleAFormatoSudamerica(double elDoubleAmericano) {
+        //System.out.println("Sudamerica: " + elDoubleAmericano);
         String elDoubleSudamerica = "";
         BigDecimal elDoubleBig = BigDecimal.valueOf(elDoubleAmericano);
         try {
@@ -314,71 +315,78 @@ public class MetodosTXT {
 
     //Poner los puntos de miles al Integer
     public String StringPuntosMiles(String elNumString) {
+        //System.out.println("StringPuntosMiles: " + elNumString);
         elNumString = elNumString.replace(".", "");
         String ElNumConPuntos = "";
         String sub1;
         String sub2;
         String sub3;
 
+        if (elNumString.equals("")) { //Si es vacio
+            return elNumString;
+        }
+
         String longitud = elNumString.length() + "";
         switch (longitud) {
-            case "1":
+            case "1" -> {
                 ElNumConPuntos = elNumString;
                 return ElNumConPuntos;
-            //break;
-            case "2":
+            }
+            case "2" -> {
                 ElNumConPuntos = elNumString;
                 return ElNumConPuntos;
-            //break;
-            case "3":
+            }
+            case "3" -> {
                 ElNumConPuntos = elNumString;
                 return ElNumConPuntos;
-            //break;
-            case "4":
+            }
+            case "4" -> {
                 sub1 = elNumString.substring(0, 1);
                 sub2 = elNumString.substring(1, 4);
                 ElNumConPuntos = sub1 + "." + sub2;
                 return ElNumConPuntos;
-            //break;
-            case "5":
+            }
+            case "5" -> {
                 sub1 = elNumString.substring(0, 2);
                 sub2 = elNumString.substring(2, 5);
                 ElNumConPuntos = sub1 + "." + sub2;
                 return ElNumConPuntos;
-            //break;
-            case "6":
+            }
+            case "6" -> {
                 sub1 = elNumString.substring(0, 3);
                 sub2 = elNumString.substring(3, 6);
                 ElNumConPuntos = sub1 + "." + sub2;
                 return ElNumConPuntos;
-            //break;
-            case "7":
+            }
+            case "7" -> {
                 sub1 = elNumString.substring(0, 1);
                 sub2 = elNumString.substring(1, 4);
                 sub3 = elNumString.substring(4, 7);
                 ElNumConPuntos = sub1 + "." + sub2 + "." + sub3;
                 return ElNumConPuntos;
-            //break;
-            case "8":
+            }
+            case "8" -> {
                 sub1 = elNumString.substring(0, 2);
                 sub2 = elNumString.substring(2, 5);
                 sub3 = elNumString.substring(5, 8);
                 ElNumConPuntos = sub1 + "." + sub2 + "." + sub3;
                 return ElNumConPuntos;
-            //break;
-            case "9":
+            }
+            case "9" -> {
                 sub1 = elNumString.substring(0, 3);
                 sub2 = elNumString.substring(3, 6);
                 sub3 = elNumString.substring(6, 9);
                 ElNumConPuntos = sub1 + "." + sub2 + "." + sub3;
                 return ElNumConPuntos;
+                //break;
+            }
             //break;
 
-            default:
-                System.out.println("longitud invalida: " + longitud);
+            default -> {
+                System.out.println("longitud o algun caracter invalido: longitud: " + longitud + ", elNumString: " + elNumString);
                 return ElNumConPuntos;
+            }
         }
-
     }
 
     //Formatear double para que tenga solo dos numeros despues de la coma, y la coma es punto

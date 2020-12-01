@@ -78,23 +78,23 @@ public class Conexion {
             }
 
             default ->
-                JOptionPane.showMessageDialog(null, "No se encontró la moneda seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Case no se encontro", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
-        Connection conexion;
+        Connection connection;
         try {
             Class.forName(controlador);
-            conexion = DriverManager.getConnection(servidor, usuarioDB, passDB);
-            if (conexion != null) {
+            connection = DriverManager.getConnection(servidor, usuarioDB, passDB);
+            if (connection != null) {
                 System.out.println("\nCONEXIÓN A " + nombreBD + ", EXITOSA..");
             }
         } catch (ClassNotFoundException | SQLException ex) {
-            conexion = null;
+            connection = null;
             log_historial.error("Error 1089: " + ex);
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error de conexion a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        return conexion;
+        return connection;
     }
 
     public void DesconectarBasedeDatos() {

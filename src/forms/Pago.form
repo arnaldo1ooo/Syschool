@@ -55,7 +55,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="panel3" alignment="0" max="32767" attributes="0"/>
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="351" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="btnEliminar" min="-2" pref="150" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="344" max="-2" attributes="0"/>
               </Group>
@@ -78,13 +78,16 @@
                                       <Component id="cbCampoBuscar" min="-2" pref="168" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <Component id="scPrincipal" alignment="0" max="32767" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
                                   <Component id="lbCantRegistros" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="scPrincipal" min="-2" pref="847" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -103,7 +106,7 @@
                       <Component id="jLabel10" alignment="2" min="-2" pref="32" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                  <Component id="scPrincipal" min="-2" pref="118" max="-2" attributes="0"/>
+                  <Component id="scPrincipal" min="-2" pref="184" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="lbCantRegistros" min="-2" pref="18" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>

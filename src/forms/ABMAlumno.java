@@ -7,9 +7,6 @@ package forms;
 
 import conexion.Conexion;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.FocusTraversalPolicy;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -19,11 +16,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 import javax.swing.JOptionPane;
 import static login.Login.codUsuario;
 import utilidades.Metodos;
@@ -64,8 +59,6 @@ public class ABMAlumno extends javax.swing.JDialog {
         //Cambiar color de disabled combo
         metodoscombo.CambiarColorDisabledCombo(cbSexo, Color.BLACK);
         metodoscombo.CambiarColorDisabledCombo(cbEstado, Color.BLACK);
-
-        OrdenTabulador();
     }
 
     //--------------------------METODOS----------------------------//
@@ -95,7 +88,10 @@ public class ABMAlumno extends javax.swing.JDialog {
                 String codigo = txtCodigo.getText();
                 String nombre = metodos.MayusCadaPrimeraLetra(txtNombre.getText());
                 String apellido = metodos.MayusCadaPrimeraLetra(txtApellido.getText());
-                String cedula = metodostxt.StringSinPuntosMiles(txtCedula.getText()) + "";
+                String cedula = null;
+                if (chbSincedula.isSelected() == false) {
+                    cedula = metodostxt.StringSinPuntosMiles(txtCedula.getText()) + "";
+                }
                 SimpleDateFormat formatofecha = new SimpleDateFormat("yyyy-MM-dd");
                 String fechanacimiento = formatofecha.format(dcFechaNacimiento.getDate());
                 String fechainscripcion = formatofecha.format(dcFechaInscripcion.getDate());
@@ -110,8 +106,8 @@ public class ABMAlumno extends javax.swing.JDialog {
                     int confirmado = JOptionPane.showConfirmDialog(this, "¿Esta seguro crear este nuevo registro?", "Confirmación", JOptionPane.YES_OPTION);
                     if (JOptionPane.YES_OPTION == confirmado) {
                         //REGISTRAR NUEVO
-                        String sentencia = "CALL SP_" + nombreTablaBD + "Alta ('" + nombre + "','" + apellido + "','" + cedula
-                                + "','" + fechanacimiento + "','" + fechainscripcion + "','" + sexo + "','" + telefono + "','" + email
+                        String sentencia = "CALL SP_" + nombreTablaBD + "Alta ('" + nombre + "','" + apellido + "'," + cedula
+                                + ",'" + fechanacimiento + "','" + fechainscripcion + "','" + sexo + "','" + telefono + "','" + email
                                 + "','" + obs + "','" + apoderado + "','" + estado + "')";
                         con.EjecutarABM(sentencia, true);
 
@@ -122,12 +118,11 @@ public class ABMAlumno extends javax.swing.JDialog {
                 } else {
                     int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar este registro?", "Confirmación", JOptionPane.YES_OPTION);
                     if (JOptionPane.YES_OPTION == confirmado) {
-                        String sentencia = "CALL SP_" + nombreTablaBD + "Modificar('" + codigo + "','" + nombre + "','" + apellido + "','" + cedula
-                                + "','" + fechanacimiento + "','" + fechainscripcion + "','" + sexo + "','" + telefono + "','" + email
+                        String sentencia = "CALL SP_" + nombreTablaBD + "Modificar('" + codigo + "','" + nombre + "','" + apellido + "'," + cedula
+                                + ",'" + fechanacimiento + "','" + fechainscripcion + "','" + sexo + "','" + telefono + "','" + email
                                 + "','" + obs + "','" + apoderado + "','" + estado + "')";
-                        con.EjecutarABM(sentencia, true);
 
-                        
+                        con.EjecutarABM(sentencia, true);
                         TablaConsultaBDAll(); //Actualizar tabla                        
                         ModoEdicion(false);
                         Limpiar();
@@ -135,7 +130,7 @@ public class ABMAlumno extends javax.swing.JDialog {
                 }
             }
         } catch (HeadlessException ex) {
-            JOptionPane.showMessageDialog(null, "Completar los campos obligarios marcados con * ", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Completar los campos obligarios marcados con * ", "Advertencia", JOptionPane.WARNING_MESSAGE);
             System.out.println("Completar los campos obligarios marcados con * " + ex);
             txtNombre.requestFocus();
         }
@@ -167,7 +162,6 @@ public class ABMAlumno extends javax.swing.JDialog {
             "Telefono", "Email", "Observación", "Apoderado", "Estado"}; //Debe tener la misma cantidad que los campos a consultar
 
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
-        cbCampoBuscar.setSelectedIndex(1);
         metodos.AnchuraColumna(tbPrincipal);
 
         if (tbPrincipal.getModel().getRowCount() == 1) {
@@ -183,10 +177,17 @@ public class ABMAlumno extends javax.swing.JDialog {
         txtApellido.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 2) + ""));
         txtCedula.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 3) + ""));
         txtCedula.setText(metodostxt.StringPuntosMiles(txtCedula.getText()));
+
+        if (txtCedula.getText().equals("")) {
+            chbSincedula.setSelected(true);
+        } else {
+            chbSincedula.setSelected(false);
+            txtCedula.setEnabled(false);
+        }
+
         try {
             Date fechaParseada;
-            fechaParseada = new SimpleDateFormat("dd/MM/yyyy")
-                    .parse(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 4).toString() + ""));
+            fechaParseada = new SimpleDateFormat("dd/MM/yyyy").parse(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 4).toString() + ""));
             dcFechaNacimiento.setDate(fechaParseada);
 
             //Obtener edad
@@ -221,6 +222,7 @@ public class ABMAlumno extends javax.swing.JDialog {
         txtNombre.setEnabled(valor);
         txtApellido.setEnabled(valor);
         txtCedula.setEnabled(valor);
+        chbSincedula.setEnabled(valor);
         dcFechaNacimiento.setEnabled(valor);
         dcFechaInscripcion.setEnabled(valor);
         cbSexo.setEnabled(valor);
@@ -244,6 +246,7 @@ public class ABMAlumno extends javax.swing.JDialog {
         txtNombre.setText("");
         txtApellido.setText("");
         txtCedula.setText("");
+        chbSincedula.setSelected(false);
         dcFechaNacimiento.setCalendar(null);
         txtEdad.setText("");
         Calendar c2 = new GregorianCalendar();
@@ -271,8 +274,11 @@ public class ABMAlumno extends javax.swing.JDialog {
             return false;
         }
 
-        if (metodostxt.ValidarCampoVacioTXT(txtCedula, lblCedula) == false) {
-            return false;
+        if (chbSincedula.isSelected() == false) {
+            if (metodostxt.ValidarCampoVacioTXT(txtCedula, lblCedula) == false) {
+                return false;
+            }
+
         }
 
         if (txtCodigo.getText().equals("")) {
@@ -390,6 +396,7 @@ public class ABMAlumno extends javax.swing.JDialog {
         lblCedula1 = new javax.swing.JLabel();
         txtEdad = new javax.swing.JTextField();
         btnBuscarApoderado = new javax.swing.JButton();
+        chbSincedula = new javax.swing.JCheckBox();
         jpBotones2 = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
@@ -505,10 +512,12 @@ public class ABMAlumno extends javax.swing.JDialog {
             .addComponent(panel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Ventana Alumnos");
         setBackground(new java.awt.Color(45, 62, 80));
         setModal(true);
         setResizable(false);
+        setSize(new java.awt.Dimension(952, 621));
 
         jpPrincipal.setBackground(new java.awt.Color(233, 255, 255));
         jpPrincipal.setPreferredSize(new java.awt.Dimension(1580, 478));
@@ -795,6 +804,7 @@ public class ABMAlumno extends javax.swing.JDialog {
         jLabel2.setText("Campos con (*) son obligatorios");
 
         dcFechaInscripcion.setEnabled(false);
+        dcFechaInscripcion.setFont(new java.awt.Font("sansserif", 0, 11)); // NOI18N
 
         lblSexo.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblSexo.setForeground(new java.awt.Color(102, 102, 102));
@@ -845,6 +855,7 @@ public class ABMAlumno extends javax.swing.JDialog {
         });
 
         dcFechaNacimiento.setEnabled(false);
+        dcFechaNacimiento.setFont(new java.awt.Font("sansserif", 0, 11)); // NOI18N
         dcFechaNacimiento.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 dcFechaNacimientoPropertyChange(evt);
@@ -884,6 +895,14 @@ public class ABMAlumno extends javax.swing.JDialog {
             }
         });
 
+        chbSincedula.setText("No posee C.I.");
+        chbSincedula.setEnabled(false);
+        chbSincedula.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                chbSincedulaItemStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpEdicionLayout = new javax.swing.GroupLayout(jpEdicion);
         jpEdicion.setLayout(jpEdicionLayout);
         jpEdicionLayout.setHorizontalGroup(
@@ -892,7 +911,7 @@ public class ABMAlumno extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lblFechaIngreso, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblNombre, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblNombre, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblApellido, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblCedula, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblFechaNacimiento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -900,41 +919,48 @@ public class ABMAlumno extends javax.swing.JDialog {
                 .addGap(2, 2, 2)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(txtApellido, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtCedula, javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jpEdicionLayout.createSequentialGroup()
                         .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jpEdicionLayout.createSequentialGroup()
-                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(dcFechaNacimiento, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
-                            .addComponent(dcFechaInscripcion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblSexo, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
-                            .addComponent(lblCedula1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(2, 2, 2)
-                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cbSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEdad)))
-                    .addComponent(txtNombre))
+                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(txtCedula, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jpEdicionLayout.createSequentialGroup()
+                                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(dcFechaNacimiento, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                                    .addComponent(dcFechaInscripcion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(lblSexo, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
+                                    .addComponent(lblCedula1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jpEdicionLayout.createSequentialGroup()
+                                .addGap(2, 2, 2)
+                                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(cbSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtEdad)))
+                            .addGroup(jpEdicionLayout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(chbSincedula)))))
                 .addGap(18, 18, 18)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblTelefono, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblEmail, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblEmail, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblObs, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblEstado1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblEstado, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(2, 2, 2)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(cbEstado, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(scpObs, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtTelefono, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scpObs, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTelefono, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jpEdicionLayout.createSequentialGroup()
-                        .addComponent(cbApoderado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cbApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnBuscarApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txtEmail, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtEmail, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbEstado, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(50, 50, 50))
         );
         jpEdicionLayout.setVerticalGroup(
@@ -964,7 +990,9 @@ public class ABMAlumno extends javax.swing.JDialog {
                         .addGap(4, 4, 4)
                         .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(chbSincedula, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(4, 4, 4)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(cbApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1081,7 +1109,7 @@ public class ABMAlumno extends javax.swing.JDialog {
                         .addComponent(jpTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1109,7 +1137,7 @@ public class ABMAlumno extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 984, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 952, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1235,6 +1263,8 @@ public class ABMAlumno extends javax.swing.JDialog {
         if (((caracter < '0') || (caracter > '9')) && caracter != '-' && (caracter != '\b' /* corresponde a BACK_SPACE */)) {
             evt.consume(); // ignorar el evento de teclado
         }
+
+        metodostxt.TxtCantidadCaracteresKeyTyped(txtCedula, 11);
     }//GEN-LAST:event_txtCedulaKeyTyped
 
     private void txtEdadKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEdadKeyTyped
@@ -1285,52 +1315,56 @@ public class ABMAlumno extends javax.swing.JDialog {
     }//GEN-LAST:event_tbApoderadoKeyReleased
 
     private void txtCedulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyReleased
-        txtCedula.setText(metodostxt.StringPuntosMiles(txtCedula.getText()));
+        if (txtCedula.getText().equals("") == false) {
+            txtCedula.setText(metodostxt.StringPuntosMiles(txtCedula.getText()));
+        }
     }//GEN-LAST:event_txtCedulaKeyReleased
 
-    List<Component> ordenTabulador;
-
-    private void OrdenTabulador() {
-        ordenTabulador = new ArrayList<>();
-        ordenTabulador.add(txtNombre);
-        ordenTabulador.add(txtApellido);
-        ordenTabulador.add(txtCedula);
-        ordenTabulador.add(dcFechaInscripcion);
-        ordenTabulador.add(cbSexo);
-        ordenTabulador.add(txtTelefono);
-        ordenTabulador.add(txtEmail);
-        ordenTabulador.add(taObs);
-        ordenTabulador.add(cbEstado);
-        ordenTabulador.add(cbApoderado);
-        ordenTabulador.add(btnGuardar);
-        setFocusTraversalPolicy(new PersonalizadoFocusTraversalPolicy());
-    }
-
-    private class PersonalizadoFocusTraversalPolicy extends FocusTraversalPolicy {
-
-        public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
-            int currentPosition = ordenTabulador.indexOf(aComponent);
-            currentPosition = (currentPosition + 1) % ordenTabulador.size();
-            return (Component) ordenTabulador.get(currentPosition);
+    private void chbSincedulaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chbSincedulaItemStateChanged
+        if (chbSincedula.isSelected()) {
+            txtCedula.setEnabled(false);
+            txtCedula.setText("");
+        } else {
+            txtCedula.setEnabled(true);
         }
+    }//GEN-LAST:event_chbSincedulaItemStateChanged
 
-        public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
-            int currentPosition = ordenTabulador.indexOf(aComponent);
-            currentPosition = (ordenTabulador.size() + currentPosition - 1) % ordenTabulador.size();
-            return (Component) ordenTabulador.get(currentPosition);
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ABMAlumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        
+        //</editor-fold>
 
-        public Component getFirstComponent(Container cntnr) {
-            return (Component) ordenTabulador.get(0);
-        }
-
-        public Component getLastComponent(Container cntnr) {
-            return (Component) ordenTabulador.get(ordenTabulador.size() - 1);
-        }
-
-        public Component getDefaultComponent(Container cntnr) {
-            return (Component) ordenTabulador.get(0);
-        }
+        /* Create and display the dialog */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                ABMAlumno dialog = new ABMAlumno(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
+            }
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1346,6 +1380,7 @@ public class ABMAlumno extends javax.swing.JDialog {
     private javax.swing.JComboBox cbCampoBuscarApoderado;
     private javax.swing.JComboBox<String> cbEstado;
     private javax.swing.JComboBox<String> cbSexo;
+    private javax.swing.JCheckBox chbSincedula;
     private com.toedter.calendar.JDateChooser dcFechaInscripcion;
     private com.toedter.calendar.JDateChooser dcFechaNacimiento;
     private javax.swing.JLabel jLabel10;

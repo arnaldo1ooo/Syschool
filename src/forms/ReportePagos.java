@@ -44,6 +44,7 @@ public class ReportePagos extends javax.swing.JDialog {
         CargarComboBoxes();
 
         lblTituloFecha.setVisible(false);
+
         //Obtener Fechas
         Calendar cal = Calendar.getInstance();
         cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), 1); //Primer dia del mes seleccionado
@@ -79,21 +80,23 @@ public class ReportePagos extends javax.swing.JDialog {
         if (cbConcepto.getSelectedItem().toString().equals("TODOS")) {
             sentencia = "CALL SP_ReportePagos('" + formatofecha.format(dcDesde.getDate()) + "','" + formatofecha.format(dcHasta.getDate()) + "','-1')";
         } else {
-            sentencia = "CALL SP_ReportePagos('" + formatofecha.format(dcDesde.getDate()) + "','" + formatofecha.format(dcHasta.getDate()) + "','" + metodoscombo.ObtenerIDSelectCombo(cbConcepto) + "')";
+            sentencia = "CALL SP_ReportePagos('" + formatofecha.format(dcDesde.getDate()) + "','" + formatofecha.format(dcHasta.getDate()) + "','"
+                    + metodoscombo.ObtenerIDSelectCombo(cbConcepto) + "')";
         }
 
-        con = con.ObtenerRSSentencia(sentencia);
-
         try {
-            String numpago, fechapago, concepto, monto;
+            con = con.ObtenerRSSentencia(sentencia);
+            String numpago, fechapago, concepto;
+            double monto, total = 0;
             while (con.rs.next()) {
                 numpago = con.rs.getString("pag_numpago");
                 fechapago = formatofecha2.format(con.rs.getDate("pag_fechapago"));
                 concepto = con.rs.getString("con_descripcion");
-                monto = metodostxt.DoubleAFormatoSudamerica(con.rs.getDouble("pagcon_monto"));
-
+                monto = con.rs.getDouble("totalpago");
+                total = total + monto;
                 modelTablePagos.addRow(new Object[]{numpago, fechapago, concepto, monto});
             }
+            lblTotal.setText(metodostxt.DoubleAFormatoSudamerica(total) + " Gs.");
             tbPrincipal.setModel(modelTablePagos);
             metodos.AnchuraColumna(tbPrincipal);
             lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
@@ -103,13 +106,12 @@ public class ReportePagos extends javax.swing.JDialog {
         }
         con.DesconectarBasedeDatos();
 
-        lblTituloFecha.setVisible(true);
-     
-        String[] meses = {"Ene.", "Feb.", "Mar.", "Abr.", "May.", "Jun.","Jul.", "Ago.", "Sep.", "Oct.", "Nov.", "Dic"}; // primero creas el String array
-                // la inicializas en idioma español, país México:
+        String[] meses = {"Ene.", "Feb.", "Mar.", "Abr.", "May.", "Jun.", "Jul.", "Ago.", "Sep.", "Oct.", "Nov.", "Dic"}; // primero creas el String array
+        // la inicializas en idioma español, país México:
         DateFormatSymbols simbols = new DateFormatSymbols(new Locale("es", "MX"));  // con MX es sep, con ES (España) es sept.
         simbols.setShortMonths(meses);// lo configuras así, después de inicializar symbols:
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", simbols);
+        lblTituloFecha.setVisible(true);
         lblTituloFecha.setText("Pagos del " + dateFormat.format(dcDesde.getDate()) + " al " + dateFormat.format(dcHasta.getDate()));
     }
 
@@ -140,10 +142,13 @@ public class ReportePagos extends javax.swing.JDialog {
         };
         lbCantRegistros = new javax.swing.JLabel();
         lblTituloFecha = new javax.swing.JLabel();
+        lbCantRegistros1 = new javax.swing.JLabel();
+        lblTotal = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         btnGenerarReporte = new org.edisoncor.gui.button.ButtonSeven();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Ventana reporte de pagos");
 
         jpPrincipal.setBackground(new java.awt.Color(233, 255, 255));
         jpPrincipal.setPreferredSize(new java.awt.Dimension(1580, 478));
@@ -211,27 +216,26 @@ public class ReportePagos extends javax.swing.JDialog {
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(lblFechaPago)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblDesde, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(dcDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(lblFechaPago)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblDesde, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(dcDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dcHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
-                                .addGap(2, 2, 2)
-                                .addComponent(lblHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addGap(284, 284, 284)
-                        .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(dcHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(lblHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblConcepto)
                 .addGap(2, 2, 2)
-                .addComponent(cbConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39))
+                .addComponent(cbConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
+            .addGroup(panel1Layout.createSequentialGroup()
+                .addGap(298, 298, 298)
+                .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -283,7 +287,7 @@ public class ReportePagos extends javax.swing.JDialog {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false
@@ -327,6 +331,16 @@ public class ReportePagos extends javax.swing.JDialog {
         lblTituloFecha.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblTituloFecha.setText("Pagos del xx/xx/xx al xx/xx/xx");
 
+        lbCantRegistros1.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        lbCantRegistros1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbCantRegistros1.setText("TOTAL:");
+        lbCantRegistros1.setPreferredSize(new java.awt.Dimension(57, 25));
+
+        lblTotal.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        lblTotal.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblTotal.setText("0 Gs.");
+        lblTotal.setPreferredSize(new java.awt.Dimension(57, 25));
+
         javax.swing.GroupLayout panel4Layout = new javax.swing.GroupLayout(panel4);
         panel4.setLayout(panel4Layout);
         panel4Layout.setHorizontalGroup(
@@ -334,11 +348,16 @@ public class ReportePagos extends javax.swing.JDialog {
             .addGroup(panel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scPrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 727, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel4Layout.createSequentialGroup()
+                        .addComponent(lbCantRegistros1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(4, 4, 4)
+                        .addComponent(lblTotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 424, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel4Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lbCantRegistros, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(scPrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 727, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel4Layout.createSequentialGroup()
                                 .addComponent(lblBuscarCampo)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -357,10 +376,13 @@ public class ReportePagos extends javax.swing.JDialog {
                     .addComponent(lblBuscarCampo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblTituloFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(2, 2, 2)
-                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18))
+                .addGroup(panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbCantRegistros1, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(20, 20, 20))
         );
 
         jLabel11.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
@@ -388,10 +410,10 @@ public class ReportePagos extends javax.swing.JDialog {
                         .addComponent(jLabel11)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(jpPrincipalLayout.createSequentialGroup()
-                .addGap(308, 308, 308)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnGenerarReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(308, 308, 308))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -402,10 +424,10 @@ public class ReportePagos extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(panel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnGenerarReporte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addGap(15, 15, 15))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -416,7 +438,7 @@ public class ReportePagos extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE)
         );
 
         pack();
@@ -437,20 +459,17 @@ public class ReportePagos extends javax.swing.JDialog {
         parametros = new HashMap();
         parametros.clear();
         parametros.put("LOGO", logo);
-        parametros.put("ORDEN", cbOrdenar.getSelectedItem().toString());
-        parametros.put("DOCENTE", "");
-        parametros.put("NIVEL", cbConcepto.getSelectedItem().toString());
-        parametros.put("PERIODO", "");
-        parametros.put("TIPO_NIVEL", "");
-        parametros.put("ORDENADOPOR", cbOrdenar.getSelectedItem() + "");
-        parametros.put("TOTAL_MASC", totalMasc + "");
-        parametros.put("TOTAL_FEM", totalFem + "");
-        parametros.put("TOTAL", tbPrincipal.getRowCount() + "");
+        parametros.put("FECHADESDEHASTA", lblTituloFecha.getText());
 
-        rutajasper = "/reportes/reporte_listadoalumnos.jasper";
+        parametros.put("ORDENADOPOR", cbOrdenar.getSelectedItem() + "");
+        parametros.put("CONCEPTO", cbConcepto.getSelectedItem().toString());
+        String[] totalsplit = lblTotal.getText().split(" ");
+        parametros.put("TOTAL", totalsplit[0]);
+
+        rutajasper = "/reportes/reporte_pagos.jasper";
 
         //Crea una tabla auxiliar en donde se carga los registros ordenados por cierta en la tabla principal
-        JTable tableAuxiliar = new JTable();; //tabla auxiliar
+        JTable tableAuxiliar = new JTable(); //tabla auxiliar
         DefaultTableModel tablemodelAuxiliar = new DefaultTableModel(); //tablemodel de la tabla auxiliar
         tablemodelAuxiliar.setRowCount(0); // Vaciar filas del modelo
         //Establecer el número y el nombre de las columnas en el tablemodel auxiliar
@@ -458,10 +477,14 @@ public class ReportePagos extends javax.swing.JDialog {
             tablemodelAuxiliar.addColumn(tbPrincipal.getColumnName(i));
         }
         //Cargamos los registros ordenados al modelo auxiliar
-        for (int i = 0; i < tbPrincipal.getRowCount(); i++) {
+        for (int f = 0; f < tbPrincipal.getRowCount(); f++) {
             Object fila[] = new Object[tbPrincipal.getColumnCount()];
-            for (int j = 0; j < tbPrincipal.getColumnCount(); j++) {
-                fila[j] = tbPrincipal.getValueAt(i, j);
+            for (int c = 0; c < tbPrincipal.getColumnCount(); c++) {
+                if (tbPrincipal.getColumnName(c).equals("Monto")) {
+                    fila[c] = metodostxt.DoubleAFormatoSudamerica(Double.parseDouble(tbPrincipal.getValueAt(f, c) + ""));
+                } else {
+                    fila[c] = tbPrincipal.getValueAt(f, c);
+                }
             }
             tablemodelAuxiliar.addRow(fila);
         }
@@ -483,22 +506,23 @@ public class ReportePagos extends javax.swing.JDialog {
     }//GEN-LAST:event_tbPrincipalKeyReleased
 
     private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
-        ConsultaPagos();
+        if (dcHasta.getDate().after(dcDesde.getDate())) {
+            ConsultaPagos();
+        } else {
+            JOptionPane.showMessageDialog(this, "La fecha DESDE no puede ser mayor a la fecha HASTA", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            dcDesde.requestFocus();
+        }
     }//GEN-LAST:event_btnFiltrarActionPerformed
 
     private void cbConceptoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbConceptoItemStateChanged
-//        ConsultaListadoAlumnos();
+        modelTablePagos = (DefaultTableModel) tbPrincipal.getModel();
+        modelTablePagos.setRowCount(0);
     }//GEN-LAST:event_cbConceptoItemStateChanged
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -538,12 +562,14 @@ public class ReportePagos extends javax.swing.JDialog {
     private javax.swing.JPanel jpPrincipal;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;
+    private javax.swing.JLabel lbCantRegistros1;
     private javax.swing.JLabel lblBuscarCampo;
     private javax.swing.JLabel lblConcepto;
     private javax.swing.JLabel lblDesde;
     private javax.swing.JLabel lblFechaPago;
     private javax.swing.JLabel lblHasta;
     private javax.swing.JLabel lblTituloFecha;
+    private javax.swing.JLabel lblTotal;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel3;
     private org.edisoncor.gui.panel.Panel panel4;

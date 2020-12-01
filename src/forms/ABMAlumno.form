@@ -197,12 +197,16 @@
     </Container>
   </NonVisualComponents>
   <Properties>
+    <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="title" type="java.lang.String" value="Ventana Alumnos"/>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="50" green="3e" red="2d" type="rgb"/>
     </Property>
     <Property name="modal" type="boolean" value="true"/>
     <Property name="resizable" type="boolean" value="false"/>
+    <Property name="size" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+      <Dimension value="[952, 621]"/>
+    </Property>
   </Properties>
   <AccessibilityProperties>
     <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Alumno"/>
@@ -227,7 +231,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jpPrincipal" alignment="0" pref="984" max="32767" attributes="0"/>
+          <Component id="jpPrincipal" alignment="0" pref="952" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -260,7 +264,7 @@
                           <Component id="jpBotones" min="-2" pref="152" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="38" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -613,7 +617,7 @@
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Component id="lblFechaIngreso" alignment="1" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblNombre" alignment="1" max="32767" attributes="0"/>
+                              <Component id="lblNombre" alignment="1" max="-2" attributes="0"/>
                               <Component id="lblApellido" alignment="1" max="32767" attributes="0"/>
                               <Component id="lblCedula" alignment="1" max="32767" attributes="0"/>
                               <Component id="lblFechaNacimiento" alignment="1" max="32767" attributes="0"/>
@@ -622,49 +626,61 @@
                           <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
                               <Component id="txtApellido" alignment="0" max="32767" attributes="0"/>
-                              <Component id="txtCedula" alignment="0" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="txtCodigo" min="-2" pref="85" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="jLabel2" min="-2" pref="202" max="-2" attributes="0"/>
                               </Group>
+                              <Component id="txtNombre" alignment="1" min="-2" pref="293" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="dcFechaNacimiento" pref="127" max="32767" attributes="0"/>
-                                      <Component id="dcFechaInscripcion" max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                      <Component id="txtCedula" alignment="0" max="32767" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="dcFechaNacimiento" pref="127" max="32767" attributes="0"/>
+                                              <Component id="dcFechaInscripcion" max="32767" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="lblSexo" pref="42" max="32767" attributes="0"/>
+                                              <Component id="lblCedula1" max="32767" attributes="0"/>
+                                          </Group>
+                                      </Group>
                                   </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="lblSexo" pref="42" max="32767" attributes="0"/>
-                                      <Component id="lblCedula1" max="32767" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="cbSexo" min="-2" pref="116" max="-2" attributes="0"/>
-                                      <Component id="txtEdad" max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" attributes="0">
+                                          <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="cbSexo" min="-2" pref="116" max="-2" attributes="0"/>
+                                              <Component id="txtEdad" max="32767" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Component id="chbSincedula" min="-2" max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
                               </Group>
-                              <Component id="txtNombre" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="lblTelefono" alignment="1" min="-2" pref="160" max="-2" attributes="0"/>
-                              <Component id="lblEmail" alignment="1" max="32767" attributes="0"/>
+                              <Component id="lblEmail" alignment="1" max="-2" attributes="0"/>
                               <Component id="lblObs" alignment="1" min="-2" pref="67" max="-2" attributes="0"/>
                               <Component id="lblEstado1" alignment="1" min="-2" max="-2" attributes="0"/>
                               <Component id="lblEstado" alignment="1" min="-2" pref="65" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="cbEstado" alignment="0" min="-2" pref="99" max="-2" attributes="0"/>
-                              <Component id="scpObs" alignment="0" max="32767" attributes="0"/>
-                              <Component id="txtTelefono" alignment="0" max="32767" attributes="0"/>
+                              <Component id="scpObs" alignment="0" min="-2" pref="282" max="-2" attributes="0"/>
+                              <Component id="txtTelefono" alignment="0" min="-2" pref="282" max="-2" attributes="0"/>
                               <Group type="102" alignment="1" attributes="0">
-                                  <Component id="cbApoderado" max="32767" attributes="0"/>
+                                  <Component id="cbApoderado" min="-2" pref="240" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="btnBuscarApoderado" min="-2" pref="36" max="-2" attributes="0"/>
                               </Group>
                               <Component id="txtEmail" alignment="0" min="-2" pref="282" max="-2" attributes="0"/>
+                              <Component id="cbEstado" alignment="0" min="-2" pref="112" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
                       </Group>
@@ -700,7 +716,10 @@
                                   <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="lblCedula" alignment="0" min="-2" pref="28" max="-2" attributes="0"/>
-                                      <Component id="txtCedula" alignment="0" min="-2" pref="28" max="-2" attributes="0"/>
+                                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                          <Component id="txtCedula" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                                          <Component id="chbSincedula" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
                               </Group>
                           </Group>
@@ -931,6 +950,9 @@
                 <Component class="com.toedter.calendar.JDateChooser" name="dcFechaInscripcion">
                   <Properties>
                     <Property name="enabled" type="boolean" value="false"/>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="sansserif" size="11" style="0"/>
+                    </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="lblSexo">
@@ -1047,6 +1069,9 @@
                 <Component class="com.toedter.calendar.JDateChooser" name="dcFechaNacimiento">
                   <Properties>
                     <Property name="enabled" type="boolean" value="false"/>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="sansserif" size="11" style="0"/>
+                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="dcFechaNacimientoPropertyChange"/>
@@ -1105,6 +1130,15 @@
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBuscarApoderadoActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="chbSincedula">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="No posee C.I."/>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="chbSincedulaItemStateChanged"/>
                   </Events>
                 </Component>
               </SubComponents>
