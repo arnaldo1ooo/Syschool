@@ -101,7 +101,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         if (filasel != -1) {
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro eliminar este concepto?, TAMBIEN SE ELIMINARÁN TODOS LOS PAGOS REALIZADOS CON ESTE CONCEPTO", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
-                String codigo = tbPrincipal.getValueAt(filasel, 0) + "";
+                int codigo = Integer.parseInt(tbPrincipal.getValueAt(filasel, 0) + "");
                 String sentencia = "CALL SP_ConceptoEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
@@ -138,28 +138,28 @@ public class ABMConceptoPago extends javax.swing.JDialog {
 
         try {
             fila = new Object[18];
-            while (con.rs.next()) {
-                fila[0] = con.rs.getString(1);
-                fila[1] = con.rs.getString(2);
-                fila[2] = con.rs.getString(3);
+            while (con.getResultSet().next()) {
+                fila[0] = con.getResultSet().getString(1);
+                fila[1] = con.getResultSet().getString(2);
+                fila[2] = con.getResultSet().getString(3);
 
-                importe = con.rs.getDouble(4);
+                importe = con.getResultSet().getDouble(4);
                 fila[3] = metodostxt.DoubleAFormatoSudamerica(importe);
-                con.rs.getString(4);
-                fila[4] = con.rs.getString(5);
-                fila[5] = con.rs.getString(6);
-                fila[6] = con.rs.getString(7);
-                fila[7] = con.rs.getString(8);
-                fila[8] = con.rs.getString(9);
-                fila[9] = con.rs.getString(10);
-                fila[10] = con.rs.getString(11);
-                fila[11] = con.rs.getString(12);
-                fila[12] = con.rs.getString(13);
-                fila[13] = con.rs.getString(14);
-                fila[14] = con.rs.getString(15);
-                fila[15] = con.rs.getString(16);
-                fila[16] = con.rs.getString(17);
-                fila[17] = con.rs.getString(18);
+                con.getResultSet().getString(4);
+                fila[4] = con.getResultSet().getString(5);
+                fila[5] = con.getResultSet().getString(6);
+                fila[6] = con.getResultSet().getString(7);
+                fila[7] = con.getResultSet().getString(8);
+                fila[8] = con.getResultSet().getString(9);
+                fila[9] = con.getResultSet().getString(10);
+                fila[10] = con.getResultSet().getString(11);
+                fila[11] = con.getResultSet().getString(12);
+                fila[12] = con.getResultSet().getString(13);
+                fila[13] = con.getResultSet().getString(14);
+                fila[14] = con.getResultSet().getString(15);
+                fila[15] = con.getResultSet().getString(16);
+                fila[16] = con.getResultSet().getString(17);
+                fila[17] = con.getResultSet().getString(18);
 
                 modelotabla.addRow(fila);//agrega el registro a la tabla
             }

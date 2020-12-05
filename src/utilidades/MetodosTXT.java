@@ -46,7 +46,7 @@ public class MetodosTXT {
     }
 
     public void SoloNumeroDecimalKeyTyped(KeyEvent evt, JTextField ElTXT) {
-// Que solo entre numeros y .
+        // Que solo entre numeros y .
         char teclaoprimida = evt.getKeyChar();
         if ((teclaoprimida < '0' || teclaoprimida > '9')
                 && teclaoprimida != KeyEvent.VK_BACK_SPACE //Para que no entre espacio
@@ -465,5 +465,4 @@ public class MetodosTXT {
         }
         return true;
     }
-
 };

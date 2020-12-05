@@ -43,20 +43,21 @@ import utilidades.ColorearJTable;
  * @author Lic. Arnaldo Cantero
  */
 public class RegistrarPago extends javax.swing.JDialog {
-    
+
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
     MetodosCombo metodoscombo = new MetodosCombo();
-    DefaultTableModel tablemodelConceptoAPagar;
-    DefaultTableModel modeltablePoderantes;
-    
+    DefaultTableModel modelTableConceptoAPagar;
+    DefaultTableModel modelTablePoderantes;
+    DefaultTableModel modelTableConceptos;
+
     public RegistrarPago(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
-        
-        tablemodelConceptoAPagar = (DefaultTableModel) tbConceptoAPagar.getModel();
-        modeltablePoderantes = (DefaultTableModel) tbPoderantes.getModel();
+
+        modelTableConceptoAPagar = (DefaultTableModel) tbConceptoAPagar.getModel();
+        modelTablePoderantes = (DefaultTableModel) tbPoderantes.getModel();
         //Obtener fecha actual
         dcFechaPago.setDate(new Date());
         Calendar c2 = new GregorianCalendar();
@@ -67,13 +68,13 @@ public class RegistrarPago extends javax.swing.JDialog {
         Limpiar();
         TablaAllConcepto();
         TablaAllApoderado();
-        
+
         txtCedulaApoderado.setText("");
 
         //Permiso Roles de usuario
         String permisos = metodos.PermisoRol(codUsuario, "PAGO");
         btnGuardar.setVisible(permisos.contains("A"));
-        
+
         OrdenTabulador();
     }
 
@@ -83,19 +84,35 @@ public class RegistrarPago extends javax.swing.JDialog {
         metodoscombo.CargarComboConsulta(cbApoderado, "SELECT apo_codigo, CONCAT(apo_nombre,' ', apo_apellido) AS nomape "
                 + "FROM apoderado ORDER BY apo_nombre", -1);
     }
-    
+
     private void TablaAllConcepto() {//Realiza la consulta de los productos que tenemos en la base de datos
-        String sentencia = "SELECT con_codigo, con_descripcion, con_tipoimporte, con_importe, con_numpagos, con_tipopago FROM concepto ORDER BY con_descripcion;";
-        String titlesJtabla[] = {"Código", "Descripción", "Tipo importe", "Importe", "N° de pagos", "Tipo de pago"};
-        tbAllConcepto.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, null));
-        double costo;
-        for (int i = 0; i < tbAllConcepto.getRowCount(); i++) {
-            costo = Double.parseDouble(tbAllConcepto.getValueAt(i, 3) + "");
-            tbAllConcepto.setValueAt(metodostxt.DoubleAFormatoSudamerica(costo), i, 3);
+        try {
+            modelTableConceptos = (DefaultTableModel) tbAllConceptos.getModel();
+            modelTableConceptos.setRowCount(0); //Vacia tabla
+
+            String sentencia = "SELECT con_codigo, con_descripcion, con_tipoimporte, con_importe, con_numpagos, con_tipopago FROM concepto ORDER BY con_descripcion";
+            con = con.ObtenerRSSentencia(sentencia);
+            int codigo, numpagos;
+            String descripcion, tipoimporte, tipopago;
+            double importe;
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getInt("con_codigo");
+                descripcion = con.getResultSet().getString("con_descripcion");
+                tipoimporte = con.getResultSet().getString("con_tipoimporte");
+                importe = con.getResultSet().getDouble("con_importe");
+                numpagos = con.getResultSet().getInt("con_numpagos");
+                tipopago = con.getResultSet().getString("con_tipopago");
+
+                modelTableConceptos.addRow(new Object[]{codigo, descripcion, tipoimporte, importe, numpagos, tipopago});
+            }
+            tbAllConceptos.setModel(modelTableConceptos);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        metodos.AnchuraColumna(tbAllConcepto);
+        con.DesconectarBasedeDatos();
+        metodos.AnchuraColumna(tbAllConceptos);
     }
-    
+
     public void RegistroNuevo() {
         try {
             if (ComprobarCampos() == true) {
@@ -105,7 +122,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 String fechapago = formatoFecha.format(dcFechaPago.getDate());
                 double importe = metodostxt.DoubleAFormatoAmericano(txtImporteRecibido.getText());
                 int periodo = Integer.parseInt(lblPeriodoActual.getText());
-                
+
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo pago?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
                     try {
@@ -122,25 +139,25 @@ public class RegistrarPago extends javax.swing.JDialog {
 
                         //Obtener el id de pago
                         con = con.ObtenerRSSentencia("SELECT MAX(pag_codigo) AS ultimoid FROM pago");
-                        while (con.rs.next()) {
-                            idultimopago = con.rs.getInt("ultimoid");
+                        while (con.getResultSet().next()) {
+                            idultimopago = con.getResultSet().getInt("ultimoid");
                         }
                         con.DesconectarBasedeDatos();
-                        
+
                         int cantfila = tbConceptoAPagar.getRowCount();
                         for (int fila = 0; fila < cantfila; fila++) {
                             idconcepto = Integer.parseInt(tbConceptoAPagar.getValueAt(fila, 0) + "");
                             numcuotas = Integer.parseInt(tbConceptoAPagar.getValueAt(fila, 3) + "");
                             meses = tbConceptoAPagar.getValueAt(fila, 4) + "";
                             monto = metodostxt.DoubleAFormatoAmericano(tbConceptoAPagar.getValueAt(fila, 5) + "");
-                            
+
                             sentencia = "CALL SP_PagoConceptosAlta('" + idultimopago + "','" + idconcepto
                                     + "','" + numcuotas + "','" + meses + "','" + monto + "')";
                             con.EjecutarABM(sentencia, false);
                         }
                         Toolkit.getDefaultToolkit().beep(); //BEEP
                         JOptionPane.showMessageDialog(this, "Se agregó correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
-                        
+
                         ImprimirRecibo();
                         Limpiar();
                         GenerarNumpago();
@@ -158,7 +175,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             e.printStackTrace();
         }
     }
-    
+
     private void ImprimirRecibo() {
         //Imprimir recibo
         int confirmado2 = JOptionPane.showConfirmDialog(this, "¿Quieres imprimir el recibo de pago?", "Confirmación", JOptionPane.YES_OPTION);
@@ -214,10 +231,10 @@ public class RegistrarPago extends javax.swing.JDialog {
             String tipohoja = "";
             try {
                 con = con.ObtenerRSSentencia("SELECT conf_descripcion, conf_valor FROM configuracion");
-                while (con.rs.next()) {
-                    switch (con.rs.getString("conf_descripcion")) {
+                while (con.getResultSet().next()) {
+                    switch (con.getResultSet().getString("conf_descripcion")) {
                         case "TIPOHOJA":
-                            tipohoja = con.rs.getString("conf_valor");
+                            tipohoja = con.getResultSet().getString("conf_valor");
                             break;
                         default:
                             JOptionPane.showMessageDialog(this, "No se encontró la moneda seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
@@ -228,19 +245,19 @@ public class RegistrarPago extends javax.swing.JDialog {
                 e.printStackTrace();
             }
             con.DesconectarBasedeDatos();
-            
+
             System.out.println("tipohoja " + tipohoja);
             String rutajasper = "/reportes/recibo/reporte_recibo_principal_" + tipohoja.toLowerCase() + ".jasper";
-            
+
             metodos.GenerarReporteJTABLE(rutajasper, parametros, null);
         }
     }
-    
+
     private void Limpiar() {
         cbApoderado.setSelectedIndex(-1);
         txtCedulaApoderado.setText("");
         dcFechaPago.setDate(new Date());
-        tablemodelConceptoAPagar.setRowCount(0);
+        modelTableConceptoAPagar.setRowCount(0);
         btnAgregar.setEnabled(false);
         btnEliminar.setEnabled(false);
         txtImporteRecibido.setEnabled(false);
@@ -248,12 +265,15 @@ public class RegistrarPago extends javax.swing.JDialog {
         txtImporteRecibido.setForeground(Color.BLACK);
         txtVuelto.setText("0");
         txtTotalAPagar.setText("0");
-        tbAllConcepto.clearSelection();
-        
-        modeltablePoderantes = (DefaultTableModel) tbPoderantes.getModel();
-        modeltablePoderantes.setRowCount(0);
+        tbAllConceptos.clearSelection();
+        for (int f = 0; f < tbAllConceptos.getRowCount(); f++) { //Vaciar num cuotas pagados
+            tbAllConceptos.setValueAt("", f, 6);
+        }
+
+        modelTablePoderantes = (DefaultTableModel) tbPoderantes.getModel();
+        modelTablePoderantes.setRowCount(0);
     }
-    
+
     private boolean ComprobarCampos() {
         if (cbApoderado.getSelectedIndex() == -1) {
             Toolkit.getDefaultToolkit().beep();
@@ -261,28 +281,28 @@ public class RegistrarPago extends javax.swing.JDialog {
             cbApoderado.requestFocus();
             return false;
         }
-        
+
         if (dcFechaPago.getDate() == null) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Complete la fecha de pago", "Advertencia", JOptionPane.WARNING_MESSAGE);
             dcFechaPago.requestFocus();
             return false;
         }
-        
+
         int cantidadpagos = tbConceptoAPagar.getModel().getRowCount();
         if (cantidadpagos <= 0) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "No se cargó ningún pago", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        
+
         if (txtImporteRecibido.getText().equals("")) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Ingrese el importe", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtImporteRecibido.requestFocus();
             return false;
         }
-        
+
         double importe = metodostxt.DoubleAFormatoAmericano(txtImporteRecibido.getText());
         double totalventa = metodostxt.DoubleAFormatoAmericano(txtTotalAPagar.getText());
         if (totalventa > importe || txtImporteRecibido.getText().equals("")) {
@@ -291,33 +311,33 @@ public class RegistrarPago extends javax.swing.JDialog {
             txtImporteRecibido.requestFocus();
             return false;
         }
-        
+
         return true;
     }
-    
+
     private void TablaAllApoderado() {//Realiza la consulta de los productos que tenemos en la base de datos
         String sentencia = "CALL SP_ApoderadoConsulta";
         String titlesJtabla[] = {"Código", "N° de cédula", "Nombre", "Apellido", "Sexo", "Dirección", "Teléfono", "Email", "Observación"};
-        
+
         tbApoderado.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscarApoderado));
         cbCampoBuscarApoderado.setSelectedIndex(1);
         metodos.AnchuraColumna(tbApoderado);
-        
+
         if (tbApoderado.getModel().getRowCount() == 1) {
             lbCantRegistrosApoderado.setText(tbApoderado.getModel().getRowCount() + " Registro encontrado");
         } else {
             lbCantRegistrosApoderado.setText(tbApoderado.getModel().getRowCount() + " Registros encontrados");
         }
     }
-    
+
     private void GenerarNumpago() {
         try {
             con = con.ObtenerRSSentencia("SELECT MAX(pag_numpago) AS numultimopago FROM pago");
             String numultimapago = null;
-            while (con.rs.next()) {
-                numultimapago = con.rs.getString("numultimopago");
+            while (con.getResultSet().next()) {
+                numultimapago = con.getResultSet().getString("numultimopago");
             }
-            
+
             if (numultimapago == null) {
                 numultimapago = String.format("%8s", String.valueOf(1)).replace(' ', '0');
             } else {
@@ -446,7 +466,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         btnAgregar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
         scAllConcepto = new javax.swing.JScrollPane();
-        tbAllConcepto = new javax.swing.JTable(){
+        tbAllConceptos = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex) {
                 return false; //Disallow the editing of any cell
             }
@@ -957,7 +977,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         panel3Layout.setVerticalGroup(
             panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
-                .addContainerGap(10, Short.MAX_VALUE)
+                .addContainerGap(14, Short.MAX_VALUE)
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(lbl7)
                     .addComponent(txtConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1571,38 +1591,45 @@ public class RegistrarPago extends javax.swing.JDialog {
             }
         });
 
-        tbAllConcepto.setAutoCreateRowSorter(true);
-        tbAllConcepto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        tbAllConcepto.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
-        tbAllConcepto.setModel(new javax.swing.table.DefaultTableModel(
+        tbAllConceptos.setAutoCreateRowSorter(true);
+        tbAllConceptos.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        tbAllConceptos.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
+        tbAllConceptos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Codigo", "Concepto", "Tipo de importe", "Importe", "N° de pagos", "Tipo de pago"
+                "Codigo", "Concepto", "Tipo de importe", "Importe", "N° de pagos", "Tipo de pago", "Cuotas pagadas"
             }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tbAllConcepto.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        tbAllConcepto.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        tbAllConcepto.setGridColor(new java.awt.Color(0, 153, 204));
-        tbAllConcepto.setOpaque(false);
-        tbAllConcepto.setRowHeight(20);
-        tbAllConcepto.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tbAllConcepto.getTableHeader().setReorderingAllowed(false);
-        tbAllConcepto.addMouseListener(new java.awt.event.MouseAdapter() {
+        tbAllConceptos.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tbAllConceptos.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tbAllConceptos.setGridColor(new java.awt.Color(0, 153, 204));
+        tbAllConceptos.setOpaque(false);
+        tbAllConceptos.setRowHeight(20);
+        tbAllConceptos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tbAllConceptos.getTableHeader().setReorderingAllowed(false);
+        tbAllConceptos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                tbAllConceptoMousePressed(evt);
+                tbAllConceptosMousePressed(evt);
             }
         });
-        scAllConcepto.setViewportView(tbAllConcepto);
+        scAllConcepto.setViewportView(tbAllConceptos);
 
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
@@ -1616,7 +1643,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(scAllConcepto, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE))
+                    .addComponent(scAllConcepto, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnAgregar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1717,7 +1744,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1728,7 +1755,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 572, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         getAccessibleContext().setAccessibleName("RegistrarPago");
@@ -1743,6 +1770,33 @@ public class RegistrarPago extends javax.swing.JDialog {
             BuscarCantBasicoyMedio();
             CargarDatosaAgregarPagos();
 
+            //Tipo de importe
+            String tipoimporte = tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 2) + "";
+            switch (tipoimporte) {
+                case "FIJO" ->
+                    txtImporte.setEnabled(false);
+
+                case "VARIABLE" ->
+                    txtImporte.setEnabled(true);
+                default ->
+                    System.out.println("No existe en el sistema el tipo de importe seleccionado " + tipoimporte);
+            }
+
+            //Tipo de pago
+            String tipopago = tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 5) + "";
+            switch (tipopago) {
+                case "UNICO" -> {
+                    txtNumCuotasAPagar.setText("1");
+                    txtNumCuotasAPagar.setEnabled(false);
+                }
+                case "MENSUAL" -> {
+                    txtNumCuotasAPagar.setText("0");
+                    txtNumCuotasAPagar.setEnabled(true);
+                }
+                default ->
+                    System.out.println("No existe en el sistema el tipo de pago seleccionado" + tipopago);
+            }
+
             //Si todas las cuotas ya fueron pagadas
             if (lblNumCuotasPagados.getText().equals(lblNumTotalCuotas.getText())) {
                 txtNumCuotasAPagar.setEnabled(false);
@@ -1750,43 +1804,19 @@ public class RegistrarPago extends javax.swing.JDialog {
                 lblCancelado.setVisible(true);
                 txtImporte.setEnabled(false);
                 txtNumCuotasAPagar.setText("0");
-            } else { //Si aun no se cancelo las cuotas
+                txtNumCuotasAPagar.setEnabled(false);
+            } else {//Si aun no se cancelo las cuotas
                 btnAgregar2.setEnabled(true);
                 lblCancelado.setVisible(false);
-                
-                String tipoimporte = tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 2) + "";
-                switch (tipoimporte) {
-                    case "FIJO" ->
-                        txtImporte.setEnabled(false);
-                    
-                    case "VARIABLE" ->
-                        txtImporte.setEnabled(true);
-                    default ->
-                        System.out.println("No existe en el sistema el tipo de importe seleccionado");
-                }
-                
-                String tipopago = tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 5) + "";
-                switch (tipopago) {
-                    case "UNICO" -> {
-                        txtNumCuotasAPagar.setText("1");
-                        txtNumCuotasAPagar.setEnabled(false);
-                    }
-                    case "MENSUAL" -> {
-                        txtNumCuotasAPagar.setText("0");
-                        txtNumCuotasAPagar.setEnabled(true);
-                    }
-                    default ->
-                        System.out.println("No existe en el sistema el tipo de pago seleccionado");
-                }
             }
-            
+
             IconMesesAPagar();
             AgregarPago.setLocationRelativeTo(this); //Centrar
             AgregarPago.setVisible(true);
         }
     }//GEN-LAST:event_btnAgregarActionPerformed
-    
-    private void BuscarCantBasicoyMedio() throws HeadlessException, NumberFormatException {
+
+    private void BuscarCantBasicoyMedio() {
         //Verificar cantidad de poderantes del basico y medio
         String cantbasico = "NO";
         int cantmedio = 0;
@@ -1801,11 +1831,11 @@ public class RegistrarPago extends javax.swing.JDialog {
                 codnivel = Integer.parseInt(tbPoderantes.getValueAt(i, 3) + "");
                 con = con.ObtenerRSSentencia("SELECT niv_tipo FROM nivel WHERE niv_codigo='" + codnivel + "'");
                 try {
-                    if (con.rs.next()) {
-                        if (con.rs.getString("niv_tipo").equals("BÁSICO") && cantbasico.equals("NO")) {
+                    if (con.getResultSet().next()) {
+                        if (con.getResultSet().getString("niv_tipo").equals("BÁSICO") && cantbasico.equals("NO")) {
                             cantbasico = "SI";
                         } else {
-                            if (con.rs.getString("niv_tipo").equals("MEDIO")) {
+                            if (con.getResultSet().getString("niv_tipo").equals("MEDIO")) {
                                 cantmedio = cantmedio + 1;
                             }
                         }
@@ -1815,29 +1845,29 @@ public class RegistrarPago extends javax.swing.JDialog {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                con.DesconectarBasedeDatos();
             }
         }
-        con.DesconectarBasedeDatos();
     }
-    
-    private void CargarDatosaAgregarPagos() throws NumberFormatException {
+
+    private void CargarDatosaAgregarPagos() {
         //Cargar valores del concepto a ventana agregar pago
-        txtConcepto.setText(tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 1) + "");
-        txtImporte.setText(tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 3) + "");
-        lblNumTotalCuotas.setText(tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 4) + "");
+        txtConcepto.setText(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 1) + "");
+        txtImporte.setText(metodostxt.DoubleAFormatoSudamerica(Double.parseDouble(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 3) + "")));
+        lblNumTotalCuotas.setText(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 4) + "");
         txtSubtotal.setText("0");
         numactual = 0;
-        
+
         try {
-            int codconcepto = Integer.parseInt(tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 0) + "");
+            int codconcepto = Integer.parseInt(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 0) + "");
             //Obtener numero de cuotas pagados
             int codapoderado = metodoscombo.ObtenerIDSelectCombo(cbApoderado);
             con = con.ObtenerRSSentencia("SELECT SUM(pagcon_numcuotas) AS sumanumcuotas "
                     + "FROM pago, pago_concepto "
                     + "WHERE pagcon_concepto = '" + codconcepto + "' AND pag_apoderado = '" + codapoderado + "' "
                     + "AND pag_periodo = '" + lblPeriodoActual.getText() + "' AND pag_codigo = pagcon_pago");
-            while (con.rs.next()) {
-                lblNumCuotasPagados.setText(con.rs.getInt("sumanumcuotas") + "");
+            while (con.getResultSet().next()) {
+                lblNumCuotasPagados.setText(con.getResultSet().getInt("sumanumcuotas") + "");
             }
             //Obtener meses a pagar
             con = con.ObtenerRSSentencia("SELECT con_ene, con_feb, con_mar, con_abr, con_may, con_jun, con_jul, "
@@ -1849,18 +1879,18 @@ public class RegistrarPago extends javax.swing.JDialog {
             ImageIcon iconoX = new ImageIcon(getClass().getResource("/iconos/Iconos20x20/0.png"));
             ImageIcon iconoOK = new ImageIcon(getClass().getResource("/iconos/Iconos20x20/1.png"));
             JLabel labelactual;
-            if (con.rs.next()) {
+            if (con.getResultSet().next()) {
                 for (int i = 0; i < compMesesAPagar.length; i++) {
                     //Meses a pagar
                     if (compMesesAPagar[i] instanceof JLabel) { //Si es Jlabel
                         labelactual = ((JLabel) compMesesAPagar[i]);
-                        labelactual.setIcon(new ImageIcon(getClass().getResource("/iconos/Iconos20x20/" + con.rs.getInt(i + 1) + ".png")));
-                        labelactual.setEnabled(con.rs.getBoolean(i + 1));
+                        labelactual.setIcon(new ImageIcon(getClass().getResource("/iconos/Iconos20x20/" + con.getResultSet().getInt(i + 1) + ".png")));
+                        labelactual.setEnabled(con.getResultSet().getBoolean(i + 1));
                     }
                     //Meses pagados
                     if (compMesesPagados[i] instanceof JLabel) { //Si es Jlabel
                         labelactual = ((JLabel) compMesesPagados[i]);
-                        labelactual.setEnabled(con.rs.getBoolean(i + 1));
+                        labelactual.setEnabled(con.getResultSet().getBoolean(i + 1));
                         labelactual.setIcon(iconoX);
                         if (numcuotaspagados > 0) {
                             if (labelactual.isEnabled() && labelactual.getIcon().toString().equals(iconoX.toString())) {
@@ -1877,8 +1907,8 @@ public class RegistrarPago extends javax.swing.JDialog {
         }
         con.DesconectarBasedeDatos();
     }
-    
-    private boolean ComprobarAgregar() throws HeadlessException {
+
+    private boolean ComprobarAgregar() {
         //Verificar si se selecciono un apoderado
         if (cbApoderado.getSelectedIndex() == -1) {
             Toolkit.getDefaultToolkit().beep();
@@ -1892,22 +1922,16 @@ public class RegistrarPago extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "El Apoderado seleccionado no tiene ningún alumno a su cargo", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        //Si no se selecciono a un apoderado
-        if (cbApoderado.getSelectedIndex() == -1) {
-            Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(this, "Seleccione un apoderado", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            cbApoderado.requestFocus();
-            return false;
-        }
+
         //Si no se seleccionó ningun concepto
-        if (tbAllConcepto.getSelectedRowCount() == 0) {
+        if (tbAllConceptos.getSelectedRowCount() == 0) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Seleccione el concepto a agregar", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtBuscar.requestFocus();
             return false;
         }
         //Ver si el concepto a agregar ya fue agregado
-        String codconceptoselect = tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 0) + "";
+        String codconceptoselect = tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 0) + "";
         String codagregado;
         for (int fila = 0; fila < tbConceptoAPagar.getRowCount(); fila++) {
             codagregado = tbConceptoAPagar.getValueAt(fila, 0) + "";
@@ -1919,7 +1943,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         }
         return true;
     }
-    
+
     private void SumarSubtotal() {
         //Suma la colmna subtotal
         double sumarsubtotal = metodos.SumarColumnaDouble(tbConceptoAPagar, 6);
@@ -1929,11 +1953,11 @@ public class RegistrarPago extends javax.swing.JDialog {
     }
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        tbAllConcepto.clearSelection();
+        tbAllConceptos.clearSelection();
         if (tbConceptoAPagar.getSelectedRowCount() > 0) {
-            tablemodelConceptoAPagar.removeRow(tbConceptoAPagar.getSelectedRow());
+            modelTableConceptoAPagar.removeRow(tbConceptoAPagar.getSelectedRow());
             SumarSubtotal();
-            
+
             if (tbConceptoAPagar.getRowCount() <= 0) {
                 txtImporteRecibido.setEnabled(false);
                 txtImporteRecibido.setText("");
@@ -1957,7 +1981,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnGuardarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnGuardarKeyPressed
-        
+
 
     }//GEN-LAST:event_btnGuardarKeyPressed
 
@@ -1976,7 +2000,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         metodostxt.TxtCantidadCaracteresKeyTyped(txtImporteRecibido, 11);
         metodostxt.SoloNumeroDecimalKeyTyped(evt, txtImporteRecibido);
     }//GEN-LAST:event_txtImporteRecibidoKeyTyped
-    
+
     private void CalcularVuelto() {
         double importe = metodostxt.DoubleAFormatoAmericano(txtImporteRecibido.getText());
         double totalAPagar = metodostxt.DoubleAFormatoAmericano(txtTotalAPagar.getText());
@@ -2009,7 +2033,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     }//GEN-LAST:event_txtImporteRecibidoActionPerformed
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-        metodos.FiltroJTable(txtBuscar.getText(), 1, tbAllConcepto);
+        metodos.FiltroJTable(txtBuscar.getText(), 1, tbAllConceptos);
     }//GEN-LAST:event_txtBuscarKeyReleased
 
     private void txtCedulaApoderadoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaApoderadoKeyReleased
@@ -2022,53 +2046,76 @@ public class RegistrarPago extends javax.swing.JDialog {
 
     private void cbApoderadoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbApoderadoItemStateChanged
         if (cbApoderado.getSelectedIndex() != -1) {
+            modelTablePoderantes.setRowCount(0); //Vacia la tabla
+            for (int f = 0; f < tbAllConceptos.getRowCount(); f++) { //Vaciar num cuotas pagados
+                tbAllConceptos.setValueAt("", f, 6);
+            }
+
             con = con.ObtenerRSSentencia("SELECT CONCAT(alu_nombre,' ',alu_apellido) AS nomapealumno, alu_cedula, "
-                    + "(CASE WHEN mat_alumno IS NULL THEN 'NO MATRICULADO' "
-                    + "ELSE (CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
-                    + "ELSE CONCAT(niv_descripcion,' \"', niv_seccion,'\"', ' ',niv_turno) END) END) AS nivel, niv_codigo "
-                    + "FROM alumno LEFT OUTER JOIN matricula ON alu_codigo=mat_alumno LEFT OUTER JOIN nivel ON mat_nivel=niv_codigo "
-                    + "WHERE alu_apoderado='" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' "
-                    + "AND (mat_alumno IS NULL OR mat_alumno=alu_codigo) AND (mat_nivel IS NULL OR mat_nivel=niv_codigo) ORDER BY alu_nombre");
-            
+                    + "(CASE "
+                    + "WHEN mat_alumno IS NULL THEN 'NO MATRICULADO' "
+                    + "ELSE "
+                    + "(CASE niv_seccion "
+                    + "WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
+                    + "ELSE CONCAT(niv_descripcion,' \\\"', niv_seccion,'\\\"', ' ',niv_turno) END) END) AS nivel, niv_codigo, apo_cedula "
+                    + "FROM (alumno LEFT OUTER JOIN matricula ON alu_codigo=mat_alumno LEFT OUTER JOIN nivel ON mat_nivel=niv_codigo), apoderado "
+                    + "WHERE (mat_alumno IS NULL OR mat_alumno=alu_codigo) AND (mat_nivel IS NULL OR mat_nivel=niv_codigo) AND alu_apoderado = apo_codigo "
+                    + "AND alu_apoderado='" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' "
+                    + "ORDER BY alu_nombre");
+
             try {
                 String nomapealumno;
                 String cedula;
                 String nivel;
                 String codnivel;
-                modeltablePoderantes.setRowCount(0); //Vacia la tabla
-                while (con.rs.next()) {
-                    nomapealumno = con.rs.getString("nomapealumno");
-                    cedula = metodostxt.StringPuntosMiles(con.rs.getString("alu_cedula"));
-                    nivel = con.rs.getString("nivel");
-                    codnivel = con.rs.getString("niv_codigo");
-                    
-                    modeltablePoderantes.addRow(new Object[]{nomapealumno, cedula, nivel, codnivel});
+                while (con.getResultSet().next()) {
+                    nomapealumno = con.getResultSet().getString("nomapealumno");
+                    cedula = metodostxt.StringPuntosMiles(con.getResultSet().getString("alu_cedula"));
+                    nivel = con.getResultSet().getString("nivel");
+                    codnivel = con.getResultSet().getString("niv_codigo");
+                    txtCedulaApoderado.setText(metodostxt.StringPuntosMiles(con.getResultSet().getString("apo_cedula")));
+
+                    modelTablePoderantes.addRow(new Object[]{nomapealumno, cedula, nivel, codnivel});
                 }
-                tbPoderantes.setModel(modeltablePoderantes);
+                tbPoderantes.setModel(modelTablePoderantes);
                 metodos.OcultarColumna(tbPoderantes, 3); //Ocultar columna
 
                 //Colorear
                 tbPoderantes.setDefaultRenderer(Object.class, new ColorearJTable());
-
-                //Obtener cedula del apoderado
-                con = con.ObtenerRSSentencia("SELECT apo_cedula FROM apoderado WHERE apo_codigo='"
-                        + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "'");
-                while (con.rs.next()) {
-                    txtCedulaApoderado.setText(metodostxt.StringPuntosMiles(con.rs.getString("apo_cedula")));
-                }
             } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            con.DesconectarBasedeDatos();
+
+            //Obtener pagos ya realizados
+            try {
+                con = con.ObtenerRSSentencia("SELECT pagcon_concepto, SUM(pagcon_numcuotas) AS sumnumcuotas "
+                        + "FROM pago, pago_concepto WHERE pag_codigo=pagcon_pago AND pag_apoderado = '" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' GROUP BY pagcon_concepto");
+                int idconcepto, sumnumcuotas;
+                while (con.getResultSet().next()) {
+                    idconcepto = con.getResultSet().getInt("pagcon_concepto");
+                    sumnumcuotas = con.getResultSet().getInt("sumnumcuotas");
+
+                    for (int f = 0; f < tbAllConceptos.getRowCount(); f++) {
+                        if (tbAllConceptos.getValueAt(f, 0).equals(idconcepto)) {
+                            tbAllConceptos.setValueAt(sumnumcuotas, f, 6);
+                            f = tbAllConceptos.getRowCount();
+                        }
+                    }
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             con.DesconectarBasedeDatos();
         }
     }//GEN-LAST:event_cbApoderadoItemStateChanged
 
-    private void tbAllConceptoMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbAllConceptoMousePressed
-        if (tbAllConcepto.isEnabled()) {
+    private void tbAllConceptosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbAllConceptosMousePressed
+        if (tbAllConceptos.isEnabled()) {
             btnAgregar.setEnabled(true);
             btnEliminar.setEnabled(false);
         }
-    }//GEN-LAST:event_tbAllConceptoMousePressed
+    }//GEN-LAST:event_tbAllConceptosMousePressed
 
     private void tbConceptoAPagarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbConceptoAPagarMousePressed
         if (tbConceptoAPagar.isEnabled()) {
@@ -2084,18 +2131,18 @@ public class RegistrarPago extends javax.swing.JDialog {
     private void txtConceptoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtConceptoKeyTyped
         // TODO add your handling code here:
     }//GEN-LAST:event_txtConceptoKeyTyped
-    
+
     int numactual = 0;
     private void txtNumCuotasAPagarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNumCuotasAPagarKeyReleased
         IconMesesAPagar();
     }//GEN-LAST:event_txtNumCuotasAPagarKeyReleased
-    
+
     private void IconMesesAPagar() {
         if (txtNumCuotasAPagar.getText().equals("") == false) {
             int numCuotasAPagar = Integer.parseInt(txtNumCuotasAPagar.getText());
             int numCuotasPagados = Integer.parseInt(lblNumCuotasPagados.getText());
             int numTotalCuotas = Integer.parseInt(lblNumTotalCuotas.getText());
-            
+
             if (numCuotasAPagar > (numTotalCuotas - numCuotasPagados) && (numTotalCuotas - numCuotasPagados) != 0) {
                 Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(AgregarPago, "El número de cuotas a pagar no puede ser mayor al número de cuotas faltantes", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -2103,7 +2150,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 txtSubtotal.setText("0");
                 return;
             }
-            
+
             double importe = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
 
             //Sumar cantidad de poderantes basicos y medio
@@ -2115,7 +2162,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 numpoderantes = numpoderantes + Integer.parseInt(lblPoderantesMedio.getText());
             }
             importe = importe * numpoderantes;
-            
+
             txtSubtotal.setText(metodostxt.DoubleAFormatoSudamerica(numCuotasAPagar * importe));
             if (numactual != Integer.parseInt(txtNumCuotasAPagar.getText())) { //Si el numero ingresado no es el mismo
                 numactual = Integer.parseInt(txtNumCuotasAPagar.getText());
@@ -2159,7 +2206,7 @@ public class RegistrarPago extends javax.swing.JDialog {
 
     private void txtImporteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyReleased
         txtImporte.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtImporte.getText()));
-        
+
         double importe = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
         int numcuotas = Integer.parseInt(txtNumCuotasAPagar.getText());
         txtSubtotal.setText(metodostxt.DoubleAFormatoSudamerica(importe * numcuotas));
@@ -2188,15 +2235,15 @@ public class RegistrarPago extends javax.swing.JDialog {
             txtNumCuotasAPagar.requestFocus();
             return;
         }
-        
+
         if (txtImporte.getText().equals("") || txtImporte.getText().equals("0")) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(AgregarPago, "El importe no puede ser vacío o 0", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtNumCuotasAPagar.requestFocus();
             return;
         }
-        
-        String codigo = tbAllConcepto.getValueAt(tbAllConcepto.getSelectedRow(), 0) + "";
+
+        String codigo = tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 0) + "";
         String concepto = txtConcepto.getText();
         int numcuotaspagadosyapagar = Integer.parseInt(lblNumCuotasPagados.getText()) + Integer.parseInt(txtNumCuotasAPagar.getText());
         String numcuotastotalpagados = numcuotaspagadosyapagar + " de " + lblNumTotalCuotas.getText();
@@ -2224,35 +2271,35 @@ public class RegistrarPago extends javax.swing.JDialog {
             }
         }
         String meses;
-        
+
         if (mes2.equals("")) {
             meses = mes1;
         } else {
             meses = mes1 + " a " + mes2;
         }
-        
+
         int numcuotas = Integer.parseInt(txtNumCuotasAPagar.getText());
         String importe = txtImporte.getText();
         String subtotal = txtSubtotal.getText();
-        
+
         if (numcuotas <= 0) {
             JOptionPane.showMessageDialog(null, "El número de cuotas no puede ser menor o igual a 0", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtNumCuotasAPagar.requestFocus();
             return;
         }
-        
-        tablemodelConceptoAPagar.addRow(new Object[]{codigo, concepto, numcuotastotalpagados, numcuotas, meses, importe, subtotal});
-        tbConceptoAPagar.setModel(tablemodelConceptoAPagar);
+
+        modelTableConceptoAPagar.addRow(new Object[]{codigo, concepto, numcuotastotalpagados, numcuotas, meses, importe, subtotal});
+        tbConceptoAPagar.setModel(modelTableConceptoAPagar);
         metodos.AnchuraColumna(tbConceptoAPagar);
-        
+
         SumarSubtotal();
-        
+
         if (tbConceptoAPagar.getRowCount() > 0) {
             txtImporteRecibido.setEnabled(true);
         } else {
             txtImporteRecibido.setEnabled(false);
         }
-        
+
         txtImporteRecibido.requestFocus();
         AgregarPago.dispose();
     }//GEN-LAST:event_btnAgregar2ActionPerformed
@@ -2271,7 +2318,7 @@ public class RegistrarPago extends javax.swing.JDialog {
 
     private void txtBuscarApoderadoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarApoderadoKeyReleased
         metodos.FiltroJTable(txtBuscarApoderado.getText(), cbCampoBuscarApoderado.getSelectedIndex(), tbApoderado);
-        
+
         if (tbApoderado.getRowCount() == 1) {
             lbCantRegistrosApoderado.setText(tbApoderado.getRowCount() + " Registro encontrado");
         } else {
@@ -2298,9 +2345,9 @@ public class RegistrarPago extends javax.swing.JDialog {
     private void tbPoderantesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPoderantesMousePressed
         // TODO add your handling code here:
     }//GEN-LAST:event_tbPoderantesMousePressed
-    
+
     List<Component> ordenTabulador;
-    
+
     private void OrdenTabulador() {
         ordenTabulador = new ArrayList<>();
         ordenTabulador.add(cbApoderado);
@@ -2308,31 +2355,31 @@ public class RegistrarPago extends javax.swing.JDialog {
         ordenTabulador.add(txtImporteRecibido);
         ordenTabulador.add(btnGuardar);
         setFocusTraversalPolicy(new PersonalizadoFocusTraversalPolicy());
-        
+
     }
-    
+
     private class PersonalizadoFocusTraversalPolicy extends FocusTraversalPolicy {
-        
+
         public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
             int currentPosition = ordenTabulador.indexOf(aComponent);
             currentPosition = (currentPosition + 1) % ordenTabulador.size();
             return (Component) ordenTabulador.get(currentPosition);
         }
-        
+
         public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
             int currentPosition = ordenTabulador.indexOf(aComponent);
             currentPosition = (ordenTabulador.size() + currentPosition - 1) % ordenTabulador.size();
             return (Component) ordenTabulador.get(currentPosition);
         }
-        
+
         public Component getFirstComponent(Container cntnr) {
             return (Component) ordenTabulador.get(0);
         }
-        
+
         public Component getLastComponent(Container cntnr) {
             return (Component) ordenTabulador.get(ordenTabulador.size() - 1);
         }
-        
+
         public Component getDefaultComponent(Container cntnr) {
             return (Component) ordenTabulador.get(0);
         }
@@ -2428,7 +2475,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     private javax.swing.JScrollPane scAllConcepto1;
     private javax.swing.JScrollPane scApoderado;
     private javax.swing.JScrollPane scConceptoAPagar;
-    private javax.swing.JTable tbAllConcepto;
+    private javax.swing.JTable tbAllConceptos;
     private javax.swing.JTable tbApoderado;
     private javax.swing.JTable tbConceptoAPagar;
     private javax.swing.JTable tbPoderantes;

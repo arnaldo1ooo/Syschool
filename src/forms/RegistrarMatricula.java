@@ -643,8 +643,8 @@ public class RegistrarMatricula extends javax.swing.JDialog {
                     + "ELSE CONCAT(niv_descripcion,' \"', niv_seccion,'\"', ' ',niv_turno) END AS nivel "
                     + "FROM matricula, nivel WHERE mat_alumno='" + metodoscombo.ObtenerIDSelectCombo(cbAlumno) + "' "
                     + "AND mat_nivel=niv_codigo ORDER BY mat_periodo DESC LIMIT 1");
-            if (con.rs.next()) {
-                lblUltimaMatriculacion.setText(con.rs.getString("nivel") + " (" + con.rs.getString("mat_periodo") + ")");
+            if (con.getResultSet().next()) {
+                lblUltimaMatriculacion.setText(con.getResultSet().getString("nivel") + " (" + con.getResultSet().getString("mat_periodo") + ")");
             } else {
                 lblUltimaMatriculacion.setText("Nunca");
             }

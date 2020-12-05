@@ -88,23 +88,25 @@ public class ReportePagos extends javax.swing.JDialog {
             con = con.ObtenerRSSentencia(sentencia);
             String numpago, fechapago, concepto;
             double monto, total = 0;
-            while (con.rs.next()) {
-                numpago = con.rs.getString("pag_numpago");
-                fechapago = formatofecha2.format(con.rs.getDate("pag_fechapago"));
-                concepto = con.rs.getString("con_descripcion");
-                monto = con.rs.getDouble("totalpago");
+            while (con.getResultSet().next()) {
+                numpago = con.getResultSet().getString("pag_numpago");
+                fechapago = formatofecha2.format(con.getResultSet().getDate("pag_fechapago"));
+                concepto = con.getResultSet().getString("con_descripcion");
+                monto = con.getResultSet().getDouble("totalpago");
                 total = total + monto;
                 modelTablePagos.addRow(new Object[]{numpago, fechapago, concepto, monto});
+
+                lblTotal.setText(metodostxt.DoubleAFormatoSudamerica(total) + " Gs.");
             }
-            lblTotal.setText(metodostxt.DoubleAFormatoSudamerica(total) + " Gs.");
-            tbPrincipal.setModel(modelTablePagos);
-            metodos.AnchuraColumna(tbPrincipal);
-            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
         } catch (SQLException e) {
             log_historial.error("Error 10218: " + e);
             e.printStackTrace();
         }
         con.DesconectarBasedeDatos();
+        tbPrincipal.setModel(modelTablePagos);
+        metodos.AnchuraColumna(tbPrincipal);
+        metodos.OrdenarColumna(tbPrincipal, cbOrdenar.getSelectedIndex());
+        lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
 
         String[] meses = {"Ene.", "Feb.", "Mar.", "Abr.", "May.", "Jun.", "Jul.", "Ago.", "Sep.", "Oct.", "Nov.", "Dic"}; // primero creas el String array
         // la inicializas en idioma español, país México:

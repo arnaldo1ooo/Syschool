@@ -404,7 +404,20 @@
                       <Font name="Tahoma" size="12" style="0"/>
                     </Property>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="0" rowCount="0"/>
+                      <Table columnCount="12" rowCount="0">
+                        <Column editable="false" title="Codigo" type="java.lang.Integer"/>
+                        <Column editable="false" title="Nombre" type="java.lang.String"/>
+                        <Column editable="false" title="Apellido" type="java.lang.String"/>
+                        <Column editable="false" title="N&#xb0; de cedula" type="java.lang.Integer"/>
+                        <Column editable="false" title="Fecha de nacimiento" type="java.lang.String"/>
+                        <Column editable="false" title="Fecha de inscripcion" type="java.lang.String"/>
+                        <Column editable="false" title="Sexo" type="java.lang.String"/>
+                        <Column editable="false" title="Telefono" type="java.lang.Integer"/>
+                        <Column editable="false" title="Email" type="java.lang.String"/>
+                        <Column editable="false" title="Observacion" type="java.lang.String"/>
+                        <Column editable="false" title="Apoderado" type="java.lang.String"/>
+                        <Column editable="false" title="Estado" type="java.lang.String"/>
+                      </Table>
                     </Property>
                     <Property name="autoResizeMode" type="int" value="4"/>
                     <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
@@ -421,6 +434,7 @@
                     </Property>
                   </Properties>
                   <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tbPrincipalMouseClicked"/>
                     <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tbPrincipalMousePressed"/>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="tbPrincipalKeyReleased"/>
                   </Events>
@@ -485,7 +499,7 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace pref="7" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="btnModificar" alignment="1" max="32767" attributes="0"/>
                           <Component id="btnEliminar" alignment="1" max="32767" attributes="0"/>

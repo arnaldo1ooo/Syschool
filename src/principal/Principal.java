@@ -21,7 +21,8 @@ import forms.RegistrarGasto;
 import forms.RegistrarMatricula;
 import forms.RegistrarPago;
 import forms.RegistrarPagoSalario;
-import forms.ReporteListadoAlumnos;
+import forms.ReporteAlumnos;
+import forms.ReporteAlumnosEyC;
 import forms.ReportePagos;
 
 import java.sql.SQLException;
@@ -52,7 +53,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     public Principal() {
         initComponents();
         this.setExtendedState(Principal.MAXIMIZED_BOTH);//Maximizar ventana
-        
+
         ObtenerHorayFecha();
         lbAlias.setText(alias);
         PerfilesUsuario(codUsuario);
@@ -64,8 +65,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         con = con.ObtenerRSSentencia("CALL SP_UsuarioModuloConsulta('" + codUsuario + "')");
         String modulo;
         try {
-            while (con.rs.next()) {
-                modulo = con.rs.getString("mo_denominacion");
+            while (con.getResultSet().next()) {
+                modulo = con.getResultSet().getString("mo_denominacion");
                 switch (modulo) {
                     case "NIVEL" -> {
                         btnNivel.setEnabled(true);
@@ -110,6 +111,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                     case "REPORTE" -> {
                         meReporte.setEnabled(true);
                         meitReporteAlumnos.setEnabled(true);
+                        meitReporteAlumnosEyC.setEnabled(true);
                         meitReportePagos.setEnabled(true);
                     }
 
@@ -134,11 +136,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         con = con.ObtenerRSSentencia(consulta);
         try {
             String perfil = "";
-            while (con.rs.next()) {
+            while (con.getResultSet().next()) {
                 if (perfil.equals("")) {
-                    perfil = con.rs.getString("per_denominacion");
+                    perfil = con.getResultSet().getString("per_denominacion");
                 } else {
-                    perfil = perfil + ", " + con.rs.getString("per_denominacion");
+                    perfil = perfil + ", " + con.getResultSet().getString("per_denominacion");
                 }
             }
             lblPerfil.setText(perfil);
@@ -199,6 +201,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meitAnularGasto = new javax.swing.JMenuItem();
         meReporte = new javax.swing.JMenu();
         meitReporteAlumnos = new javax.swing.JMenuItem();
+        jSeparator9 = new javax.swing.JPopupMenu.Separator();
+        meitReporteAlumnosEyC = new javax.swing.JMenuItem();
         jSeparator8 = new javax.swing.JPopupMenu.Separator();
         meitReportePagos = new javax.swing.JMenuItem();
         meUsuario = new javax.swing.JMenu();
@@ -641,7 +645,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meReporte.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
         meReporte.setPreferredSize(new java.awt.Dimension(150, 70));
 
-        meitReporteAlumnos.setText("Reporte de listado de alumnos");
+        meitReporteAlumnos.setText("Reporte de listado de alumnos (Por Nivel)");
         meitReporteAlumnos.setEnabled(false);
         meitReporteAlumnos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -649,6 +653,16 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             }
         });
         meReporte.add(meitReporteAlumnos);
+        meReporte.add(jSeparator9);
+
+        meitReporteAlumnosEyC.setText("Reporte de alumnos (Escuela y/o Colegio)");
+        meitReporteAlumnosEyC.setEnabled(false);
+        meitReporteAlumnosEyC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meitReporteAlumnosEyCActionPerformed(evt);
+            }
+        });
+        meReporte.add(meitReporteAlumnosEyC);
         meReporte.add(jSeparator8);
 
         meitReportePagos.setText("Reporte de pagos");
@@ -889,7 +903,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     }//GEN-LAST:event_jMenuItem18ActionPerformed
 
     private void meitReporteAlumnosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitReporteAlumnosActionPerformed
-        ReporteListadoAlumnos reporteListaAlumnos = new ReporteListadoAlumnos(this, true);
+        ReporteAlumnos reporteListaAlumnos = new ReporteAlumnos(this, true);
         reporteListaAlumnos.setLocationRelativeTo(this); //Centrar
         reporteListaAlumnos.setVisible(true);
     }//GEN-LAST:event_meitReporteAlumnosActionPerformed
@@ -1009,6 +1023,12 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         // TODO add your handling code here:
     }//GEN-LAST:event_meNivelActionPerformed
 
+    private void meitReporteAlumnosEyCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitReporteAlumnosEyCActionPerformed
+        ReporteAlumnosEyC reportealumnoseyc = new ReporteAlumnosEyC(this, true);
+        reportealumnoseyc.setLocationRelativeTo(this);
+        reportealumnoseyc.setVisible(true);
+    }//GEN-LAST:event_meitReporteAlumnosEyCActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -1068,6 +1088,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JPopupMenu.Separator jSeparator8;
+    private javax.swing.JPopupMenu.Separator jSeparator9;
     private javax.swing.JLabel lbAlias;
     private javax.swing.JLabel lbFecha;
     private javax.swing.JLabel lbFechaTitulo;
@@ -1101,6 +1122,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenuItem meitRegistrarPago;
     private javax.swing.JMenuItem meitRegistrarPagoSalario;
     private javax.swing.JMenuItem meitReporteAlumnos;
+    private javax.swing.JMenuItem meitReporteAlumnosEyC;
     private javax.swing.JMenuItem meitReportePagos;
     private javax.swing.JMenuItem meitRol;
     private org.edisoncor.gui.panel.Panel panel1;

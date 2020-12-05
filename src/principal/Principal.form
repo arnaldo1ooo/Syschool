@@ -205,11 +205,22 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="meitReporteAlumnos">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Reporte de listado de alumnos"/>
+                <Property name="text" type="java.lang.String" value="Reporte de listado de alumnos (Por Nivel)"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="meitReporteAlumnosActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator9">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="meitReporteAlumnosEyC">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Reporte de alumnos (Escuela y/o Colegio)"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="meitReporteAlumnosEyCActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator8">

@@ -37,7 +37,6 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
         CargarComboBoxes();
         Limpiar();
 
-
     }
 
     //--------------------------METODOS----------------------------//
@@ -58,10 +57,10 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
         try {
             String codigo, descripcion, idalta, idmodificar, idbaja;
             String[] idRoles;
-            while (con.rs.next()) {
-                codigo = con.rs.getString("mo_codigo");
-                descripcion = con.rs.getString("mo_denominacion");
-                idRoles = con.rs.getString("idRoles").split(",");
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getString("mo_codigo");
+                descripcion = con.getResultSet().getString("mo_denominacion");
+                idRoles = con.getResultSet().getString("idRoles").split(",");
                 idalta = idRoles[0];
                 idmodificar = idRoles[1];
                 idbaja = idRoles[2];
@@ -488,8 +487,8 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
             sentencia = "CALL SP_UsuarioRolConsulta('" + metodoscombo.ObtenerIDSelectCombo(cbUsuario) + "','" + moduloselect + "')";
             con = con.ObtenerRSSentencia(sentencia);
 
-            while (con.rs.next()) {
-                switch (con.rs.getString("rol_denominacion")) {
+            while (con.getResultSet().next()) {
+                switch (con.getResultSet().getString("rol_denominacion")) {
                     case "ALTA" -> {
                         chbAlta.setSelected(true);
                         altaExiste = true;
@@ -503,7 +502,7 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
                         bajaExiste = true;
                     }
                     default ->
-                        System.out.println("Error switch " + con.rs.getString("rol_denominacion"));
+                        System.out.println("Error switch " + con.getResultSet().getString("rol_denominacion"));
                 }
             }
         } catch (SQLException e) {

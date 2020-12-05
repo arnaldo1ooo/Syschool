@@ -51,8 +51,8 @@ public class ABMPerfil extends javax.swing.JDialog {
         try {
             tablemodelPerfilModulos = (DefaultTableModel) tbPerfilModulos.getModel();
             con = con.ObtenerRSSentencia("CALL SP_ModuloConsulta()");
-            while (con.rs.next()) {
-                tablemodelPerfilModulos.addRow(new Object[]{con.rs.getString("mo_codigo"), con.rs.getString("mo_denominacion")});
+            while (con.getResultSet().next()) {
+                tablemodelPerfilModulos.addRow(new Object[]{con.getResultSet().getString("mo_codigo"), con.getResultSet().getString("mo_denominacion")});
             }
 
             tbPerfilModulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -82,8 +82,8 @@ public class ABMPerfil extends javax.swing.JDialog {
                         //Obtener ultimo codigo perfil
                         String ultimoidperfil = "";
                         con = con.ObtenerRSSentencia("SELECT MAX(per_codigo) AS ultimoid FROM perfil");
-                        if (con.rs.next()) {
-                            ultimoidperfil = con.rs.getString("ultimoid");
+                        if (con.getResultSet().next()) {
+                            ultimoidperfil = con.getResultSet().getString("ultimoid");
                         }
 
                         //Nuevos Perfil_Modulo
@@ -110,7 +110,7 @@ public class ABMPerfil extends javax.swing.JDialog {
                             codmodulo = tbPerfilModulos.getValueAt(i, 0) + "";
                             estado = (Boolean) tbPerfilModulos.getValueAt(i, 2);
                             con = con.ObtenerRSSentencia("SELECT permo_codigo FROM perfil_modulo WHERE permo_perfil='" + codperfil + "' AND permo_modulo='" + codmodulo + "'");
-                            if (con.rs.next()) {
+                            if (con.getResultSet().next()) {
                                 if (estado == false) {
                                     con.EjecutarABM("CALL SP_PerfilModuloEliminar('" + codperfil + "','" + codmodulo + "')", false);
                                 }
@@ -137,7 +137,7 @@ public class ABMPerfil extends javax.swing.JDialog {
         if (filasel != -1) {
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro eliminar este perfil?", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
-                String codigo = tbPrincipal.getValueAt(filasel, 0) + "";
+                int codigo = Integer.parseInt(tbPrincipal.getValueAt(filasel, 0) + "");
                 String sentencia = "CALL SP_PerfilEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
@@ -181,9 +181,9 @@ public class ABMPerfil extends javax.swing.JDialog {
             String sentencia = "SELECT mo_codigo, mo_denominacion FROM perfil_modulo, modulo WHERE permo_perfil = '" + codperfil
                     + "' AND permo_modulo=mo_codigo ORDER BY mo_denominacion";
             con = con.ObtenerRSSentencia(sentencia);
-            while (con.rs.next()) {
+            while (con.getResultSet().next()) {
                 for (int i = 0, estado = 0; i < tbPerfilModulos.getRowCount() && estado == 0; i++) {
-                    if (con.rs.getString("mo_codigo").equals(tbPerfilModulos.getValueAt(i, 0))) {
+                    if (con.getResultSet().getString("mo_codigo").equals(tbPerfilModulos.getValueAt(i, 0))) {
                         tbPerfilModulos.setValueAt(true, i, 2);
                         estado = 1;
                     }

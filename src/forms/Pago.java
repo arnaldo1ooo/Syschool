@@ -55,14 +55,14 @@ public class Pago extends javax.swing.JDialog {
             int codigo, periodo;
             String apoderado, fechapago, numpago;
             double importe, total;
-            while (con.rs.next()) {
-                codigo = con.rs.getInt("pag_codigo");
-                numpago = con.rs.getString("pag_numpago");
-                apoderado = con.rs.getString("nomape");
-                fechapago = con.rs.getString("fechapago");
-                importe = metodostxt.FormatearATresDecimales(con.rs.getDouble("pag_importe"));
-                total = metodostxt.FormatearATresDecimales(con.rs.getDouble("totalpago"));
-                periodo = con.rs.getInt("pag_periodo");
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getInt("pag_codigo");
+                numpago = con.getResultSet().getString("pag_numpago");
+                apoderado = con.getResultSet().getString("nomape");
+                fechapago = con.getResultSet().getString("fechapago");
+                importe = metodostxt.FormatearATresDecimales(con.getResultSet().getDouble("pag_importe"));
+                total = metodostxt.FormatearATresDecimales(con.getResultSet().getDouble("totalpago"));
+                periodo = con.getResultSet().getInt("pag_periodo");
 
                 modeltablePago.addRow(new Object[]{codigo, numpago, apoderado, fechapago, importe, total, periodo});
             }

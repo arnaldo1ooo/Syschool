@@ -140,10 +140,10 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
             String tipohoja = "";
             try {
                 con = con.ObtenerRSSentencia("SELECT conf_descripcion, conf_valor FROM configuracion");
-                while (con.rs.next()) {
-                    switch (con.rs.getString("conf_descripcion")) {
+                while (con.getResultSet().next()) {
+                    switch (con.getResultSet().getString("conf_descripcion")) {
                         case "TIPOHOJA":
-                            tipohoja = con.rs.getString("conf_valor");
+                            tipohoja = con.getResultSet().getString("conf_valor");
                             break;
                         default:
                             JOptionPane.showMessageDialog(this, "No se encontró la hoja seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
@@ -590,10 +590,10 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
             String sentencia = "SELECT fun_cedula, fun_salario, car_descripcion FROM funcionario,cargo "
                     + "WHERE fun_codigo = '" + idfuncionario + "' AND fun_cargo=car_codigo";
             con = con.ObtenerRSSentencia(sentencia);
-            while (con.rs.next()) {
-                txtCedula.setText(metodostxt.StringPuntosMiles(con.rs.getString("fun_cedula")));
-                txtSalario.setText(metodostxt.DoubleAFormatoSudamerica(con.rs.getDouble("fun_salario")));
-                txtCargo.setText(con.rs.getString("car_descripcion"));
+            while (con.getResultSet().next()) {
+                txtCedula.setText(metodostxt.StringPuntosMiles(con.getResultSet().getString("fun_cedula")));
+                txtSalario.setText(metodostxt.DoubleAFormatoSudamerica(con.getResultSet().getDouble("fun_salario")));
+                txtCargo.setText(con.getResultSet().getString("car_descripcion"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -632,8 +632,8 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
         try {
             con = con.ObtenerRSSentencia("SELECT MAX(pasal_numpago) AS numultimopago FROM pago_salario");
             String numultimapago = null;
-            while (con.rs.next()) {
-                numultimapago = con.rs.getString("numultimopago");
+            while (con.getResultSet().next()) {
+                numultimapago = con.getResultSet().getString("numultimopago");
             }
 
             if (numultimapago == null) {

@@ -34,13 +34,13 @@ import utilidades.MetodosCombo;
  * @author Arnaldo Cantero
  */
 public class ABMApoderado extends javax.swing.JDialog {
-    
+
     Conexion con = new Conexion();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
     MetodosCombo metodoscombo = new MetodosCombo();
     DefaultTableModel modelTablaPoderantes;
-    
+
     public ABMApoderado(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
@@ -51,13 +51,13 @@ public class ABMApoderado extends javax.swing.JDialog {
         btnNuevo.setVisible(permisos.contains("A"));
         btnModificar.setVisible(permisos.contains("M"));
         btnEliminar.setVisible(permisos.contains("B"));
-        
+
         TablaConsultaBDAll(); //Trae todos los registros
         txtBuscar.requestFocus();
 
         //Cambiar color de disabled combo
         metodoscombo.CambiarColorDisabledCombo(cbSexo, Color.BLACK);
-        
+
         OrdenTabulador();
     }
 
@@ -73,19 +73,19 @@ public class ABMApoderado extends javax.swing.JDialog {
             String email = txtEmail.getText();
             String telefono = txtTelefono.getText();
             String obs = metodos.MayusPrimeraLetra(taObs.getText());
-            
+
             if (txtCodigoApoderado.getText().equals("")) { //NUEVO REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo apoderado?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
                     String sentencia = "CALL SP_ApoderadoAlta ('" + cedula + "','" + nombre + "','" + apellido + "','"
                             + sexo + "','" + direccion + "','" + telefono + "','" + email + "','" + obs + "')";
                     con.EjecutarABM(sentencia, false);
-                    
+
                     NuevoModificarAlumno();
-                    
+
                     Toolkit.getDefaultToolkit().beep();
                     JOptionPane.showMessageDialog(this, "Operación realizada correctamente");
-                    
+
                     TablaConsultaBDAll(); //Actualizar tabla
                     ModoEdicion(false);
                     Limpiar();
@@ -96,12 +96,12 @@ public class ABMApoderado extends javax.swing.JDialog {
                     String sentencia = "CALL SP_ApoderadoModificar('" + codigo + "','" + cedula + "','" + nombre + "','" + apellido + "','" + sexo + "','" + direccion
                             + "','" + telefono + "','" + email + "','" + obs + "')";
                     con.EjecutarABM(sentencia, false);
-                    
+
                     NuevoModificarAlumno();
-                    
+
                     Toolkit.getDefaultToolkit().beep();
                     JOptionPane.showMessageDialog(this, "Operación realizada correctamente");
-                    
+
                     TablaConsultaBDAll(); //Actualizar tabla
                     ModoEdicion(false);
                     Limpiar();
@@ -109,7 +109,7 @@ public class ABMApoderado extends javax.swing.JDialog {
             }
         }
     }
-    
+
     private void NuevoModificarAlumno() {
         //Guardar alumnos
         String codigoalumno, nombrealumno, apellidoalumno, cedulaalumno, fechanacimiento, fechainscripcion, sexoalumno, telefonoalumno, emailalumno, obsalumno;
@@ -117,7 +117,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         String estadoalumno, sentencia;
         SimpleDateFormat formatfechaBD = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatfechaSuda = new SimpleDateFormat("dd/MM/yyyy");
-        
+
         for (int i = 0; i < tbPoderantes.getRowCount(); i++) {
             codigoalumno = tbPoderantes.getValueAt(i, 0) + "";
             nombrealumno = metodos.MayusCadaPrimeraLetra(tbPoderantes.getValueAt(i, 1) + "");
@@ -139,8 +139,8 @@ public class ABMApoderado extends javax.swing.JDialog {
             if (txtCodigoApoderado.getText().equals("")) { //Si es nuevo apoderado
                 try {
                     con = con.ObtenerRSSentencia("SELECT MAX(apo_codigo) AS idapoderado FROM apoderado");
-                    if (con.rs.next()) {
-                        idapoderado = con.rs.getInt("idapoderado");
+                    if (con.getResultSet().next()) {
+                        idapoderado = con.getResultSet().getInt("idapoderado");
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -150,7 +150,7 @@ public class ABMApoderado extends javax.swing.JDialog {
             } else {
                 idapoderado = Integer.parseInt(txtCodigoApoderado.getText());
             }
-            
+
             estadoalumno = tbPoderantes.getValueAt(i, 10) + "";
             switch (estadoalumno) {
                 case "ACTIVO":
@@ -163,7 +163,7 @@ public class ABMApoderado extends javax.swing.JDialog {
                     JOptionPane.showMessageDialog(this, "Estado no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
                     break;
             }
-            
+
             if (codigoalumno.equals("")) { //Si es un alumno nuevo
                 sentencia = "CALL SP_AlumnoAlta('" + nombrealumno + "','" + apellidoalumno + "','" + cedulaalumno + "','" + fechanacimiento + "','" + fechainscripcion
                         + "','" + sexoalumno + "','" + telefonoalumno + "','" + emailalumno + "','" + obsalumno + "','" + idapoderado + "','" + estadoalumno + "')";
@@ -175,18 +175,18 @@ public class ABMApoderado extends javax.swing.JDialog {
             }
         }
     }
-    
+
     private void RegistroEliminar() {
         int filasel = tbPrincipal.getSelectedRow();
-        Toolkit.getDefaultToolkit().beep();
         if (filasel != -1) {
+            Toolkit.getDefaultToolkit().beep();
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de eliminar este apoderado? Tambien se ELIMINARÁN "
                     + "los ALUMNOS A SU CARGO y sus respectivas MATRICULAS y PAGOS", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
-                String codigo = tbPrincipal.getModel().getValueAt(filasel, 0) + "";
+                int codigo = Integer.parseInt(tbPrincipal.getModel().getValueAt(filasel, 0) + "");
                 String sentencia = "CALL SP_ApoderadoEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
-                
+
                 TablaConsultaBDAll(); //Actualizar tabla
                 ModoEdicion(false);
                 Limpiar();
@@ -196,21 +196,21 @@ public class ABMApoderado extends javax.swing.JDialog {
             txtBuscar.requestFocus();
         }
     }
-    
+
     private void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
         String sentencia = "CALL SP_ApoderadoConsulta";
         String titlesJtabla[] = {"Código", "N° de Cédula", "Nombre", "Apellido", "Sexo", "Dirección", "Teléfono", "Email", "Observación"};
         tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
         cbCampoBuscar.setSelectedIndex(1);
         metodos.AnchuraColumna(tbPrincipal);
-        
+
         if (tbPrincipal.getModel().getRowCount() == 1) {
             lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registro encontrado");
         } else {
             lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registros encontrados");
         }
     }
-    
+
     private void ModoVistaPrevia() {
         if (tbPrincipal.getRowCount() > 0) {
             txtCodigoApoderado.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + ""));
@@ -223,11 +223,11 @@ public class ABMApoderado extends javax.swing.JDialog {
             txtTelefono.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 6) + ""));
             txtEmail.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 7) + ""));
             taObs.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 8) + ""));
-            
+
             ConsultaPoderantes();
         }
     }
-    
+
     private void ModoEdicion(boolean valor) {
         jtpEdicion.setSelectedIndex(0);
         txtBuscar.setEnabled(!valor);
@@ -249,10 +249,10 @@ public class ABMApoderado extends javax.swing.JDialog {
         btnNuevoAlumno.setEnabled(valor);
         btnModificarAlumno.setEnabled(false);
         btnEliminarAlumno.setEnabled(false);
-        
+
         txtNombre.requestFocus();
     }
-    
+
     private void Limpiar() {
         txtCodigoApoderado.setText("");
         txtCedula.setText("");
@@ -263,40 +263,40 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtEmail.setText("");
         txtTelefono.setText("");
         taObs.setText("");
-        
+
         lblCedula.setForeground(new Color(102, 102, 102));
         lblNombre.setForeground(new Color(102, 102, 102));
         lblApellido.setForeground(new Color(102, 102, 102));
         lblDireccion.setForeground(new Color(102, 102, 102));
-        
+
         txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
-        
+
         modelTablaPoderantes = (DefaultTableModel) tbPoderantes.getModel();
         modelTablaPoderantes.setRowCount(0);
     }
-    
+
     public boolean ComprobarCampos() {
         if (metodostxt.ValidarCampoVacioTXT(txtCedula, lblCedula) == false) {
             return false;
         }
-        
+
         if (metodostxt.ValidarCampoVacioTXT(txtNombre, lblNombre) == false) {
             return false;
         }
-        
+
         if (metodostxt.ValidarCampoVacioTXT(txtApellido, lblApellido) == false) {
             return false;
         }
-        
+
         if (metodostxt.ValidarCampoVacioTXT(txtDireccion, lblDireccion) == false) {
             return false;
         }
-        
+
         if (txtCodigoApoderado.getText().equals("")) {
             try {
                 con = con.ObtenerRSSentencia("SELECT apo_cedula FROM apoderado WHERE apo_cedula='" + txtCedula.getText() + "'");
-                if (con.rs.next() == true) { //Si ya existe el numero de cedula en la tabla
+                if (con.getResultSet().next() == true) { //Si ya existe el numero de cedula en la tabla
                     System.out.println("El N° de cédula ingresado ya existe!");
                     Toolkit.getDefaultToolkit().beep();
                     JOptionPane.showMessageDialog(null, "El N° de cédula ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1404,10 +1404,10 @@ public class ABMApoderado extends javax.swing.JDialog {
 //--------------------------Eventos de componentes----------------------------//
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
         metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
-        
+
         btnModificar.setEnabled(false);
         btnEliminar.setEnabled(false);
-        
+
         if (tbPrincipal.getRowCount() == 1) {
             lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registro encontrado");
         } else {
@@ -1435,7 +1435,7 @@ public class ABMApoderado extends javax.swing.JDialog {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         RegistroEliminar();
-        
+
         TablaConsultaBDAll();
         Limpiar();
         ModoEdicion(false);
@@ -1451,7 +1451,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         if (tbPrincipal.isEnabled() == true) {
             btnModificar.setEnabled(true);
             btnEliminar.setEnabled(true);
-            
+
             ModoVistaPrevia();
         }
     }//GEN-LAST:event_tbPrincipalMousePressed
@@ -1481,7 +1481,7 @@ public class ABMApoderado extends javax.swing.JDialog {
 
     private void txtCedulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyReleased
         metodostxt.TxtColorLabelKeyReleased(txtCedula, lblCedula);
-        
+
         txtCedula.setText(metodostxt.StringPuntosMiles(txtCedula.getText()));
 
     }//GEN-LAST:event_txtCedulaKeyReleased
@@ -1560,7 +1560,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtNombreAlumno.setText(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 1) + ""));
         txtApellidoAlumno.setText(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 2) + ""));
         txtCedulaAlumno.setText(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 3) + ""));
-        
+
         try {
             Date fechaParseada = new SimpleDateFormat("dd/MM/yyyy").parse(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 4).toString() + ""));
             dcFechaNacimientoAlumno.setDate(fechaParseada);
@@ -1571,21 +1571,21 @@ public class ABMApoderado extends javax.swing.JDialog {
             LocalDate ahora = LocalDate.now();
             Period periodo = Period.between(fechaNac, ahora);
             txtEdadAlumno.setText(metodos.SiStringEsNull(periodo.getYears() + ""));
-            
+
             fechaParseada = new SimpleDateFormat("dd/MM/yyyy").parse(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 5).toString() + ""));
             dcFechaInscripcionAlumno.setDate(fechaParseada);
         } catch (ParseException e) {
             System.out.println("Error al parsear fecha");
             e.printStackTrace();
         }
-        
+
         cbSexoAlumno.setSelectedItem(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 6).toString());
         txtTelefonoAlumno.setText(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 7).toString());
         txtEmailAlumno.setText(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 8).toString());
         taObsAlumno.setText(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 9).toString());
         String estado = tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 10).toString();
         cbEstadoAlumno.setSelectedItem(estado);
-        
+
         AltaAlumno.setLocationRelativeTo(this);
         AltaAlumno.setVisible(true);
     }//GEN-LAST:event_btnModificarAlumnoActionPerformed
@@ -1656,7 +1656,7 @@ public class ABMApoderado extends javax.swing.JDialog {
     }//GEN-LAST:event_txtEmailAlumnoKeyTyped
 
     private void btnAgregarAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarAlumnoActionPerformed
-        
+
         if (ComprobarCamposAlumnos() == true) {
             String nombre = metodos.MayusCadaPrimeraLetra(txtNombreAlumno.getText());
             String apellido = metodos.MayusCadaPrimeraLetra(txtApellidoAlumno.getText());
@@ -1669,7 +1669,7 @@ public class ABMApoderado extends javax.swing.JDialog {
             String email = txtEmailAlumno.getText();
             String obs = taObsAlumno.getText();
             String estado = cbEstadoAlumno.getSelectedItem() + "";
-            
+
             if (btnAgregarAlumno.getText().equals("Agregar")) {
                 modelTablaPoderantes = (DefaultTableModel) tbPoderantes.getModel();
                 modelTablaPoderantes.addRow(new Object[]{"", nombre, apellido, cedula, fechanacimiento, fechainscripcion, sexo, telefono, email, obs, estado});
@@ -1694,13 +1694,13 @@ public class ABMApoderado extends javax.swing.JDialog {
             metodos.AnchuraColumna(tbPoderantes);
             AltaAlumno.dispose();
         }
-        
+
 
     }//GEN-LAST:event_btnAgregarAlumnoActionPerformed
 
     private void txtCedulaAlumnoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaAlumnoKeyReleased
         metodostxt.TxtColorLabelKeyReleased(txtCedulaAlumno, lblCedulaAlumno);
-        
+
         txtCedulaAlumno.setText(metodostxt.StringPuntosMiles(txtCedulaAlumno.getText()));
     }//GEN-LAST:event_txtCedulaAlumnoKeyReleased
 
@@ -1708,7 +1708,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         //Limpiar alumno
         btnAgregarAlumno.setText("Agregar");
         lmTitulo.setText("Nuevo alumno");
-        
+
         txtCodigoAlumno.setText("");
         txtNombreAlumno.setText("");
         txtApellidoAlumno.setText("");
@@ -1724,7 +1724,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         lblNombreAlumno.setForeground(Color.WHITE);
         lblApellidoAlumno.setForeground(Color.WHITE);
         lblCedulaAlumno.setForeground(Color.WHITE);
-        
+
         AltaAlumno.setLocationRelativeTo(this);
         AltaAlumno.setVisible(true);
     }//GEN-LAST:event_btnNuevoAlumnoActionPerformed
@@ -1736,10 +1736,10 @@ public class ABMApoderado extends javax.swing.JDialog {
                 Toolkit.getDefaultToolkit().beep();
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Deseas eliminar al alumno seleccionado?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
-                    
+
                     modelTablaPoderantes = (DefaultTableModel) tbPoderantes.getModel();
                     modelTablaPoderantes.removeRow(tbPoderantes.getSelectedRow());
-                    
+
                 }
             } else {
                 int confirmado2 = JOptionPane.showConfirmDialog(this, "¿Deseas eliminar al alumno seleccionado?, TAMBIEN SE ELIMINARÁN LAS MATRICULAS DEL MISMO", "Confirmación", JOptionPane.YES_OPTION);
@@ -1766,32 +1766,32 @@ public class ABMApoderado extends javax.swing.JDialog {
     private void btnGuardarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnGuardarKeyReleased
         // TODO add your handling code here:
     }//GEN-LAST:event_btnGuardarKeyReleased
-    
+
     private void ConsultaPoderantes() {
         modelTablaPoderantes = (DefaultTableModel) tbPoderantes.getModel();//Cargamos campos de jtable al modeltable
         modelTablaPoderantes.setRowCount(0); //Vacia la tabla
 
         int codigoapoderado = Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "");
         String sentencia = "CALL SP_ApoderadoAlumnosConsulta(" + codigoapoderado + ")";
-        
+
         con = con.ObtenerRSSentencia(sentencia);
-        
+
         try {
-            String codigo, nombre, apellido, cedula, fechanac, fechainsc, sexo, telefono, email, obs, estado;
-            
-            while (con.rs.next()) {
-                codigo = con.rs.getString("alu_codigo");
-                nombre = con.rs.getString("alu_nombre");
-                apellido = con.rs.getString("alu_apellido");
-                cedula = metodostxt.StringPuntosMiles(con.rs.getString("alu_cedula"));
-                fechanac = con.rs.getString("fechanacimiento");
-                fechainsc = con.rs.getString("fechainscripcion");
-                sexo = con.rs.getString("alu_sexo");
-                telefono = con.rs.getString("alu_telefono");
-                email = con.rs.getString("alu_email");
-                obs = con.rs.getString("alu_obs");
-                estado = con.rs.getString("estado");
-                
+            int codigo, telefono;
+            String nombre, apellido, cedula, fechanac, fechainsc, sexo, email, obs, estado;
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getInt("alu_codigo");
+                nombre = con.getResultSet().getString("alu_nombre");
+                apellido = con.getResultSet().getString("alu_apellido");
+                cedula = metodostxt.StringPuntosMiles(con.getResultSet().getString("alu_cedula"));
+                fechanac = con.getResultSet().getString("fechanacimiento");
+                fechainsc = con.getResultSet().getString("fechainscripcion");
+                sexo = con.getResultSet().getString("alu_sexo");
+                telefono = con.getResultSet().getInt("alu_telefono");
+                email = con.getResultSet().getString("alu_email");
+                obs = con.getResultSet().getString("alu_obs");
+                estado = con.getResultSet().getString("estado");
+
                 modelTablaPoderantes.addRow(new Object[]{codigo, nombre, apellido, cedula, fechanac, fechainsc, sexo, telefono, email, obs, estado});
             }
             tbPoderantes.setModel(modelTablaPoderantes);
@@ -1801,16 +1801,16 @@ public class ABMApoderado extends javax.swing.JDialog {
         }
         con.DesconectarBasedeDatos();
     }
-    
+
     public boolean ComprobarCamposAlumnos() {
         if (metodostxt.ValidarCampoVacioTXT(txtNombreAlumno, lblNombreAlumno) == false) {
             return false;
         }
-        
+
         if (metodostxt.ValidarCampoVacioTXT(txtApellidoAlumno, lblApellidoAlumno) == false) {
             return false;
         }
-        
+
         if (metodostxt.ValidarCampoVacioTXT(txtCedulaAlumno, lblCedulaAlumno) == false) {
             return false;
         }
@@ -1819,7 +1819,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         if (txtCodigoApoderado.getText().equals("")) {
             try {
                 con = con.ObtenerRSSentencia("SELECT alu_cedula FROM alumno WHERE alu_cedula='" + metodostxt.StringSinPuntosMiles(txtCedulaAlumno.getText()) + "'");
-                if (con.rs.next() == true) { //Si ya existe el numero de cedula en la tabla
+                if (con.getResultSet().next() == true) { //Si ya existe el numero de cedula en la tabla
                     System.out.println("El N° de cédula ingresado ya existe!");
                     Toolkit.getDefaultToolkit().beep();
                     JOptionPane.showMessageDialog(null, "El N° de cédula ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1834,7 +1834,7 @@ public class ABMApoderado extends javax.swing.JDialog {
                 System.out.println("La CI ingresada no existe en la bd, aprobado: " + e);
             }
         }
-        
+
         try {
             if (dcFechaNacimientoAlumno.getDate().after(new Date()) == true) {
                 Toolkit.getDefaultToolkit().beep();
@@ -1845,7 +1845,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        
+
         if (txtEdadAlumno.getText().equals("") == false) {
             if (Integer.parseInt(txtEdadAlumno.getText()) <= 2) {
                 Toolkit.getDefaultToolkit().beep();
@@ -1854,14 +1854,14 @@ public class ABMApoderado extends javax.swing.JDialog {
                 return false;
             }
         }
-        
+
         if (dcFechaNacimientoAlumno.getDate() == null) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(AltaAlumno, "Ingrese una fecha de nacimiento válida", "Advertencia", JOptionPane.WARNING_MESSAGE);
             dcFechaNacimientoAlumno.requestFocus();
             return false;
         }
-        
+
         if (dcFechaInscripcionAlumno.getDate() == null) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(AltaAlumno, "Ingrese una fecha de inscripción válida", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -1870,9 +1870,9 @@ public class ABMApoderado extends javax.swing.JDialog {
         }
         return true;
     }
-    
+
     List<Component> ordenTabulador;
-    
+
     private void OrdenTabulador() {
         ordenTabulador = new ArrayList<>();
         ordenTabulador.add(txtNombre);
@@ -1885,29 +1885,29 @@ public class ABMApoderado extends javax.swing.JDialog {
         ordenTabulador.add(btnGuardar);
         setFocusTraversalPolicy(new PersonalizadoFocusTraversalPolicy());
     }
-    
+
     private class PersonalizadoFocusTraversalPolicy extends FocusTraversalPolicy {
-        
+
         public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
             int currentPosition = ordenTabulador.indexOf(aComponent);
             currentPosition = (currentPosition + 1) % ordenTabulador.size();
             return (Component) ordenTabulador.get(currentPosition);
         }
-        
+
         public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
             int currentPosition = ordenTabulador.indexOf(aComponent);
             currentPosition = (ordenTabulador.size() + currentPosition - 1) % ordenTabulador.size();
             return (Component) ordenTabulador.get(currentPosition);
         }
-        
+
         public Component getFirstComponent(Container cntnr) {
             return (Component) ordenTabulador.get(0);
         }
-        
+
         public Component getLastComponent(Container cntnr) {
             return (Component) ordenTabulador.get(ordenTabulador.size() - 1);
         }
-        
+
         public Component getDefaultComponent(Container cntnr) {
             return (Component) ordenTabulador.get(0);
         }

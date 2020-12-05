@@ -84,7 +84,7 @@ public class ABMConceptoGasto extends javax.swing.JDialog {
         if (filasel != -1) {
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro eliminar este concepto?, TAMBIEN SE ELIMINARÁN TODOS LOS PAGOS REALIZADOS CON ESTE CONCEPTO", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
-                String codigo = tbPrincipal.getValueAt(filasel, 0) + "";
+                int codigo = Integer.parseInt(tbPrincipal.getValueAt(filasel, 0) + "");
                 String sentencia = "CALL SP_ConceptoEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
@@ -118,11 +118,11 @@ public class ABMConceptoGasto extends javax.swing.JDialog {
             int codigo;
             String descripcion, tipogasto;
             double monto;
-            while (con.rs.next()) {
-                codigo = con.rs.getInt(1);
-                descripcion = con.rs.getString(2);
-                tipogasto = con.rs.getString(3);
-                monto = con.rs.getDouble(4);
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getInt(1);
+                descripcion = con.getResultSet().getString(2);
+                tipogasto = con.getResultSet().getString(3);
+                monto = con.getResultSet().getDouble(4);
 
                 modelotabla.addRow(new Object[]{codigo, descripcion, tipogasto, monto});//agrega el registro a la tabla
             }

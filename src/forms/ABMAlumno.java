@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import static login.Login.codUsuario;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
@@ -35,7 +36,7 @@ public class ABMAlumno extends javax.swing.JDialog {
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
     MetodosCombo metodoscombo = new MetodosCombo();
-    String nombreTablaBD = "Alumno";
+    DefaultTableModel modeltableAlumnos;
 
     public ABMAlumno(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -106,7 +107,7 @@ public class ABMAlumno extends javax.swing.JDialog {
                     int confirmado = JOptionPane.showConfirmDialog(this, "¿Esta seguro crear este nuevo registro?", "Confirmación", JOptionPane.YES_OPTION);
                     if (JOptionPane.YES_OPTION == confirmado) {
                         //REGISTRAR NUEVO
-                        String sentencia = "CALL SP_" + nombreTablaBD + "Alta ('" + nombre + "','" + apellido + "'," + cedula
+                        String sentencia = "CALL SP_AlumnoAlta ('" + nombre + "','" + apellido + "'," + cedula
                                 + ",'" + fechanacimiento + "','" + fechainscripcion + "','" + sexo + "','" + telefono + "','" + email
                                 + "','" + obs + "','" + apoderado + "','" + estado + "')";
                         con.EjecutarABM(sentencia, true);
@@ -118,7 +119,7 @@ public class ABMAlumno extends javax.swing.JDialog {
                 } else {
                     int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar este registro?", "Confirmación", JOptionPane.YES_OPTION);
                     if (JOptionPane.YES_OPTION == confirmado) {
-                        String sentencia = "CALL SP_" + nombreTablaBD + "Modificar('" + codigo + "','" + nombre + "','" + apellido + "'," + cedula
+                        String sentencia = "CALL SP_AlumnoModificar('" + codigo + "','" + nombre + "','" + apellido + "'," + cedula
                                 + ",'" + fechanacimiento + "','" + fechainscripcion + "','" + sexo + "','" + telefono + "','" + email
                                 + "','" + obs + "','" + apoderado + "','" + estado + "')";
 
@@ -137,13 +138,13 @@ public class ABMAlumno extends javax.swing.JDialog {
     }
 
     private void RegistroEliminar() {
-        String codigo;
+        int codigo;
         int filasel = tbPrincipal.getSelectedRow();
         if (filasel != -1) {
             int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea eliminar este alumno?, tambien se ELIMINARÁN las matriculas referentes al mismo", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
-                codigo = (String) tbPrincipal.getModel().getValueAt(filasel, 0);
-                String sentencia = "CALL SP_" + nombreTablaBD + "Eliminar(" + codigo + ")";
+                codigo = Integer.parseInt(tbPrincipal.getModel().getValueAt(filasel, 0) + "");
+                String sentencia = "CALL SP_AlumnoEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
                 TablaConsultaBDAll(); //Actualizar tabla
@@ -157,12 +158,44 @@ public class ABMAlumno extends javax.swing.JDialog {
     }
 
     private void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
-        String sentencia = "CALL SP_" + nombreTablaBD + "Consulta";
-        String titlesJtabla[] = {"Código", "Nombre", "Apellido", "N° de cédula", "Fecha de nacimiento", "Fecha de inscripcion", "Sexo",
-            "Telefono", "Email", "Observación", "Apoderado", "Estado"}; //Debe tener la misma cantidad que los campos a consultar
+        modeltableAlumnos = (DefaultTableModel) tbPrincipal.getModel();
+        modeltableAlumnos.setRowCount(0); //Vacia tabla
 
-        tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
-        metodos.AnchuraColumna(tbPrincipal);
+        //Cargar Combo Buscar
+        if (cbCampoBuscar.getItemCount() == 0) {
+            for (int i = 0; i < modeltableAlumnos.getColumnCount(); i++) {
+                cbCampoBuscar.addItem(modeltableAlumnos.getColumnName(i));
+            }
+            cbCampoBuscar.setSelectedIndex(1);
+        }
+
+        try {
+            String sentencia = "CALL SP_AlumnoConsulta()";
+            con = con.ObtenerRSSentencia(sentencia);
+            int codigo, cedula, telefono;
+            String nombre, apellido, sexo, fechanac, fechains, email, obs, apoderado, estado;
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getInt("alu_codigo");
+                nombre = con.getResultSet().getString("alu_nombre");
+                apellido = con.getResultSet().getString("alu_apellido");
+                cedula = con.getResultSet().getInt("alu_cedula");
+                fechanac = con.getResultSet().getString("fechanacimiento");
+                fechains = con.getResultSet().getString("fechainscripcion");
+                sexo = con.getResultSet().getString("alu_sexo");
+                telefono = con.getResultSet().getInt("alu_telefono");
+                email = con.getResultSet().getString("alu_email");
+                obs = con.getResultSet().getString("alu_obs");
+                apoderado = con.getResultSet().getString("nomapeapoderado");
+                estado = con.getResultSet().getString("estado");
+
+                modeltableAlumnos.addRow(new Object[]{codigo, nombre, apellido, cedula, fechanac, fechains, sexo, telefono, email, obs, apoderado, estado});
+            }
+            tbPrincipal.setModel(modeltableAlumnos);
+            metodos.AnchuraColumna(tbPrincipal);
+        } catch (SQLException | NullPointerException e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
 
         if (tbPrincipal.getModel().getRowCount() == 1) {
             lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registro encontrado");
@@ -178,7 +211,7 @@ public class ABMAlumno extends javax.swing.JDialog {
         txtCedula.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 3) + ""));
         txtCedula.setText(metodostxt.StringPuntosMiles(txtCedula.getText()));
 
-        if (txtCedula.getText().equals("")) {
+        if (txtCedula.getText().equals("0")) {
             chbSincedula.setSelected(true);
         } else {
             chbSincedula.setSelected(false);
@@ -219,6 +252,7 @@ public class ABMAlumno extends javax.swing.JDialog {
     private void ModoEdicion(boolean valor) {
         txtBuscar.setEnabled(!valor);
         tbPrincipal.setEnabled(!valor);
+
         txtNombre.setEnabled(valor);
         txtApellido.setEnabled(valor);
         txtCedula.setEnabled(valor);
@@ -274,24 +308,24 @@ public class ABMAlumno extends javax.swing.JDialog {
             return false;
         }
 
-        if (chbSincedula.isSelected() == false) {
-            if (metodostxt.ValidarCampoVacioTXT(txtCedula, lblCedula) == false) {
-                return false;
-            }
-
+        if (metodostxt.ValidarCampoVacioTXT(txtCedula, lblCedula) == false) {
+            return false;
         }
 
-        if (txtCodigo.getText().equals("")) {
+        if (txtCedula.getText().equals("0") && chbSincedula.isSelected() == false) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "El N° de cédula no puede ser 0", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        if (txtCodigo.getText().equals("") && txtCedula.getText().equals("0") == false) {
             try {
-                con = con.ObtenerRSSentencia("SELECT alu_cedula FROM alumno "
-                        + "WHERE alu_cedula='" + txtCedula.getText() + "'");
-                if (con.rs.next() == true) { //Si ya existe el numero de cedula en la tabla
-                    System.out.println("El N° de cédula ingresado ya existe!");
+                con = con.ObtenerRSSentencia("SELECT alu_cedula FROM alumno WHERE alu_cedula='" + txtCedula.getText() + "'");
+                if (con.getResultSet().next() == true) { //Si ya existe el numero de cedula en la tabla
                     Toolkit.getDefaultToolkit().beep();
-                    JOptionPane.showMessageDialog(null, "El N° de cédula ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "El N° de cédula ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
                     lblCedula.setForeground(Color.RED);
                     lblCedula.requestFocus();
-                    con.DesconectarBasedeDatos();
                     return false;
                 }
             } catch (SQLException e) {
@@ -299,6 +333,7 @@ public class ABMAlumno extends javax.swing.JDialog {
             } catch (NullPointerException e) {
                 System.out.println("La CI ingresada no existe en la bd, aprobado: " + e);
             }
+            con.DesconectarBasedeDatos();
         }
 
         if (dcFechaNacimiento.getDate().after(new Date()) == true) {
@@ -548,9 +583,24 @@ public class ABMAlumno extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Codigo", "Nombre", "Apellido", "N° de cedula", "Fecha de nacimiento", "Fecha de inscripcion", "Sexo", "Telefono", "Email", "Observacion", "Apoderado", "Estado"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbPrincipal.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbPrincipal.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbPrincipal.setGridColor(new java.awt.Color(0, 153, 204));
@@ -559,6 +609,9 @@ public class ABMAlumno extends javax.swing.JDialog {
         tbPrincipal.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbPrincipal.getTableHeader().setReorderingAllowed(false);
         tbPrincipal.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbPrincipalMouseClicked(evt);
+            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 tbPrincipalMousePressed(evt);
             }
@@ -665,7 +718,7 @@ public class ABMAlumno extends javax.swing.JDialog {
         jpBotonesLayout.setHorizontalGroup(
             jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpBotonesLayout.createSequentialGroup()
-                .addContainerGap(7, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1122,7 +1175,7 @@ public class ABMAlumno extends javax.swing.JDialog {
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jpBotones, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+                    .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 239, Short.MAX_VALUE)
                     .addComponent(jpTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(8, 8, 8)
                 .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1137,7 +1190,7 @@ public class ABMAlumno extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 952, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 952, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1323,11 +1376,16 @@ public class ABMAlumno extends javax.swing.JDialog {
     private void chbSincedulaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chbSincedulaItemStateChanged
         if (chbSincedula.isSelected()) {
             txtCedula.setEnabled(false);
-            txtCedula.setText("");
+            txtCedula.setText("0");
         } else {
+            txtCedula.setText("");
             txtCedula.setEnabled(true);
         }
     }//GEN-LAST:event_chbSincedulaItemStateChanged
+
+    private void tbPrincipalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPrincipalMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tbPrincipalMouseClicked
 
     /**
      * @param args the command line arguments
@@ -1343,13 +1401,15 @@ public class ABMAlumno extends javax.swing.JDialog {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ABMAlumno.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ABMAlumno.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
         //</editor-fold>
 
         /* Create and display the dialog */

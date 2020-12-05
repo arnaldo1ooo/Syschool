@@ -37,10 +37,12 @@ public class Login extends javax.swing.JFrame {
 
         try {
             String sentencia = "CALL SP_LoginConsulta ('" + alias + "','" + pass + "') ";
+
             con = con.ObtenerRSSentencia(sentencia);
-            if (con.rs.next()) {
-                codUsuario = con.rs.getString("usu_codigo");
-                nomapeUsuario = con.rs.getString("usu_nombre") + " " + con.rs.getString("usu_apellido");
+
+            if (con.getResultSet().next()) {
+                codUsuario = con.getResultSet().getString("usu_codigo");
+                nomapeUsuario = con.getResultSet().getString("usu_nombre") + " " + con.getResultSet().getString("usu_apellido");
 
                 this.dispose(); //Cerrar Ventana Login*/
                 SplashScreen splash = new SplashScreen(this, true);

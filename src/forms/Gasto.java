@@ -41,8 +41,8 @@ public class Gasto extends javax.swing.JDialog {
         try {
             cbFiltroAnho.addItem("TODOS");
             con = con.ObtenerRSSentencia("SELECT YEAR(gas_fecha) AS anho FROM gasto GROUP BY(gas_fecha) ORDER BY gas_fecha DESC");
-            while (con.rs.next()) {
-                cbFiltroAnho.addItem(con.rs.getString("anho"));
+            while (con.getResultSet().next()) {
+                cbFiltroAnho.addItem(con.getResultSet().getString("anho"));
             }
             if (cbFiltroAnho.getItemCount() == 1) {
                 cbFiltroAnho.setSelectedIndex(0);

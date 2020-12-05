@@ -87,7 +87,7 @@ public class ABMNivel extends javax.swing.JDialog {
         if (filasel != -1) {
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro eliminar este nivel?, tambien se ELIMINARÁN las matriculas con este nivel", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
-                String codigo = tbPrincipal.getValueAt(filasel, 0) + "";
+                int codigo = Integer.parseInt(tbPrincipal.getValueAt(filasel, 0) + "");
                 String sentencia = "CALL SP_NivelEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 

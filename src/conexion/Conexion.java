@@ -10,12 +10,14 @@ import java.sql.Statement;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.apache.log4j.Logger;
 
 public class Conexion {
 
-    public Connection connection;
-    public Statement st;
-    public ResultSet rs;
+    private Conexion con;
+    private Connection connection;
+    private Statement st;
+    private ResultSet rs;
     private static String controlador;
     private static String usuarioDB;
     private static String passDB; //Contrasena de la BD
@@ -23,8 +25,7 @@ public class Conexion {
     private static String host;
     private static String puerto;
     private static String servidor;
-    private Conexion con;
-    static org.apache.log4j.Logger log_historial = org.apache.log4j.Logger.getLogger(Conexion.class.getName());
+    static Logger log_historial = Logger.getLogger(Conexion.class.getName());
 
     public static Connection ConectarBasedeDatos() {
         String tipoHost = "local";
@@ -97,16 +98,28 @@ public class Conexion {
         return connection;
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public Statement getStatement() {
+        return st;
+    }
+
+    public ResultSet getResultSet() {
+        return rs;
+    }
+
     public void DesconectarBasedeDatos() {
         try {
-            if (connection != null) {
-                connection.close();
+            if (getConnection() != null) {
+                getConnection().close();
             }
-            if (st != null) {
-                st.close();
+            if (getStatement() != null) {
+                getStatement().close();
             }
-            if (rs != null) {
-                rs.close();
+            if (getResultSet() != null) {
+                getResultSet().close();
             }
             System.out.println("DESCONEXIÓN DE LA BD (" + nombreBD + ") EXITOSA..");
 
@@ -164,31 +177,13 @@ public class Conexion {
     public Conexion ObtenerRSSentencia(String sentencia) { //con.Desconectar luego de usar el metodo
         con = new Conexion();
         try {
-            System.out.println("Ejecutar sentencia ObtenerRSSentencia " + sentencia);
             con.connection = (Connection) Conexion.ConectarBasedeDatos();
             con.st = con.connection.createStatement();
             con.rs = con.st.executeQuery(sentencia);
-            int cantreg = 0;
-            while (con.rs.next() && cantreg < 2) { //Revisamos cuantos registro trajo la consulta
-                cantreg = cantreg + 1;
-            }
 
-            switch (cantreg) {
-                case 0 ->
-                    System.out.println("ObtenerRSSentencia no trajo ningun resultado");
-                //con.rs.beforeFirst(); //Ponemos antes del primer registro en el puntero
-                case 1 -> {
-                    System.out.println("ObtenerRSSentencia trajo un resultado");
-                    con.rs.beforeFirst(); //Ponemos antes del primer registro en el puntero
-                }
-                case 2 -> {
-                    System.out.println("ObtenerRSSentencia trajo mas de un resultado");
-                    con.rs.beforeFirst(); //Ponemos antes del primer registro en el puntero
-                }
-                default -> {
-                }
-            }
-            //aca se escribe lo que si o si se ejecuta
+            con.rs.last(); //Poner el puntero en el ultimo
+            System.out.println("ObtenerRSSentencia trajo " + con.rs.getRow() + " resultados, consulta: " + sentencia);
+            con.getResultSet().beforeFirst(); //Poner el puntero en el anteprimero
         } catch (SQLException | NullPointerException e) {
             log_historial.error("Error 1092: " + e);
             e.printStackTrace();
@@ -216,7 +211,7 @@ public class Conexion {
         }
     }
 
-    public Boolean SiYaExisteEnLaBD(String sentencia) { //con.Desconectar luego de usar el metodo
+    public Boolean SiYaExisteEnLaBD(String sentencia) {
         con = new Conexion();
         int cantreg = 0;
         try {

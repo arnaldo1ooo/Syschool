@@ -47,6 +47,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -54,10 +55,9 @@ import net.sf.jasperreports.view.JasperViewer;
  */
 public class Metodos {
 
-    Conexion con = new Conexion();
-    MetodosTXT metodostxt = new MetodosTXT();
+    private Conexion con = new Conexion();
     public int CantRegistros = 0;
-    static org.apache.log4j.Logger log_historial = org.apache.log4j.Logger.getLogger(Metodos.class.getName());
+    static Logger log_historial = Logger.getLogger(Metodos.class.getName());
 
     public void AnchuraColumna(JTable laTabla) {
         TableColumnModel tbColumnModel = laTabla.getColumnModel();
@@ -160,12 +160,12 @@ public class Metodos {
 
         System.out.println("sentencia filtro tabla BD: " + sentencia);
 
-        Connection conexion;
+        Connection connection;
         Statement st;
         ResultSet rs;
         try {
-            conexion = (Connection) Conexion.ConectarBasedeDatos();
-            st = conexion.createStatement();
+            connection = (Connection) Conexion.ConectarBasedeDatos();
+            st = connection.createStatement();
             rs = st.executeQuery(sentencia);
             ResultSetMetaData mdrs = rs.getMetaData();
             int numColumns = mdrs.getColumnCount();
@@ -180,7 +180,7 @@ public class Metodos {
             }
             LaTabla.setModel(modelotabla);//asigna a la tabla el modelo creado
 
-            conexion.close();
+            connection.close();
             st.close();
             rs.close();
         } catch (SQLException e) {
@@ -190,40 +190,8 @@ public class Metodos {
         }
     }
 
-    /*public void CentrarventanaJInternalFrame(JInternalFrame LaVentana) {
-        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        int x = (int) ((dimension.getWidth() - LaVentana.getWidth()) / 2);
-        int y = 0; //(int) ((dimension.getHeight() - LaVentana.getHeight()) / 2);
-        LaVentana.setLocation(x, y);
-    }
-
-    public void CentrarVentanaJDialog(JDialog LaVentana) {
-        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        int x = (int) ((dimension.getWidth() - LaVentana.getWidth()) / 2);
-        int y = (int) ((dimension.getHeight() - LaVentana.getHeight()) / 2);
-        LaVentana.setLocation(x, y);
-    }*/
-
- /*public String ObtenerCotizacion(String de, String a) {
-        String valor = "";
-        try {
-            DecimalFormat df = new DecimalFormat("#.###");
-            Conexion con = new Conexion();
-            con = con.ObtenerRSSentencia("SELECT coti_valor FROM cambio WHERE cam_de = '" + de + "' AND cam_a = '" + a + "'");
-            if (con.rs.next() == true) {
-                valor = df.format(Double.parseDouble(con.rs.getString(1)));
-                valor = valor.replace(".", ",");
-            }
-            con.DesconectarBasedeDatos();
-        } catch (SQLException e) {
-            log_historial.error("Error 1006: " + e);
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al intentar obtener cambio " + e);
-        }
-        return valor;
-    }*/
-    
     public double SumarColumnaDouble(JTable LaTabla, int LaColumna) {
+        MetodosTXT metodostxt = new MetodosTXT();
         double valor;
         double totalDouble = 0;
 
@@ -297,9 +265,8 @@ public class Metodos {
                 JasperReport jrReporte_productos = (JasperReport) JRLoader.loadObject(isRutajasper);
 
                 //LOS TITULOS DE LA Consulta DEBEN COINCIDIR CON LOS FIELDS DEL JASPER
-                Conexion con = new Conexion();
                 con = con.ObtenerRSSentencia(consulta);
-                JRResultSetDataSource rsLista = new JRResultSetDataSource(con.rs); //Para sql
+                JRResultSetDataSource rsLista = new JRResultSetDataSource(con.getResultSet()); //Para sql
                 JasperPrint jprint = JasperFillManager.fillReport(jrReporte_productos, parametros, rsLista);
 
                 JasperViewer jViewer = new JasperViewer(jprint, false);//false para que al cerrar reporte no se cierre el sistema
@@ -320,6 +287,7 @@ public class Metodos {
     }
 
     public String PermisoRol(String codUsuario, String modulo) {
+
         con = con.ObtenerRSSentencia("CALL SP_UsuarioRolConsulta('" + codUsuario + "','" + modulo + "')");
 
         String permisos = "";
@@ -327,9 +295,9 @@ public class Metodos {
         String aliasusuario;
         try {
 
-            while (con.rs.next()) {
-                roldenominacion = con.rs.getString("rol_denominacion");
-                aliasusuario = con.rs.getString("usu_alias");
+            while (con.getResultSet().next()) {
+                roldenominacion = con.getResultSet().getString("rol_denominacion");
+                aliasusuario = con.getResultSet().getString("usu_alias");
                 switch (roldenominacion) {
                     case "ALTA":
                         permisos = permisos.concat("A");
@@ -417,4 +385,37 @@ public class Metodos {
         laTabla.setRowSorter(sorter);
         laTabla.getRowSorter().toggleSortOrder(numColumna);
     }
+
+    /*public void CentrarventanaJInternalFrame(JInternalFrame LaVentana) {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - LaVentana.getWidth()) / 2);
+        int y = 0; //(int) ((dimension.getHeight() - LaVentana.getHeight()) / 2);
+        LaVentana.setLocation(x, y);
+    }
+
+    public void CentrarVentanaJDialog(JDialog LaVentana) {
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - LaVentana.getWidth()) / 2);
+        int y = (int) ((dimension.getHeight() - LaVentana.getHeight()) / 2);
+        LaVentana.setLocation(x, y);
+    }*/
+
+ /*public String ObtenerCotizacion(String de, String a) {
+        String valor = "";
+        try {
+            DecimalFormat df = new DecimalFormat("#.###");
+            Conexion con = new Conexion();
+            con = con.ObtenerRSSentencia("SELECT coti_valor FROM cambio WHERE cam_de = '" + de + "' AND cam_a = '" + a + "'");
+            if (con.rs.next() == true) {
+                valor = df.format(Double.parseDouble(con.rs.getString(1)));
+                valor = valor.replace(".", ",");
+            }
+            con.DesconectarBasedeDatos();
+        } catch (SQLException e) {
+            log_historial.error("Error 1006: " + e);
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al intentar obtener cambio " + e);
+        }
+        return valor;
+    }*/
 }

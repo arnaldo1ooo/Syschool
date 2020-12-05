@@ -232,13 +232,12 @@ public class MetodosImagen {
         ImageIcon iconoEscala = new ImageIcon(iconoOriginal.getImage().getScaledInstance(EljButton.getho, largojbutton, java.awt.Image.SCALE_DEFAULT));
     }*/
     public String ObtenerUltimoID() {
-        Metodos metodos = new Metodos();
         String idultimoproducto = "";
         try {
             Conexion con = new Conexion();
             con = con.ObtenerRSSentencia("SELECT MAX(pro_codigo) AS idultimoproducto FROM producto");
-            while (con.rs.next()) {
-                idultimoproducto = con.rs.getString("idultimoproducto");
+            while (con.getResultSet().next()) {
+                idultimoproducto = con.getResultSet().getString("idultimoproducto");
             }
             con.DesconectarBasedeDatos();
 

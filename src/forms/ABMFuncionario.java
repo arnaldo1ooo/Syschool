@@ -112,11 +112,11 @@ public class ABMFuncionario extends javax.swing.JDialog {
 
     private void RegistroEliminar() {
         int filasel = tbPrincipal.getSelectedRow();
-        String codigo = tbPrincipal.getModel().getValueAt(filasel, 0) + "";
-
         if (filasel != -1) {
-            int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea eliminar este funcionario?, tambien se ELIMINARÁN los pagos salariales del mismo", "Confirmación", JOptionPane.YES_OPTION);
+            int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea eliminar este funcionario?, tambien se ELIMINARÁN los pagos salariales del mismo "
+                    + "y los registros de docentes a cargo", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
+                int codigo = Integer.parseInt(tbPrincipal.getValueAt(filasel, 0) + "");
                 String sentencia = "CALL SP_" + nombreTablaBD + "Eliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
@@ -147,19 +147,19 @@ public class ABMFuncionario extends javax.swing.JDialog {
 
         try {
             String codigo, nombre, apellido, cedula, fechaing, sexo, telefono, salario, email, obs, estado, cargo;
-            while (con.rs.next()) {
-                codigo = con.rs.getString("fun_codigo");
-                nombre = con.rs.getString("fun_nombre");
-                apellido = con.rs.getString("fun_apellido");
-                cedula = metodostxt.StringPuntosMiles(con.rs.getString("fun_cedula"));
-                fechaing = con.rs.getString("fechaingreso");
-                sexo = con.rs.getString("fun_sexo");
-                telefono = con.rs.getString("fun_telefono");
-                salario = metodostxt.DoubleAFormatoSudamerica(Double.parseDouble(con.rs.getString("fun_salario")));
-                email = con.rs.getString("fun_email");
-                obs = con.rs.getString("fun_obs");
-                estado = con.rs.getString("estado");
-                cargo = con.rs.getString("car_descripcion");
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getString("fun_codigo");
+                nombre = con.getResultSet().getString("fun_nombre");
+                apellido = con.getResultSet().getString("fun_apellido");
+                cedula = metodostxt.StringPuntosMiles(con.getResultSet().getString("fun_cedula"));
+                fechaing = con.getResultSet().getString("fechaingreso");
+                sexo = con.getResultSet().getString("fun_sexo");
+                telefono = con.getResultSet().getString("fun_telefono");
+                salario = metodostxt.DoubleAFormatoSudamerica(Double.parseDouble(con.getResultSet().getString("fun_salario")));
+                email = con.getResultSet().getString("fun_email");
+                obs = con.getResultSet().getString("fun_obs");
+                estado = con.getResultSet().getString("estado");
+                cargo = con.getResultSet().getString("car_descripcion");
 
                 modelTableFuncionarios.addRow(new Object[]{codigo, nombre, apellido, cedula, fechaing, sexo, telefono, salario, email, obs, estado, cargo});
             }

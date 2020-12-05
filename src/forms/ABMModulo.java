@@ -73,7 +73,7 @@ public class ABMModulo extends javax.swing.JDialog {
         if (filasel != -1) {
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro eliminar este registro?", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
-                String codigo = tbPrincipal.getValueAt(filasel, 0) + "";
+                int codigo = Integer.parseInt(tbPrincipal.getValueAt(filasel, 0) + "");
                 String sentencia = "CALL SP_ModuloEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 

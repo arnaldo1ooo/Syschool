@@ -98,14 +98,14 @@ public class ABMUsuario extends javax.swing.JDialog {
     }
 
     private void RegistroEliminar() {
-        String codigo;
-        if (tbPrincipal.getSelectedRow() == -1) {
+        int filasel = tbPrincipal.getSelectedRow();
+        if (filasel == -1) {
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtBuscar.requestFocus();
         } else {
-            int confirmado = JOptionPane.showConfirmDialog(null, "¿Realmente desea eliminar este registro?", "Confirmación", JOptionPane.YES_OPTION);
+            int confirmado = JOptionPane.showConfirmDialog(this, "¿Realmente desea eliminar este registro?", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
-                codigo = tbPrincipal.getModel().getValueAt(tbPrincipal.getSelectedRow(), 0) + "";
+                int codigo = Integer.parseInt(tbPrincipal.getValueAt(filasel, 0) + "");
                 String sentencia = "CALL SP_UsuarioEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
             }

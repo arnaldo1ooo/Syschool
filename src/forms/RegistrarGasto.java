@@ -42,8 +42,8 @@ public class RegistrarGasto extends javax.swing.JDialog {
             con = con.ObtenerRSSentencia("SELECT per_denominacion FROM usuario,perfil,usuario_perfil "
                     + "WHERE usu_codigo = '" + codUsuario + "' AND usuper_usuario = usu_codigo AND usuper_perfil = per_codigo "
                     + "ORDER BY per_denominacion");
-            while (con.rs.next()) {
-                if (con.rs.getString("per_denominacion").equals("DIRECTORA")) {
+            while (con.getResultSet().next()) {
+                if (con.getResultSet().getString("per_denominacion").equals("DIRECTORA")) {
                     tipogasto = "ADMINISTRATIVO";
                     lblPrivilegio.setText("GASTOS ADMINISTRATIVOS");
                 }
@@ -409,9 +409,9 @@ public class RegistrarGasto extends javax.swing.JDialog {
             int idConceptoGasto = metodoscombo.ObtenerIDSelectCombo(cbConceptoGasto);
             String sentencia = "SELECT congas_monto FROM concepto_gasto WHERE congas_codigo = '" + idConceptoGasto + "' AND congas_tipo = '" + tipogasto + "'";
             con = con.ObtenerRSSentencia(sentencia);
-            while (con.rs.next()) {
-                if (con.rs.getDouble("congas_monto") != 0) { //Si no es null
-                    txtMonto.setText(metodostxt.DoubleAFormatoSudamerica(con.rs.getDouble("congas_monto")));
+            while (con.getResultSet().next()) {
+                if (con.getResultSet().getDouble("congas_monto") != 0) { //Si no es null
+                    txtMonto.setText(metodostxt.DoubleAFormatoSudamerica(con.getResultSet().getDouble("congas_monto")));
                 } else {
                     txtMonto.setText("");
                 }

@@ -14,7 +14,6 @@ import javax.swing.JComboBox;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
@@ -24,9 +23,9 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
  */
 public class MetodosCombo {
 
+    private Conexion con = new Conexion();
     private int codigo;
     private String descripcion;
-    Conexion con = new Conexion();
     static Logger log_historial = Logger.getLogger(MetodosCombo.class.getName());
 
     public MetodosCombo() { //No borrar
@@ -84,15 +83,14 @@ public class MetodosCombo {
         System.out.println("Cargar combo (" + elCombo.getName() + "): " + consulta);
         try {
             elCombo.removeAllItems(); //Vaciamos el combo
-            AutoCompleteDecorator.decorate(elCombo);
-            con = con.ObtenerRSSentencia(consulta);
 
-            while (con.rs.next()) {
-                elCombo.addItem(new MetodosCombo(con.rs.getInt(1), con.rs.getString(2)));
+            con = con.ObtenerRSSentencia(consulta);
+            while (con.getResultSet().next()) {
+                elCombo.addItem(new MetodosCombo(con.getResultSet().getInt(1), con.getResultSet().getString(2)));
                 //Seleccionado por defecto
                 try {
-                    if (codItemDefault == con.rs.getInt(1) && codItemDefault >= 0) {
-                        elCombo.setSelectedItem(con.rs.getString(2));
+                    if (codItemDefault == con.getResultSet().getInt(1) && codItemDefault >= 0) {
+                        elCombo.setSelectedItem(con.getResultSet().getString(2));
                     }
                 } catch (NullPointerException e) {
                     log_historial.warn("Error 1012: " + e);
@@ -109,8 +107,11 @@ public class MetodosCombo {
         } catch (NumberFormatException | SQLException e) {
             log_historial.error("Error al cargar combo: " + e);
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            System.out.println("CargarComboConsulta NullPointerException");
         }
 
+        AutoCompleteDecorator.decorate(elCombo);
         CambiarColorDisabledCombo(elCombo, Color.BLACK);
         con.DesconectarBasedeDatos();
     }
@@ -147,9 +148,5 @@ public class MetodosCombo {
         JScrollPane scrollPane = (JScrollPane) popup.getComponent(0);
         scrollPane.setHorizontalScrollBar(new JScrollBar(JScrollBar.HORIZONTAL));
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    }
-
-    public void CargarTitulosACombo(JTable tbPrincipal, JComboBox cbCampoBuscar) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -23,8 +23,8 @@ public class Configuracion extends javax.swing.JDialog {
 
         try {
             con = con.ObtenerRSSentencia("SELECT conf_valor FROM configuracion WHERE conf_codigo = '1' AND conf_descripcion = 'TIPOHOJA'");
-            if (con.rs.next()) {
-                cbTipoHoja.setSelectedItem(con.rs.getString("conf_valor"));
+            if (con.getResultSet().next()) {
+                cbTipoHoja.setSelectedItem(con.getResultSet().getString("conf_valor"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
