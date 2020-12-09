@@ -34,7 +34,6 @@ public class ReportePagos extends javax.swing.JDialog {
     MetodosTXT metodostxt = new MetodosTXT();
     Conexion con = new Conexion();
     DefaultTableModel modelTablePagos;
-    int totalMasc, totalFem;
     static org.apache.log4j.Logger log_historial = org.apache.log4j.Logger.getLogger(ReportePagos.class.getName());
 
     public ReportePagos(java.awt.Frame parent, boolean modal) {
@@ -96,7 +95,7 @@ public class ReportePagos extends javax.swing.JDialog {
                 total = total + monto;
                 modelTablePagos.addRow(new Object[]{numpago, fechapago, concepto, monto});
 
-                lblTotal.setText(metodostxt.DoubleAFormatoSudamerica(total) + " Gs.");
+                lblTotal.setText(metodostxt.DoubleAFormatSudamerica(total) + " Gs.");
             }
         } catch (SQLException e) {
             log_historial.error("Error 10218: " + e);
@@ -278,6 +277,8 @@ public class ReportePagos extends javax.swing.JDialog {
             }
         });
 
+        scPrincipal.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         tbPrincipal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         tbPrincipal.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         tbPrincipal.setModel(new javax.swing.table.DefaultTableModel(
@@ -456,17 +457,19 @@ public class ReportePagos extends javax.swing.JDialog {
         Map parametros;
         String rutajasper;
         InputStream logo = this.getClass().getResourceAsStream("/reportes/images/logo_ace.jpg");
+        InputStream logo2 = this.getClass().getResourceAsStream("/reportes/images/logo_sanroque.png");
 
         //Parametros
         parametros = new HashMap();
         parametros.clear();
         parametros.put("LOGO", logo);
-        parametros.put("FECHADESDEHASTA", lblTituloFecha.getText());
+        parametros.put("LOGO2", logo2);
+        parametros.put("FECHADESDEHASTA", "(" + lblTituloFecha.getText() + ")");
 
         parametros.put("ORDENADOPOR", cbOrdenar.getSelectedItem() + "");
         parametros.put("CONCEPTO", cbConcepto.getSelectedItem().toString());
         String[] totalsplit = lblTotal.getText().split(" ");
-        parametros.put("TOTAL", totalsplit[0]);
+        parametros.put("TOTAL", totalsplit[0]+" Gs");
 
         rutajasper = "/reportes/reporte_pagos.jasper";
 
@@ -483,7 +486,7 @@ public class ReportePagos extends javax.swing.JDialog {
             Object fila[] = new Object[tbPrincipal.getColumnCount()];
             for (int c = 0; c < tbPrincipal.getColumnCount(); c++) {
                 if (tbPrincipal.getColumnName(c).equals("Monto")) {
-                    fila[c] = metodostxt.DoubleAFormatoSudamerica(Double.parseDouble(tbPrincipal.getValueAt(f, c) + ""));
+                    fila[c] = metodostxt.DoubleAFormatSudamerica(Double.parseDouble(tbPrincipal.getValueAt(f, c) + ""));
                 } else {
                     fila[c] = tbPrincipal.getValueAt(f, c);
                 }

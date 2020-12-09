@@ -21,6 +21,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import static login.Login.codUsuario;
+import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
@@ -31,23 +32,21 @@ import utilidades.MetodosTXT;
  */
 public class ABMFuncionario extends javax.swing.JDialog {
 
-    Conexion con = new Conexion();
-    Metodos metodos = new Metodos();
-    MetodosTXT metodostxt = new MetodosTXT();
-    MetodosCombo metodoscombo = new MetodosCombo();
-    DefaultTableModel modelTableFuncionarios;
-    String nombreTablaBD = "Funcionario";
+    private Conexion con = new Conexion();
+    private Metodos metodos = new Metodos();
+    private MetodosTXT metodostxt = new MetodosTXT();
+    private MetodosCombo metodoscombo = new MetodosCombo();
+    private DefaultTableModel modelTableFuncionarios;
 
     public ABMFuncionario(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
 
-        txtBuscar.requestFocus();
-
         //Poner fecha actual
         dcFechaIngreso.setDate(new Date());
 
         //Metodos
+        TableRowFilterSupport.forTable(tbPrincipal).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera
         TablaConsultaBDAll(); //Trae todos los registros
         CargarComboBoxes();
 
@@ -70,15 +69,21 @@ public class ABMFuncionario extends javax.swing.JDialog {
         if (ComprobarCampos() == true) {
             String codigo = txtCodigo.getText();
             String nombre = metodos.MayusCadaPrimeraLetra(txtNombre.getText());
+            nombre = metodostxt.QuitaEspaciosString(nombre);
             String apellido = metodos.MayusCadaPrimeraLetra(txtApellido.getText());
+            apellido = metodostxt.QuitaEspaciosString(apellido);
             SimpleDateFormat formatofecha = new SimpleDateFormat("yyyy-MM-dd");
             String cedula = metodostxt.StringSinPuntosMiles(txtCedula.getText()) + "";
+            cedula = metodostxt.QuitaEspaciosString(cedula);
             String fechaingreso = formatofecha.format(dcFechaIngreso.getDate());
             String sexo = cbSexo.getSelectedItem().toString();
             String telefono = txtTelefono.getText();
+            telefono = metodostxt.QuitaEspaciosString(telefono);
             double salario = metodostxt.DoubleAFormatoAmericano(txtSalario.getText());
             String email = txtEmail.getText();
+            email = metodostxt.QuitaEspaciosString(email);
             String obs = taObs.getText();
+            obs = metodostxt.QuitaEspaciosString(obs);
             int estado = cbEstado.getSelectedIndex();
             int cargo = metodoscombo.ObtenerIDSelectCombo(cbCargo);
 
@@ -86,7 +91,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
                 //NUEVO REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de crear este nuevo registro?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
-                    String sentencia = "CALL SP_" + nombreTablaBD + "Alta ('" + nombre + "','" + apellido + "','" + cedula
+                    String sentencia = "CALL SP_FuncionarioAlta ('" + nombre + "','" + apellido + "','" + cedula
                             + "','" + fechaingreso + "','" + sexo + "','" + telefono + "','" + salario + "','" + email + "','" + obs + "','" + estado + "','" + cargo + "')";
                     con.EjecutarABM(sentencia, true);
 
@@ -98,7 +103,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
                 //MODIFICAR REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar este registro?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
-                    String sentencia = "CALL SP_" + nombreTablaBD + "Modificar(" + codigo + ",'" + nombre + "','" + apellido + "','" + cedula
+                    String sentencia = "CALL SP_FuncionarioModificar(" + codigo + ",'" + nombre + "','" + apellido + "','" + cedula
                             + "','" + fechaingreso + "','" + sexo + "','" + telefono + "','" + salario + "','" + email + "','" + obs + "','" + estado + "','" + cargo + "')";
                     con.EjecutarABM(sentencia, true);
 
@@ -117,7 +122,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
                     + "y los registros de docentes a cargo", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
                 int codigo = Integer.parseInt(tbPrincipal.getValueAt(filasel, 0) + "");
-                String sentencia = "CALL SP_" + nombreTablaBD + "Eliminar(" + codigo + ")";
+                String sentencia = "CALL SP_FuncionarioEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
                 TablaConsultaBDAll();
@@ -127,35 +132,28 @@ public class ABMFuncionario extends javax.swing.JDialog {
         } else {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtBuscar.requestFocus();
         }
     }
 
     private void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
-        if (cbCampoBuscar.getItemCount() == 0) {
-            for (int i = 0; i < tbPrincipal.getColumnCount(); i++) {
-                cbCampoBuscar.addItem(tbPrincipal.getColumnName(i));
-            }
-        }
-
         modelTableFuncionarios = (DefaultTableModel) tbPrincipal.getModel();//Cargamos campos de jtable al modeltable
         modelTableFuncionarios.setRowCount(0); //Vacia la tabla
 
-        String sentencia = "CALL SP_" + nombreTablaBD + "Consulta";
-
-        con = con.ObtenerRSSentencia(sentencia);
-
+        String sentencia = "CALL SP_FuncionarioConsulta()";
         try {
-            String codigo, nombre, apellido, cedula, fechaing, sexo, telefono, salario, email, obs, estado, cargo;
+            con = con.ObtenerRSSentencia(sentencia);
+            int codigo, cedula;
+            String nombre, apellido, fechaing, sexo, telefono, email, obs, estado, cargo;
+            double salario;
             while (con.getResultSet().next()) {
-                codigo = con.getResultSet().getString("fun_codigo");
+                codigo = con.getResultSet().getInt("fun_codigo");
                 nombre = con.getResultSet().getString("fun_nombre");
                 apellido = con.getResultSet().getString("fun_apellido");
-                cedula = metodostxt.StringPuntosMiles(con.getResultSet().getString("fun_cedula"));
+                cedula = con.getResultSet().getInt("fun_cedula");
                 fechaing = con.getResultSet().getString("fechaingreso");
                 sexo = con.getResultSet().getString("fun_sexo");
                 telefono = con.getResultSet().getString("fun_telefono");
-                salario = metodostxt.DoubleAFormatoSudamerica(Double.parseDouble(con.getResultSet().getString("fun_salario")));
+                salario = con.getResultSet().getDouble("fun_salario");
                 email = con.getResultSet().getString("fun_email");
                 obs = con.getResultSet().getString("fun_obs");
                 estado = con.getResultSet().getString("estado");
@@ -181,7 +179,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
         txtCodigo.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "");
         txtNombre.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1) + "");
         txtApellido.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 2) + "");
-        txtCedula.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 3) + "");
+        txtCedula.setText(metodostxt.StringPuntosMiles(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 3) + ""));
         try {
             java.util.Date fechaParseada = new SimpleDateFormat("dd/MM/yyyy").parse(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 4) + "");
             dcFechaIngreso.setDate(fechaParseada);
@@ -191,17 +189,14 @@ public class ABMFuncionario extends javax.swing.JDialog {
 
         cbSexo.setSelectedItem(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 5) + "");
         txtTelefono.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 6) + "");
-        txtSalario.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 7) + "");
+        txtSalario.setText(metodostxt.DoubleAFormatSudamerica(Double.parseDouble(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 7) + "")));
         txtEmail.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 8) + "");
         taObs.setText(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 9) + "");
         cbEstado.setSelectedItem(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 10) + "");
-
-        String cargo = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 11) + "";
-        metodoscombo.SetSelectedNombreItem(cbCargo, cargo);
+        metodoscombo.SetSelectedNombreItem(cbCargo, tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 11) + "");
     }
 
     private void ModoEdicion(boolean valor) {
-        txtBuscar.setEnabled(!valor);
         tbPrincipal.setEnabled(!valor);
         txtNombre.setEnabled(valor);
         txtApellido.setEnabled(valor);
@@ -240,7 +235,6 @@ public class ABMFuncionario extends javax.swing.JDialog {
         lblNombre.setForeground(new Color(102, 102, 102));
         lblApellido.setForeground(new Color(102, 102, 102));
 
-        txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
     }
 
@@ -261,16 +255,12 @@ public class ABMFuncionario extends javax.swing.JDialog {
 
         jpPrincipal = new javax.swing.JPanel();
         jpTabla = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
         scPrincipal = new javax.swing.JScrollPane();
         tbPrincipal = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex) {
                 return false; //Disallow the editing of any cell
             }
         };
-        lblBuscarCampo = new javax.swing.JLabel();
-        cbCampoBuscar = new javax.swing.JComboBox();
         lbCantRegistros = new javax.swing.JLabel();
         jpBotones = new javax.swing.JPanel();
         btnNuevo = new javax.swing.JButton();
@@ -320,20 +310,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
         jpTabla.setBackground(new java.awt.Color(233, 255, 255));
         jpTabla.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
-        jLabel10.setText("  BUSCAR ");
-
-        txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
-        txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
-        txtBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtBuscar.setCaretColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.setDisabledTextColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtBuscarKeyReleased(evt);
-            }
-        });
+        scPrincipal.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         tbPrincipal.setAutoCreateRowSorter(true);
         tbPrincipal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -345,7 +322,22 @@ public class ABMFuncionario extends javax.swing.JDialog {
             new String [] {
                 "Codigo", "Nombre", "Apellido", "N° de cédula", "Fecha de ingreso", "Sexo", "Teléfono", "Salario (Gs)", "Email", "Obs", "Estado", "Cargo"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbPrincipal.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbPrincipal.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbPrincipal.setGridColor(new java.awt.Color(0, 153, 204));
@@ -365,10 +357,6 @@ public class ABMFuncionario extends javax.swing.JDialog {
         });
         scPrincipal.setViewportView(tbPrincipal);
 
-        lblBuscarCampo.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        lblBuscarCampo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblBuscarCampo.setText("Buscar por:");
-
         lbCantRegistros.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         lbCantRegistros.setForeground(new java.awt.Color(153, 153, 0));
         lbCantRegistros.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -381,30 +369,17 @@ public class ABMFuncionario extends javax.swing.JDialog {
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
-                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(lblBuscarCampo)
-                            .addGap(4, 4, 4)
-                            .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 673, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lbCantRegistros, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 429, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 429, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(44, 44, 44))
+            .addGroup(jpTablaLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(scPrincipal)
+                .addContainerGap())
         );
         jpTablaLayout.setVerticalGroup(
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblBuscarCampo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
                 .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addGap(2, 2, 2)
                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -459,7 +434,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
         jpBotonesLayout.setHorizontalGroup(
             jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpBotonesLayout.createSequentialGroup()
-                .addContainerGap(13, Short.MAX_VALUE)
+                .addContainerGap(11, Short.MAX_VALUE)
                 .addGroup(jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -692,7 +667,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpEdicionLayout.createSequentialGroup()
                         .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblTelefono, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                            .addComponent(lblTelefono, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lblEmail, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblObs, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lblEstado, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -856,7 +831,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addComponent(jpTabla, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(jpTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
@@ -875,7 +850,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jpBotones, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                    .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 236, Short.MAX_VALUE)
                     .addComponent(jpTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(8, 8, 8)
                 .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -902,14 +877,6 @@ public class ABMFuncionario extends javax.swing.JDialog {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-//--------------------------Eventos de componentes----------------------------//
-    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-        metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
-
-        btnModificar.setEnabled(false);
-        btnEliminar.setEnabled(false);
-    }//GEN-LAST:event_txtBuscarKeyReleased
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         RegistroNuevoModificar();
@@ -1071,12 +1038,10 @@ public class ABMFuncionario extends javax.swing.JDialog {
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnNuevo;
-    private javax.swing.JComboBox cbCampoBuscar;
     private javax.swing.JComboBox<MetodosCombo> cbCargo;
     private javax.swing.JComboBox<String> cbEstado;
     private javax.swing.JComboBox<String> cbSexo;
     private com.toedter.calendar.JDateChooser dcFechaIngreso;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jpBotones;
     private javax.swing.JPanel jpBotones2;
@@ -1088,7 +1053,6 @@ public class ABMFuncionario extends javax.swing.JDialog {
     private javax.swing.JLabel lbCantRegistros;
     private javax.swing.JLabel lblApellido;
     private javax.swing.JLabel lblApellido1;
-    private javax.swing.JLabel lblBuscarCampo;
     private javax.swing.JLabel lblCodigo;
     private javax.swing.JLabel lblEmail;
     private javax.swing.JLabel lblEstado;
@@ -1105,7 +1069,6 @@ public class ABMFuncionario extends javax.swing.JDialog {
     private javax.swing.JTextArea taObs;
     private javax.swing.JTable tbPrincipal;
     private javax.swing.JTextField txtApellido;
-    private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtCedula;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtEmail;

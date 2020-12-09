@@ -6,18 +6,20 @@
 package forms;
 
 import conexion.Conexion;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
 import java.awt.Toolkit;
 
 import java.awt.event.KeyEvent;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 import utilidades.MetodosCombo;
@@ -28,19 +30,21 @@ import utilidades.MetodosCombo;
  */
 public class ABMNivelDocente extends javax.swing.JDialog {
 
-    Conexion con = new Conexion();
-    Metodos metodos = new Metodos();
-    MetodosTXT metodostxt = new MetodosTXT();
-    MetodosCombo metodoscombo = new MetodosCombo();
-    Calendar c2 = new GregorianCalendar();
+    private Conexion con = new Conexion();
+    private Metodos metodos = new Metodos();
+    private MetodosTXT metodostxt = new MetodosTXT();
+    private MetodosCombo metodoscombo = new MetodosCombo();
+    private Calendar c2 = new GregorianCalendar();
+    private DefaultTableModel modelTableNivelDocente;
 
     public ABMNivelDocente(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
 
         CargarComboBoxes();
+
+        TableRowFilterSupport.forTable(tbPrincipal).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera
         ConsultaDocentes(); //Trae todos los registros
-        txtBuscar.requestFocus();
 
         OrdenTabulador();
     }
@@ -107,18 +111,32 @@ public class ABMNivelDocente extends javax.swing.JDialog {
             }
         } else {
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtBuscar.requestFocus();
         }
     }
 
     private void ConsultaDocentes() {//Realiza la consulta de los productos que tenemos en la base de datos
-        String sentencia = "SELECT nivfun_codigo, CONCAT(fun_nombre,' ', fun_apellido) AS docente, nivfun_periodo "
-                + "FROM nivel_docente, funcionario "
-                + "WHERE nivfun_docente = fun_codigo AND nivfun_nivel = '" + metodoscombo.ObtenerIDSelectCombo(cbNivel) + "'";
-        String titlesJtabla[] = {"Código", "Docente", "Periodo"};
-        tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
-        cbCampoBuscar.setSelectedIndex(1);
-        metodos.AnchuraColumna(tbPrincipal);
+        modelTableNivelDocente = (DefaultTableModel) tbPrincipal.getModel();//Cargamos campos de jtable al modeltable
+        modelTableNivelDocente.setRowCount(0); //Vacia la tabla
+        try {
+            String sentencia = "SELECT nivfun_codigo, CONCAT(fun_nombre,' ', fun_apellido) AS docente, nivfun_periodo "
+                    + "FROM nivel_docente, funcionario "
+                    + "WHERE nivfun_docente = fun_codigo AND nivfun_nivel = '" + metodoscombo.ObtenerIDSelectCombo(cbNivel) + "'";
+            con = con.ObtenerRSSentencia(sentencia);
+            int codigo, periodo;
+            String docente;
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getInt("nivfun_codigo");
+                docente = con.getResultSet().getString("docente");
+                periodo = con.getResultSet().getInt("nivfun_periodo");
+
+                modelTableNivelDocente.addRow(new Object[]{codigo, docente, periodo});
+            }
+            tbPrincipal.setModel(modelTableNivelDocente);
+            metodos.AnchuraColumna(tbPrincipal);
+        } catch (SQLException | NullPointerException e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
 
         if (tbPrincipal.getModel().getRowCount() == 1) {
             lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registro encontrado");
@@ -137,7 +155,6 @@ public class ABMNivelDocente extends javax.swing.JDialog {
 
     private void ModoEdicion(boolean valor) {
         cbNivel.setEnabled(!valor);
-        txtBuscar.setEnabled(!valor);
         tbPrincipal.setEnabled(!valor);
         cbDocente.setEnabled(valor);
         dyPeriodo.setEnabled(valor);
@@ -156,7 +173,6 @@ public class ABMNivelDocente extends javax.swing.JDialog {
 
         dyPeriodo.setYear(c2.get(Calendar.YEAR));
 
-        txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
     }
 
@@ -184,16 +200,12 @@ public class ABMNivelDocente extends javax.swing.JDialog {
 
         jpPrincipal = new javax.swing.JPanel();
         jpTabla = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
         scPrincipal = new javax.swing.JScrollPane();
         tbPrincipal = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex) {
                 return false; //Disallow the editing of any cell
             }
         };
-        lblBuscarCampo = new javax.swing.JLabel();
-        cbCampoBuscar = new javax.swing.JComboBox();
         lbCantRegistros = new javax.swing.JLabel();
         jpBotones = new javax.swing.JPanel();
         btnNuevo = new javax.swing.JButton();
@@ -218,7 +230,7 @@ public class ABMNivelDocente extends javax.swing.JDialog {
         lblNivel = new javax.swing.JLabel();
         cbNivel = new javax.swing.JComboBox<>();
 
-        setTitle("Ventana niveles");
+        setTitle("Ventana docentes encargados");
         setBackground(new java.awt.Color(45, 62, 80));
         setResizable(false);
 
@@ -228,22 +240,6 @@ public class ABMNivelDocente extends javax.swing.JDialog {
         jpTabla.setBackground(new java.awt.Color(233, 255, 255));
         jpTabla.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
-        jLabel10.setText("  BUSCAR ");
-        jLabel10.setIconTextGap(0);
-
-        txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
-        txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
-        txtBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtBuscar.setCaretColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.setDisabledTextColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtBuscarKeyReleased(evt);
-            }
-        });
-
         tbPrincipal.setAutoCreateRowSorter(true);
         tbPrincipal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         tbPrincipal.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -252,9 +248,24 @@ public class ABMNivelDocente extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Codigo", "Docente", "Periodo"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.String.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbPrincipal.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbPrincipal.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbPrincipal.setGridColor(new java.awt.Color(0, 153, 204));
@@ -274,10 +285,6 @@ public class ABMNivelDocente extends javax.swing.JDialog {
         });
         scPrincipal.setViewportView(tbPrincipal);
 
-        lblBuscarCampo.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        lblBuscarCampo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblBuscarCampo.setText("Buscar por:");
-
         lbCantRegistros.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         lbCantRegistros.setForeground(new java.awt.Color(153, 153, 0));
         lbCantRegistros.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -288,35 +295,18 @@ public class ABMNivelDocente extends javax.swing.JDialog {
         jpTabla.setLayout(jpTablaLayout);
         jpTablaLayout.setHorizontalGroup(
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jpTablaLayout.createSequentialGroup()
-                .addContainerGap(8, Short.MAX_VALUE)
-                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 623, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jpTablaLayout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addGap(2, 2, 2)
-                        .addComponent(txtBuscar)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblBuscarCampo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-            .addGroup(jpTablaLayout.createSequentialGroup()
-                .addGap(292, 292, 292)
-                .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 502, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(127, 127, 127))
         );
         jpTablaLayout.setVerticalGroup(
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblBuscarCampo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
-                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -585,26 +575,27 @@ public class ABMNivelDocente extends javax.swing.JDialog {
         jpPrincipal.setLayout(jpPrincipalLayout);
         jpPrincipalLayout.setHorizontalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jpPrincipalLayout.createSequentialGroup()
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addGap(252, 252, 252)
-                        .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jtpEdicion)
-                            .addGroup(jpPrincipalLayout.createSequentialGroup()
-                                .addComponent(jpTabla, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cbNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(lblNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jpPrincipalLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 679, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jpPrincipalLayout.createSequentialGroup()
+                                .addComponent(jpTabla, javax.swing.GroupLayout.PREFERRED_SIZE, 518, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(180, 180, 180))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -631,9 +622,7 @@ public class ABMNivelDocente extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 814, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 691, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -646,20 +635,6 @@ public class ABMNivelDocente extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-//--------------------------Eventos de componentes----------------------------//
-    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-        metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
-
-        btnModificar.setEnabled(false);
-        btnEliminar.setEnabled(false);
-
-        if (tbPrincipal.getRowCount() == 1) {
-            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registro encontrado");
-        } else {
-            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
-        }
-    }//GEN-LAST:event_txtBuscarKeyReleased
-
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         RegistroNuevoModificar();
     }//GEN-LAST:event_btnGuardarActionPerformed
@@ -670,11 +645,11 @@ public class ABMNivelDocente extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-        Limpiar();
-        ModoEdicion(true);
-
         if (cbNivel.getSelectedIndex() != -1) {
             txtNivel.setText(cbNivel.getSelectedItem().toString());
+
+            Limpiar();
+            ModoEdicion(true);
         } else {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Seleccione un nivel", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -772,11 +747,9 @@ public class ABMNivelDocente extends javax.swing.JDialog {
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnNuevo;
-    private javax.swing.JComboBox cbCampoBuscar;
     private javax.swing.JComboBox<MetodosCombo> cbDocente;
     private javax.swing.JComboBox<MetodosCombo> cbNivel;
     private com.toedter.calendar.JYearChooser dyPeriodo;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jpBotones;
     private javax.swing.JPanel jpBotones2;
@@ -786,7 +759,6 @@ public class ABMNivelDocente extends javax.swing.JDialog {
     private javax.swing.JTabbedPane jtpEdicion;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;
-    private javax.swing.JLabel lblBuscarCampo;
     private javax.swing.JLabel lblCodigo;
     private javax.swing.JLabel lblDescripcion;
     private javax.swing.JLabel lblDocente;
@@ -795,7 +767,6 @@ public class ABMNivelDocente extends javax.swing.JDialog {
     private org.edisoncor.gui.panel.Panel panel2;
     private javax.swing.JScrollPane scPrincipal;
     private javax.swing.JTable tbPrincipal;
-    private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtNivel;
     // End of variables declaration//GEN-END:variables

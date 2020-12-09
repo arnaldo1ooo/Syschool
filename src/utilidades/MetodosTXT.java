@@ -31,9 +31,18 @@ public class MetodosTXT {
         //Declaramos una variable y le asignamos un evento
         char car = evt.getKeyChar();
         //Condicion que nos permite ingresar datos de tipo texto
-        if (((car < 'a' || car > 'z') && (car < 'A' || car > 'z')) && (car != 'ñ') && (car != (char) KeyEvent.VK_BACK_SPACE) && (car != (char) KeyEvent.VK_SPACE)) {
+        if (((car < 'a' || car > 'z') && (car < 'A' || car > 'z')) && (car != 'ñ') && (car != 'Ñ') && (car != (char) KeyEvent.VK_BACK_SPACE) && (car != (char) KeyEvent.VK_SPACE)) {
             evt.consume();
         }
+    }
+
+    public String QuitaEspaciosString(String texto) {
+        java.util.StringTokenizer tokens = new java.util.StringTokenizer(texto);
+        StringBuilder buff = new StringBuilder();
+        while (tokens.hasMoreTokens()) {
+            buff.append(" ").append(tokens.nextToken());
+        }
+        return buff.toString().trim();
     }
 
     public void SoloNumeroEnteroKeyTyped(KeyEvent evt) {
@@ -219,7 +228,7 @@ public class MetodosTXT {
     }
 
     //Convertir de Double americano a Double Sudamericano
-    public String DoubleAFormatoSudamerica(double elDoubleAmericano) {
+    public String DoubleAFormatSudamerica(double elDoubleAmericano) {
         //System.out.println("Sudamerica: " + elDoubleAmericano);
         String elDoubleSudamerica = "";
         BigDecimal elDoubleBig = BigDecimal.valueOf(elDoubleAmericano);
@@ -299,10 +308,12 @@ public class MetodosTXT {
             ElNumero = ElNumero.replace(",", "."); //Cambia la coma en punto
             ElNumeroDouble = Double.parseDouble(ElNumero);
         } catch (NumberFormatException e) {
-            System.out.println("Error DoubleAFormatoAmericano " + e);
-            log_historial.error("Error 1019: " + e);
-            e.printStackTrace();
+            System.out.println("Error DoubleAFormatoAmericano valor: " + ElNumero + ", Error:" + e);
+            /*log_historial.error("Error 1019 valor: " + ElNumero + ", Error:" + e);
+            e.printStackTrace();*/
+        } catch (NullPointerException e) {
         }
+
         return ElNumeroDouble;
     }
 

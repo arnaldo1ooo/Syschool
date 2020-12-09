@@ -9,22 +9,25 @@ import conexion.Conexion;
 import java.awt.Toolkit;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import static login.Login.codUsuario;
+import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 
 public class Matricula extends javax.swing.JDialog {
 
-    Conexion con = new Conexion();
-    Metodos metodos = new Metodos();
-    MetodosTXT metodostxt = new MetodosTXT();
+    private Conexion con = new Conexion();
+    private Metodos metodos = new Metodos();
+    private MetodosTXT metodostxt = new MetodosTXT();
+    private DefaultTableModel tableModelMatricula;
 
     public Matricula(javax.swing.JFrame parent, boolean eliminar) {
         super(parent);
         initComponents();
 
-        CargarFiltroPeriodo();
-        ConsultaMatriculaPorPeriodo(cbFiltroPeriodo.getSelectedItem().toString());
+        TableRowFilterSupport.forTable(tbPrincipal).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera        
+        ConsultaAllMatricula();
 
         if (eliminar == false) {
             btnEliminar.setVisible(eliminar);
@@ -35,32 +38,30 @@ public class Matricula extends javax.swing.JDialog {
         }
     }
 
-    private void CargarFiltroPeriodo() {
-        try {
-            con = con.ObtenerRSSentencia("SELECT mat_periodo FROM matricula GROUP BY(mat_periodo) ORDER BY mat_periodo DESC");
-            cbFiltroPeriodo.addItem("TODOS");
-            while (con.getResultSet().next()) {
-                cbFiltroPeriodo.addItem(con.getResultSet().getString("mat_periodo"));
-            }
-            if (cbFiltroPeriodo.getItemCount() == 1) {
-                cbFiltroPeriodo.setSelectedIndex(0);
-            } else {
-                cbFiltroPeriodo.setSelectedIndex(1);
-            }
+    private void ConsultaAllMatricula() {
+        tableModelMatricula = (DefaultTableModel) tbPrincipal.getModel();
+        tableModelMatricula.setRowCount(0);
 
-        } catch (SQLException e) {
+        try {
+            String sentencia = "CALL SP_MatriculaConsulta()";
+            con = con.ObtenerRSSentencia(sentencia);
+            int codigo, periodo;
+            String alumno, nivel, fecha;
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getInt("mat_codigo");
+                alumno = con.getResultSet().getString("nomapealumno");
+                nivel = con.getResultSet().getString("nivel");
+                fecha = con.getResultSet().getString("fecha");
+                periodo = con.getResultSet().getInt("mat_periodo");
+
+                tableModelMatricula.addRow(new Object[]{codigo, alumno, nivel, fecha, periodo});
+            }
+            tbPrincipal.setModel(tableModelMatricula);
+            metodos.AnchuraColumna(tbPrincipal);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         con.DesconectarBasedeDatos();
-    }
-
-    private void ConsultaMatriculaPorPeriodo(String periodo) {
-        String sentencia = "CALL SP_MatriculaConsultaPorPeriodo('" + periodo + "')";
-        String titlesJtabla[] = {"Código", "Alumno", "Nivel", "Fecha", "Periodo"};
-        tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
-
-        metodos.AnchuraColumna(tbPrincipal);
-        cbCampoBuscar.setSelectedIndex(1);
 
         if (tbPrincipal.getModel().getRowCount() == 1) {
             lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registro encontrado");
@@ -73,12 +74,7 @@ public class Matricula extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonAction1 = new org.edisoncor.gui.button.ButtonAction();
         panel1 = new org.edisoncor.gui.panel.Panel();
-        jLabel10 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
-        cbCampoBuscar = new javax.swing.JComboBox();
-        lblBuscarCampo = new javax.swing.JLabel();
         scPrincipal = new javax.swing.JScrollPane();
         tbPrincipal = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex) {
@@ -89,10 +85,6 @@ public class Matricula extends javax.swing.JDialog {
         panel3 = new org.edisoncor.gui.panel.Panel();
         labelMetric2 = new org.edisoncor.gui.label.LabelMetric();
         btnEliminar = new javax.swing.JButton();
-        cbFiltroPeriodo = new javax.swing.JComboBox();
-        lblBuscarCampo1 = new javax.swing.JLabel();
-
-        buttonAction1.setText("buttonAction1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Matriculas");
@@ -103,24 +95,7 @@ public class Matricula extends javax.swing.JDialog {
         panel1.setColorPrimario(new java.awt.Color(233, 255, 255));
         panel1.setColorSecundario(new java.awt.Color(255, 255, 255));
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
-        jLabel10.setText("  BUSCAR ");
-
-        txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
-        txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
-        txtBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtBuscar.setCaretColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.setDisabledTextColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtBuscarKeyReleased(evt);
-            }
-        });
-
-        lblBuscarCampo.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        lblBuscarCampo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblBuscarCampo.setText("Buscar por:");
+        scPrincipal.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         tbPrincipal.setAutoCreateRowSorter(true);
         tbPrincipal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -130,9 +105,24 @@ public class Matricula extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Codigo", "Alumno", "Nivel", "Fecha", "Periodo"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbPrincipal.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbPrincipal.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbPrincipal.setGridColor(new java.awt.Color(0, 153, 204));
@@ -183,16 +173,6 @@ public class Matricula extends javax.swing.JDialog {
             }
         });
 
-        cbFiltroPeriodo.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbFiltroPeriodoItemStateChanged(evt);
-            }
-        });
-
-        lblBuscarCampo1.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        lblBuscarCampo1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblBuscarCampo1.setText("Filtrar por periodo");
-
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
@@ -209,40 +189,15 @@ public class Matricula extends javax.swing.JDialog {
                         .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(scPrincipal))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblBuscarCampo))
-                        .addGap(18, 18, 18)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panel1Layout.createSequentialGroup()
-                                .addComponent(lblBuscarCampo1)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(cbFiltroPeriodo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(scPrincipal)))
                 .addContainerGap())
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addComponent(panel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblBuscarCampo)
-                    .addComponent(lblBuscarCampo1))
-                .addGap(0, 0, 0)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(cbFiltroPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
+                .addComponent(scPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12)
@@ -265,23 +220,10 @@ public class Matricula extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-        metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
-
-        btnEliminar.setEnabled(false);
-
-        if (tbPrincipal.getRowCount() == 1) {
-            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registro encontrado");
-        } else {
-            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
-        }
-    }//GEN-LAST:event_txtBuscarKeyReleased
-
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         if (tbPrincipal.getSelectedRow() == -1) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtBuscar.requestFocus();
         } else {
             int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea anular esta matricula?", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
@@ -290,14 +232,10 @@ public class Matricula extends javax.swing.JDialog {
                 String sentencia = "CALL SP_MatriculaEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
-                ConsultaMatriculaPorPeriodo(cbFiltroPeriodo.getSelectedItem().toString()); //Actualizar tabla
+                ConsultaAllMatricula();
             }
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
-
-    private void cbFiltroPeriodoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFiltroPeriodoItemStateChanged
-        ConsultaMatriculaPorPeriodo(cbFiltroPeriodo.getSelectedItem().toString());
-    }//GEN-LAST:event_cbFiltroPeriodoItemStateChanged
 
     public static void main(String args[]) {
 
@@ -318,18 +256,11 @@ public class Matricula extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEliminar;
-    private org.edisoncor.gui.button.ButtonAction buttonAction1;
-    private javax.swing.JComboBox cbCampoBuscar;
-    private javax.swing.JComboBox cbFiltroPeriodo;
-    private javax.swing.JLabel jLabel10;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;
-    private javax.swing.JLabel lblBuscarCampo;
-    private javax.swing.JLabel lblBuscarCampo1;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel3;
     private javax.swing.JScrollPane scPrincipal;
     private javax.swing.JTable tbPrincipal;
-    private javax.swing.JTextField txtBuscar;
     // End of variables declaration//GEN-END:variables
 }

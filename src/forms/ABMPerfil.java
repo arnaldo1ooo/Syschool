@@ -19,6 +19,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 import utilidades.MetodosCombo;
@@ -29,40 +30,23 @@ import utilidades.MetodosCombo;
  */
 public class ABMPerfil extends javax.swing.JDialog {
 
-    Conexion con = new Conexion();
-    Metodos metodos = new Metodos();
-    MetodosTXT metodostxt = new MetodosTXT();
-    MetodosCombo metodoscombo = new MetodosCombo();
-    DefaultTableModel tablemodelPerfilModulos;
+    private Conexion con = new Conexion();
+    private Metodos metodos = new Metodos();
+    private MetodosTXT metodostxt = new MetodosTXT();
+    private MetodosCombo metodoscombo = new MetodosCombo();
+    private DefaultTableModel tablemodelPerfil;
+    private DefaultTableModel tablemodelAllModulos;
 
     public ABMPerfil(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
 
-        TablaConsultaPerfilAll(); //Trae todos los registros
+        TableRowFilterSupport.forTable(tbAllPerfil).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera
+        TablaConsultaAllPerfil(); //Trae todos los registros
+        TableRowFilterSupport.forTable(tbPerfilModulos).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera
         TablaConsultaAllModulos();
 
-        txtBuscar.requestFocus();
-
         OrdenTabulador();
-    }
-
-    private void TablaConsultaAllModulos() {
-        try {
-            tablemodelPerfilModulos = (DefaultTableModel) tbPerfilModulos.getModel();
-            con = con.ObtenerRSSentencia("CALL SP_ModuloConsulta()");
-            while (con.getResultSet().next()) {
-                tablemodelPerfilModulos.addRow(new Object[]{con.getResultSet().getString("mo_codigo"), con.getResultSet().getString("mo_denominacion")});
-            }
-
-            tbPerfilModulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-            tbPerfilModulos.getColumnModel().getColumn(0).setPreferredWidth(70);
-            tbPerfilModulos.getColumnModel().getColumn(1).setPreferredWidth(tbPerfilModulos.getWidth() - 135);
-            tbPerfilModulos.getColumnModel().getColumn(2).setPreferredWidth(50);
-        } catch (SQLException | NullPointerException e) {
-            e.printStackTrace();
-        }
-        con.DesconectarBasedeDatos();
     }
 
 //--------------------------METODOS----------------------------//
@@ -122,7 +106,7 @@ public class ABMPerfil extends javax.swing.JDialog {
                         }
                     }
                 }
-                TablaConsultaPerfilAll(); //Actualizar tabla
+                TablaConsultaAllPerfil(); //Actualizar tabla
                 ModoEdicion(false);
                 Limpiar();
             }
@@ -133,58 +117,99 @@ public class ABMPerfil extends javax.swing.JDialog {
     }
 
     private void RegistroEliminar() {
-        int filasel = tbPrincipal.getSelectedRow();
+        int filasel = tbAllPerfil.getSelectedRow();
         if (filasel != -1) {
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro eliminar este perfil?", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
-                int codigo = Integer.parseInt(tbPrincipal.getValueAt(filasel, 0) + "");
+                int codigo = Integer.parseInt(tbAllPerfil.getValueAt(filasel, 0) + "");
                 String sentencia = "CALL SP_PerfilEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
-                TablaConsultaPerfilAll(); //Actualizar tabla
+                TablaConsultaAllPerfil(); //Actualizar tabla
                 ModoEdicion(false);
                 Limpiar();
             }
         } else {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtBuscar.requestFocus();
         }
     }
 
-    private void TablaConsultaPerfilAll() {//Realiza la consulta de los productos que tenemos en la base de datos
-        String sentencia = "CALL SP_PerfilConsulta";
-        String titlesJtabla[] = {"Código", "Denominación", "Descripción"};
-        tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
-        cbCampoBuscar.setSelectedIndex(1);
-        metodos.AnchuraColumna(tbPrincipal);
+    private void TablaConsultaAllPerfil() {//Realiza la consulta de los productos que tenemos en la base de datos
+        tablemodelPerfil = (DefaultTableModel) tbAllPerfil.getModel();//Cargamos campos de jtable al modeltable
+        tablemodelPerfil.setRowCount(0); //Vacia la tabla
+        try {
+            String sentencia = "CALL SP_PerfilConsulta()";
+            con = con.ObtenerRSSentencia(sentencia);
+            int codigo;
+            String denominacion, descripcion;
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getInt("per_codigo");
+                denominacion = con.getResultSet().getString("per_denominacion");
+                descripcion = con.getResultSet().getString("per_descripcion");
 
-        if (tbPrincipal.getModel().getRowCount() == 1) {
-            lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registro encontrado");
-        } else {
-            lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registros encontrados");
+                tablemodelPerfil.addRow(new Object[]{codigo, denominacion, descripcion});
+            }
+            tbAllPerfil.setModel(tablemodelPerfil);
+            metodos.AnchuraColumna(tbAllPerfil);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        con.DesconectarBasedeDatos();
+
+        if (tbAllPerfil.getModel().getRowCount() == 1) {
+            lbCantRegistros.setText(tbAllPerfil.getModel().getRowCount() + " Registro encontrado");
+        } else {
+            lbCantRegistros.setText(tbAllPerfil.getModel().getRowCount() + " Registros encontrados");
+        }
+    }
+
+    private void TablaConsultaAllModulos() {
+        tablemodelAllModulos = (DefaultTableModel) tbPerfilModulos.getModel();//Cargamos campos de jtable al modeltable
+        tablemodelAllModulos.setRowCount(0); //Vacia la tabla
+        try {
+            con = con.ObtenerRSSentencia("CALL SP_ModuloConsulta()");
+            int codigo;
+            String denominacion;
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getInt("mo_codigo");
+                denominacion = con.getResultSet().getString("mo_denominacion");
+
+                tablemodelAllModulos.addRow(new Object[]{codigo, denominacion});
+            }
+            tbPerfilModulos.setModel(tablemodelAllModulos);
+            metodos.AnchuraColumna(tbPerfilModulos);
+
+            /*tbPerfilModulos.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            tbPerfilModulos.getColumnModel().getColumn(0).setPreferredWidth(70);
+            tbPerfilModulos.getColumnModel().getColumn(1).setPreferredWidth(tbPerfilModulos.getWidth() - 135);
+            tbPerfilModulos.getColumnModel().getColumn(2).setPreferredWidth(50);*/
+        } catch (SQLException | NullPointerException e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
     }
 
     private void ModoVistaPrevia() {
-        txtCodigo.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + ""));
-        txtDenominacion.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1) + ""));
-        taDescripcion.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 2) + ""));
+        txtCodigo.setText(metodos.SiStringEsNull(tbAllPerfil.getValueAt(tbAllPerfil.getSelectedRow(), 0) + ""));
+        txtDenominacion.setText(metodos.SiStringEsNull(tbAllPerfil.getValueAt(tbAllPerfil.getSelectedRow(), 1) + ""));
+        taDescripcion.setText(metodos.SiStringEsNull(tbAllPerfil.getValueAt(tbAllPerfil.getSelectedRow(), 2) + ""));
 
         try {
-            for (int i = 0; i < tbPerfilModulos.getRowCount(); i++) {
-                tbPerfilModulos.setValueAt(false, i, 2);
+            for (int f = 0; f < tbPerfilModulos.getRowCount(); f++) {
+                tbPerfilModulos.setValueAt(false, f, 2);
             }
 
-            String codperfil = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "";
-            lblTituloPerfilModulos.setText("Módulos del perfil: " + tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1));
-            String sentencia = "SELECT mo_codigo, mo_denominacion FROM perfil_modulo, modulo WHERE permo_perfil = '" + codperfil
+            String idPerfil = tbAllPerfil.getValueAt(tbAllPerfil.getSelectedRow(), 0) + "";
+            lblTituloPerfilModulos.setText("Módulos del perfil: " + tbAllPerfil.getValueAt(tbAllPerfil.getSelectedRow(), 1));
+            String sentencia = "SELECT mo_codigo, mo_denominacion FROM perfil_modulo, modulo WHERE permo_perfil = '" + idPerfil
                     + "' AND permo_modulo=mo_codigo ORDER BY mo_denominacion";
             con = con.ObtenerRSSentencia(sentencia);
             while (con.getResultSet().next()) {
-                for (int i = 0, estado = 0; i < tbPerfilModulos.getRowCount() && estado == 0; i++) {
-                    if (con.getResultSet().getString("mo_codigo").equals(tbPerfilModulos.getValueAt(i, 0))) {
-                        tbPerfilModulos.setValueAt(true, i, 2);
+                for (int f = 0, estado = 0; f < tbPerfilModulos.getRowCount() && estado == 0; f++) {
+                    if (con.getResultSet().getInt("mo_codigo") == (int) tbPerfilModulos.getValueAt(f, 0)) {
+                        System.out.println("Prueba " + con.getResultSet().getString("mo_codigo"));
+                        tbPerfilModulos.setValueAt(true, f, 2);
                         estado = 1;
                     }
                 }
@@ -197,8 +222,7 @@ public class ABMPerfil extends javax.swing.JDialog {
     }
 
     private void ModoEdicion(boolean valor) {
-        txtBuscar.setEnabled(!valor);
-        tbPrincipal.setEnabled(!valor);
+        tbAllPerfil.setEnabled(!valor);
         txtDenominacion.setEnabled(valor);
         taDescripcion.setEnabled(valor);
         tbPerfilModulos.setEnabled(valor);
@@ -217,8 +241,7 @@ public class ABMPerfil extends javax.swing.JDialog {
         lblDescripcion.setForeground(Color.BLACK);
         txtDenominacion.setText("");
         taDescripcion.setText("");
-        txtBuscar.requestFocus();
-        tbPrincipal.clearSelection();
+        tbAllPerfil.clearSelection();
 
         for (int i = 0; i < tbPerfilModulos.getRowCount(); i++) {
             tbPerfilModulos.setValueAt(false, i, 2);
@@ -239,16 +262,12 @@ public class ABMPerfil extends javax.swing.JDialog {
 
         jpPrincipal = new javax.swing.JPanel();
         jpTabla = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
         scPrincipal = new javax.swing.JScrollPane();
-        tbPrincipal = new javax.swing.JTable(){
+        tbAllPerfil = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex) {
                 return false; //Disallow the editing of any cell
             }
         };
-        lblBuscarCampo = new javax.swing.JLabel();
-        cbCampoBuscar = new javax.swing.JComboBox();
         lbCantRegistros = new javax.swing.JLabel();
         jpBotones = new javax.swing.JPanel();
         btnNuevo = new javax.swing.JButton();
@@ -283,55 +302,52 @@ public class ABMPerfil extends javax.swing.JDialog {
         jpTabla.setBackground(new java.awt.Color(233, 255, 255));
         jpTabla.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
-        jLabel10.setText("  BUSCAR ");
-        jLabel10.setIconTextGap(0);
+        scPrincipal.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
-        txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
-        txtBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtBuscar.setCaretColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.setDisabledTextColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtBuscarKeyReleased(evt);
-            }
-        });
-
-        tbPrincipal.setAutoCreateRowSorter(true);
-        tbPrincipal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        tbPrincipal.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        tbPrincipal.setModel(new javax.swing.table.DefaultTableModel(
+        tbAllPerfil.setAutoCreateRowSorter(true);
+        tbAllPerfil.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        tbAllPerfil.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        tbAllPerfil.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
                 "Código", "Denominación", "Descripción"
             }
-        ));
-        tbPrincipal.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
-        tbPrincipal.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        tbPrincipal.setGridColor(new java.awt.Color(0, 153, 204));
-        tbPrincipal.setOpaque(false);
-        tbPrincipal.setRowHeight(20);
-        tbPrincipal.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tbPrincipal.getTableHeader().setReorderingAllowed(false);
-        tbPrincipal.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                tbPrincipalMousePressed(evt);
-            }
-        });
-        tbPrincipal.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                tbPrincipalKeyReleased(evt);
-            }
-        });
-        scPrincipal.setViewportView(tbPrincipal);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
 
-        lblBuscarCampo.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        lblBuscarCampo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblBuscarCampo.setText("Buscar por:");
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tbAllPerfil.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tbAllPerfil.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tbAllPerfil.setGridColor(new java.awt.Color(0, 153, 204));
+        tbAllPerfil.setOpaque(false);
+        tbAllPerfil.setRowHeight(20);
+        tbAllPerfil.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tbAllPerfil.getTableHeader().setReorderingAllowed(false);
+        tbAllPerfil.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tbAllPerfilMousePressed(evt);
+            }
+        });
+        tbAllPerfil.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tbAllPerfilKeyReleased(evt);
+            }
+        });
+        scPrincipal.setViewportView(tbAllPerfil);
 
         lbCantRegistros.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         lbCantRegistros.setForeground(new java.awt.Color(153, 153, 0));
@@ -343,20 +359,11 @@ public class ABMPerfil extends javax.swing.JDialog {
         jpTabla.setLayout(jpTablaLayout);
         jpTablaLayout.setHorizontalGroup(
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
+            .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scPrincipal)
-                    .addGroup(jpTablaLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lblBuscarCampo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jpTablaLayout.createSequentialGroup()
+                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scPrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 595, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -365,16 +372,10 @@ public class ABMPerfil extends javax.swing.JDialog {
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblBuscarCampo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jpBotones.setBackground(new java.awt.Color(233, 255, 255));
@@ -486,6 +487,8 @@ public class ABMPerfil extends javax.swing.JDialog {
             }
         });
 
+        jScrollPane3.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         tbPerfilModulos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -495,7 +498,7 @@ public class ABMPerfil extends javax.swing.JDialog {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, true
@@ -689,7 +692,7 @@ public class ABMPerfil extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jpTabla, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jpTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -715,20 +718,6 @@ public class ABMPerfil extends javax.swing.JDialog {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-//--------------------------Eventos de componentes----------------------------//
-    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-        metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
-
-        btnModificar.setEnabled(false);
-        btnEliminar.setEnabled(false);
-
-        if (tbPrincipal.getRowCount() == 1) {
-            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registro encontrado");
-        } else {
-            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
-        }
-    }//GEN-LAST:event_txtBuscarKeyReleased
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         RegistroNuevoModificar();
@@ -758,20 +747,20 @@ public class ABMPerfil extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_btnGuardarKeyPressed
 
-    private void tbPrincipalMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPrincipalMousePressed
-        if (tbPrincipal.isEnabled() == true) {
+    private void tbAllPerfilMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbAllPerfilMousePressed
+        if (tbAllPerfil.isEnabled() == true) {
             btnModificar.setEnabled(true);
             btnEliminar.setEnabled(true);
 
             ModoVistaPrevia();
         }
-    }//GEN-LAST:event_tbPrincipalMousePressed
+    }//GEN-LAST:event_tbAllPerfilMousePressed
 
-    private void tbPrincipalKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbPrincipalKeyReleased
+    private void tbAllPerfilKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tbAllPerfilKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
             ModoVistaPrevia();
         }
-    }//GEN-LAST:event_tbPrincipalKeyReleased
+    }//GEN-LAST:event_tbAllPerfilKeyReleased
 
     private void txtDenominacionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDenominacionKeyReleased
         // TODO add your handling code here:
@@ -823,8 +812,6 @@ public class ABMPerfil extends javax.swing.JDialog {
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnNuevo;
-    private javax.swing.JComboBox cbCampoBuscar;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
@@ -836,7 +823,6 @@ public class ABMPerfil extends javax.swing.JDialog {
     private javax.swing.JTabbedPane jtpEdicion;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;
-    private javax.swing.JLabel lblBuscarCampo;
     private javax.swing.JLabel lblCodigo;
     private javax.swing.JLabel lblDenominacion;
     private javax.swing.JLabel lblDescripcion;
@@ -844,9 +830,8 @@ public class ABMPerfil extends javax.swing.JDialog {
     private org.edisoncor.gui.panel.Panel panel2;
     private javax.swing.JScrollPane scPrincipal;
     private javax.swing.JTextArea taDescripcion;
+    private javax.swing.JTable tbAllPerfil;
     private javax.swing.JTable tbPerfilModulos;
-    private javax.swing.JTable tbPrincipal;
-    private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtDenominacion;
     // End of variables declaration//GEN-END:variables

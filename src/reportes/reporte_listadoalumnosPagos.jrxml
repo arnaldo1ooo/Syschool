@@ -5,6 +5,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="LOGO2" class="java.io.InputStream"/>
 	<parameter name="DOCENTE" class="java.lang.String"/>
 	<parameter name="NIVEL" class="java.lang.String"/>
 	<parameter name="PERIODO" class="java.lang.String"/>
@@ -47,6 +48,10 @@
 			<image hAlign="Center" vAlign="Top" onErrorType="Icon">
 				<reportElement stretchType="RelativeToTallestObject" x="142" y="0" width="275" height="60" uuid="a8053cd9-837f-4ff6-9002-ea0e22ed5d57"/>
 				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<image hAlign="Center" vAlign="Top" onErrorType="Icon">
+				<reportElement stretchType="RelativeToTallestObject" x="450" y="0" width="70" height="70" uuid="3cc5ce7e-1ec5-43de-95fd-a814ca371286"/>
+				<imageExpression><![CDATA[$P{LOGO2}]]></imageExpression>
 			</image>
 		</band>
 	</title>

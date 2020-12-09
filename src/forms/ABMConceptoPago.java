@@ -21,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 import static login.Login.codUsuario;
+import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
 
 /**
  *
@@ -28,9 +29,10 @@ import static login.Login.codUsuario;
  */
 public class ABMConceptoPago extends javax.swing.JDialog {
 
-    Conexion con = new Conexion();
-    Metodos metodos = new Metodos();
-    MetodosTXT metodostxt = new MetodosTXT();
+    private Conexion con = new Conexion();
+    private Metodos metodos = new Metodos();
+    private MetodosTXT metodostxt = new MetodosTXT();
+    private DefaultTableModel modelTablaPrincipal;
 
     public ABMConceptoPago(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -42,8 +44,8 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         btnModificar.setVisible(permisos.contains("M"));
         btnEliminar.setVisible(permisos.contains("B"));
 
+        TableRowFilterSupport.forTable(tbPrincipal).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera
         TablaConsultaBDAll(); //Trae todos los registros
-        txtBuscar.requestFocus();
 
         OrdenTabulador();
     }
@@ -111,63 +113,48 @@ public class ABMConceptoPago extends javax.swing.JDialog {
             }
         } else {
             Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(null, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtBuscar.requestFocus();
+            JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }
 
-    DefaultTableModel modelotabla;
-    Object[] fila;
-    double importe;
-
     private void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
-        String sentencia = "CALL SP_ConceptoConsulta";
-        String titlesJtabla[] = {"Código", "Descripción", "Tipo de importe", "Importe", "Tipo de pago", "N° de pagos",
-            "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+        modelTablaPrincipal = (DefaultTableModel) tbPrincipal.getModel();
+        modelTablaPrincipal.setRowCount(0);
 
-        if (cbCampoBuscar.getItemCount() == 0) {//Si combo esta vacio
-            for (int i = 0; i < titlesJtabla.length; i++) {
-                cbCampoBuscar.addItem(titlesJtabla[i]);
-            }
-            cbCampoBuscar.setSelectedIndex(1);
-        }
-
-        modelotabla = new DefaultTableModel(null, titlesJtabla);
-
+        String sentencia = "CALL SP_ConceptoConsulta()";
         con = con.ObtenerRSSentencia(sentencia);
-
         try {
-            fila = new Object[18];
+            int codigo, numpagos;
+            String descripcion, tipoimporte, tipopago;
+            double importe;
+            boolean ene, feb, mar, abr, may, jun, jul, ago, sept, oct, nov, dic;
             while (con.getResultSet().next()) {
-                fila[0] = con.getResultSet().getString(1);
-                fila[1] = con.getResultSet().getString(2);
-                fila[2] = con.getResultSet().getString(3);
-
+                codigo = con.getResultSet().getInt(1);
+                descripcion = con.getResultSet().getString(2);
+                tipoimporte = con.getResultSet().getString(3);
                 importe = con.getResultSet().getDouble(4);
-                fila[3] = metodostxt.DoubleAFormatoSudamerica(importe);
-                con.getResultSet().getString(4);
-                fila[4] = con.getResultSet().getString(5);
-                fila[5] = con.getResultSet().getString(6);
-                fila[6] = con.getResultSet().getString(7);
-                fila[7] = con.getResultSet().getString(8);
-                fila[8] = con.getResultSet().getString(9);
-                fila[9] = con.getResultSet().getString(10);
-                fila[10] = con.getResultSet().getString(11);
-                fila[11] = con.getResultSet().getString(12);
-                fila[12] = con.getResultSet().getString(13);
-                fila[13] = con.getResultSet().getString(14);
-                fila[14] = con.getResultSet().getString(15);
-                fila[15] = con.getResultSet().getString(16);
-                fila[16] = con.getResultSet().getString(17);
-                fila[17] = con.getResultSet().getString(18);
+                tipopago = con.getResultSet().getString(5);
+                numpagos = con.getResultSet().getInt(6);
+                ene = con.getResultSet().getBoolean(7);
+                feb = con.getResultSet().getBoolean(8);
+                mar = con.getResultSet().getBoolean(9);
+                abr = con.getResultSet().getBoolean(10);
+                may = con.getResultSet().getBoolean(11);
+                jun = con.getResultSet().getBoolean(12);
+                jul = con.getResultSet().getBoolean(13);
+                ago = con.getResultSet().getBoolean(14);
+                sept = con.getResultSet().getBoolean(15);
+                oct = con.getResultSet().getBoolean(16);
+                nov = con.getResultSet().getBoolean(17);
+                dic = con.getResultSet().getBoolean(18);
 
-                modelotabla.addRow(fila);//agrega el registro a la tabla
+                modelTablaPrincipal.addRow(new Object[]{codigo, descripcion, tipoimporte, importe, tipopago, numpagos, ene, feb, mar, abr, may, jun, jul, ago, sept, oct, nov, dic});//agrega el registro a la tabla
             }
+            tbPrincipal.setModel(modelTablaPrincipal);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         con.DesconectarBasedeDatos();
-        tbPrincipal.setModel(modelotabla);
         metodos.AnchuraColumna(tbPrincipal);
 
         if (tbPrincipal.getModel().getRowCount() == 1) {
@@ -181,25 +168,24 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         txtCodigo.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + ""));
         txtDescripcion.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1) + ""));
         cbTipoImporte.setSelectedItem(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 2) + ""));
-        txtImporte.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 3) + ""));
+        txtImporte.setText(metodostxt.DoubleAFormatSudamerica(Double.parseDouble(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 3) + "")));
         cbTipoPago.setSelectedItem(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 4) + ""));
         sfNumPagos.setValue(Integer.parseInt(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 5) + "")));
-        chbEne.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 6) + "") == 1));
-        chbFeb.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 7) + "") == 1));
-        chbMar.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 8) + "") == 1));
-        chbAbr.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 9) + "") == 1));
-        chbMay.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 10) + "") == 1));
-        chbJun.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 11) + "") == 1));
-        chbJul.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 12) + "") == 1));
-        chbAgo.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 13) + "") == 1));
-        chbSep.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 14) + "") == 1));
-        chbOct.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 15) + "") == 1));
-        chbNov.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 16) + "") == 1));
-        chbDic.setSelected((Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 17) + "") == 1));
+        chbEne.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 6));
+        chbFeb.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 7));
+        chbMar.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 8));
+        chbAbr.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 9));
+        chbMay.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 10));
+        chbJun.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 11));
+        chbJul.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 12));
+        chbAgo.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 13));
+        chbSep.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 14));
+        chbOct.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 15));
+        chbNov.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 16));
+        chbDic.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 17));
     }
 
     private void ModoEdicion(boolean valor) {
-        txtBuscar.setEnabled(!valor);
         tbPrincipal.setEnabled(!valor);
         txtDescripcion.setEnabled(valor);
         cbTipoImporte.setEnabled(valor);
@@ -248,7 +234,6 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         chbNov.setSelected(false);
         chbDic.setSelected(false);
 
-        txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
     }
 
@@ -309,16 +294,12 @@ public class ABMConceptoPago extends javax.swing.JDialog {
 
         jpPrincipal = new javax.swing.JPanel();
         jpTabla = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
         scPrincipal = new javax.swing.JScrollPane();
         tbPrincipal = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex) {
                 return false; //Disallow the editing of any cell
             }
         };
-        lblBuscarCampo = new javax.swing.JLabel();
-        cbCampoBuscar = new javax.swing.JComboBox();
         lbCantRegistros = new javax.swing.JLabel();
         jpBotones = new javax.swing.JPanel();
         btnNuevo = new javax.swing.JButton();
@@ -368,20 +349,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         jpTabla.setBackground(new java.awt.Color(233, 255, 255));
         jpTabla.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
-        jLabel10.setText("  BUSCAR ");
-
-        txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
-        txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
-        txtBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtBuscar.setCaretColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.setDisabledTextColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtBuscarKeyReleased(evt);
-            }
-        });
+        scPrincipal.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         tbPrincipal.setAutoCreateRowSorter(true);
         tbPrincipal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -391,9 +359,24 @@ public class ABMConceptoPago extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Codigo", "Descripcion", "Tipo de importe", "Importe", "Tipo de pago", "N° de pagos", "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbPrincipal.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbPrincipal.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbPrincipal.setGridColor(new java.awt.Color(0, 153, 204));
@@ -413,10 +396,6 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         });
         scPrincipal.setViewportView(tbPrincipal);
 
-        lblBuscarCampo.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        lblBuscarCampo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblBuscarCampo.setText("Buscar por:");
-
         lbCantRegistros.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         lbCantRegistros.setForeground(new java.awt.Color(153, 153, 0));
         lbCantRegistros.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -429,20 +408,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scPrincipal)
-                    .addGroup(jpTablaLayout.createSequentialGroup()
-                        .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jpTablaLayout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(102, 102, 102))
-                            .addGroup(jpTablaLayout.createSequentialGroup()
-                                .addComponent(jLabel10)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblBuscarCampo)
-                                .addGap(3, 3, 3)))
-                        .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(scPrincipal)
                 .addContainerGap())
             .addGroup(jpTablaLayout.createSequentialGroup()
                 .addGap(341, 341, 341)
@@ -453,16 +419,10 @@ public class ABMConceptoPago extends javax.swing.JDialog {
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblBuscarCampo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jpBotones.setBackground(new java.awt.Color(233, 255, 255));
@@ -518,7 +478,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
                     .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap(8, Short.MAX_VALUE))
         );
         jpBotonesLayout.setVerticalGroup(
             jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -897,7 +857,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
                 .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jpBotones, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                    .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 196, Short.MAX_VALUE)
                     .addComponent(jpTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -916,7 +876,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 585, Short.MAX_VALUE)
         );
 
         getAccessibleContext().setAccessibleName("Encargados");
@@ -924,20 +884,6 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-//--------------------------Eventos de componentes----------------------------//
-    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-        metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
-
-        btnModificar.setEnabled(false);
-        btnEliminar.setEnabled(false);
-
-        if (tbPrincipal.getRowCount() == 1) {
-            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registro encontrado");
-        } else {
-            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
-        }
-    }//GEN-LAST:event_txtBuscarKeyReleased
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         RegistroNuevoModificar();
@@ -1075,7 +1021,6 @@ public class ABMConceptoPago extends javax.swing.JDialog {
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnNuevo;
-    private javax.swing.JComboBox cbCampoBuscar;
     private javax.swing.JComboBox<String> cbTipoImporte;
     private javax.swing.JComboBox<String> cbTipoPago;
     private javax.swing.JCheckBox chbAbr;
@@ -1090,7 +1035,6 @@ public class ABMConceptoPago extends javax.swing.JDialog {
     private javax.swing.JCheckBox chbNov;
     private javax.swing.JCheckBox chbOct;
     private javax.swing.JCheckBox chbSep;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jpBotones;
     private javax.swing.JPanel jpBotones2;
@@ -1100,7 +1044,6 @@ public class ABMConceptoPago extends javax.swing.JDialog {
     private javax.swing.JTabbedPane jtpEdicion;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;
-    private javax.swing.JLabel lblBuscarCampo;
     private javax.swing.JLabel lblCodigo;
     private javax.swing.JLabel lblDescripcion;
     private javax.swing.JLabel lblImporte;
@@ -1112,7 +1055,6 @@ public class ABMConceptoPago extends javax.swing.JDialog {
     private javax.swing.JScrollPane scPrincipal;
     private com.toedter.components.JSpinField sfNumPagos;
     private javax.swing.JTable tbPrincipal;
-    private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtDescripcion;
     private javax.swing.JTextField txtImporte;

@@ -16,7 +16,9 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import static login.Login.codUsuario;
+import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 import utilidades.MetodosCombo;
@@ -27,10 +29,11 @@ import utilidades.MetodosCombo;
  */
 public class ABMNivel extends javax.swing.JDialog {
 
-    Conexion con = new Conexion();
-    Metodos metodos = new Metodos();
-    MetodosTXT metodostxt = new MetodosTXT();
-    MetodosCombo metodoscombo = new MetodosCombo();
+    private Conexion con = new Conexion();
+    private Metodos metodos = new Metodos();
+    private MetodosTXT metodostxt = new MetodosTXT();
+    private MetodosCombo metodoscombo = new MetodosCombo();
+    private DefaultTableModel modelTableNivel;
 
     public ABMNivel(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -42,8 +45,8 @@ public class ABMNivel extends javax.swing.JDialog {
         btnModificar.setVisible(permisos.contains("M"));
         btnEliminar.setVisible(permisos.contains("B"));
 
+        TableRowFilterSupport.forTable(tbPrincipal).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera
         TablaConsultaBDAll(); //Trae todos los registros
-        txtBuscar.requestFocus();
 
         OrdenTabulador();
     }
@@ -98,16 +101,32 @@ public class ABMNivel extends javax.swing.JDialog {
         } else {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtBuscar.requestFocus();
         }
     }
 
     private void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
-        String sentencia = "CALL SP_NivelConsulta";
-        String titlesJtabla[] = {"Código", "Descripción", "Sección", "Turno", "Tipo"};
-        tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
-        cbCampoBuscar.setSelectedIndex(1);
-        metodos.AnchuraColumna(tbPrincipal);
+        modelTableNivel = (DefaultTableModel) tbPrincipal.getModel();//Cargamos campos de jtable al modeltable
+        modelTableNivel.setRowCount(0); //Vacia la tabla
+        try {
+            String sentencia = "CALL SP_NivelConsulta()";
+            con = con.ObtenerRSSentencia(sentencia);
+            int codigo;
+            String descripcion, seccion, turno, tipo;
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getInt("niv_codigo");
+                descripcion = con.getResultSet().getString("niv_descripcion");
+                seccion = con.getResultSet().getString("niv_seccion");
+                turno = con.getResultSet().getString("niv_turno");
+                tipo = con.getResultSet().getString("niv_tipo");
+
+                modelTableNivel.addRow(new Object[]{codigo, descripcion, seccion, turno, tipo});
+            }
+            tbPrincipal.setModel(modelTableNivel);
+            metodos.AnchuraColumna(tbPrincipal);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
 
         if (tbPrincipal.getModel().getRowCount() == 1) {
             lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registro encontrado");
@@ -125,7 +144,6 @@ public class ABMNivel extends javax.swing.JDialog {
     }
 
     private void ModoEdicion(boolean valor) {
-        txtBuscar.setEnabled(!valor);
         tbPrincipal.setEnabled(!valor);
         txtDescripcion.setEnabled(valor);
         cbSeccion.setEnabled(valor);
@@ -149,7 +167,6 @@ public class ABMNivel extends javax.swing.JDialog {
         cbTurno.setSelectedIndex(0);
         cbTipo.setSelectedIndex(0);
 
-        txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
     }
 
@@ -167,16 +184,12 @@ public class ABMNivel extends javax.swing.JDialog {
 
         jpPrincipal = new javax.swing.JPanel();
         jpTabla = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
         scPrincipal = new javax.swing.JScrollPane();
         tbPrincipal = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex) {
                 return false; //Disallow the editing of any cell
             }
         };
-        lblBuscarCampo = new javax.swing.JLabel();
-        cbCampoBuscar = new javax.swing.JComboBox();
         lbCantRegistros = new javax.swing.JLabel();
         jpBotones = new javax.swing.JPanel();
         btnNuevo = new javax.swing.JButton();
@@ -211,21 +224,7 @@ public class ABMNivel extends javax.swing.JDialog {
         jpTabla.setBackground(new java.awt.Color(233, 255, 255));
         jpTabla.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
-        jLabel10.setText("  BUSCAR ");
-        jLabel10.setIconTextGap(0);
-
-        txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
-        txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
-        txtBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtBuscar.setCaretColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.setDisabledTextColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtBuscarKeyReleased(evt);
-            }
-        });
+        scPrincipal.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         tbPrincipal.setAutoCreateRowSorter(true);
         tbPrincipal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -235,9 +234,24 @@ public class ABMNivel extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Codigo", "Descripcion", "Seccion", "Turno", "Tipo"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbPrincipal.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbPrincipal.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbPrincipal.setGridColor(new java.awt.Color(0, 153, 204));
@@ -257,10 +271,6 @@ public class ABMNivel extends javax.swing.JDialog {
         });
         scPrincipal.setViewportView(tbPrincipal);
 
-        lblBuscarCampo.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        lblBuscarCampo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblBuscarCampo.setText("Buscar por:");
-
         lbCantRegistros.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         lbCantRegistros.setForeground(new java.awt.Color(153, 153, 0));
         lbCantRegistros.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -273,16 +283,7 @@ public class ABMNivel extends javax.swing.JDialog {
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap(8, Short.MAX_VALUE)
-                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 623, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jpTablaLayout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addGap(2, 2, 2)
-                        .addComponent(txtBuscar)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblBuscarCampo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 623, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(jpTablaLayout.createSequentialGroup()
                 .addGap(292, 292, 292)
@@ -293,16 +294,10 @@ public class ABMNivel extends javax.swing.JDialog {
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblBuscarCampo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
-                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         jpBotones.setBackground(new java.awt.Color(233, 255, 255));
@@ -625,20 +620,6 @@ public class ABMNivel extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-//--------------------------Eventos de componentes----------------------------//
-    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-        metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
-
-        btnModificar.setEnabled(false);
-        btnEliminar.setEnabled(false);
-
-        if (tbPrincipal.getRowCount() == 1) {
-            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registro encontrado");
-        } else {
-            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
-        }
-    }//GEN-LAST:event_txtBuscarKeyReleased
-
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         RegistroNuevoModificar();
     }//GEN-LAST:event_btnGuardarActionPerformed
@@ -735,11 +716,9 @@ public class ABMNivel extends javax.swing.JDialog {
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnNuevo;
-    private javax.swing.JComboBox cbCampoBuscar;
     private javax.swing.JComboBox<String> cbSeccion;
     private javax.swing.JComboBox<String> cbTipo;
     private javax.swing.JComboBox<String> cbTurno;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jpBotones;
     private javax.swing.JPanel jpBotones2;
@@ -749,7 +728,6 @@ public class ABMNivel extends javax.swing.JDialog {
     private javax.swing.JTabbedPane jtpEdicion;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;
-    private javax.swing.JLabel lblBuscarCampo;
     private javax.swing.JLabel lblCodigo;
     private javax.swing.JLabel lblDescripcion;
     private javax.swing.JLabel lblRucCedula1;
@@ -758,7 +736,6 @@ public class ABMNivel extends javax.swing.JDialog {
     private org.edisoncor.gui.panel.Panel panel2;
     private javax.swing.JScrollPane scPrincipal;
     private javax.swing.JTable tbPrincipal;
-    private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtDescripcion;
     // End of variables declaration//GEN-END:variables

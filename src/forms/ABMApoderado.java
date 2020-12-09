@@ -27,6 +27,7 @@ import javax.swing.table.DefaultTableModel;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 import static login.Login.codUsuario;
+import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
 import utilidades.MetodosCombo;
 
 /**
@@ -40,20 +41,20 @@ public class ABMApoderado extends javax.swing.JDialog {
     MetodosTXT metodostxt = new MetodosTXT();
     MetodosCombo metodoscombo = new MetodosCombo();
     DefaultTableModel modelTablaPoderantes;
+    DefaultTableModel modelTableApoderados;
 
     public ABMApoderado(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
 
         //Permiso Roles de usuario
-        //Permiso Roles de usuario
         String permisos = metodos.PermisoRol(codUsuario, "APODERADO");
         btnNuevo.setVisible(permisos.contains("A"));
         btnModificar.setVisible(permisos.contains("M"));
         btnEliminar.setVisible(permisos.contains("B"));
 
+        TableRowFilterSupport.forTable(tbPrincipal).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera
         TablaConsultaBDAll(); //Trae todos los registros
-        txtBuscar.requestFocus();
 
         //Cambiar color de disabled combo
         metodoscombo.CambiarColorDisabledCombo(cbSexo, Color.BLACK);
@@ -66,14 +67,21 @@ public class ABMApoderado extends javax.swing.JDialog {
         if (ComprobarCampos() == true) {
             String codigo = txtCodigoApoderado.getText();
             String cedula = metodostxt.StringSinPuntosMiles(txtCedula.getText()) + "";
+            cedula = metodostxt.QuitaEspaciosString(cedula);
             String nombre = metodos.MayusCadaPrimeraLetra(txtNombre.getText());
+            nombre = metodostxt.QuitaEspaciosString(nombre);
             String apellido = metodos.MayusCadaPrimeraLetra(txtApellido.getText());
+            apellido = metodostxt.QuitaEspaciosString(apellido);
             String sexo = cbSexo.getSelectedItem() + "";
             String direccion = metodos.MayusPrimeraLetra(txtDireccion.getText());
+            direccion = metodostxt.QuitaEspaciosString(direccion);
             String email = txtEmail.getText();
+            email = metodostxt.QuitaEspaciosString(email);
             String telefono = txtTelefono.getText();
+            telefono = metodostxt.QuitaEspaciosString(telefono);
             String obs = metodos.MayusPrimeraLetra(taObs.getText());
-
+            obs = metodostxt.QuitaEspaciosString(obs);
+            
             if (txtCodigoApoderado.getText().equals("")) { //NUEVO REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo apoderado?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
@@ -193,16 +201,36 @@ public class ABMApoderado extends javax.swing.JDialog {
             }
         } else {
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtBuscar.requestFocus();
         }
     }
 
     private void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
-        String sentencia = "CALL SP_ApoderadoConsulta";
-        String titlesJtabla[] = {"Código", "N° de Cédula", "Nombre", "Apellido", "Sexo", "Dirección", "Teléfono", "Email", "Observación"};
-        tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
-        cbCampoBuscar.setSelectedIndex(1);
-        metodos.AnchuraColumna(tbPrincipal);
+        try {
+            modelTableApoderados = (DefaultTableModel) tbPrincipal.getModel();
+            modelTableApoderados.setRowCount(0); //Vacia tabla
+
+            int codigo, cedula, telefono;
+            String nombre, apellido, sexo, direccion, email, obs;
+            con = con.ObtenerRSSentencia("CALL SP_ApoderadoConsulta()");
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getInt("apo_codigo");
+                cedula = con.getResultSet().getInt("apo_cedula");
+                nombre = con.getResultSet().getString("apo_nombre");
+                apellido = con.getResultSet().getString("apo_apellido");
+                sexo = con.getResultSet().getString("apo_sexo");
+                direccion = con.getResultSet().getString("apo_direccion");
+                telefono = con.getResultSet().getInt("apo_telefono");
+                email = con.getResultSet().getString("apo_email");
+                obs = con.getResultSet().getString("apo_obs");
+
+                modelTableApoderados.addRow(new Object[]{codigo, cedula, nombre, apellido, sexo, direccion, telefono, email, obs});
+            }
+            tbPrincipal.setModel(modelTableApoderados);
+            metodos.AnchuraColumna(tbPrincipal);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
 
         if (tbPrincipal.getModel().getRowCount() == 1) {
             lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registro encontrado");
@@ -230,7 +258,6 @@ public class ABMApoderado extends javax.swing.JDialog {
 
     private void ModoEdicion(boolean valor) {
         jtpEdicion.setSelectedIndex(0);
-        txtBuscar.setEnabled(!valor);
         tbPrincipal.setEnabled(!valor);
         txtCedula.setEnabled(valor);
         txtNombre.setEnabled(valor);
@@ -269,7 +296,6 @@ public class ABMApoderado extends javax.swing.JDialog {
         lblApellido.setForeground(new Color(102, 102, 102));
         lblDireccion.setForeground(new Color(102, 102, 102));
 
-        txtBuscar.requestFocus();
         tbPrincipal.clearSelection();
 
         modelTablaPoderantes = (DefaultTableModel) tbPoderantes.getModel();
@@ -351,16 +377,12 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtCodigoAlumno = new javax.swing.JTextField();
         jpPrincipal = new javax.swing.JPanel();
         jpTabla = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
         scPrincipal = new javax.swing.JScrollPane();
         tbPrincipal = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex) {
                 return false; //Disallow the editing of any cell
             }
         };
-        lblBuscarCampo = new javax.swing.JLabel();
-        cbCampoBuscar = new javax.swing.JComboBox();
         lbCantRegistros = new javax.swing.JLabel();
         jpBotones = new javax.swing.JPanel();
         btnNuevo = new javax.swing.JButton();
@@ -753,21 +775,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         jpTabla.setBackground(new java.awt.Color(233, 255, 255));
         jpTabla.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
-        jLabel10.setText("  BUSCAR ");
-        jLabel10.setFocusable(false);
-
-        txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
-        txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
-        txtBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtBuscar.setCaretColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.setDisabledTextColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtBuscarKeyReleased(evt);
-            }
-        });
+        scPrincipal.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         tbPrincipal.setAutoCreateRowSorter(true);
         tbPrincipal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -777,9 +785,24 @@ public class ABMApoderado extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Codigo", "N° de Cedula", "Nombre", "Apellido", "Sexo", "Direccion", "Telefono", "Email", "Observacion"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbPrincipal.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbPrincipal.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbPrincipal.setGridColor(new java.awt.Color(0, 153, 204));
@@ -799,11 +822,6 @@ public class ABMApoderado extends javax.swing.JDialog {
         });
         scPrincipal.setViewportView(tbPrincipal);
 
-        lblBuscarCampo.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        lblBuscarCampo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblBuscarCampo.setText("Buscar por:");
-        lblBuscarCampo.setFocusable(false);
-
         lbCantRegistros.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         lbCantRegistros.setForeground(new java.awt.Color(153, 153, 0));
         lbCantRegistros.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -818,31 +836,17 @@ public class ABMApoderado extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scPrincipal, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
-                                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblBuscarCampo)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lbCantRegistros, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(scPrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jpTablaLayout.setVerticalGroup(
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblBuscarCampo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
-                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -896,7 +900,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         jpBotonesLayout.setHorizontalGroup(
             jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpBotonesLayout.createSequentialGroup()
-                .addContainerGap(13, Short.MAX_VALUE)
+                .addContainerGap(11, Short.MAX_VALUE)
                 .addGroup(jpBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnNuevo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEliminar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1401,20 +1405,6 @@ public class ABMApoderado extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-//--------------------------Eventos de componentes----------------------------//
-    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-        metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
-
-        btnModificar.setEnabled(false);
-        btnEliminar.setEnabled(false);
-
-        if (tbPrincipal.getRowCount() == 1) {
-            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registro encontrado");
-        } else {
-            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
-        }
-    }//GEN-LAST:event_txtBuscarKeyReleased
-
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         RegistroNuevoModificar();
     }//GEN-LAST:event_btnGuardarActionPerformed
@@ -1751,7 +1741,6 @@ public class ABMApoderado extends javax.swing.JDialog {
             btnEliminarAlumno.setEnabled(false);
         } else {
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtBuscar.requestFocus();
         }
     }//GEN-LAST:event_btnEliminarAlumnoActionPerformed
 
@@ -1924,13 +1913,11 @@ public class ABMApoderado extends javax.swing.JDialog {
     private javax.swing.JButton btnModificarAlumno;
     private javax.swing.JButton btnNuevo;
     private javax.swing.JButton btnNuevoAlumno;
-    private javax.swing.JComboBox cbCampoBuscar;
     private javax.swing.JComboBox<String> cbEstadoAlumno;
     private javax.swing.JComboBox<String> cbSexo;
     private javax.swing.JComboBox<String> cbSexoAlumno;
     private com.toedter.calendar.JDateChooser dcFechaInscripcionAlumno;
     private com.toedter.calendar.JDateChooser dcFechaNacimientoAlumno;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jpAlumnosACargo;
@@ -1944,7 +1931,6 @@ public class ABMApoderado extends javax.swing.JDialog {
     private javax.swing.JLabel lbCantRegistros;
     private javax.swing.JLabel lblApellido;
     private javax.swing.JLabel lblApellidoAlumno;
-    private javax.swing.JLabel lblBuscarCampo;
     private javax.swing.JLabel lblCedula;
     private javax.swing.JLabel lblCedulaAlumno;
     private javax.swing.JLabel lblCodigo;
@@ -1978,7 +1964,6 @@ public class ABMApoderado extends javax.swing.JDialog {
     private javax.swing.JTable tbPrincipal;
     private javax.swing.JTextField txtApellido;
     private javax.swing.JTextField txtApellidoAlumno;
-    private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtCedula;
     private javax.swing.JTextField txtCedulaAlumno;
     private javax.swing.JTextField txtCodigoAlumno;

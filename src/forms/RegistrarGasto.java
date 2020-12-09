@@ -411,7 +411,7 @@ public class RegistrarGasto extends javax.swing.JDialog {
             con = con.ObtenerRSSentencia(sentencia);
             while (con.getResultSet().next()) {
                 if (con.getResultSet().getDouble("congas_monto") != 0) { //Si no es null
-                    txtMonto.setText(metodostxt.DoubleAFormatoSudamerica(con.getResultSet().getDouble("congas_monto")));
+                    txtMonto.setText(metodostxt.DoubleAFormatSudamerica(con.getResultSet().getDouble("congas_monto")));
                 } else {
                     txtMonto.setText("");
                 }

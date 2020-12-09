@@ -41,10 +41,12 @@ import javax.swing.table.TableRowSorter;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRResultSetDataSource;
+import net.sf.jasperreports.engine.JRRuntimeException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+import net.sf.jasperreports.engine.util.JRFontNotFoundException;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
 import org.apache.log4j.Logger;
@@ -252,6 +254,9 @@ public class Metodos {
         } catch (JRException e) {
             log_historial.error("Error 1008: " + e);
             e.printStackTrace();
+        } catch (JRRuntimeException e) {
+            log_historial.error("Error 1085: " + e);
+            e.printStackTrace();
         }
     }
 
@@ -281,43 +286,39 @@ public class Metodos {
                 con.DesconectarBasedeDatos();
             }
         } catch (JRException e) {
-            log_historial.error("Error 1009: " + e);
+            log_historial.error("Error 1009: consulta:" + consulta + ", rutajasper:" + rutajasper + ", Error:" + e);
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            log_historial.error("Error 1071: consulta:" + consulta + ", rutajasper:" + rutajasper + ", Error:" + e);
             e.printStackTrace();
         }
     }
 
     public String PermisoRol(String codUsuario, String modulo) {
-
-        con = con.ObtenerRSSentencia("CALL SP_UsuarioRolConsulta('" + codUsuario + "','" + modulo + "')");
-
         String permisos = "";
         String roldenominacion;
         String aliasusuario;
         try {
-
+            con = con.ObtenerRSSentencia("CALL SP_UsuarioRolConsulta('" + codUsuario + "','" + modulo + "')");
             while (con.getResultSet().next()) {
                 roldenominacion = con.getResultSet().getString("rol_denominacion");
                 aliasusuario = con.getResultSet().getString("usu_alias");
                 switch (roldenominacion) {
-                    case "ALTA":
+                    case "ALTA" -> {
                         permisos = permisos.concat("A");
-                        break;
-
-                    case "MODIFICAR":
-                        permisos = permisos.concat("M");
-                        break;
-
-                    case "BAJA":
+                        System.out.println("El usuario " + aliasusuario + " en el modulo " + modulo + " tiene permiso para Alta");
+                    }
+                    case "BAJA" -> {
                         permisos = permisos.concat("B");
-                        break;
-
-                    default:
-                        System.out.println("No coincide ninguno");
-                        break;
+                        System.out.println("El usuario " + aliasusuario + " en el modulo " + modulo + " tiene permiso para Baja");
+                    }
+                    case "MODIFICAR" -> {
+                        permisos = permisos.concat("M");
+                        System.out.println("El usuario " + aliasusuario + " en el modulo " + modulo + " tiene permiso para Modificar");
+                    }
+                    default ->
+                        System.out.println("No coincide ninguno: " + roldenominacion);
                 }
-                System.out.println("El usuario " + aliasusuario + " en el modulo " + modulo + " tiene permiso para " + roldenominacion
-                );
-
             }
         } catch (SQLException e) {
             log_historial.error("Error 1010: " + e);

@@ -78,14 +78,13 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
 
             DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
             String fecha = formatoFecha.format(dcFecha.getDate());
-            String mes = cbMes.getSelectedItem() + "";
+            String mes = cbMes.getSelectedItem().toString() + "";
             String obs = txtObs.getText();
 
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este pago de salario?", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
                 //Registrar nuevo gasto
-                String sentencia = "CALL SP_PagoSalarioAlta('" + numpago + "','" + idfuncionario + "','" + salario + "','" + fecha
-                        + "','" + mes + "','" + obs + "')";
+                String sentencia = "CALL SP_PagoSalarioAlta('" + numpago + "','" + idfuncionario + "','" + salario + "','" + fecha + "','" + mes + "','" + obs + "')";
                 con.EjecutarABM(sentencia, true);
                 ImprimirRecibo();
                 GenerarNumpago();
@@ -97,6 +96,8 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
     private void Limpiar() {
         cbFuncionario.setSelectedIndex(-1);
         txtSalario.setText("");
+        txtCedula.setText("");
+        txtCargo.setText("");
         dcFecha.setDate(new Date());
         cbMes.setSelectedIndex(0);
         txtObs.setText("");
@@ -456,7 +457,7 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
                                         .addComponent(txtSalario)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(lblFechaRegistro)
-                                        .addGap(51, 51, 51))
+                                        .addGap(6, 6, 6))
                                     .addGroup(panel1Layout.createSequentialGroup()
                                         .addComponent(cbFuncionario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
@@ -483,17 +484,16 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblCodigo10, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCargo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtCargo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblFechaRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(cbFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                                .addComponent(lblCodigo6, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lblFechaRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(lblCodigo6, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(lblCodigo9, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -592,7 +592,7 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
             con = con.ObtenerRSSentencia(sentencia);
             while (con.getResultSet().next()) {
                 txtCedula.setText(metodostxt.StringPuntosMiles(con.getResultSet().getString("fun_cedula")));
-                txtSalario.setText(metodostxt.DoubleAFormatoSudamerica(con.getResultSet().getDouble("fun_salario")));
+                txtSalario.setText(metodostxt.DoubleAFormatSudamerica(con.getResultSet().getDouble("fun_salario")));
                 txtCargo.setText(con.getResultSet().getString("car_descripcion"));
             }
         } catch (SQLException e) {

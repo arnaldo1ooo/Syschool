@@ -9,23 +9,26 @@ import conexion.Conexion;
 import java.awt.Toolkit;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import static login.Login.codUsuario;
+import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 
 public class PagoSalarial extends javax.swing.JDialog {
 
-    Conexion con = new Conexion();
-    Metodos metodos = new Metodos();
-    MetodosTXT metodostxt = new MetodosTXT();
+    private Conexion con = new Conexion();
+    private Metodos metodos = new Metodos();
+    private MetodosTXT metodostxt = new MetodosTXT();
+    private DefaultTableModel modelTablePagoSal;
 
     public PagoSalarial(javax.swing.JFrame parent, boolean eliminar) {
         super(parent);
         initComponents();
 
         //Metodos
-        CargarFiltroAnho();
-        ConsultaAllPagoSal(cbFiltroAnho.getSelectedItem() + "");
+        TableRowFilterSupport.forTable(tbPrincipal).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera
+        ConsultaAllPagoSal();
 
         if (eliminar == false) {
             //Oculta los botones si no es para eliminar pago
@@ -37,39 +40,32 @@ public class PagoSalarial extends javax.swing.JDialog {
         }
     }
 
-    private void CargarFiltroAnho() {
+    private void ConsultaAllPagoSal() {
+        modelTablePagoSal = (DefaultTableModel) tbPrincipal.getModel();
+        modelTablePagoSal.setRowCount(0); //Vacia tabla
         try {
-            cbFiltroAnho.addItem("TODOS");
-            con = con.ObtenerRSSentencia("SELECT YEAR(pasal_fecha) AS anho FROM pago_salario GROUP BY(pasal_fecha) ORDER BY pasal_fecha DESC");
+            String sentencia = "CALL SP_PagoSalarioConsulta()";
+            con = con.ObtenerRSSentencia(sentencia);
+            int codigo, numpago;
+            String funcionario, fecha, mes, obs;
+            double salario;
             while (con.getResultSet().next()) {
-                cbFiltroAnho.addItem(con.getResultSet().getString("anho"));
-            }
-            if (cbFiltroAnho.getItemCount() == 1) {
-                cbFiltroAnho.setSelectedIndex(0);
-            } else {
-                cbFiltroAnho.setSelectedIndex(1);
-            }
+                codigo = con.getResultSet().getInt("pasal_codigo");
+                numpago = con.getResultSet().getInt("pasal_numpago");
+                funcionario = con.getResultSet().getString("nomape");
+                salario = con.getResultSet().getDouble("pasal_salario");
+                fecha = con.getResultSet().getString("fecha");
+                mes = con.getResultSet().getString("pasal_mes");
+                obs = con.getResultSet().getString("pasal_obs");
 
-        } catch (SQLException e) {
+                modelTablePagoSal.addRow(new Object[]{codigo, numpago, funcionario, salario, fecha, mes, obs});
+            }
+            tbPrincipal.setModel(modelTablePagoSal);
+            metodos.AnchuraColumna(tbPrincipal);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         con.DesconectarBasedeDatos();
-    }
-
-    private void ConsultaAllPagoSal(String anho) {
-        String sentencia = "CALL SP_PagoSalarioConsultaPorAnho('" + anho + "')";
-        String titlesJtabla[] = {"Código", "N° de pago", "Funcionario", "Salario", "Fecha", "Mes", "Obs"};
-        tbPrincipal.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscar));
-
-        double salario;
-        for (int i = 0; i < tbPrincipal.getRowCount(); i++) {
-            salario = Double.parseDouble(tbPrincipal.getValueAt(i, 3) + "");
-            salario = metodostxt.FormatearATresDecimales(salario);
-            tbPrincipal.setValueAt(metodostxt.DoubleAFormatoSudamerica(salario), i, 3);
-        }
-
-        metodos.AnchuraColumna(tbPrincipal);
-        cbCampoBuscar.setSelectedIndex(2);
 
         if (tbPrincipal.getModel().getRowCount() == 1) {
             lbCantRegistros.setText(tbPrincipal.getModel().getRowCount() + " Registro encontrado");
@@ -83,8 +79,6 @@ public class PagoSalarial extends javax.swing.JDialog {
     private void initComponents() {
 
         panel1 = new org.edisoncor.gui.panel.Panel();
-        jLabel10 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
         scPrincipal = new javax.swing.JScrollPane();
         tbPrincipal = new javax.swing.JTable(){
             public boolean isCellEditable(int rowIndex, int colIndex) {
@@ -95,10 +89,6 @@ public class PagoSalarial extends javax.swing.JDialog {
         panel3 = new org.edisoncor.gui.panel.Panel();
         labelMetric2 = new org.edisoncor.gui.label.LabelMetric();
         btnEliminar = new javax.swing.JButton();
-        cbFiltroAnho = new javax.swing.JComboBox();
-        lblBuscarCampo1 = new javax.swing.JLabel();
-        cbCampoBuscar = new javax.swing.JComboBox();
-        lblBuscarCampo2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Ventana Pagos de salario");
@@ -108,21 +98,7 @@ public class PagoSalarial extends javax.swing.JDialog {
         panel1.setColorPrimario(new java.awt.Color(233, 255, 255));
         panel1.setColorSecundario(new java.awt.Color(255, 255, 255));
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
-        jLabel10.setText("  BUSCAR ");
-        jLabel10.setIconTextGap(1);
-
-        txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
-        txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
-        txtBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtBuscar.setCaretColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.setDisabledTextColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtBuscarKeyReleased(evt);
-            }
-        });
+        scPrincipal.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         tbPrincipal.setAutoCreateRowSorter(true);
         tbPrincipal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -132,9 +108,24 @@ public class PagoSalarial extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Codigo", "N° de pago", "Funcionario", "Salario", "Fecha", "Mes", "Obs"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbPrincipal.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbPrincipal.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbPrincipal.setGridColor(new java.awt.Color(0, 153, 204));
@@ -198,72 +189,33 @@ public class PagoSalarial extends javax.swing.JDialog {
             }
         });
 
-        cbFiltroAnho.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbFiltroAnhoItemStateChanged(evt);
-            }
-        });
-
-        lblBuscarCampo1.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        lblBuscarCampo1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblBuscarCampo1.setText("Filtrar por año");
-
-        lblBuscarCampo2.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        lblBuscarCampo2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblBuscarCampo2.setText("Buscar por");
-
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(lblBuscarCampo1)
-                                .addComponent(cbFiltroAnho, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
-                                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblBuscarCampo2)
-                                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(165, 165, 165))))
-                    .addComponent(scPrincipal)
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(117, 117, 117))
             .addGroup(panel1Layout.createSequentialGroup()
-                .addGap(271, 271, 271)
-                .addComponent(btnEliminar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panel1Layout.createSequentialGroup()
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel1Layout.createSequentialGroup()
+                                .addGap(271, 271, 271)
+                                .addComponent(btnEliminar))
+                            .addGroup(panel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 706, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(panel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(19, 19, 19)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lblBuscarCampo2)
-                            .addComponent(lblBuscarCampo1))
-                        .addGap(2, 2, 2)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(cbFiltroAnho, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(4, 4, 4)
-                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(panel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -275,7 +227,7 @@ public class PagoSalarial extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, 718, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -290,15 +242,10 @@ public class PagoSalarial extends javax.swing.JDialog {
 
     }//GEN-LAST:event_tbPrincipalMousePressed
 
-    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-        metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
-    }//GEN-LAST:event_txtBuscarKeyReleased
-
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         if (tbPrincipal.getSelectedRow() == -1) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtBuscar.requestFocus();
         } else {
             int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea anular este pago salarial?", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
@@ -307,7 +254,7 @@ public class PagoSalarial extends javax.swing.JDialog {
                 String sentencia = "CALL SP_PagoSalarioEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
-                ConsultaAllPagoSal(cbFiltroAnho.getSelectedItem() + "");//Actualizar tabla
+                ConsultaAllPagoSal();
             }
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
@@ -319,10 +266,6 @@ public class PagoSalarial extends javax.swing.JDialog {
     private void tbPrincipalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPrincipalMouseClicked
 
     }//GEN-LAST:event_tbPrincipalMouseClicked
-
-    private void cbFiltroAnhoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbFiltroAnhoItemStateChanged
-        ConsultaAllPagoSal(cbFiltroAnho.getSelectedItem() + "");
-    }//GEN-LAST:event_cbFiltroAnhoItemStateChanged
 
     public static void main(String args[]) {
 
@@ -343,17 +286,11 @@ public class PagoSalarial extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEliminar;
-    private javax.swing.JComboBox cbCampoBuscar;
-    private javax.swing.JComboBox cbFiltroAnho;
-    private javax.swing.JLabel jLabel10;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;
-    private javax.swing.JLabel lblBuscarCampo1;
-    private javax.swing.JLabel lblBuscarCampo2;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel3;
     private javax.swing.JScrollPane scPrincipal;
     private javax.swing.JTable tbPrincipal;
-    private javax.swing.JTextField txtBuscar;
     // End of variables declaration//GEN-END:variables
 }

@@ -12,15 +12,17 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import static login.Login.codUsuario;
+import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 
 public class Pago extends javax.swing.JDialog {
 
-    Conexion con = new Conexion();
-    Metodos metodos = new Metodos();
-    MetodosTXT metodostxt = new MetodosTXT();
-    DefaultTableModel modeltablePago;
+    private Conexion con = new Conexion();
+    private Metodos metodos = new Metodos();
+    private MetodosTXT metodostxt = new MetodosTXT();
+    private DefaultTableModel modelTablePago;
+    private DefaultTableModel modelTablePagoConceptos;
 
     public Pago(javax.swing.JFrame parent, boolean eliminar) {
         super(parent);
@@ -34,20 +36,14 @@ public class Pago extends javax.swing.JDialog {
             String permisos = metodos.PermisoRol(codUsuario, "PAGO");
             btnEliminar.setVisible(permisos.contains("B"));
         }
-
+        TableRowFilterSupport.forTable(tbPrincipal).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera
+        TableRowFilterSupport.forTable(tbConceptosPagados).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera
         ConsultaPagos();
     }
 
     private void ConsultaPagos() {
-        modeltablePago = (DefaultTableModel) tbPrincipal.getModel();
-        modeltablePago.setRowCount(0); //Vacia tabla
-        //Cargar Combo Buscar
-        if (cbCampoBuscar.getItemCount() == 0) {
-            for (int i = 0; i < modeltablePago.getColumnCount(); i++) {
-                cbCampoBuscar.addItem(modeltablePago.getColumnName(i));
-            }
-            cbCampoBuscar.setSelectedIndex(1);
-        }
+        modelTablePago = (DefaultTableModel) tbPrincipal.getModel();
+        modelTablePago.setRowCount(0); //Vacia tabla
 
         try {
             String sentencia = "CALL SP_PagoConsulta()";
@@ -64,10 +60,10 @@ public class Pago extends javax.swing.JDialog {
                 total = metodostxt.FormatearATresDecimales(con.getResultSet().getDouble("totalpago"));
                 periodo = con.getResultSet().getInt("pag_periodo");
 
-                modeltablePago.addRow(new Object[]{codigo, numpago, apoderado, fechapago, importe, total, periodo});
+                modelTablePago.addRow(new Object[]{codigo, numpago, apoderado, fechapago, importe, total, periodo});
             }
             con.DesconectarBasedeDatos();
-            tbPrincipal.setModel(modeltablePago);
+            tbPrincipal.setModel(modelTablePago);
             metodos.AnchuraColumna(tbPrincipal);
         } catch (SQLException | NullPointerException e) {
             e.printStackTrace();
@@ -81,24 +77,31 @@ public class Pago extends javax.swing.JDialog {
     }
 
     private void ConsultaConceptoPagos() {
-        int codPagoSelect = Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0).toString());
-        String sentencia = "CALL SP_PagoConceptosConsulta(" + codPagoSelect + ")";
-        String titlesJtabla[] = {"Concepto", "N° de cuotas pagadas", "Meses", "Monto", "Subtotal"};
+        modelTablePagoConceptos = (DefaultTableModel) tbConceptosPagados.getModel();
+        modelTablePagoConceptos.setRowCount(0); //Vacia tabla
+        try {
+            int idPagoSelect = (int) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0);
+            String sentencia = "CALL SP_PagoConceptosConsulta(" + idPagoSelect + ")";
+            con = con.ObtenerRSSentencia(sentencia);
+            String concepto, meses;
+            int numcuotaspagadas;
+            double monto, subtotal;
+            while (con.getResultSet().next()) {
+                concepto = con.getResultSet().getString("con_descripcion");
+                numcuotaspagadas = con.getResultSet().getInt("pagcon_numcuotas");
+                meses = con.getResultSet().getString("pagcon_meses");
+                monto = con.getResultSet().getDouble("pagcon_monto");
+                subtotal = con.getResultSet().getDouble("subtotal");
 
-        tbConceptosPagados.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, null));
+                modelTablePagoConceptos.addRow(new Object[]{concepto, numcuotaspagadas, meses, monto, subtotal});
+            }
+            tbConceptosPagados.setModel(modelTablePagoConceptos);
+            metodos.AnchuraColumna(tbConceptosPagados);
 
-        //Convertir monto y subtotal
-        double monto;
-        double subtotal;
-        for (int i = 0; i < tbConceptosPagados.getRowCount(); i++) {
-            monto = Double.parseDouble(tbConceptosPagados.getValueAt(i, 3).toString());
-            monto = metodostxt.FormatearATresDecimales(monto);
-            tbConceptosPagados.setValueAt(metodostxt.DoubleAFormatoSudamerica(monto), i, 3);
-            subtotal = Double.parseDouble(tbConceptosPagados.getValueAt(i, 4).toString());
-            subtotal = metodostxt.FormatearATresDecimales(subtotal);
-            tbConceptosPagados.setValueAt(metodostxt.DoubleAFormatoSudamerica(subtotal), i, 4);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        //metodos.AnchuraColumna(tbConceptosPagados);
+        con.DesconectarBasedeDatos();
 
         if (tbConceptosPagados.getModel().getRowCount() == 1) {
             lbCantRegistrosProductos.setText(tbConceptosPagados.getModel().getRowCount() + " Registro encontrado");
@@ -108,8 +111,7 @@ public class Pago extends javax.swing.JDialog {
 
         if (tbPrincipal.getSelectedRowCount() > 0) {
             String numcompra = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1).toString();
-            pnProductosComprados.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(),
-                    "Conceptos del pago N° " + numcompra));
+            pnProductosComprados.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Conceptos del pago N° " + numcompra));
         }
     }
 
@@ -119,9 +121,6 @@ public class Pago extends javax.swing.JDialog {
 
         brightPassFilter1 = new org.edisoncor.gui.util.BrightPassFilter();
         panel1 = new org.edisoncor.gui.panel.Panel();
-        jLabel10 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
-        cbCampoBuscar = new javax.swing.JComboBox();
         pnProductosComprados = new javax.swing.JPanel();
         scPrincipal1 = new javax.swing.JScrollPane();
         tbConceptosPagados = new javax.swing.JTable(){
@@ -140,7 +139,6 @@ public class Pago extends javax.swing.JDialog {
         panel3 = new org.edisoncor.gui.panel.Panel();
         labelMetric2 = new org.edisoncor.gui.label.LabelMetric();
         btnEliminar = new javax.swing.JButton();
-        lblBuscarCampo2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Pagos");
@@ -150,24 +148,10 @@ public class Pago extends javax.swing.JDialog {
         panel1.setColorPrimario(new java.awt.Color(233, 255, 255));
         panel1.setColorSecundario(new java.awt.Color(255, 255, 255));
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
-        jLabel10.setText("  BUSCAR ");
-        jLabel10.setIconTextGap(1);
-
-        txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
-        txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
-        txtBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtBuscar.setCaretColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.setDisabledTextColor(new java.awt.Color(0, 204, 204));
-        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtBuscarKeyReleased(evt);
-            }
-        });
-
         pnProductosComprados.setBackground(new java.awt.Color(255, 255, 255));
         pnProductosComprados.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Conceptos del pago N° 000000"));
+
+        scPrincipal1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         tbConceptosPagados.setAutoCreateRowSorter(true);
         tbConceptosPagados.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -177,9 +161,24 @@ public class Pago extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Concepto", "N° de cuotas pagadas", "Meses", "Monto", "Subtotal"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbConceptosPagados.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbConceptosPagados.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbConceptosPagados.setEnabled(false);
@@ -219,6 +218,8 @@ public class Pago extends javax.swing.JDialog {
                 .addComponent(lbCantRegistrosProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+
+        scPrincipal.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         tbPrincipal.setAutoCreateRowSorter(true);
         tbPrincipal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -309,10 +310,6 @@ public class Pago extends javax.swing.JDialog {
             }
         });
 
-        lblBuscarCampo2.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
-        lblBuscarCampo2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblBuscarCampo2.setText("Buscar por");
-
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
@@ -329,19 +326,8 @@ public class Pago extends javax.swing.JDialog {
                         .addComponent(pnProductosComprados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(panel1Layout.createSequentialGroup()
-                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 476, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblBuscarCampo2)
-                                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(panel1Layout.createSequentialGroup()
-                                .addComponent(lbCantRegistros, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(15, 15, 15)))
-                        .addGap(10, 10, 10))
+                        .addComponent(lbCantRegistros, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(25, 25, 25))
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 847, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
@@ -350,15 +336,8 @@ public class Pago extends javax.swing.JDialog {
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addComponent(panel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblBuscarCampo2)
-                .addGap(2, 2, 2)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(2, 2, 2)
-                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -389,17 +368,10 @@ public class Pago extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_tbPrincipalMousePressed
 
-    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-        metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
-
-        tbConceptosPagados.setModel(new DefaultTableModel()); //Vaciar tabla
-    }//GEN-LAST:event_txtBuscarKeyReleased
-
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         if (tbPrincipal.getSelectedRow() == -1) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            txtBuscar.requestFocus();
         } else {
             int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea anular este pago?", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
@@ -457,12 +429,9 @@ public class Pago extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.edisoncor.gui.util.BrightPassFilter brightPassFilter1;
     private javax.swing.JButton btnEliminar;
-    private javax.swing.JComboBox cbCampoBuscar;
-    private javax.swing.JLabel jLabel10;
     private org.edisoncor.gui.label.LabelMetric labelMetric2;
     private javax.swing.JLabel lbCantRegistros;
     private javax.swing.JLabel lbCantRegistrosProductos;
-    private javax.swing.JLabel lblBuscarCampo2;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel3;
     private javax.swing.JPanel pnProductosComprados;
@@ -470,6 +439,5 @@ public class Pago extends javax.swing.JDialog {
     private javax.swing.JScrollPane scPrincipal1;
     private javax.swing.JTable tbConceptosPagados;
     private javax.swing.JTable tbPrincipal;
-    private javax.swing.JTextField txtBuscar;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" pageWidth="612" pageHeight="943" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d7ba0bb7-545a-46fb-9be6-63e81b1f1532">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="290"/>
+	<parameter name="NUMPAGO" class="java.lang.String"/>
+	<parameter name="NUMPAGO2" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="LOGO2" class="java.io.InputStream"/>
+	<parameter name="APODERADO" class="java.lang.String"/>
+	<parameter name="APODERADO2" class="java.lang.String"/>
+	<parameter name="CEDULA" class="java.lang.String"/>
+	<parameter name="CEDULA2" class="java.lang.String"/>
+	<parameter name="TOTAL" class="java.lang.String"/>
+	<parameter name="TOTAL2" class="java.lang.String"/>
+	<parameter name="DATASOURCE" class="net.sf.jasperreports.engine.JRDataSource" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATASOURCE2" class="net.sf.jasperreports.engine.JRDataSource" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Users\\Arnaldo_Cantero\\Documents\\NetBeansProjects\\Escuela\\src\\reportes\\recibo\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NIVEL_BASICO" class="java.lang.String"/>
+	<parameter name="NIVEL_BASICO2" class="java.lang.String"/>
+	<parameter name="NIVEL_MEDIO" class="java.lang.String"/>
+	<parameter name="NIVEL_MEDIO2" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[CALL SP_ProductoConsulta]]>
+	</queryString>
+	<detail>
+		<band height="903" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement x="-20" y="-21" width="612" height="451" uuid="2306a1d4-14c9-4f44-a7c6-322cf4a608f2"/>
+				<subreportParameter name="SUBREPORT_DIR"/>
+				<subreportParameter name="NUMPAGO">
+					<subreportParameterExpression><![CDATA[$P{NUMPAGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NIVEL_MEDIO">
+					<subreportParameterExpression><![CDATA[$P{NIVEL_MEDIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="APODERADO">
+					<subreportParameterExpression><![CDATA[$P{APODERADO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NIVEL_BASICO">
+					<subreportParameterExpression><![CDATA[$P{NIVEL_BASICO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL">
+					<subreportParameterExpression><![CDATA[$P{TOTAL}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CEDULA">
+					<subreportParameterExpression><![CDATA[$P{CEDULA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{DATASOURCE}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reporte_recibo_pago.jasper"]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="-20" y="450" width="612" height="1" forecolor="#999999" uuid="e0dad45f-260e-448f-a0f1-f0ba41415028"/>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<subreport isUsingCache="false">
+				<reportElement x="-20" y="456" width="612" height="428" uuid="59b4d847-9d75-4b35-96aa-ee2d71bbe506"/>
+				<subreportParameter name="SUBREPORT_DIR"/>
+				<subreportParameter name="NUMPAGO">
+					<subreportParameterExpression><![CDATA[$P{NUMPAGO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="LOGO">
+					<subreportParameterExpression><![CDATA[$P{LOGO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NIVEL_MEDIO">
+					<subreportParameterExpression><![CDATA[$P{NIVEL_MEDIO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="APODERADO">
+					<subreportParameterExpression><![CDATA[$P{APODERADO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NIVEL_BASICO">
+					<subreportParameterExpression><![CDATA[$P{NIVEL_BASICO2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TOTAL">
+					<subreportParameterExpression><![CDATA[$P{TOTAL2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="CEDULA">
+					<subreportParameterExpression><![CDATA[$P{CEDULA2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{DATASOURCE2}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "reporte_recibo_pago.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+</jasperReport>

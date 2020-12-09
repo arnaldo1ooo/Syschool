@@ -102,8 +102,8 @@ public class MetodosCombo {
                 elCombo.setSelectedIndex(-1);
             }
 
-            elCombo.setMaximumRowCount(elCombo.getModel().getSize()); //Hace que se despliegue en toda la pantalla vertical el combo
-            AddScrollHorizontalCombo(elCombo);
+            //elCombo.setMaximumRowCount(elCombo.getModel().getSize()); //Hace que se despliegue en toda la pantalla vertical el combo
+            //AddScrollHorizontalCombo(elCombo);
         } catch (NumberFormatException | SQLException e) {
             log_historial.error("Error al cargar combo: " + e);
             e.printStackTrace();
@@ -112,6 +112,7 @@ public class MetodosCombo {
         }
 
         AutoCompleteDecorator.decorate(elCombo);
+        
         CambiarColorDisabledCombo(elCombo, Color.BLACK);
         con.DesconectarBasedeDatos();
     }

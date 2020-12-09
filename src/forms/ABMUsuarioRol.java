@@ -16,6 +16,7 @@ import javax.swing.table.DefaultTableModel;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import org.apache.log4j.Logger;
+import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
 
 /**
  *
@@ -23,10 +24,10 @@ import org.apache.log4j.Logger;
  */
 public class ABMUsuarioRol extends javax.swing.JDialog {
 
-    Conexion con = new Conexion();
-    Metodos metodos = new Metodos();
-    MetodosCombo metodoscombo = new MetodosCombo();
-    DefaultTableModel modeltableModulo;
+    private Conexion con = new Conexion();
+    private Metodos metodos = new Metodos();
+    private MetodosCombo metodoscombo = new MetodosCombo();
+    private DefaultTableModel tableModelModulo;
 
     static Logger log_historial = Logger.getLogger(ABMUsuarioRol.class.getName());
 
@@ -34,6 +35,7 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
+        TableRowFilterSupport.forTable(tbModulosUsuario).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera
         CargarComboBoxes();
         Limpiar();
 
@@ -48,27 +50,26 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
     String sentencia;
 
     private void ConsultaModulosUsuario(String idusuario) {
-        modeltableModulo = (DefaultTableModel) tbModulosUsuario.getModel();
-        modeltableModulo.setRowCount(0);
-
-        sentencia = "CALL SP_UsuarioModuloConsulta(" + idusuario + ")";
-        con = con.ObtenerRSSentencia(sentencia);
+        tableModelModulo = (DefaultTableModel) tbModulosUsuario.getModel();
+        tableModelModulo.setRowCount(0);
 
         try {
-            String codigo, descripcion, idalta, idmodificar, idbaja;
+            sentencia = "CALL SP_UsuarioModuloConsulta(" + idusuario + ")";
+            con = con.ObtenerRSSentencia(sentencia);
+            int codigo, idalta, idmodificar, idbaja;
+            String descripcion;
             String[] idRoles;
             while (con.getResultSet().next()) {
-                codigo = con.getResultSet().getString("mo_codigo");
+                codigo = con.getResultSet().getInt("mo_codigo");
                 descripcion = con.getResultSet().getString("mo_denominacion");
                 idRoles = con.getResultSet().getString("idRoles").split(",");
-                idalta = idRoles[0];
-                idmodificar = idRoles[1];
-                idbaja = idRoles[2];
+                idalta = Integer.parseInt(idRoles[0]);
+                idmodificar = Integer.parseInt(idRoles[1]);
+                idbaja = Integer.parseInt(idRoles[2]);
 
-                modeltableModulo.addRow(new Object[]{codigo, descripcion, idalta, idmodificar, idbaja});
+                tableModelModulo.addRow(new Object[]{codigo, descripcion, idalta, idmodificar, idbaja});
             }
-
-            tbModulosUsuario.setModel(modeltableModulo);
+            tbModulosUsuario.setModel(tableModelModulo);
         } catch (SQLException e) {
             log_historial.error("Error 1001: " + e);
             e.printStackTrace();
@@ -139,8 +140,8 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
     private void Limpiar() {
         cbUsuario.setSelectedIndex(-1);
 
-        modeltableModulo = (DefaultTableModel) tbModulosUsuario.getModel();
-        modeltableModulo.setRowCount(0);
+        tableModelModulo = (DefaultTableModel) tbModulosUsuario.getModel();
+        tableModelModulo.setRowCount(0);
 
         btnModificarGuardar.setText("Modificar");
 
@@ -201,7 +202,22 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
             new String [] {
                 "Código", "Descripción", "idAlta", "idModificar", "idBaja"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbModulosUsuario.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbModulosUsuario.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbModulosUsuario.setGridColor(new java.awt.Color(0, 153, 204));
@@ -318,15 +334,15 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblBuscarCampo)
                     .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(54, 54, 54)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jpEdicionLayout.createSequentialGroup()
                         .addComponent(btnModificarGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(pnRoles, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblRolesUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                    .addComponent(lblRolesUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15))
         );
         jpEdicionLayout.setVerticalGroup(
             jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -388,16 +404,15 @@ public class ABMUsuarioRol extends javax.swing.JDialog {
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jpPrincipalLayout.createSequentialGroup()
+                .addGap(16, 16, 16)
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblSeleccioneUsuario)
-                            .addComponent(cbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblSeleccioneUsuario)
+                    .addComponent(cbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(361, Short.MAX_VALUE))
+            .addGroup(jpPrincipalLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jpEdicion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

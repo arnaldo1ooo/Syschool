@@ -30,13 +30,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import static login.Login.codUsuario;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
-import utilidades.ColorearJTable;
+import utilidades.ColorearCelda;
 
 /**
  *
@@ -44,13 +45,13 @@ import utilidades.ColorearJTable;
  */
 public class RegistrarPago extends javax.swing.JDialog {
 
-    Conexion con = new Conexion();
-    Metodos metodos = new Metodos();
-    MetodosTXT metodostxt = new MetodosTXT();
-    MetodosCombo metodoscombo = new MetodosCombo();
-    DefaultTableModel modelTableConceptoAPagar;
-    DefaultTableModel modelTablePoderantes;
-    DefaultTableModel modelTableConceptos;
+    private Conexion con = new Conexion();
+    private Metodos metodos = new Metodos();
+    private MetodosTXT metodostxt = new MetodosTXT();
+    private MetodosCombo metodoscombo = new MetodosCombo();
+    private DefaultTableModel modelTableConceptoAPagar;
+    private DefaultTableModel modelTablePoderantes;
+    private DefaultTableModel modelTableConceptos;
 
     public RegistrarPago(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -86,10 +87,9 @@ public class RegistrarPago extends javax.swing.JDialog {
     }
 
     private void TablaAllConcepto() {//Realiza la consulta de los productos que tenemos en la base de datos
+        modelTableConceptos = (DefaultTableModel) tbAllConceptos.getModel();
+        modelTableConceptos.setRowCount(0); //Vacia tabla
         try {
-            modelTableConceptos = (DefaultTableModel) tbAllConceptos.getModel();
-            modelTableConceptos.setRowCount(0); //Vacia tabla
-
             String sentencia = "SELECT con_codigo, con_descripcion, con_tipoimporte, con_importe, con_numpagos, con_tipopago FROM concepto ORDER BY con_descripcion";
             con = con.ObtenerRSSentencia(sentencia);
             int codigo, numpagos;
@@ -158,7 +158,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                         Toolkit.getDefaultToolkit().beep(); //BEEP
                         JOptionPane.showMessageDialog(this, "Se agregó correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
 
-                        ImprimirRecibo();
+                        ImprimirReciboPago();
                         Limpiar();
                         GenerarNumpago();
                     } catch (HeadlessException ex) {
@@ -176,7 +176,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         }
     }
 
-    private void ImprimirRecibo() {
+    private void ImprimirReciboPago() {
         //Imprimir recibo
         int confirmado2 = JOptionPane.showConfirmDialog(this, "¿Quieres imprimir el recibo de pago?", "Confirmación", JOptionPane.YES_OPTION);
         if (JOptionPane.YES_OPTION == confirmado2) {
@@ -187,7 +187,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 subtotal = metodostxt.DoubleAFormatoAmericano(tbConceptoAPagar.getValueAt(i, 6) + "");
                 total = total + subtotal;
             }
-            String totalString = metodostxt.DoubleAFormatoSudamerica(total);
+            String totalString = metodostxt.DoubleAFormatSudamerica(total);
             InputStream logo = this.getClass().getResourceAsStream("/reportes/images/logo_ace.jpg");
             InputStream logo2 = this.getClass().getResourceAsStream("/reportes/images/logo_ace.jpg");
             //Parametros
@@ -224,20 +224,20 @@ public class RegistrarPago extends javax.swing.JDialog {
             JRDataSource datasource2 = new JRTableModelDataSource(tbConceptoAPagar.getModel());
             parametros.put("DATASOURCE2", datasource2);
             //Enviar directorio del subreporte
-            String directoriosub = this.getClass().getResource("/reportes/recibo/reporte_recibo.jasper").toString();
-            directoriosub = directoriosub.replaceAll("reporte_recibo.jasper", "");
+            String directoriosub = this.getClass().getResource("/reportes/recibo_pago/reporte_recibo_pago.jasper").toString();
+            directoriosub = directoriosub.replaceAll("reporte_recibo_pago.jasper", "");
             parametros.put("SUBREPORT_DIR", directoriosub); //Direccion del subreporte
 
             String tipohoja = "";
             try {
-                con = con.ObtenerRSSentencia("SELECT conf_descripcion, conf_valor FROM configuracion");
+                con = con.ObtenerRSSentencia("SELECT conf_codigo, conf_descripcion, conf_valor FROM configuracion WHERE conf_descripcion = 'TIPOHOJA'");
                 while (con.getResultSet().next()) {
                     switch (con.getResultSet().getString("conf_descripcion")) {
                         case "TIPOHOJA":
                             tipohoja = con.getResultSet().getString("conf_valor");
                             break;
                         default:
-                            JOptionPane.showMessageDialog(this, "No se encontró la moneda seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(this, "No coincide con switch al buscar tipo de hoja", "Error", JOptionPane.ERROR_MESSAGE);
                             break;
                     }
                 }
@@ -247,7 +247,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             con.DesconectarBasedeDatos();
 
             System.out.println("tipohoja " + tipohoja);
-            String rutajasper = "/reportes/recibo/reporte_recibo_principal_" + tipohoja.toLowerCase() + ".jasper";
+            String rutajasper = "/reportes/recibo_pago/reporte_recibo_principal_" + tipohoja.toLowerCase() + ".jasper";
 
             metodos.GenerarReporteJTABLE(rutajasper, parametros, null);
         }
@@ -261,7 +261,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         btnAgregar.setEnabled(false);
         btnEliminar.setEnabled(false);
         txtImporteRecibido.setEnabled(false);
-        txtImporteRecibido.setText("0");
+        txtImporteRecibido.setText("");
         txtImporteRecibido.setForeground(Color.BLACK);
         txtVuelto.setText("0");
         txtTotalAPagar.setText("0");
@@ -470,6 +470,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             public boolean isCellEditable(int rowIndex, int colIndex) {
                 return false; //Disallow the editing of any cell
             }
+
         };
         panel7 = new org.edisoncor.gui.panel.Panel();
         jLabel1 = new javax.swing.JLabel();
@@ -1046,6 +1047,8 @@ public class RegistrarPago extends javax.swing.JDialog {
         lblBuscarCampoApoderado.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblBuscarCampoApoderado.setText("Buscar por:");
 
+        scApoderado.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
         tbApoderado.setAutoCreateRowSorter(true);
         tbApoderado.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         tbApoderado.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
@@ -1087,21 +1090,23 @@ public class RegistrarPago extends javax.swing.JDialog {
         panel6Layout.setHorizontalGroup(
             panel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel6Layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addGroup(panel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(scApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 717, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(panel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(panel6Layout.createSequentialGroup()
-                        .addComponent(lbCantRegistrosApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(8, 8, 8))
-                    .addGroup(panel6Layout.createSequentialGroup()
-                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtBuscarApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lblBuscarCampoApoderado)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbCampoBuscarApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addContainerGap()
+                        .addComponent(lbCantRegistrosApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel6Layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addGroup(panel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(panel6Layout.createSequentialGroup()
+                                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtBuscarApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(53, 53, 53)
+                                .addComponent(lblBuscarCampoApoderado)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cbCampoBuscarApoderado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(scApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 709, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(14, 14, 14))
         );
         panel6Layout.setVerticalGroup(
             panel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1130,14 +1135,15 @@ public class RegistrarPago extends javax.swing.JDialog {
             .addComponent(panel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Ventana Registrar Pagos");
         setBackground(new java.awt.Color(45, 62, 80));
         setPreferredSize(new java.awt.Dimension(1244, 575));
         setResizable(false);
-        setSize(new java.awt.Dimension(1244, 575));
+        setSize(new java.awt.Dimension(1260, 575));
 
         jpPrincipal.setBackground(new java.awt.Color(233, 255, 255));
-        jpPrincipal.setPreferredSize(new java.awt.Dimension(1244, 575));
+        jpPrincipal.setPreferredSize(new java.awt.Dimension(1260, 575));
 
         jpBotones.setBackground(new java.awt.Color(233, 255, 255));
         jpBotones.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder()));
@@ -1224,7 +1230,6 @@ public class RegistrarPago extends javax.swing.JDialog {
         lblFechaPago.setToolTipText("");
         lblFechaPago.setFocusable(false);
 
-        dcFechaPago.setEnabled(false);
         dcFechaPago.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
         dcFechaPago.setMaxSelectableDate(new java.util.Date(4102455600000L));
         dcFechaPago.setMinSelectableDate(new java.util.Date(631162800000L));
@@ -1292,55 +1297,50 @@ public class RegistrarPago extends javax.swing.JDialog {
             jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpDatosVentaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(jpDatosVentaLayout.createSequentialGroup()
                         .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(2, 2, 2)
+                            .addComponent(cbApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnBuscarApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jpDatosVentaLayout.createSequentialGroup()
                         .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblCedulaApoderado)
-                            .addComponent(txtCedulaApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(14, 14, 14)
+                            .addComponent(txtCedulaApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, Short.MAX_VALUE)
                         .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dcFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(87, 87, 87)
+                            .addComponent(dcFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(30, 30, 30)
                 .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jpDatosVentaLayout.createSequentialGroup()
-                        .addComponent(lblPoderantes)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(scAllConcepto1))
-                .addContainerGap())
+                    .addComponent(lblPoderantes)
+                    .addComponent(scAllConcepto1, javax.swing.GroupLayout.PREFERRED_SIZE, 696, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jpDatosVentaLayout.setVerticalGroup(
             jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpDatosVentaLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpDatosVentaLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(btnBuscarApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(lblPoderantes)
+                        .addGap(2, 2, 2)
+                        .addComponent(scAllConcepto1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jpDatosVentaLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jpDatosVentaLayout.createSequentialGroup()
-                                .addComponent(lblPoderantes)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(scAllConcepto1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jpDatosVentaLayout.createSequentialGroup()
-                                .addComponent(lblApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(2, 2, 2)
-                                .addComponent(cbApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                                    .addComponent(lblCedulaApoderado)
-                                    .addComponent(lblFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(2, 2, 2)
-                                .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                                    .addComponent(txtCedulaApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(dcFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                        .addComponent(lblApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(2, 2, 2)
+                        .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnBuscarApoderado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbApoderado))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(lblCedulaApoderado)
+                            .addComponent(lblFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(2, 2, 2)
+                        .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(txtCedulaApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dcFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1372,7 +1372,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 .addComponent(labelMetric1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(3, 3, 3)
                 .addComponent(lblNumPago, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(50, 50, 50))
         );
         panel2Layout.setVerticalGroup(
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1641,18 +1641,17 @@ public class RegistrarPago extends javax.swing.JDialog {
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(scAllConcepto, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnAgregar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(scAllConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 547, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(scConceptoAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(scConceptoAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 531, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(32, 32, 32))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1664,18 +1663,18 @@ public class RegistrarPago extends javax.swing.JDialog {
                     .addComponent(jLabel10))
                 .addGap(2, 2, 2)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(scConceptoAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(scAllConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(scAllConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(scConceptoAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panel7.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        panel7.setColorPrimario(new java.awt.Color(191, 191, 6));
-        panel7.setColorSecundario(new java.awt.Color(164, 164, 0));
+        panel7.setColorPrimario(new java.awt.Color(0, 153, 153));
+        panel7.setColorSecundario(new java.awt.Color(0, 140, 140));
 
         jLabel1.setFont(new java.awt.Font("Franklin Gothic Medium Cond", 1, 20)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -1722,13 +1721,14 @@ public class RegistrarPago extends javax.swing.JDialog {
             .addGroup(jpPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addComponent(jpDatosVenta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jpDatosVenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(9, 9, 9)
                         .addComponent(panel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(panel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1205, Short.MAX_VALUE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1736,7 +1736,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jpDatosVenta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jpDatosVenta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(panel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1744,18 +1744,18 @@ public class RegistrarPago extends javax.swing.JDialog {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         getAccessibleContext().setAccessibleName("RegistrarPago");
@@ -1853,7 +1853,14 @@ public class RegistrarPago extends javax.swing.JDialog {
     private void CargarDatosaAgregarPagos() {
         //Cargar valores del concepto a ventana agregar pago
         txtConcepto.setText(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 1) + "");
-        txtImporte.setText(metodostxt.DoubleAFormatoSudamerica(Double.parseDouble(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 3) + "")));
+
+        double importe = Double.parseDouble(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 3) + "");
+        if (importe == 0) {
+            txtImporte.setText("");
+        } else {
+            txtImporte.setText(metodostxt.DoubleAFormatSudamerica(importe));
+        }
+
         lblNumTotalCuotas.setText(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 4) + "");
         txtSubtotal.setText("0");
         numactual = 0;
@@ -1948,7 +1955,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         //Suma la colmna subtotal
         double sumarsubtotal = metodos.SumarColumnaDouble(tbConceptoAPagar, 6);
         sumarsubtotal = metodostxt.FormatearATresDecimales(sumarsubtotal);
-        String sumarsubtotalString = metodostxt.DoubleAFormatoSudamerica(sumarsubtotal);
+        String sumarsubtotalString = metodostxt.DoubleAFormatSudamerica(sumarsubtotal);
         txtTotalAPagar.setText(sumarsubtotalString); //El 5 es la columna 5, comienza de 0
     }
 
@@ -1965,14 +1972,23 @@ public class RegistrarPago extends javax.swing.JDialog {
                 btnEliminar.setEnabled(false);
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Seleccione el concepto a eliminar", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Seleccione el concepto a eliminar", "Advertencia", JOptionPane.WARNING_MESSAGE);
             btnEliminar.setEnabled(false);
             tbConceptoAPagar.requestFocus();
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnBuscarApoderadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarApoderadoActionPerformed
-        BuscadorApoderado.setLocationRelativeTo(null);
+        BuscadorApoderado.setLocationRelativeTo(this);
+        txtBuscarApoderado.setText("");
+        metodos.FiltroJTable(txtBuscarApoderado.getText(), cbCampoBuscarApoderado.getSelectedIndex(), tbApoderado);
+
+        if (tbApoderado.getRowCount() == 1) {
+            lbCantRegistrosApoderado.setText(tbApoderado.getRowCount() + " Registro encontrado");
+        } else {
+            lbCantRegistrosApoderado.setText(tbApoderado.getRowCount() + " Registros encontrados");
+        }
+
         BuscadorApoderado.setVisible(true);
     }//GEN-LAST:event_btnBuscarApoderadoActionPerformed
 
@@ -2011,7 +2027,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             txtImporteRecibido.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtImporteRecibido.getText()));
             double vuelto = importe - totalAPagar;
             vuelto = metodostxt.FormatearATresDecimales(vuelto);
-            txtVuelto.setText(metodostxt.DoubleAFormatoSudamerica(vuelto));
+            txtVuelto.setText(metodostxt.DoubleAFormatSudamerica(vuelto));
             txtImporteRecibido.setForeground(new Color(0, 153, 51)); //Verde
         }
     }
@@ -2048,7 +2064,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         if (cbApoderado.getSelectedIndex() != -1) {
             modelTablePoderantes.setRowCount(0); //Vacia la tabla
             for (int f = 0; f < tbAllConceptos.getRowCount(); f++) { //Vaciar num cuotas pagados
-                tbAllConceptos.setValueAt("", f, 6);
+                tbAllConceptos.setValueAt("0", f, 6);
             }
 
             con = con.ObtenerRSSentencia("SELECT CONCAT(alu_nombre,' ',alu_apellido) AS nomapealumno, alu_cedula, "
@@ -2081,7 +2097,8 @@ public class RegistrarPago extends javax.swing.JDialog {
                 metodos.OcultarColumna(tbPoderantes, 3); //Ocultar columna
 
                 //Colorear
-                tbPoderantes.setDefaultRenderer(Object.class, new ColorearJTable());
+                tbPoderantes.setDefaultRenderer(Object.class, new ColorearCelda());
+                tbAllConceptos.setDefaultRenderer(Object.class, new ColorearCelda());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -2091,14 +2108,19 @@ public class RegistrarPago extends javax.swing.JDialog {
             try {
                 con = con.ObtenerRSSentencia("SELECT pagcon_concepto, SUM(pagcon_numcuotas) AS sumnumcuotas "
                         + "FROM pago, pago_concepto WHERE pag_codigo=pagcon_pago AND pag_apoderado = '" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' GROUP BY pagcon_concepto");
-                int idconcepto, sumnumcuotas;
+                int idconcepto, sumnumcuotas, totalcuotas;
                 while (con.getResultSet().next()) {
                     idconcepto = con.getResultSet().getInt("pagcon_concepto");
                     sumnumcuotas = con.getResultSet().getInt("sumnumcuotas");
 
                     for (int f = 0; f < tbAllConceptos.getRowCount(); f++) {
                         if (tbAllConceptos.getValueAt(f, 0).equals(idconcepto)) {
-                            tbAllConceptos.setValueAt(sumnumcuotas, f, 6);
+                            totalcuotas = (int) tbAllConceptos.getValueAt(f, 4);
+                            if (sumnumcuotas == totalcuotas) {
+                                tbAllConceptos.setValueAt(sumnumcuotas + " CANCELADO", f, 6);
+                            } else {
+                                tbAllConceptos.setValueAt(sumnumcuotas, f, 6);
+                            }
                             f = tbAllConceptos.getRowCount();
                         }
                     }
@@ -2163,7 +2185,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             }
             importe = importe * numpoderantes;
 
-            txtSubtotal.setText(metodostxt.DoubleAFormatoSudamerica(numCuotasAPagar * importe));
+            txtSubtotal.setText(metodostxt.DoubleAFormatSudamerica(numCuotasAPagar * importe));
             if (numactual != Integer.parseInt(txtNumCuotasAPagar.getText())) { //Si el numero ingresado no es el mismo
                 numactual = Integer.parseInt(txtNumCuotasAPagar.getText());
                 //Recorrer los meses y poner checks sin pagar
@@ -2209,7 +2231,7 @@ public class RegistrarPago extends javax.swing.JDialog {
 
         double importe = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
         int numcuotas = Integer.parseInt(txtNumCuotasAPagar.getText());
-        txtSubtotal.setText(metodostxt.DoubleAFormatoSudamerica(importe * numcuotas));
+        txtSubtotal.setText(metodostxt.DoubleAFormatSudamerica(importe * numcuotas));
     }//GEN-LAST:event_txtImporteKeyReleased
 
     private void txtImporteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyTyped
