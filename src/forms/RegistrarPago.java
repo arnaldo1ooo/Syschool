@@ -1205,7 +1205,7 @@ public class RegistrarPago extends javax.swing.JDialog {
 
         lblApoderado.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblApoderado.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblApoderado.setText("Apoderado (Encargado)");
+        lblApoderado.setText("Apoderado (Responsable)");
         lblApoderado.setToolTipText("");
         lblApoderado.setFocusable(false);
 
@@ -1820,33 +1820,26 @@ public class RegistrarPago extends javax.swing.JDialog {
         //Verificar cantidad de poderantes del basico y medio
         String cantbasico = "NO";
         int cantmedio = 0;
-        String nivel;
         int codnivel;
         for (int i = 0; i < tbPoderantes.getRowCount(); i++) {
-            nivel = tbPoderantes.getValueAt(i, 2) + "";
-            if (nivel.equals("NO MATRICULADO")) {
-                Toolkit.getDefaultToolkit().beep();
-                JOptionPane.showMessageDialog(this, "Existe uno o más Poderantes no matriculados, no se puede realizar el pago", "Advertencia", JOptionPane.WARNING_MESSAGE);
-            } else {
-                codnivel = Integer.parseInt(tbPoderantes.getValueAt(i, 3) + "");
-                con = con.ObtenerRSSentencia("SELECT niv_tipo FROM nivel WHERE niv_codigo='" + codnivel + "'");
-                try {
-                    if (con.getResultSet().next()) {
-                        if (con.getResultSet().getString("niv_tipo").equals("BÁSICO") && cantbasico.equals("NO")) {
-                            cantbasico = "SI";
-                        } else {
-                            if (con.getResultSet().getString("niv_tipo").equals("MEDIO")) {
-                                cantmedio = cantmedio + 1;
-                            }
+            codnivel = Integer.parseInt(tbPoderantes.getValueAt(i, 3) + "");
+            con = con.ObtenerRSSentencia("SELECT niv_tipo FROM nivel WHERE niv_codigo='" + codnivel + "'");
+            try {
+                if (con.getResultSet().next()) {
+                    if (con.getResultSet().getString("niv_tipo").equals("BÁSICO") && cantbasico.equals("NO")) {
+                        cantbasico = "SI";
+                    } else {
+                        if (con.getResultSet().getString("niv_tipo").equals("MEDIO")) {
+                            cantmedio = cantmedio + 1;
                         }
                     }
-                    lblPoderantesBasico.setText(cantbasico + "");
-                    lblPoderantesMedio.setText(cantmedio + "");
-                } catch (SQLException e) {
-                    e.printStackTrace();
                 }
-                con.DesconectarBasedeDatos();
+                lblPoderantesBasico.setText(cantbasico + "");
+                lblPoderantesMedio.setText(cantmedio + "");
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+            con.DesconectarBasedeDatos();
         }
     }
 
@@ -1948,6 +1941,18 @@ public class RegistrarPago extends javax.swing.JDialog {
                 return false;
             }
         }
+
+        //Comprobar si alumnos estan matriculados
+        String nivel;
+        for (int i = 0; i < tbPoderantes.getRowCount(); i++) {
+            nivel = tbPoderantes.getValueAt(i, 2) + "";
+            if (nivel.equals("NO MATRICULADO")) {
+                Toolkit.getDefaultToolkit().beep();
+                JOptionPane.showMessageDialog(this, "Existe uno o más Poderantes (Alumnos a cargo) no matriculados, no se puede realizar el pago", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
+        }
+
         return true;
     }
 

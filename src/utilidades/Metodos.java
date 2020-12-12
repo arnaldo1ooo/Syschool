@@ -46,7 +46,6 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
-import net.sf.jasperreports.engine.util.JRFontNotFoundException;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
 import org.apache.log4j.Logger;
@@ -129,10 +128,28 @@ public class Metodos {
 
     public void FiltroJTable(String cadenaABuscar, int columnaABuscar, JTable ElJTable) {
         //System.out.println("Metodo FiltroJTable:  cadena: " + cadenaABuscar + ", columna: " + columnaABuscar);
+
         TableRowSorter modelFiltrado = new TableRowSorter<>(ElJTable.getModel());
-        modelFiltrado.setRowFilter(RowFilter.regexFilter("(?i)" + cadenaABuscar, columnaABuscar));
-        ElJTable.setRowSorter(modelFiltrado);
-        //ElJTable.repaint();
+        if (columnaABuscar <= (ElJTable.getColumnCount() - 1)) {
+            modelFiltrado.setRowFilter(RowFilter.regexFilter("(?i)" + cadenaABuscar, columnaABuscar));
+            ElJTable.setRowSorter(modelFiltrado);
+            //ElJTable.repaint();
+        } else { //Buscar por todas las columnas
+            for (int i = 0; i < ElJTable.getColumnCount(); i++) {
+                modelFiltrado.setRowFilter(RowFilter.regexFilter("(?i)" + cadenaABuscar, i));
+                ElJTable.setRowSorter(modelFiltrado);
+            }
+        }
+    }
+
+    public void CargarTitlesaCombo(JComboBox elCombo, JTable laTabla) {
+        if (elCombo.getItemCount() == 0) {//Si combo esta vacio
+            for (int i = 0; i < laTabla.getColumnCount(); i++) {
+                elCombo.addItem(laTabla.getColumnName(i));
+            }
+            elCombo.addItem("Todos");
+            elCombo.setSelectedItem("Todos");
+        }
     }
 
     public void ConsultaFiltroTablaBD(JTable LaTabla, String titlesJtabla[], String campoconsulta[], String nombresp, String filtro, JComboBox cbCampoBuscar) {

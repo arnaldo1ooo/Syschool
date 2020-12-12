@@ -382,7 +382,7 @@
                   <Image iconType="3" name="/iconos/Iconos20x20/IconoGuardar.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Registrar"/>
-                <Property name="toolTipText" type="java.lang.String" value="Inserta el nuevo registro"/>
+                <Property name="toolTipText" type="java.lang.String" value="Registra la nueva matricula"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[128, 36]"/>
                 </Property>
@@ -407,7 +407,7 @@
                   <Image iconType="3" name="/iconos/Iconos20x20/IconoCancelar.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Limpiar campos"/>
-                <Property name="toolTipText" type="java.lang.String" value="Cancela la acci&#xf3;n"/>
+                <Property name="toolTipText" type="java.lang.String" value="Cancela lo que se estaba cargando"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCancelarActionPerformed"/>
@@ -499,6 +499,7 @@
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="0"/>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" value="Seleccione el alumno al cual desea matricular"/>
               </Properties>
               <Events>
                 <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cbAlumnoItemStateChanged"/>
@@ -532,6 +533,7 @@
             </Component>
             <Component class="com.toedter.calendar.JDateChooser" name="dcFechaMatricula">
               <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="Fecha de la matriculaci&#xf3;n que se est&#xe1; realizando"/>
                 <Property name="enabled" type="boolean" value="false"/>
                 <Property name="maxSelectableDate" type="java.util.Date" editor="org.netbeans.beaninfo.editors.DateEditor">
                   <SerializedValue value="-84,-19,0,5,115,114,0,14,106,97,118,97,46,117,116,105,108,46,68,97,116,101,104,106,-127,1,75,89,116,25,3,0,0,120,112,119,8,0,0,3,-69,45,104,-93,-128,120"/>
@@ -557,6 +559,7 @@
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="0"/>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" value="Seleccione el nivel en donde se matricular&#xe1; al alumno seleccionado"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;MetodosCombo&gt;"/>
@@ -568,6 +571,7 @@
                   <Font name="SansSerif" size="14" style="1"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="4"/>
+                <Property name="toolTipText" type="java.lang.String" value="Periodo del a&#xf1;o lectivo en donde se matricular&#xe1; el alumno seleccionado"/>
                 <Property name="disabledTextColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>

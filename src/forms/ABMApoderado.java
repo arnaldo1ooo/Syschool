@@ -27,7 +27,6 @@ import javax.swing.table.DefaultTableModel;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 import static login.Login.codUsuario;
-import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
 import utilidades.MetodosCombo;
 
 /**
@@ -36,12 +35,14 @@ import utilidades.MetodosCombo;
  */
 public class ABMApoderado extends javax.swing.JDialog {
 
-    Conexion con = new Conexion();
-    Metodos metodos = new Metodos();
-    MetodosTXT metodostxt = new MetodosTXT();
-    MetodosCombo metodoscombo = new MetodosCombo();
-    DefaultTableModel modelTablaPoderantes;
-    DefaultTableModel modelTableApoderados;
+    private Conexion con = new Conexion();
+    private Metodos metodos = new Metodos();
+    private MetodosTXT metodostxt = new MetodosTXT();
+    private MetodosCombo metodoscombo = new MetodosCombo();
+    private DefaultTableModel modelTablaPoderantes;
+    private DefaultTableModel modelTableApoderados;
+    private Color colorVerde = new Color(6, 147, 27);
+    private Color colorRojo = new Color(206, 16, 45);
 
     public ABMApoderado(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -53,7 +54,8 @@ public class ABMApoderado extends javax.swing.JDialog {
         btnModificar.setVisible(permisos.contains("M"));
         btnEliminar.setVisible(permisos.contains("B"));
 
-        TableRowFilterSupport.forTable(tbPrincipal).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera
+        lblCIValidacion.setVisible(false);
+        metodos.CargarTitlesaCombo(cbCampoBuscar, tbPrincipal);
         TablaConsultaBDAll(); //Trae todos los registros
 
         //Cambiar color de disabled combo
@@ -66,8 +68,11 @@ public class ABMApoderado extends javax.swing.JDialog {
     public void RegistroNuevoModificar() {
         if (ComprobarCampos() == true) {
             String codigo = txtCodigoApoderado.getText();
-            String cedula = metodostxt.StringSinPuntosMiles(txtCedula.getText()) + "";
-            cedula = metodostxt.QuitaEspaciosString(cedula);
+            String cedula = null;
+            if (chbSincedula.isSelected() == false) {
+                cedula = metodostxt.StringSinPuntosMiles(txtCedula.getText()) + "";
+                cedula = metodostxt.QuitaEspaciosString(cedula);
+            }
             String nombre = metodos.MayusCadaPrimeraLetra(txtNombre.getText());
             nombre = metodostxt.QuitaEspaciosString(nombre);
             String apellido = metodos.MayusCadaPrimeraLetra(txtApellido.getText());
@@ -81,11 +86,11 @@ public class ABMApoderado extends javax.swing.JDialog {
             telefono = metodostxt.QuitaEspaciosString(telefono);
             String obs = metodos.MayusPrimeraLetra(taObs.getText());
             obs = metodostxt.QuitaEspaciosString(obs);
-            
+
             if (txtCodigoApoderado.getText().equals("")) { //NUEVO REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo apoderado?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
-                    String sentencia = "CALL SP_ApoderadoAlta ('" + cedula + "','" + nombre + "','" + apellido + "','"
+                    String sentencia = "CALL SP_ApoderadoAlta (" + cedula + ",'" + nombre + "','" + apellido + "','"
                             + sexo + "','" + direccion + "','" + telefono + "','" + email + "','" + obs + "')";
                     con.EjecutarABM(sentencia, false);
 
@@ -97,11 +102,12 @@ public class ABMApoderado extends javax.swing.JDialog {
                     TablaConsultaBDAll(); //Actualizar tabla
                     ModoEdicion(false);
                     Limpiar();
+                    txtBuscar.setText("");
                 }
             } else { //MODIFICAR REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar este apoderado?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
-                    String sentencia = "CALL SP_ApoderadoModificar('" + codigo + "','" + cedula + "','" + nombre + "','" + apellido + "','" + sexo + "','" + direccion
+                    String sentencia = "CALL SP_ApoderadoModificar('" + codigo + "'," + cedula + ",'" + nombre + "','" + apellido + "','" + sexo + "','" + direccion
                             + "','" + telefono + "','" + email + "','" + obs + "')";
                     con.EjecutarABM(sentencia, false);
 
@@ -113,6 +119,7 @@ public class ABMApoderado extends javax.swing.JDialog {
                     TablaConsultaBDAll(); //Actualizar tabla
                     ModoEdicion(false);
                     Limpiar();
+                    txtBuscar.setText("");
                 }
             }
         }
@@ -120,7 +127,7 @@ public class ABMApoderado extends javax.swing.JDialog {
 
     private void NuevoModificarAlumno() {
         //Guardar alumnos
-        String codigoalumno, nombrealumno, apellidoalumno, cedulaalumno, fechanacimiento, fechainscripcion, sexoalumno, telefonoalumno, emailalumno, obsalumno;
+        String codigoalumno, nombrealumno, apellidoalumno, fechanacimiento, fechainscripcion, sexoalumno, telefonoalumno, emailalumno, obsalumno;
         int idapoderado = -1;
         String estadoalumno, sentencia;
         SimpleDateFormat formatfechaBD = new SimpleDateFormat("yyyy-MM-dd");
@@ -129,8 +136,16 @@ public class ABMApoderado extends javax.swing.JDialog {
         for (int i = 0; i < tbPoderantes.getRowCount(); i++) {
             codigoalumno = tbPoderantes.getValueAt(i, 0) + "";
             nombrealumno = metodos.MayusCadaPrimeraLetra(tbPoderantes.getValueAt(i, 1) + "");
+            nombrealumno = metodostxt.QuitaEspaciosString(nombrealumno);
             apellidoalumno = metodos.MayusCadaPrimeraLetra(tbPoderantes.getValueAt(i, 2) + "");
-            cedulaalumno = metodostxt.StringSinPuntosMiles(tbPoderantes.getValueAt(i, 3) + "") + "";
+            apellidoalumno = metodostxt.QuitaEspaciosString(apellidoalumno);
+
+            String cedulaalumno = null;
+            if (chbSincedula.isSelected() == false) {
+                cedulaalumno = metodostxt.StringSinPuntosMiles(tbPoderantes.getValueAt(i, 3) + "") + "";
+                cedulaalumno = metodostxt.QuitaEspaciosString(cedulaalumno);
+            }
+
             try {//Convertir fechas
                 fechanacimiento = formatfechaBD.format(formatfechaSuda.parse(tbPoderantes.getValueAt(i, 4) + ""));
                 fechainscripcion = formatfechaBD.format(formatfechaSuda.parse(tbPoderantes.getValueAt(i, 5) + ""));
@@ -140,8 +155,11 @@ public class ABMApoderado extends javax.swing.JDialog {
             }
             sexoalumno = tbPoderantes.getValueAt(i, 6) + "";
             telefonoalumno = tbPoderantes.getValueAt(i, 7) + "";
+            telefonoalumno = metodostxt.QuitaEspaciosString(telefonoalumno);
             emailalumno = tbPoderantes.getValueAt(i, 8) + "";
+            emailalumno = metodostxt.QuitaEspaciosString(emailalumno);
             obsalumno = tbPoderantes.getValueAt(i, 9) + "";
+            obsalumno = metodostxt.QuitaEspaciosString(obsalumno);
 
             //Buscar el id del ultimo apoderado agregado
             if (txtCodigoApoderado.getText().equals("")) { //Si es nuevo apoderado
@@ -173,11 +191,11 @@ public class ABMApoderado extends javax.swing.JDialog {
             }
 
             if (codigoalumno.equals("")) { //Si es un alumno nuevo
-                sentencia = "CALL SP_AlumnoAlta('" + nombrealumno + "','" + apellidoalumno + "','" + cedulaalumno + "','" + fechanacimiento + "','" + fechainscripcion
+                sentencia = "CALL SP_AlumnoAlta('" + nombrealumno + "','" + apellidoalumno + "'," + cedulaalumno + ",'" + fechanacimiento + "','" + fechainscripcion
                         + "','" + sexoalumno + "','" + telefonoalumno + "','" + emailalumno + "','" + obsalumno + "','" + idapoderado + "','" + estadoalumno + "')";
                 con.EjecutarABM(sentencia, false);
             } else {
-                sentencia = "CALL SP_AlumnoModificar('" + codigoalumno + "','" + nombrealumno + "','" + apellidoalumno + "','" + cedulaalumno + "','" + fechanacimiento
+                sentencia = "CALL SP_AlumnoModificar('" + codigoalumno + "','" + nombrealumno + "','" + apellidoalumno + "'," + cedulaalumno + ",'" + fechanacimiento
                         + "','" + fechainscripcion + "','" + sexoalumno + "','" + telefonoalumno + "','" + emailalumno + "','" + obsalumno + "','" + idapoderado + "','" + estadoalumno + "')";
                 con.EjecutarABM(sentencia, false);
             }
@@ -209,8 +227,8 @@ public class ABMApoderado extends javax.swing.JDialog {
             modelTableApoderados = (DefaultTableModel) tbPrincipal.getModel();
             modelTableApoderados.setRowCount(0); //Vacia tabla
 
-            int codigo, cedula, telefono;
-            String nombre, apellido, sexo, direccion, email, obs;
+            int codigo, cedula;
+            String nombre, apellido, sexo, direccion, telefono, email, obs;
             con = con.ObtenerRSSentencia("CALL SP_ApoderadoConsulta()");
             while (con.getResultSet().next()) {
                 codigo = con.getResultSet().getInt("apo_codigo");
@@ -219,7 +237,7 @@ public class ABMApoderado extends javax.swing.JDialog {
                 apellido = con.getResultSet().getString("apo_apellido");
                 sexo = con.getResultSet().getString("apo_sexo");
                 direccion = con.getResultSet().getString("apo_direccion");
-                telefono = con.getResultSet().getInt("apo_telefono");
+                telefono = con.getResultSet().getString("apo_telefono");
                 email = con.getResultSet().getString("apo_email");
                 obs = con.getResultSet().getString("apo_obs");
 
@@ -228,6 +246,7 @@ public class ABMApoderado extends javax.swing.JDialog {
             tbPrincipal.setModel(modelTableApoderados);
             metodos.AnchuraColumna(tbPrincipal);
         } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error " + e);
             e.printStackTrace();
         }
         con.DesconectarBasedeDatos();
@@ -242,8 +261,16 @@ public class ABMApoderado extends javax.swing.JDialog {
     private void ModoVistaPrevia() {
         if (tbPrincipal.getRowCount() > 0) {
             txtCodigoApoderado.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + ""));
+
             txtCedula.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 1) + ""));
             txtCedula.setText(metodostxt.StringPuntosMiles(txtCedula.getText()));
+
+            if (txtCedula.getText().equals("0")) {
+                chbSincedula.setSelected(true);
+            } else {
+                chbSincedula.setSelected(false);
+            }
+
             txtNombre.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 2) + ""));
             txtApellido.setText(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 3) + ""));
             cbSexo.setSelectedItem(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 4) + ""));
@@ -257,9 +284,18 @@ public class ABMApoderado extends javax.swing.JDialog {
     }
 
     private void ModoEdicion(boolean valor) {
-        jtpEdicion.setSelectedIndex(0);
+        txtBuscar.setEnabled(!valor);
         tbPrincipal.setEnabled(!valor);
-        txtCedula.setEnabled(valor);
+        chbSincedula.setEnabled(valor);
+        if (chbSincedula.isSelected()) {
+            txtCedula.setEnabled(false);
+        } else {
+            txtCedula.setEnabled(true);
+        }
+        chbSincedula.setEnabled(valor);
+        if (valor == false) {
+            txtCedula.setEnabled(valor);
+        }
         txtNombre.setEnabled(valor);
         txtApellido.setEnabled(valor);
         cbSexo.setEnabled(valor);
@@ -277,11 +313,12 @@ public class ABMApoderado extends javax.swing.JDialog {
         btnModificarAlumno.setEnabled(false);
         btnEliminarAlumno.setEnabled(false);
 
-        txtNombre.requestFocus();
+        txtCedula.requestFocus();
     }
 
     private void Limpiar() {
         txtCodigoApoderado.setText("");
+        chbSincedula.setSelected(false);
         txtCedula.setText("");
         txtNombre.setText("");
         txtApellido.setText("");
@@ -291,10 +328,10 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtTelefono.setText("");
         taObs.setText("");
 
-        lblCedula.setForeground(new Color(102, 102, 102));
-        lblNombre.setForeground(new Color(102, 102, 102));
-        lblApellido.setForeground(new Color(102, 102, 102));
-        lblDireccion.setForeground(new Color(102, 102, 102));
+        lblCedula.setForeground(Color.DARK_GRAY);
+        lblNombre.setForeground(Color.DARK_GRAY);
+        lblApellido.setForeground(Color.DARK_GRAY);
+        lblDireccion.setForeground(Color.DARK_GRAY);
 
         tbPrincipal.clearSelection();
 
@@ -304,39 +341,49 @@ public class ABMApoderado extends javax.swing.JDialog {
 
     public boolean ComprobarCampos() {
         if (metodostxt.ValidarCampoVacioTXT(txtCedula, lblCedula) == false) {
+            jtpEdicion.setSelectedIndex(0);
+            return false;
+        }
+
+        if (txtCedula.getText().equals("0") && chbSincedula.isSelected() == false) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "El N° de cédula no puede ser 0", "Error", JOptionPane.ERROR_MESSAGE);
+            txtCedula.requestFocus();
+            return false;
+        }
+
+        if (lblCIValidacion.isVisible()) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "El N° de cédula del apoderado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
+            txtCedula.requestFocus();
             return false;
         }
 
         if (metodostxt.ValidarCampoVacioTXT(txtNombre, lblNombre) == false) {
+            jtpEdicion.setSelectedIndex(0);
             return false;
         }
 
         if (metodostxt.ValidarCampoVacioTXT(txtApellido, lblApellido) == false) {
+            jtpEdicion.setSelectedIndex(0);
             return false;
         }
 
         if (metodostxt.ValidarCampoVacioTXT(txtDireccion, lblDireccion) == false) {
+            jtpEdicion.setSelectedIndex(0);
             return false;
         }
 
-        if (txtCodigoApoderado.getText().equals("")) {
-            try {
-                con = con.ObtenerRSSentencia("SELECT apo_cedula FROM apoderado WHERE apo_cedula='" + txtCedula.getText() + "'");
-                if (con.getResultSet().next() == true) { //Si ya existe el numero de cedula en la tabla
-                    System.out.println("El N° de cédula ingresado ya existe!");
-                    Toolkit.getDefaultToolkit().beep();
-                    JOptionPane.showMessageDialog(null, "El N° de cédula ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
-                    lblCedula.setForeground(Color.RED);
-                    lblCedula.requestFocus();
-                    return false;
-                }
-            } catch (SQLException e) {
-                System.out.println("Error al buscar si ci ya existe en bd: " + e);
-            } catch (NullPointerException e) {
-                System.out.println("La CI ingresada no existe en la bd, aprobado: " + e);
-            }
-            con.DesconectarBasedeDatos();
+        //Validacion cedula apoderado
+        if (SiYaExisteCIApoderado() == true) {
+            System.out.println("El N° de cédula ingresado ya existe!");
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(this, "El N° de cédula ingresado del apoderado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
+            lblCedula.setForeground(colorRojo);
+            txtCedula.requestFocus();
+            return false;
         }
+
         return true;
     }
 
@@ -375,6 +422,8 @@ public class ABMApoderado extends javax.swing.JDialog {
         lmTitulo = new org.edisoncor.gui.label.LabelMetric();
         lblNombreAlumno1 = new javax.swing.JLabel();
         txtCodigoAlumno = new javax.swing.JTextField();
+        chbSincedulaAlumno = new javax.swing.JCheckBox();
+        lblCIValidacionAlumno = new javax.swing.JLabel();
         jpPrincipal = new javax.swing.JPanel();
         jpTabla = new javax.swing.JPanel();
         scPrincipal = new javax.swing.JScrollPane();
@@ -384,6 +433,10 @@ public class ABMApoderado extends javax.swing.JDialog {
             }
         };
         lbCantRegistros = new javax.swing.JLabel();
+        cbCampoBuscar = new javax.swing.JComboBox();
+        lblBuscarCampoApoderado = new javax.swing.JLabel();
+        txtBuscar = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
         jpBotones = new javax.swing.JPanel();
         btnNuevo = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
@@ -394,10 +447,6 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtCodigoApoderado = new javax.swing.JTextField();
         lblCedula = new javax.swing.JLabel();
         txtCedula = new javax.swing.JTextField();
-        lblNombre = new javax.swing.JLabel();
-        txtNombre = new javax.swing.JTextField();
-        lblApellido = new javax.swing.JLabel();
-        txtApellido = new javax.swing.JTextField();
         lblDireccion = new javax.swing.JLabel();
         txtDireccion = new javax.swing.JTextField();
         lblTelefono = new javax.swing.JLabel();
@@ -410,6 +459,12 @@ public class ABMApoderado extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         cbSexo = new javax.swing.JComboBox<>();
         lblSexo = new javax.swing.JLabel();
+        chbSincedula = new javax.swing.JCheckBox();
+        txtNombre = new javax.swing.JTextField();
+        lblNombre = new javax.swing.JLabel();
+        lblApellido = new javax.swing.JLabel();
+        txtApellido = new javax.swing.JTextField();
+        lblCIValidacion = new javax.swing.JLabel();
         jpAlumnosACargo = new javax.swing.JPanel();
         scPrincipal1 = new javax.swing.JScrollPane();
         tbPoderantes = new javax.swing.JTable(){
@@ -458,7 +513,7 @@ public class ABMApoderado extends javax.swing.JDialog {
 
         txtApellidoAlumno.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtApellidoAlumno.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtApellidoAlumno.setNextFocusableComponent(txtCedulaAlumno);
+        txtApellidoAlumno.setNextFocusableComponent(dcFechaNacimientoAlumno);
         txtApellidoAlumno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtApellidoAlumnoKeyReleased(evt);
@@ -475,7 +530,12 @@ public class ABMApoderado extends javax.swing.JDialog {
 
         txtCedulaAlumno.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtCedulaAlumno.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtCedulaAlumno.setNextFocusableComponent(dcFechaNacimientoAlumno);
+        txtCedulaAlumno.setNextFocusableComponent(txtNombreAlumno);
+        txtCedulaAlumno.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCedulaAlumnoFocusLost(evt);
+            }
+        });
         txtCedulaAlumno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtCedulaAlumnoKeyReleased(evt);
@@ -495,6 +555,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         dcFechaNacimientoAlumno.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 dcFechaNacimientoAlumnoPropertyChange(evt);
+            }
+        });
+        dcFechaNacimientoAlumno.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                dcFechaNacimientoAlumnoKeyReleased(evt);
             }
         });
 
@@ -611,7 +676,7 @@ public class ABMApoderado extends javax.swing.JDialog {
             .addGroup(panel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(lmTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(529, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -638,67 +703,84 @@ public class ABMApoderado extends javax.swing.JDialog {
             }
         });
 
+        chbSincedulaAlumno.setForeground(new java.awt.Color(255, 255, 255));
+        chbSincedulaAlumno.setText("No posee C.I.");
+        chbSincedulaAlumno.setEnabled(false);
+        chbSincedulaAlumno.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                chbSincedulaAlumnoItemStateChanged(evt);
+            }
+        });
+        chbSincedulaAlumno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chbSincedulaAlumnoActionPerformed(evt);
+            }
+        });
+
+        lblCIValidacionAlumno.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        lblCIValidacionAlumno.setForeground(new java.awt.Color(255, 0, 0));
+        lblCIValidacionAlumno.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCIValidacionAlumno.setText("C.I. ya existe");
+        lblCIValidacionAlumno.setFocusable(false);
+
         javax.swing.GroupLayout pnAltaAlumnoLayout = new javax.swing.GroupLayout(pnAltaAlumno);
         pnAltaAlumno.setLayout(pnAltaAlumnoLayout);
         pnAltaAlumnoLayout.setHorizontalGroup(
             pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                .addGap(14, 14, 14)
+                .addGap(12, 12, 12)
                 .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                        .addComponent(btnAgregarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(160, 160, 160)
-                        .addComponent(jLabel3))
-                    .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnAltaAlumnoLayout.createSequentialGroup()
-                                .addComponent(lblNombreAlumno1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(2, 2, 2)
-                                .addComponent(txtCodigoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(170, 170, 170))
-                            .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(lblCedulaAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(lblApellidoAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(lblNombreAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(2, 2, 2)
-                                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(txtApellidoAlumno, javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(txtCedulaAlumno, javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(txtNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(lblFechaNacimiento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(lblFechaInscripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(3, 3, 3)
-                                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(dcFechaNacimientoAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(dcFechaInscripcionAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(lblSexoAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(lblEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(2, 2, 2)
-                                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(cbSexoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(txtEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                        .addGap(22, 22, 22)
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblObsAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblEmailAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblTelefonoAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblNombreAlumno1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCedulaAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblNombreAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblApellidoAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblFechaInscripcion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(2, 2, 2)
+                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnAltaAlumnoLayout.createSequentialGroup()
+                                    .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(dcFechaInscripcionAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(dcFechaNacimientoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(lblEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(lblSexoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(2, 2, 2)
+                                    .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(cbSexoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(txtApellidoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 307, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
+                                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtCodigoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtCedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(chbSincedulaAlumno)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblCIValidacionAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(btnAgregarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnAltaAlumnoLayout.createSequentialGroup()
+                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblObsAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblEmailAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblEstadoAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblTelefonoAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(2, 2, 2)
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtEmailAlumno)
-                            .addComponent(txtTelefonoAlumno)
                             .addComponent(cbEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(scpObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(txtEmailAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(scpObsAlumno)
+                            .addComponent(txtTelefonoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
         pnAltaAlumnoLayout.setVerticalGroup(
             pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -712,30 +794,32 @@ public class ABMApoderado extends javax.swing.JDialog {
                     .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
                         .addGap(4, 4, 4)
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lblNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(chbSincedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblTelefonoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtTelefonoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtTelefonoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCIValidacionAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(4, 4, 4)
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lblApellidoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtApellidoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblEmailAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtEmailAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(4, 4, 4)
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(scpObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblCedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtCedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                                    .addComponent(lblApellidoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtApellidoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(4, 4, 4)
                                 .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                                     .addComponent(lblFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(dcFechaNacimientoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(lblEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(scpObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(txtEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(4, 4, 4)
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                             .addComponent(lblFechaInscripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -744,20 +828,20 @@ public class ABMApoderado extends javax.swing.JDialog {
                             .addComponent(cbSexoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(cbEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(44, 44, 44))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnAltaAlumnoLayout.createSequentialGroup()
+                        .addGap(2, 63, Short.MAX_VALUE))
+                    .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnAgregarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(60, 60, 60))))
+                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnAgregarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(60, 60, 60))
         );
 
         javax.swing.GroupLayout AltaAlumnoLayout = new javax.swing.GroupLayout(AltaAlumno.getContentPane());
         AltaAlumno.getContentPane().setLayout(AltaAlumnoLayout);
         AltaAlumnoLayout.setHorizontalGroup(
             AltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnAltaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(pnAltaAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, 887, Short.MAX_VALUE)
         );
         AltaAlumnoLayout.setVerticalGroup(
             AltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -789,7 +873,7 @@ public class ABMApoderado extends javax.swing.JDialog {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false, false, false
@@ -811,6 +895,9 @@ public class ABMApoderado extends javax.swing.JDialog {
         tbPrincipal.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbPrincipal.getTableHeader().setReorderingAllowed(false);
         tbPrincipal.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbPrincipalMouseClicked(evt);
+            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 tbPrincipalMousePressed(evt);
             }
@@ -829,28 +916,70 @@ public class ABMApoderado extends javax.swing.JDialog {
         lbCantRegistros.setFocusable(false);
         lbCantRegistros.setPreferredSize(new java.awt.Dimension(57, 25));
 
+        lblBuscarCampoApoderado.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        lblBuscarCampoApoderado.setForeground(new java.awt.Color(0, 0, 0));
+        lblBuscarCampoApoderado.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblBuscarCampoApoderado.setText("Buscar por:");
+
+        txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
+        txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
+        txtBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtBuscar.setCaretColor(new java.awt.Color(0, 204, 204));
+        txtBuscar.setDisabledTextColor(new java.awt.Color(0, 204, 204));
+        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBuscarKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtBuscarKeyTyped(evt);
+            }
+        });
+
+        jLabel12.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
+        jLabel12.setText("  BUSCAR ");
+
         javax.swing.GroupLayout jpTablaLayout = new javax.swing.GroupLayout(jpTabla);
         jpTabla.setLayout(jpTablaLayout);
         jpTablaLayout.setHorizontalGroup(
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
+            .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(scPrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 831, Short.MAX_VALUE))
+                    .addComponent(scPrincipal, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jpTablaLayout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblBuscarCampoApoderado)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jpTablaLayout.setVerticalGroup(
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblBuscarCampoApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        cbCampoBuscar.getAccessibleContext().setAccessibleName("");
+        lblBuscarCampoApoderado.getAccessibleContext().setAccessibleName("");
+        txtBuscar.getAccessibleContext().setAccessibleName("");
 
         jpBotones.setBackground(new java.awt.Color(233, 255, 255));
         jpBotones.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED));
@@ -945,6 +1074,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtCedula.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtCedula.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtCedula.setEnabled(false);
+        txtCedula.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCedulaFocusLost(evt);
+            }
+        });
         txtCedula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCedulaActionPerformed(evt);
@@ -956,42 +1090,6 @@ public class ABMApoderado extends javax.swing.JDialog {
             }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtCedulaKeyTyped(evt);
-            }
-        });
-
-        lblNombre.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        lblNombre.setForeground(new java.awt.Color(102, 102, 102));
-        lblNombre.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblNombre.setText("Nombre*:");
-        lblNombre.setFocusable(false);
-
-        txtNombre.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        txtNombre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtNombre.setEnabled(false);
-        txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtNombreKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtNombreKeyTyped(evt);
-            }
-        });
-
-        lblApellido.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        lblApellido.setForeground(new java.awt.Color(102, 102, 102));
-        lblApellido.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblApellido.setText("Apellido*:");
-        lblApellido.setFocusable(false);
-
-        txtApellido.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        txtApellido.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtApellido.setEnabled(false);
-        txtApellido.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtApellidoKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtApellidoKeyTyped(evt);
             }
         });
 
@@ -1085,6 +1183,56 @@ public class ABMApoderado extends javax.swing.JDialog {
         lblSexo.setToolTipText("");
         lblSexo.setFocusable(false);
 
+        chbSincedula.setText("No posee C.I.");
+        chbSincedula.setEnabled(false);
+        chbSincedula.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                chbSincedulaItemStateChanged(evt);
+            }
+        });
+
+        txtNombre.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        txtNombre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtNombre.setEnabled(false);
+        txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtNombreKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtNombreKeyTyped(evt);
+            }
+        });
+
+        lblNombre.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lblNombre.setForeground(new java.awt.Color(102, 102, 102));
+        lblNombre.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblNombre.setText("Nombre*:");
+        lblNombre.setFocusable(false);
+
+        lblApellido.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lblApellido.setForeground(new java.awt.Color(102, 102, 102));
+        lblApellido.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblApellido.setText("Apellido*:");
+        lblApellido.setFocusable(false);
+
+        txtApellido.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        txtApellido.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtApellido.setEnabled(false);
+        txtApellido.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtApellidoKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtApellidoKeyTyped(evt);
+            }
+        });
+
+        lblCIValidacion.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        lblCIValidacion.setForeground(new java.awt.Color(255, 0, 0));
+        lblCIValidacion.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCIValidacion.setText("C.I. ya existe");
+        lblCIValidacion.setFocusable(false);
+
         javax.swing.GroupLayout jpEdicionLayout = new javax.swing.GroupLayout(jpEdicion);
         jpEdicion.setLayout(jpEdicionLayout);
         jpEdicionLayout.setHorizontalGroup(
@@ -1092,38 +1240,45 @@ public class ABMApoderado extends javax.swing.JDialog {
             .addGroup(jpEdicionLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(lblCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(2, 2, 2)
+                    .addComponent(lblCodigo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblCedula, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                    .addComponent(lblNombre, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblApellido, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblSexo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpEdicionLayout.createSequentialGroup()
+                        .addComponent(txtCodigoApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2)
+                        .addGap(97, 97, 97))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpEdicionLayout.createSequentialGroup()
+                        .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(169, 169, 169))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpEdicionLayout.createSequentialGroup()
+                        .addComponent(cbSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(279, 279, 279))
                     .addGroup(jpEdicionLayout.createSequentialGroup()
-                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(txtCedula, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jpEdicionLayout.createSequentialGroup()
-                                .addComponent(txtCodigoApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel2))
-                            .addComponent(txtNombre, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtApellido, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 161, Short.MAX_VALUE)
                         .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblEmail, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblDireccion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblTelefono, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblObs, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(4, 4, 4))
-                    .addGroup(jpEdicionLayout.createSequentialGroup()
-                        .addComponent(cbSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(txtNombre)
+                            .addGroup(jpEdicionLayout.createSequentialGroup()
+                                .addComponent(txtCedula, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(chbSincedula)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblCIValidacion, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblObs, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(txtEmail)
                     .addComponent(txtTelefono)
+                    .addComponent(scpObs, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
                     .addComponent(txtDireccion, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scpObs, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE))
+                    .addComponent(txtEmail))
                 .addGap(123, 123, 123))
         );
         jpEdicionLayout.setVerticalGroup(
@@ -1133,38 +1288,40 @@ public class ABMApoderado extends javax.swing.JDialog {
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                         .addComponent(lblDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                        .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.CENTER, jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtCodigoApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(lblCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtCodigoApoderado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                        .addComponent(lblTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chbSincedula, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCIValidacion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblObs, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scpObs, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(jpEdicionLayout.createSequentialGroup()
-                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lblCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCedula, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblObs, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                                .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lblApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cbSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(scpObs, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap(7, Short.MAX_VALUE))
+                            .addComponent(lblSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 5, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         jtpEdicion.addTab("Edición", jpEdicion);
@@ -1181,7 +1338,22 @@ public class ABMApoderado extends javax.swing.JDialog {
             new String [] {
                 "Código", "Nombre", "Apellido", "N° de Cédula", "Fecha de nac.", "Fecha de inscr.", "Sexo", "Teléfono", "Email", "Obs", "Estado"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbPoderantes.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbPoderantes.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbPoderantes.setEnabled(false);
@@ -1241,7 +1413,7 @@ public class ABMApoderado extends javax.swing.JDialog {
             jpAlumnosACargoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpAlumnosACargoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scPrincipal1, javax.swing.GroupLayout.DEFAULT_SIZE, 857, Short.MAX_VALUE)
+                .addComponent(scPrincipal1, javax.swing.GroupLayout.DEFAULT_SIZE, 853, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpAlumnosACargoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnModificarAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1330,7 +1502,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         panel2.setColorSecundario(new java.awt.Color(233, 255, 255));
 
         labelMetric2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        labelMetric2.setText("APODERADOS");
+        labelMetric2.setText("APODERADOS (RESPONSABLES)");
         labelMetric2.setDireccionDeSombra(110);
         labelMetric2.setFocusable(false);
         labelMetric2.setFont(new java.awt.Font("Cooper Black", 0, 28)); // NOI18N
@@ -1341,7 +1513,7 @@ public class ABMApoderado extends javax.swing.JDialog {
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel2Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
-                .addComponent(labelMetric2, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(labelMetric2, javax.swing.GroupLayout.PREFERRED_SIZE, 601, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panel2Layout.setVerticalGroup(
@@ -1364,12 +1536,12 @@ public class ABMApoderado extends javax.swing.JDialog {
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
                         .addComponent(jpTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jpPrincipalLayout.createSequentialGroup()
+                        .addGap(343, 343, 343)
+                        .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(jpPrincipalLayout.createSequentialGroup()
-                .addGap(349, 349, 349)
-                .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1383,7 +1555,7 @@ public class ABMApoderado extends javax.swing.JDialog {
                 .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         jtpEdicion.getAccessibleContext().setAccessibleName("");
@@ -1396,7 +1568,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
         );
 
         getAccessibleContext().setAccessibleName("Encargados");
@@ -1471,7 +1643,6 @@ public class ABMApoderado extends javax.swing.JDialog {
 
     private void txtCedulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyReleased
         metodostxt.TxtColorLabelKeyReleased(txtCedula, lblCedula);
-
         txtCedula.setText(metodostxt.StringPuntosMiles(txtCedula.getText()));
 
     }//GEN-LAST:event_txtCedulaKeyReleased
@@ -1546,10 +1717,24 @@ public class ABMApoderado extends javax.swing.JDialog {
         //Cargar datos del alumno a modificar
         lmTitulo.setText("Modificar alumno");
         btnAgregarAlumno.setText("Modificar");
+
+        CargarDatosAlumno();
+
+        AltaAlumno.setLocationRelativeTo(this);
+        AltaAlumno.setVisible(true);
+    }//GEN-LAST:event_btnModificarAlumnoActionPerformed
+
+    private void CargarDatosAlumno() {
         txtCodigoAlumno.setText(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 0) + "");
         txtNombreAlumno.setText(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 1) + ""));
         txtApellidoAlumno.setText(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 2) + ""));
+
         txtCedulaAlumno.setText(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 3) + ""));
+        chbSincedulaAlumno.setSelected(false);
+        chbSincedulaAlumno.setEnabled(true);
+        if (txtCedulaAlumno.getText().equals("0")) {
+            chbSincedulaAlumno.setSelected(true);
+        }
 
         try {
             Date fechaParseada = new SimpleDateFormat("dd/MM/yyyy").parse(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 4).toString() + ""));
@@ -1575,10 +1760,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         taObsAlumno.setText(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 9).toString());
         String estado = tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 10).toString();
         cbEstadoAlumno.setSelectedItem(estado);
-
-        AltaAlumno.setLocationRelativeTo(this);
-        AltaAlumno.setVisible(true);
-    }//GEN-LAST:event_btnModificarAlumnoActionPerformed
+    }
 
     private void taObsAlumnoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_taObsAlumnoKeyPressed
         char car = (char) evt.getKeyCode();
@@ -1649,15 +1831,20 @@ public class ABMApoderado extends javax.swing.JDialog {
 
         if (ComprobarCamposAlumnos() == true) {
             String nombre = metodos.MayusCadaPrimeraLetra(txtNombreAlumno.getText());
+            nombre = metodostxt.QuitaEspaciosString(nombre);
             String apellido = metodos.MayusCadaPrimeraLetra(txtApellidoAlumno.getText());
-            String cedula = txtCedulaAlumno.getText();
+            apellido = metodostxt.QuitaEspaciosString(apellido);
+            int cedula = metodostxt.StringSinPuntosMiles(txtCedulaAlumno.getText());
             SimpleDateFormat formatofecha = new SimpleDateFormat("dd/MM/yyyy");
             String fechanacimiento = formatofecha.format(dcFechaNacimientoAlumno.getDate());
             String fechainscripcion = formatofecha.format(dcFechaInscripcionAlumno.getDate());
             String sexo = cbSexoAlumno.getSelectedItem() + "";
             String telefono = txtTelefonoAlumno.getText();
+            telefono = metodostxt.QuitaEspaciosString(telefono);
             String email = txtEmailAlumno.getText();
+            email = metodostxt.QuitaEspaciosString(email);
             String obs = taObsAlumno.getText();
+            obs = metodostxt.QuitaEspaciosString(obs);
             String estado = cbEstadoAlumno.getSelectedItem() + "";
 
             if (btnAgregarAlumno.getText().equals("Agregar")) {
@@ -1699,10 +1886,19 @@ public class ABMApoderado extends javax.swing.JDialog {
         btnAgregarAlumno.setText("Agregar");
         lmTitulo.setText("Nuevo alumno");
 
+        LimpiarAlumno();
+        AltaAlumno.setLocationRelativeTo(this);
+        AltaAlumno.setVisible(true);
+    }//GEN-LAST:event_btnNuevoAlumnoActionPerformed
+
+    private void LimpiarAlumno() {
         txtCodigoAlumno.setText("");
         txtNombreAlumno.setText("");
         txtApellidoAlumno.setText("");
         txtCedulaAlumno.setText("");
+        chbSincedulaAlumno.setSelected(false);
+        chbSincedulaAlumno.setEnabled(true);
+        lblCIValidacionAlumno.setVisible(false);
         dcFechaNacimientoAlumno.setDate(null);
         txtEdadAlumno.setText("");
         dcFechaInscripcionAlumno.setDate(new Date());
@@ -1714,10 +1910,8 @@ public class ABMApoderado extends javax.swing.JDialog {
         lblNombreAlumno.setForeground(Color.WHITE);
         lblApellidoAlumno.setForeground(Color.WHITE);
         lblCedulaAlumno.setForeground(Color.WHITE);
-
-        AltaAlumno.setLocationRelativeTo(this);
-        AltaAlumno.setVisible(true);
-    }//GEN-LAST:event_btnNuevoAlumnoActionPerformed
+        txtCedulaAlumno.requestFocus();
+    }
 
     private void btnEliminarAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarAlumnoActionPerformed
         if (tbPoderantes.getSelectedRow() != -1) {
@@ -1726,15 +1920,17 @@ public class ABMApoderado extends javax.swing.JDialog {
                 Toolkit.getDefaultToolkit().beep();
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Deseas eliminar al alumno seleccionado?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
-
                     modelTablaPoderantes = (DefaultTableModel) tbPoderantes.getModel();
                     modelTablaPoderantes.removeRow(tbPoderantes.getSelectedRow());
-
                 }
             } else {
                 int confirmado2 = JOptionPane.showConfirmDialog(this, "¿Deseas eliminar al alumno seleccionado?, TAMBIEN SE ELIMINARÁN LAS MATRICULAS DEL MISMO", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado2) {
                     con.EjecutarABM("CALL SP_AlumnoEliminar('" + idalumno + "')", true);
+
+                    TablaConsultaBDAll();
+                    Limpiar();
+                    ModoEdicion(false);
                 }
             }
             btnModificar.setEnabled(false);
@@ -1756,6 +1952,115 @@ public class ABMApoderado extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnGuardarKeyReleased
 
+    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
+        metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
+
+        if (tbPrincipal.getRowCount() == 1) {
+            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registro encontrado");
+        } else {
+            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
+        }
+    }//GEN-LAST:event_txtBuscarKeyReleased
+
+    private void txtBuscarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyTyped
+        metodostxt.FiltroCaracteresProhibidos(evt);
+    }//GEN-LAST:event_txtBuscarKeyTyped
+
+    private void chbSincedulaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chbSincedulaItemStateChanged
+        if (chbSincedula.isSelected()) {
+            txtCedula.setEnabled(false);
+            txtCedula.setText("0");
+            lblCedula.setForeground(colorVerde);
+            lblCIValidacion.setVisible(false);
+        } else {
+            if (btnGuardar.isEnabled()) {
+                txtCedula.setText("");
+                txtCedula.setEnabled(true);
+                lblCedula.setForeground(Color.DARK_GRAY);
+            }
+        }
+    }//GEN-LAST:event_chbSincedulaItemStateChanged
+
+    private void tbPrincipalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPrincipalMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tbPrincipalMouseClicked
+
+    private void chbSincedulaAlumnoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chbSincedulaAlumnoItemStateChanged
+        if (chbSincedulaAlumno.isSelected()) {
+            txtCedulaAlumno.setEnabled(false);
+            txtCedulaAlumno.setText("0");
+            lblCIValidacionAlumno.setVisible(false);
+        } else {
+            txtCedulaAlumno.setText("");
+            txtCedulaAlumno.setEnabled(true);
+        }
+    }//GEN-LAST:event_chbSincedulaAlumnoItemStateChanged
+
+    private void dcFechaNacimientoAlumnoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dcFechaNacimientoAlumnoKeyReleased
+
+    }//GEN-LAST:event_dcFechaNacimientoAlumnoKeyReleased
+
+    private void txtCedulaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCedulaFocusLost
+        if (SiYaExisteCIApoderado() == true) {
+            System.out.println("El N° de cédula ingresado ya existe!");
+            lblCIValidacion.setVisible(true);
+            lblCedula.setForeground(colorRojo);
+            txtCedula.requestFocus();
+        } else {
+            lblCIValidacion.setVisible(false);
+        }
+    }//GEN-LAST:event_txtCedulaFocusLost
+
+    private boolean SiYaExisteCIApoderado() {
+        //Validacion cedula apoderado
+        if (txtCodigoApoderado.getText().equals("") && txtCedula.getText().equals("0") == false) {
+            try {
+                con = con.ObtenerRSSentencia("SELECT apo_cedula FROM apoderado WHERE apo_cedula='" + metodostxt.StringSinPuntosMiles(txtCedula.getText()) + "'");
+                if (con.getResultSet().next() == true) { //Si ya existe el numero de cedula en la tabla
+                    return true;
+                }
+            } catch (SQLException e) {
+                System.out.println("Error al buscar si ci ya existe en bd: " + e);
+            } catch (NullPointerException e) {
+                System.out.println("La CI ingresada no existe en la bd, aprobado: " + e);
+            }
+            con.DesconectarBasedeDatos();
+        }
+        return false;
+    }
+
+    private void txtCedulaAlumnoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCedulaAlumnoFocusLost
+        if (SiExisteCIAlumno()) {
+            lblCIValidacionAlumno.setVisible(true);
+            lblCedulaAlumno.setForeground(colorRojo);
+            txtCedulaAlumno.requestFocus();
+        } else {
+            lblCIValidacionAlumno.setVisible(false);
+        }
+    }//GEN-LAST:event_txtCedulaAlumnoFocusLost
+
+    private void chbSincedulaAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chbSincedulaAlumnoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_chbSincedulaAlumnoActionPerformed
+
+    private boolean SiExisteCIAlumno() {
+        //Validar Cedula Alumno
+        if (txtCodigoAlumno.getText().equals("") && txtCedulaAlumno.getText().equals("0") == false) {
+            try {
+                con = con.ObtenerRSSentencia("SELECT alu_cedula FROM alumno WHERE alu_cedula='" + metodostxt.StringSinPuntosMiles(txtCedulaAlumno.getText()) + "'");
+                if (con.getResultSet().next() == true) { //Si ya existe el numero de cedula en la tabla
+                    return true;
+                }
+            } catch (SQLException e) {
+                System.out.println("Error al buscar si ci ya existe en bd: " + e);
+            } catch (NullPointerException e) {
+                System.out.println("La CI ingresada no existe en la bd, aprobado: " + e);
+            }
+            con.DesconectarBasedeDatos();
+        }
+        return false;
+    }
+
     private void ConsultaPoderantes() {
         modelTablaPoderantes = (DefaultTableModel) tbPoderantes.getModel();//Cargamos campos de jtable al modeltable
         modelTablaPoderantes.setRowCount(0); //Vacia la tabla
@@ -1766,17 +2071,17 @@ public class ABMApoderado extends javax.swing.JDialog {
         con = con.ObtenerRSSentencia(sentencia);
 
         try {
-            int codigo, telefono;
-            String nombre, apellido, cedula, fechanac, fechainsc, sexo, email, obs, estado;
+            int codigo, cedula;
+            String nombre, apellido, fechanac, fechainsc, sexo, telefono, email, obs, estado;
             while (con.getResultSet().next()) {
                 codigo = con.getResultSet().getInt("alu_codigo");
                 nombre = con.getResultSet().getString("alu_nombre");
                 apellido = con.getResultSet().getString("alu_apellido");
-                cedula = metodostxt.StringPuntosMiles(con.getResultSet().getString("alu_cedula"));
+                cedula = con.getResultSet().getInt("alu_cedula");
                 fechanac = con.getResultSet().getString("fechanacimiento");
                 fechainsc = con.getResultSet().getString("fechainscripcion");
                 sexo = con.getResultSet().getString("alu_sexo");
-                telefono = con.getResultSet().getInt("alu_telefono");
+                telefono = con.getResultSet().getString("alu_telefono");
                 email = con.getResultSet().getString("alu_email");
                 obs = con.getResultSet().getString("alu_obs");
                 estado = con.getResultSet().getString("estado");
@@ -1792,6 +2097,24 @@ public class ABMApoderado extends javax.swing.JDialog {
     }
 
     public boolean ComprobarCamposAlumnos() {
+        if (metodostxt.ValidarCampoVacioTXT(txtCedulaAlumno, lblCedulaAlumno) == false) {
+            return false;
+        }
+
+        if (txtCedulaAlumno.getText().equals("0") && chbSincedulaAlumno.isSelected() == false) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(AltaAlumno, "El N° de cédula no puede ser 0", "Error", JOptionPane.ERROR_MESSAGE);
+            txtCedula.requestFocus();
+            return false;
+        }
+
+        if (lblCIValidacionAlumno.isVisible()) {
+            Toolkit.getDefaultToolkit().beep();
+            JOptionPane.showMessageDialog(AltaAlumno, "El N° de cédula del alumno ya se encuentra registrado", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            txtCedulaAlumno.requestFocus();
+            return false;
+        }
+
         if (metodostxt.ValidarCampoVacioTXT(txtNombreAlumno, lblNombreAlumno) == false) {
             return false;
         }
@@ -1800,31 +2123,7 @@ public class ABMApoderado extends javax.swing.JDialog {
             return false;
         }
 
-        if (metodostxt.ValidarCampoVacioTXT(txtCedulaAlumno, lblCedulaAlumno) == false) {
-            return false;
-        }
-
-        //Validar
-        if (txtCodigoApoderado.getText().equals("")) {
-            try {
-                con = con.ObtenerRSSentencia("SELECT alu_cedula FROM alumno WHERE alu_cedula='" + metodostxt.StringSinPuntosMiles(txtCedulaAlumno.getText()) + "'");
-                if (con.getResultSet().next() == true) { //Si ya existe el numero de cedula en la tabla
-                    System.out.println("El N° de cédula ingresado ya existe!");
-                    Toolkit.getDefaultToolkit().beep();
-                    JOptionPane.showMessageDialog(null, "El N° de cédula ingresado ya se encuentra registrado", "Error", JOptionPane.ERROR_MESSAGE);
-                    lblCedulaAlumno.setForeground(Color.RED);
-                    lblCedulaAlumno.requestFocus();
-                    con.DesconectarBasedeDatos();
-                    return false;
-                }
-            } catch (SQLException e) {
-                System.out.println("Error al buscar si ci ya existe en bd: " + e);
-            } catch (NullPointerException e) {
-                System.out.println("La CI ingresada no existe en la bd, aprobado: " + e);
-            }
-        }
-
-        try {
+        try { // Validar Fecha de nacimiento
             if (dcFechaNacimientoAlumno.getDate().after(new Date()) == true) {
                 Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(AltaAlumno, "La fecha de nacimiento no puede ser mayor a la fecha actual", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -1864,15 +2163,17 @@ public class ABMApoderado extends javax.swing.JDialog {
 
     private void OrdenTabulador() {
         ordenTabulador = new ArrayList<>();
+        ordenTabulador.add(txtCedula);
         ordenTabulador.add(txtNombre);
         ordenTabulador.add(txtApellido);
-        ordenTabulador.add(txtCedula);
+        ordenTabulador.add(cbSexo);
         ordenTabulador.add(txtDireccion);
         ordenTabulador.add(txtTelefono);
         ordenTabulador.add(txtEmail);
         ordenTabulador.add(taObs);
         ordenTabulador.add(btnGuardar);
         setFocusTraversalPolicy(new PersonalizadoFocusTraversalPolicy());
+
     }
 
     private class PersonalizadoFocusTraversalPolicy extends FocusTraversalPolicy {
@@ -1913,11 +2214,15 @@ public class ABMApoderado extends javax.swing.JDialog {
     private javax.swing.JButton btnModificarAlumno;
     private javax.swing.JButton btnNuevo;
     private javax.swing.JButton btnNuevoAlumno;
+    private javax.swing.JComboBox cbCampoBuscar;
     private javax.swing.JComboBox<String> cbEstadoAlumno;
     private javax.swing.JComboBox<String> cbSexo;
     private javax.swing.JComboBox<String> cbSexoAlumno;
+    private javax.swing.JCheckBox chbSincedula;
+    private javax.swing.JCheckBox chbSincedulaAlumno;
     private com.toedter.calendar.JDateChooser dcFechaInscripcionAlumno;
     private com.toedter.calendar.JDateChooser dcFechaNacimientoAlumno;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jpAlumnosACargo;
@@ -1931,6 +2236,9 @@ public class ABMApoderado extends javax.swing.JDialog {
     private javax.swing.JLabel lbCantRegistros;
     private javax.swing.JLabel lblApellido;
     private javax.swing.JLabel lblApellidoAlumno;
+    private javax.swing.JLabel lblBuscarCampoApoderado;
+    private javax.swing.JLabel lblCIValidacion;
+    private javax.swing.JLabel lblCIValidacionAlumno;
     private javax.swing.JLabel lblCedula;
     private javax.swing.JLabel lblCedulaAlumno;
     private javax.swing.JLabel lblCodigo;
@@ -1964,6 +2272,7 @@ public class ABMApoderado extends javax.swing.JDialog {
     private javax.swing.JTable tbPrincipal;
     private javax.swing.JTextField txtApellido;
     private javax.swing.JTextField txtApellidoAlumno;
+    private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtCedula;
     private javax.swing.JTextField txtCedulaAlumno;
     private javax.swing.JTextField txtCodigoAlumno;

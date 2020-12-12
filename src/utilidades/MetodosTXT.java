@@ -31,7 +31,7 @@ public class MetodosTXT {
         //Declaramos una variable y le asignamos un evento
         char car = evt.getKeyChar();
         //Condicion que nos permite ingresar datos de tipo texto
-        if (((car < 'a' || car > 'z') && (car < 'A' || car > 'z')) && (car != 'ñ') && (car != 'Ñ') && (car != (char) KeyEvent.VK_BACK_SPACE) && (car != (char) KeyEvent.VK_SPACE)) {
+        if (((car < 'a' || car > 'z') && (car < 'A' || car > 'z')) && (car != '.') && (car != 'ñ') && (car != 'Ñ') && (car != (char) KeyEvent.VK_BACK_SPACE) && (car != (char) KeyEvent.VK_SPACE)) {
             evt.consume();
         }
     }
@@ -49,7 +49,7 @@ public class MetodosTXT {
         //Declaramos una variable y le asignamos un evento
         char car = evt.getKeyChar();
         //Condicion que nos permite ingresar datos de tipo numerico
-        if (((car < '0' || car > '9') && (car != (char) KeyEvent.VK_BACK_SPACE))) {
+        if (((car < '0' || car > '9') && (car != (char) KeyEvent.VK_BACK_SPACE) && car != (char) KeyEvent.VK_LEFT && car != (char) KeyEvent.VK_RIGHT)) {
             evt.consume();
         }
     }
@@ -318,16 +318,24 @@ public class MetodosTXT {
     }
 
     public int StringSinPuntosMiles(String elNumString) {
-        elNumString = elNumString.replace(".", "");
-        int elNumInt = Integer.parseInt(elNumString);
+        if (elNumString.equals("") == false) {
+            elNumString = elNumString.replace(".", "");
+            int elNumInt = Integer.parseInt(elNumString);
+            return elNumInt;
+        } else {
+            return 0;
+        }
 
-        return elNumInt;
     }
 
     //Poner los puntos de miles al Integer
     public String StringPuntosMiles(String elNumString) {
         //System.out.println("StringPuntosMiles: " + elNumString);
-        elNumString = elNumString.replace(".", "");
+        try { //Si elNumString es vacio null
+            elNumString = elNumString.replace(".", "");
+        } catch (NullPointerException e) {
+            return "0";
+        }
         String ElNumConPuntos = "";
         String sub1;
         String sub2;

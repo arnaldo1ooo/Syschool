@@ -337,7 +337,7 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         btnGuardar.setForeground(new java.awt.Color(255, 255, 255));
         btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos20x20/IconoGuardar.png"))); // NOI18N
         btnGuardar.setText("Registrar");
-        btnGuardar.setToolTipText("Inserta el nuevo registro");
+        btnGuardar.setToolTipText("Registra la nueva matricula");
         btnGuardar.setPreferredSize(new java.awt.Dimension(128, 36));
         btnGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -355,7 +355,7 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         btnCancelar.setForeground(new java.awt.Color(255, 255, 255));
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos20x20/IconoCancelar.png"))); // NOI18N
         btnCancelar.setText("Limpiar campos");
-        btnCancelar.setToolTipText("Cancela la acción");
+        btnCancelar.setToolTipText("Cancela lo que se estaba cargando");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
@@ -392,6 +392,7 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         lblRucCedula.setToolTipText("");
         lblRucCedula.setFocusable(false);
 
+        cbAlumno.setToolTipText("Seleccione el alumno al cual desea matricular");
         cbAlumno.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cbAlumnoItemStateChanged(evt);
@@ -412,6 +413,7 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         lblFechaRegistro.setToolTipText("");
         lblFechaRegistro.setFocusable(false);
 
+        dcFechaMatricula.setToolTipText("Fecha de la matriculación que se está realizando");
         dcFechaMatricula.setEnabled(false);
         dcFechaMatricula.setMaxSelectableDate(new java.util.Date(4102455600000L));
         dcFechaMatricula.setMinSelectableDate(new java.util.Date(631162800000L));
@@ -422,8 +424,11 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         lblNivel.setToolTipText("");
         lblNivel.setFocusable(false);
 
+        cbNivel.setToolTipText("Seleccione el nivel en donde se matriculará al alumno seleccionado");
+
         txtPeriodo.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         txtPeriodo.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtPeriodo.setToolTipText("Periodo del año lectivo en donde se matriculará el alumno seleccionado");
         txtPeriodo.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtPeriodo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
@@ -636,18 +641,58 @@ public class RegistrarMatricula extends javax.swing.JDialog {
     }//GEN-LAST:event_tbAlumnosKeyReleased
 
     private void cbAlumnoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbAlumnoItemStateChanged
+        String nivelAnterior;
+        String seccionAnterior;
+        String turnoAnterior;
         try {
             lblAlumnoActual.setText(cbAlumno.getSelectedItem().toString());
 
-            con = con.ObtenerRSSentencia("SELECT mat_periodo, CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
+            con = con.ObtenerRSSentencia("SELECT niv_descripcion, niv_seccion, niv_turno, mat_periodo, "
+                    + "CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
                     + "ELSE CONCAT(niv_descripcion,' \"', niv_seccion,'\"', ' ',niv_turno) END AS nivel "
                     + "FROM matricula, nivel WHERE mat_alumno='" + metodoscombo.ObtenerIDSelectCombo(cbAlumno) + "' "
                     + "AND mat_nivel=niv_codigo ORDER BY mat_periodo DESC LIMIT 1");
             if (con.getResultSet().next()) {
                 lblUltimaMatriculacion.setText(con.getResultSet().getString("nivel") + " (" + con.getResultSet().getString("mat_periodo") + ")");
+                nivelAnterior = con.getResultSet().getString("niv_descripcion");
+                seccionAnterior = con.getResultSet().getString("niv_seccion");
+                turnoAnterior = con.getResultSet().getString("niv_turno");
+
             } else {
                 lblUltimaMatriculacion.setText("Nunca");
+                nivelAnterior = "-";
+                seccionAnterior = "-";
+                turnoAnterior = "-";
             }
+
+            if (lblUltimaMatriculacion.getText().equals("Nunca")) {
+                cbNivel.setSelectedIndex(0);
+            } else {
+                String niveles[] = {"JARDIN", "PREESCOLAR", "1° GRADO", "2° GRADO", "3° GRADO", "4° GRADO", "5° GRADO", "6° GRADO", "7° GRADO", "8° GRADO", "9° GRADO",
+                    "1° CURSO", "2° CURSO", "3° CURSO"};
+                int nivelAnteriorInt = 0;
+                for (int i = 0; i < niveles.length; i++) {
+                    if (nivelAnterior.equals(niveles[i])) {
+                        nivelAnteriorInt = i;
+                        i = niveles.length;
+                    }
+                }
+
+                if (nivelAnteriorInt > 10 && nivelAnteriorInt < 13) {//Si NivelAnterior es 1 Curso  a 3 curso
+                    System.out.println("1 " + niveles[nivelAnteriorInt + 1]);
+                    metodoscombo.SetSelectedNombreItem(cbNivel, niveles[nivelAnteriorInt + 1]);
+                }
+
+                if (nivelAnteriorInt < 11 && nivelAnteriorInt >= 0) {//Si NivelAnterior es jardin hasta 9 grado
+                    System.out.println("2 " + niveles[nivelAnteriorInt + 1] + " \"" + seccionAnterior + "\" " + turnoAnterior);
+                    metodoscombo.SetSelectedNombreItem(cbNivel, niveles[nivelAnteriorInt + 1] + " \"" + seccionAnterior + "\" " + turnoAnterior);
+                }
+
+                if (nivelAnteriorInt == 12) { //Si ya esta en 3 curso
+                    cbNivel.setSelectedIndex(0);
+                }
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {

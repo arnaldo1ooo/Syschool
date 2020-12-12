@@ -264,3 +264,7 @@
 08/12/2020 21:07:34 ERROR [AWT-EventQueue-0] (MetodosCombo.java:135) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException codItemSelect:-1
 08/12/2020 21:10:18 ERROR [AWT-EventQueue-0] (MetodosCombo.java:135) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException codItemSelect:-1
 08/12/2020 21:10:18 ERROR [AWT-EventQueue-0] (MetodosCombo.java:135) â ObtenerIdCombo: No se selecciono ningun item en el combo: java.lang.NullPointerException codItemSelect:-1
+09/12/2020 13:24:58 ERROR [AWT-EventQueue-0] (Conexion.java:209) â Error 1093: java.sql.SQLIntegrityConstraintViolationException: Duplicate entry '7192585' for key 'enc_ruccedula_UNIQUE'
+10/12/2020 21:04:07 ERROR [AWT-EventQueue-0] (Conexion.java:209) â Error 1093: java.sql.SQLIntegrityConstraintViolationException: Column 'apo_cedula' cannot be null
+10/12/2020 21:05:12 ERROR [AWT-EventQueue-0] (Conexion.java:209) â Error 1093: java.sql.SQLIntegrityConstraintViolationException: Column 'apo_cedula' cannot be null
+10/12/2020 22:36:00 ERROR [AWT-EventQueue-0] (Conexion.java:209) â Error 1093: java.sql.SQLException: Incorrect integer value: 'null' for column 'cedula' at row 1

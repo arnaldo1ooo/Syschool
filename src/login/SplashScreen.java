@@ -24,10 +24,12 @@ public class SplashScreen extends javax.swing.JFrame implements Runnable {
         try {
             this.setLocationRelativeTo(null);
             this.setVisible(true);
+            
             lblVersionBD.setText(ObtenerVersionBD());
+            
+            
             Thread.sleep(3000); //Esta en pantalla por 3 segundos
             this.dispose(); //Desaparece
-
             Principal principal = new Principal();
             principal.setVisible(true);
         } catch (InterruptedException e) {
