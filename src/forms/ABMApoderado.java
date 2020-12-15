@@ -55,7 +55,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         btnEliminar.setVisible(permisos.contains("B"));
 
         lblCIValidacion.setVisible(false);
-        metodos.CargarTitlesaCombo(cbCampoBuscar, tbPrincipal);
+
         TablaConsultaBDAll(); //Trae todos los registros
 
         //Cambiar color de disabled combo
@@ -73,18 +73,14 @@ public class ABMApoderado extends javax.swing.JDialog {
                 cedula = metodostxt.StringSinPuntosMiles(txtCedula.getText()) + "";
                 cedula = metodostxt.QuitaEspaciosString(cedula);
             }
-            String nombre = metodos.MayusCadaPrimeraLetra(txtNombre.getText());
-            nombre = metodostxt.QuitaEspaciosString(nombre);
-            String apellido = metodos.MayusCadaPrimeraLetra(txtApellido.getText());
-            apellido = metodostxt.QuitaEspaciosString(apellido);
+            String nombre = txtNombre.getText();
+            String apellido = txtApellido.getText();
             String sexo = cbSexo.getSelectedItem() + "";
-            String direccion = metodos.MayusPrimeraLetra(txtDireccion.getText());
-            direccion = metodostxt.QuitaEspaciosString(direccion);
+            String direccion = txtDireccion.getText();
             String email = txtEmail.getText();
-            email = metodostxt.QuitaEspaciosString(email);
             String telefono = txtTelefono.getText();
-            telefono = metodostxt.QuitaEspaciosString(telefono);
-            String obs = metodos.MayusPrimeraLetra(taObs.getText());
+            telefono = telefono;
+            String obs = metodostxt.MayusSoloPrimeraLetra(taObs.getText());
             obs = metodostxt.QuitaEspaciosString(obs);
 
             if (txtCodigoApoderado.getText().equals("")) { //NUEVO REGISTRO
@@ -135,13 +131,13 @@ public class ABMApoderado extends javax.swing.JDialog {
 
         for (int i = 0; i < tbPoderantes.getRowCount(); i++) {
             codigoalumno = tbPoderantes.getValueAt(i, 0) + "";
-            nombrealumno = metodos.MayusCadaPrimeraLetra(tbPoderantes.getValueAt(i, 1) + "");
+            nombrealumno = metodostxt.MayusCadaPrimeraLetra(tbPoderantes.getValueAt(i, 1) + "");
             nombrealumno = metodostxt.QuitaEspaciosString(nombrealumno);
-            apellidoalumno = metodos.MayusCadaPrimeraLetra(tbPoderantes.getValueAt(i, 2) + "");
+            apellidoalumno = metodostxt.MayusCadaPrimeraLetra(tbPoderantes.getValueAt(i, 2) + "");
             apellidoalumno = metodostxt.QuitaEspaciosString(apellidoalumno);
 
             String cedulaalumno = null;
-            if (chbSincedula.isSelected() == false) {
+            if (chbSincedulaAlumno.isSelected() == false) {
                 cedulaalumno = metodostxt.StringSinPuntosMiles(tbPoderantes.getValueAt(i, 3) + "") + "";
                 cedulaalumno = metodostxt.QuitaEspaciosString(cedulaalumno);
             }
@@ -205,11 +201,11 @@ public class ABMApoderado extends javax.swing.JDialog {
     private void RegistroEliminar() {
         int filasel = tbPrincipal.getSelectedRow();
         if (filasel != -1) {
+            int codigo = Integer.parseInt(tbPrincipal.getValueAt(filasel, 0) + "");
             Toolkit.getDefaultToolkit().beep();
-            int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de eliminar este apoderado? Tambien se ELIMINARÁN "
+            int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de eliminar este apoderado(" + codigo + ")? Tambien se ELIMINARÁN "
                     + "los ALUMNOS A SU CARGO y sus respectivas MATRICULAS y PAGOS", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
-                int codigo = Integer.parseInt(tbPrincipal.getModel().getValueAt(filasel, 0) + "");
                 String sentencia = "CALL SP_ApoderadoEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
@@ -227,12 +223,19 @@ public class ABMApoderado extends javax.swing.JDialog {
             modelTableApoderados = (DefaultTableModel) tbPrincipal.getModel();
             modelTableApoderados.setRowCount(0); //Vacia tabla
 
-            int codigo, cedula;
-            String nombre, apellido, sexo, direccion, telefono, email, obs;
+            if (cbCampoBuscar.getItemCount() == 0) {
+                metodos.CargarTitlesaCombo(cbCampoBuscar, tbPrincipal);
+            }
+
+            int codigo;
+            String nombre, apellido, cedula, sexo, direccion, telefono, email, obs;
             con = con.ObtenerRSSentencia("CALL SP_ApoderadoConsulta()");
             while (con.getResultSet().next()) {
                 codigo = con.getResultSet().getInt("apo_codigo");
-                cedula = con.getResultSet().getInt("apo_cedula");
+                cedula = con.getResultSet().getString("apo_cedula");
+                if (cedula == null) {
+                    cedula = "0";
+                }
                 nombre = con.getResultSet().getString("apo_nombre");
                 apellido = con.getResultSet().getString("apo_apellido");
                 sexo = con.getResultSet().getString("apo_sexo");
@@ -485,9 +488,9 @@ public class ABMApoderado extends javax.swing.JDialog {
         AltaAlumno.setTitle("Ventana Nuevo Alumno");
         AltaAlumno.setModal(true);
         AltaAlumno.setResizable(false);
-        AltaAlumno.setSize(new java.awt.Dimension(848, 370));
+        AltaAlumno.setSize(new java.awt.Dimension(893, 385));
 
-        pnAltaAlumno.setPreferredSize(new java.awt.Dimension(848, 370));
+        pnAltaAlumno.setPreferredSize(new java.awt.Dimension(930, 385));
 
         lblNombreAlumno.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblNombreAlumno.setForeground(new java.awt.Color(255, 255, 255));
@@ -497,6 +500,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtNombreAlumno.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtNombreAlumno.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtNombreAlumno.setNextFocusableComponent(txtApellidoAlumno);
+        txtNombreAlumno.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtNombreAlumnoFocusLost(evt);
+            }
+        });
         txtNombreAlumno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtNombreAlumnoKeyReleased(evt);
@@ -514,6 +522,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtApellidoAlumno.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtApellidoAlumno.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtApellidoAlumno.setNextFocusableComponent(dcFechaNacimientoAlumno);
+        txtApellidoAlumno.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtApellidoAlumnoFocusLost(evt);
+            }
+        });
         txtApellidoAlumno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtApellidoAlumnoKeyReleased(evt);
@@ -573,6 +586,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtEdadAlumno.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtEdadAlumno.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtEdadAlumno.setEnabled(false);
+        txtEdadAlumno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtEdadAlumnoActionPerformed(evt);
+            }
+        });
 
         lblFechaInscripcion.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         lblFechaInscripcion.setForeground(new java.awt.Color(255, 255, 255));
@@ -598,6 +616,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtTelefonoAlumno.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtTelefonoAlumno.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtTelefonoAlumno.setNextFocusableComponent(txtEmailAlumno);
+        txtTelefonoAlumno.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtTelefonoAlumnoFocusLost(evt);
+            }
+        });
         txtTelefonoAlumno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtTelefonoAlumnoKeyPressed(evt);
@@ -615,6 +638,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtEmailAlumno.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtEmailAlumno.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtEmailAlumno.setNextFocusableComponent(taObsAlumno);
+        txtEmailAlumno.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtEmailAlumnoFocusLost(evt);
+            }
+        });
         txtEmailAlumno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtEmailAlumnoKeyPressed(evt);
@@ -633,6 +661,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         taObsAlumno.setRows(5);
         taObsAlumno.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         taObsAlumno.setNextFocusableComponent(cbEstadoAlumno);
+        taObsAlumno.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                taObsAlumnoFocusLost(evt);
+            }
+        });
         taObsAlumno.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 taObsAlumnoKeyPressed(evt);
@@ -647,7 +680,6 @@ public class ABMApoderado extends javax.swing.JDialog {
         lblEstadoAlumno.setToolTipText("");
 
         cbEstadoAlumno.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "INACTIVO", "ACTIVO" }));
-        cbEstadoAlumno.setSelectedIndex(1);
 
         jLabel3.setForeground(new java.awt.Color(0, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -765,22 +797,22 @@ public class ABMApoderado extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lblCIValidacionAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addComponent(btnAgregarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnAltaAlumnoLayout.createSequentialGroup()
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblObsAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblEmailAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblEstadoAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblTelefonoAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblEmailAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblTelefonoAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblEstadoAlumno)
+                            .addComponent(lblObsAlumno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(2, 2, 2)
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(cbEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEmailAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(scpObsAlumno)
-                            .addComponent(txtTelefonoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(scpObsAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                            .addComponent(txtEmailAlumno)
+                            .addComponent(txtTelefonoAlumno)))
                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
         pnAltaAlumnoLayout.setVerticalGroup(
             pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -790,62 +822,58 @@ public class ABMApoderado extends javax.swing.JDialog {
                 .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(lblNombreAlumno1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtCodigoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4)
+                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblCedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chbSincedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblTelefonoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTelefonoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCIValidacionAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4)
+                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblEmailAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtEmailAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(4, 4, 4)
                 .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scpObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
+                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(lblApellidoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtApellidoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(4, 4, 4)
                         .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lblCedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(chbSincedulaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblTelefonoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtTelefonoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblCIValidacionAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(4, 4, 4)
-                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lblNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtNombreAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblEmailAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtEmailAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(4, 4, 4)
-                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(scpObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblObsAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                                    .addComponent(lblApellidoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtApellidoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(4, 4, 4)
-                                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                                    .addComponent(lblFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(dcFechaNacimientoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(4, 4, 4)
-                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(lblFechaInscripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dcFechaInscripcionAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblSexoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbSexoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(2, 63, Short.MAX_VALUE))
-                    .addGroup(pnAltaAlumnoLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnAgregarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(60, 60, 60))
+                            .addComponent(lblFechaNacimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dcFechaNacimientoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtEdadAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(4, 4, 4)
+                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblFechaInscripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dcFechaInscripcionAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblSexoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbSexoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbEstadoAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(43, 43, 43)
+                .addGroup(pnAltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAgregarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout AltaAlumnoLayout = new javax.swing.GroupLayout(AltaAlumno.getContentPane());
         AltaAlumno.getContentPane().setLayout(AltaAlumnoLayout);
         AltaAlumnoLayout.setHorizontalGroup(
             AltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnAltaAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, 887, Short.MAX_VALUE)
+            .addComponent(pnAltaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 878, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         AltaAlumnoLayout.setVerticalGroup(
             AltaAlumnoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnAltaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(pnAltaAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -1102,6 +1130,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtDireccion.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtDireccion.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtDireccion.setEnabled(false);
+        txtDireccion.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtDireccionFocusLost(evt);
+            }
+        });
         txtDireccion.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtDireccionKeyPressed(evt);
@@ -1123,6 +1156,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtTelefono.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtTelefono.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtTelefono.setEnabled(false);
+        txtTelefono.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtTelefonoFocusLost(evt);
+            }
+        });
         txtTelefono.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtTelefonoKeyPressed(evt);
@@ -1141,6 +1179,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtEmail.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtEmail.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtEmail.setEnabled(false);
+        txtEmail.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtEmailFocusLost(evt);
+            }
+        });
         txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtEmailKeyPressed(evt);
@@ -1162,6 +1205,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         taObs.setWrapStyleWord(true);
         taObs.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         taObs.setEnabled(false);
+        taObs.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                taObsFocusLost(evt);
+            }
+        });
         taObs.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 taObsKeyPressed(evt);
@@ -1194,6 +1242,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtNombre.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtNombre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtNombre.setEnabled(false);
+        txtNombre.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtNombreFocusLost(evt);
+            }
+        });
         txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtNombreKeyReleased(evt);
@@ -1218,6 +1271,11 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtApellido.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtApellido.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtApellido.setEnabled(false);
+        txtApellido.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtApellidoFocusLost(evt);
+            }
+        });
         txtApellido.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtApellidoKeyReleased(evt);
@@ -1260,11 +1318,11 @@ public class ABMApoderado extends javax.swing.JDialog {
                         .addGap(279, 279, 279))
                     .addGroup(jpEdicionLayout.createSequentialGroup()
                         .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtNombre)
                             .addGroup(jpEdicionLayout.createSequentialGroup()
-                                .addComponent(txtCedula, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
+                                .addComponent(txtCedula)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(chbSincedula)))
+                                .addComponent(chbSincedula))
+                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(lblCIValidacion, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
@@ -1317,7 +1375,7 @@ public class ABMApoderado extends javax.swing.JDialog {
                                 .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(lblApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cbSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 5, Short.MAX_VALUE)))
@@ -1340,7 +1398,7 @@ public class ABMApoderado extends javax.swing.JDialog {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false, false, false, false, false
@@ -1718,6 +1776,8 @@ public class ABMApoderado extends javax.swing.JDialog {
         lmTitulo.setText("Modificar alumno");
         btnAgregarAlumno.setText("Modificar");
 
+        lblCedulaAlumno.setForeground(Color.WHITE);
+        lblCIValidacionAlumno.setVisible(false);
         CargarDatosAlumno();
 
         AltaAlumno.setLocationRelativeTo(this);
@@ -1730,10 +1790,13 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtApellidoAlumno.setText(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 2) + ""));
 
         txtCedulaAlumno.setText(metodos.SiStringEsNull(tbPoderantes.getValueAt(tbPoderantes.getSelectedRow(), 3) + ""));
-        chbSincedulaAlumno.setSelected(false);
+        txtCedulaAlumno.setText(metodostxt.StringPuntosMiles(txtCedulaAlumno.getText()));
+
         chbSincedulaAlumno.setEnabled(true);
         if (txtCedulaAlumno.getText().equals("0")) {
             chbSincedulaAlumno.setSelected(true);
+        } else {
+            chbSincedulaAlumno.setSelected(false);
         }
 
         try {
@@ -1830,21 +1893,16 @@ public class ABMApoderado extends javax.swing.JDialog {
     private void btnAgregarAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarAlumnoActionPerformed
 
         if (ComprobarCamposAlumnos() == true) {
-            String nombre = metodos.MayusCadaPrimeraLetra(txtNombreAlumno.getText());
-            nombre = metodostxt.QuitaEspaciosString(nombre);
-            String apellido = metodos.MayusCadaPrimeraLetra(txtApellidoAlumno.getText());
-            apellido = metodostxt.QuitaEspaciosString(apellido);
+            String nombre = txtNombreAlumno.getText();
+            String apellido = txtApellidoAlumno.getText();
             int cedula = metodostxt.StringSinPuntosMiles(txtCedulaAlumno.getText());
             SimpleDateFormat formatofecha = new SimpleDateFormat("dd/MM/yyyy");
             String fechanacimiento = formatofecha.format(dcFechaNacimientoAlumno.getDate());
             String fechainscripcion = formatofecha.format(dcFechaInscripcionAlumno.getDate());
             String sexo = cbSexoAlumno.getSelectedItem() + "";
             String telefono = txtTelefonoAlumno.getText();
-            telefono = metodostxt.QuitaEspaciosString(telefono);
             String email = txtEmailAlumno.getText();
-            email = metodostxt.QuitaEspaciosString(email);
             String obs = taObsAlumno.getText();
-            obs = metodostxt.QuitaEspaciosString(obs);
             String estado = cbEstadoAlumno.getSelectedItem() + "";
 
             if (btnAgregarAlumno.getText().equals("Agregar")) {
@@ -1906,7 +1964,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         txtTelefonoAlumno.setText("");
         txtEmailAlumno.setText("");
         taObsAlumno.setText("");
-        cbEstadoAlumno.setSelectedIndex(1);
+        cbEstadoAlumno.setSelectedIndex(0);
         lblNombreAlumno.setForeground(Color.WHITE);
         lblApellidoAlumno.setForeground(Color.WHITE);
         lblCedulaAlumno.setForeground(Color.WHITE);
@@ -1990,6 +2048,7 @@ public class ABMApoderado extends javax.swing.JDialog {
             txtCedulaAlumno.setEnabled(false);
             txtCedulaAlumno.setText("0");
             lblCIValidacionAlumno.setVisible(false);
+            lblCedulaAlumno.setForeground(Color.WHITE);
         } else {
             txtCedulaAlumno.setText("");
             txtCedulaAlumno.setEnabled(true);
@@ -2043,6 +2102,59 @@ public class ABMApoderado extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_chbSincedulaAlumnoActionPerformed
 
+    private void txtEdadAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEdadAlumnoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEdadAlumnoActionPerformed
+
+    private void txtNombreFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNombreFocusLost
+        txtNombre.setText(metodostxt.QuitaEspaciosString(txtNombre.getText()));
+        txtNombre.setText(metodostxt.MayusCadaPrimeraLetra(txtNombre.getText()));
+    }//GEN-LAST:event_txtNombreFocusLost
+
+    private void txtApellidoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtApellidoFocusLost
+        txtApellido.setText(metodostxt.QuitaEspaciosString(txtApellido.getText()));
+        txtApellido.setText(metodostxt.MayusCadaPrimeraLetra(txtApellido.getText()));
+    }//GEN-LAST:event_txtApellidoFocusLost
+
+    private void txtDireccionFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDireccionFocusLost
+        txtDireccion.setText(metodostxt.QuitaEspaciosString(txtDireccion.getText()));
+        txtDireccion.setText(metodostxt.MayusSoloPrimeraLetra(txtDireccion.getText()));
+    }//GEN-LAST:event_txtDireccionFocusLost
+
+    private void taObsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_taObsFocusLost
+        taObs.setText(metodostxt.MayusSoloPrimeraLetra(taObs.getText()));
+    }//GEN-LAST:event_taObsFocusLost
+
+    private void txtEmailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtEmailFocusLost
+        txtEmail.setText(metodostxt.QuitaEspaciosString(txtEmail.getText()));
+    }//GEN-LAST:event_txtEmailFocusLost
+
+    private void txtTelefonoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTelefonoFocusLost
+        txtTelefono.setText(metodostxt.QuitaEspaciosString(txtTelefono.getText()));
+    }//GEN-LAST:event_txtTelefonoFocusLost
+
+    private void txtNombreAlumnoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNombreAlumnoFocusLost
+        txtNombreAlumno.setText(metodostxt.QuitaEspaciosString(txtNombreAlumno.getText()));
+        txtNombreAlumno.setText(metodostxt.MayusCadaPrimeraLetra(txtNombreAlumno.getText()));
+    }//GEN-LAST:event_txtNombreAlumnoFocusLost
+
+    private void txtApellidoAlumnoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtApellidoAlumnoFocusLost
+        txtApellidoAlumno.setText(metodostxt.QuitaEspaciosString(txtApellidoAlumno.getText()));
+        txtApellidoAlumno.setText(metodostxt.MayusCadaPrimeraLetra(txtApellidoAlumno.getText()));
+    }//GEN-LAST:event_txtApellidoAlumnoFocusLost
+
+    private void txtTelefonoAlumnoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTelefonoAlumnoFocusLost
+        txtTelefonoAlumno.setText(metodostxt.QuitaEspaciosString(txtTelefonoAlumno.getText()));
+    }//GEN-LAST:event_txtTelefonoAlumnoFocusLost
+
+    private void txtEmailAlumnoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtEmailAlumnoFocusLost
+        txtEmailAlumno.setText(metodostxt.QuitaEspaciosString(txtEmailAlumno.getText()));
+    }//GEN-LAST:event_txtEmailAlumnoFocusLost
+
+    private void taObsAlumnoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_taObsAlumnoFocusLost
+        taObsAlumno.setText(metodostxt.MayusSoloPrimeraLetra(taObsAlumno.getText()));
+    }//GEN-LAST:event_taObsAlumnoFocusLost
+
     private boolean SiExisteCIAlumno() {
         //Validar Cedula Alumno
         if (txtCodigoAlumno.getText().equals("") && txtCedulaAlumno.getText().equals("0") == false) {
@@ -2071,13 +2183,16 @@ public class ABMApoderado extends javax.swing.JDialog {
         con = con.ObtenerRSSentencia(sentencia);
 
         try {
-            int codigo, cedula;
-            String nombre, apellido, fechanac, fechainsc, sexo, telefono, email, obs, estado;
+            int codigo;
+            String nombre, apellido, cedula, fechanac, fechainsc, sexo, telefono, email, obs, estado;
             while (con.getResultSet().next()) {
                 codigo = con.getResultSet().getInt("alu_codigo");
                 nombre = con.getResultSet().getString("alu_nombre");
                 apellido = con.getResultSet().getString("alu_apellido");
-                cedula = con.getResultSet().getInt("alu_cedula");
+                cedula = con.getResultSet().getString("alu_cedula");
+                if (cedula == null) {
+                    cedula = "0";
+                }
                 fechanac = con.getResultSet().getString("fechanacimiento");
                 fechainsc = con.getResultSet().getString("fechainscripcion");
                 sexo = con.getResultSet().getString("alu_sexo");

@@ -138,6 +138,9 @@ public class Metodos {
             for (int i = 0; i < ElJTable.getColumnCount(); i++) {
                 modelFiltrado.setRowFilter(RowFilter.regexFilter("(?i)" + cadenaABuscar, i));
                 ElJTable.setRowSorter(modelFiltrado);
+                if (ElJTable.getRowCount() > 0) {
+                    i = ElJTable.getColumnCount();
+                }
             }
         }
     }
@@ -345,31 +348,7 @@ public class Metodos {
         return permisos;
     }
 
-    public String MayusPrimeraLetra(String laCadena) {
-        if (laCadena == null || laCadena.isEmpty()) {
-            return "";
-        } else {
-            return Character.toUpperCase(laCadena.charAt(0)) + laCadena.substring(1, laCadena.length()).toLowerCase();
-        }
-    }
-
-    public String MayusCadaPrimeraLetra(String laCadena) {
-        if (laCadena == null || laCadena.isEmpty()) {
-            return "";
-        } else {
-            char[] caracteres = laCadena.toCharArray();
-            caracteres[0] = Character.toUpperCase(caracteres[0]);
-
-            // el -2 es para evitar una excepción al caernos del arreglo
-            for (int i = 0; i < laCadena.length() - 2; i++) {
-                // Es 'palabra'
-                if (caracteres[i] == ' ' || caracteres[i] == '.' || caracteres[i] == ',') { //Separadores puede ser espacio . o ,
-                    caracteres[i + 1] = Character.toUpperCase(caracteres[i + 1]); // Reemplazamos
-                }
-            }
-            return new String(caracteres);
-        }
-    }
+ 
 
     public String SiStringEsNull(String laCadena) {
         if (laCadena.equals("null")) {

@@ -68,9 +68,9 @@ public class ABMFuncionario extends javax.swing.JDialog {
     public void RegistroNuevoModificar() {
         if (ComprobarCampos() == true) {
             String codigo = txtCodigo.getText();
-            String nombre = metodos.MayusCadaPrimeraLetra(txtNombre.getText());
+            String nombre = metodostxt.MayusCadaPrimeraLetra(txtNombre.getText());
             nombre = metodostxt.QuitaEspaciosString(nombre);
-            String apellido = metodos.MayusCadaPrimeraLetra(txtApellido.getText());
+            String apellido = metodostxt.MayusCadaPrimeraLetra(txtApellido.getText());
             apellido = metodostxt.QuitaEspaciosString(apellido);
             SimpleDateFormat formatofecha = new SimpleDateFormat("yyyy-MM-dd");
             String cedula = metodostxt.StringSinPuntosMiles(txtCedula.getText()) + "";
@@ -482,6 +482,11 @@ public class ABMFuncionario extends javax.swing.JDialog {
         txtNombre.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtNombre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtNombre.setEnabled(false);
+        txtNombre.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtNombreFocusLost(evt);
+            }
+        });
         txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtNombreKeyReleased(evt);
@@ -499,6 +504,11 @@ public class ABMFuncionario extends javax.swing.JDialog {
         txtApellido.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtApellido.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtApellido.setEnabled(false);
+        txtApellido.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtApellidoFocusLost(evt);
+            }
+        });
         txtApellido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtApellidoActionPerformed(evt);
@@ -521,6 +531,11 @@ public class ABMFuncionario extends javax.swing.JDialog {
         txtTelefono.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtTelefono.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtTelefono.setEnabled(false);
+        txtTelefono.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtTelefonoFocusLost(evt);
+            }
+        });
         txtTelefono.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtTelefonoKeyPressed(evt);
@@ -558,6 +573,11 @@ public class ABMFuncionario extends javax.swing.JDialog {
         txtEmail.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         txtEmail.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtEmail.setEnabled(false);
+        txtEmail.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtEmailFocusLost(evt);
+            }
+        });
         txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtEmailKeyPressed(evt);
@@ -579,6 +599,11 @@ public class ABMFuncionario extends javax.swing.JDialog {
         taObs.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         taObs.setEnabled(false);
         taObs.setPreferredSize(new java.awt.Dimension(212, 62));
+        taObs.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                taObsFocusLost(evt);
+            }
+        });
         taObs.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 taObsKeyPressed(evt);
@@ -985,6 +1010,28 @@ public class ABMFuncionario extends javax.swing.JDialog {
     private void txtApellidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtApellidoActionPerformed
+
+    private void txtNombreFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNombreFocusLost
+        txtNombre.setText(metodostxt.QuitaEspaciosString(txtNombre.getText()));
+        txtNombre.setText(metodostxt.MayusCadaPrimeraLetra(txtNombre.getText()));
+    }//GEN-LAST:event_txtNombreFocusLost
+
+    private void txtApellidoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtApellidoFocusLost
+        txtApellido.setText(metodostxt.QuitaEspaciosString(txtApellido.getText()));
+        txtApellido.setText(metodostxt.MayusCadaPrimeraLetra(txtApellido.getText()));
+    }//GEN-LAST:event_txtApellidoFocusLost
+
+    private void txtTelefonoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTelefonoFocusLost
+        txtTelefono.setText(metodostxt.QuitaEspaciosString(txtTelefono.getText()));
+    }//GEN-LAST:event_txtTelefonoFocusLost
+
+    private void txtEmailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtEmailFocusLost
+        txtEmail.setText(metodostxt.QuitaEspaciosString(txtEmail.getText()));
+    }//GEN-LAST:event_txtEmailFocusLost
+
+    private void taObsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_taObsFocusLost
+        taObs.setText(metodostxt.MayusSoloPrimeraLetra(taObs.getText()));
+    }//GEN-LAST:event_taObsFocusLost
 
     List<Component> ordenTabulador;
 

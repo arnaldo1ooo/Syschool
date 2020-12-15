@@ -8,7 +8,10 @@ package forms;
 import conexion.Conexion;
 import java.awt.Toolkit;
 import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.showConfirmDialog;
 import javax.swing.table.DefaultTableModel;
 import static login.Login.codUsuario;
 import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
@@ -180,17 +183,17 @@ public class Matricula extends javax.swing.JDialog {
             .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addGap(239, 239, 239)
-                        .addComponent(btnEliminar)
-                        .addGap(0, 289, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(scPrincipal)))
+                        .addComponent(scPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnEliminar)
+                .addGap(259, 259, 259))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -225,11 +228,35 @@ public class Matricula extends javax.swing.JDialog {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "No se ha seleccionado ninguna fila", "Advertencia", JOptionPane.WARNING_MESSAGE);
         } else {
-            int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea anular esta matricula?", "Confirmación", JOptionPane.YES_OPTION);
+            int confirmado = showConfirmDialog(this, "¿Realmente desea anular esta matricula?", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
-                String codigo = tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0).toString();
+                int idMatricula = (int) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0);
 
-                String sentencia = "CALL SP_MatriculaEliminar(" + codigo + ")";
+                //Si la matricula eliminada es la matricula del periodo actual o periodo siguiente
+                int periodo = (int) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 4);
+
+                //Obtener año
+                Calendar c2 = new GregorianCalendar();
+                int periodoActual = c2.get(Calendar.YEAR);
+                int periodoSiguiente = periodoActual + 1;
+                String sentencia;
+
+                if (periodo == periodoActual || periodo == periodoSiguiente) {
+                    try {
+                        //Obtener id alumno
+                        con = con.ObtenerRSSentencia("SELECT mat_alumno FROM matricula WHERE mat_codigo=" + idMatricula);
+                        while (con.getResultSet().next()) {
+                            //Cambiar estado de alumno
+                            sentencia = "UPDATE alumno SET alu_estado=0 WHERE alu_codigo=" + con.getResultSet().getInt("mat_alumno");
+                            con.EjecutarABM(sentencia, false);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    con.DesconectarBasedeDatos();
+                }
+
+                sentencia = "CALL SP_MatriculaEliminar(" + idMatricula + ")";
                 con.EjecutarABM(sentencia, true);
 
                 ConsultaAllMatricula();

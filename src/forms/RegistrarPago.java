@@ -30,7 +30,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import static login.Login.codUsuario;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
@@ -52,6 +51,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     private DefaultTableModel modelTableConceptoAPagar;
     private DefaultTableModel modelTablePoderantes;
     private DefaultTableModel modelTableConceptos;
+    private DefaultTableModel modelTableApoderados;
 
     public RegistrarPago(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -59,17 +59,21 @@ public class RegistrarPago extends javax.swing.JDialog {
 
         modelTableConceptoAPagar = (DefaultTableModel) tbConceptoAPagar.getModel();
         modelTablePoderantes = (DefaultTableModel) tbPoderantes.getModel();
+        modelTableApoderados = (DefaultTableModel) tbApoderado.getModel();
+
         //Obtener fecha actual
         dcFechaPago.setDate(new Date());
         Calendar c2 = new GregorianCalendar();
         lblPeriodoActual.setText(c2.get(Calendar.YEAR) + 1 + "");
+
         //Llamar Metodos
         GenerarNumpago();
         CargarComboBoxes();
         Limpiar();
         TablaAllConcepto();
         TablaAllApoderado();
-
+        metodos.CargarTitlesaCombo(cbCampoBuscarApoderado, tbApoderado);
+        
         txtCedulaApoderado.setText("");
 
         //Permiso Roles de usuario
@@ -307,7 +311,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         double totalventa = metodostxt.DoubleAFormatoAmericano(txtTotalAPagar.getText());
         if (totalventa > importe || txtImporteRecibido.getText().equals("")) {
             Toolkit.getDefaultToolkit().beep();
-            JOptionPane.showMessageDialog(null, "El importe debe ser mayor al total del pago", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El importe debe ser mayor al total del pago", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtImporteRecibido.requestFocus();
             return false;
         }
@@ -316,12 +320,32 @@ public class RegistrarPago extends javax.swing.JDialog {
     }
 
     private void TablaAllApoderado() {//Realiza la consulta de los productos que tenemos en la base de datos
-        String sentencia = "CALL SP_ApoderadoConsulta";
-        String titlesJtabla[] = {"Código", "N° de cédula", "Nombre", "Apellido", "Sexo", "Dirección", "Teléfono", "Email", "Observación"};
+        modelTableApoderados = (DefaultTableModel) tbApoderado.getModel();
+        modelTableApoderados.setRowCount(0);
+        try {
+            String sentencia = "CALL SP_ApoderadoConsulta()";
+            con = con.ObtenerRSSentencia(sentencia);
+            int codigo;
+            String cedula, nombre, apellido, sexo, direccion, telefono, email, obs;
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getInt("apo_codigo");
+                cedula = con.getResultSet().getString("apo_cedula");
+                nombre = con.getResultSet().getString("apo_nombre");
+                apellido = con.getResultSet().getString("apo_apellido");
+                sexo = con.getResultSet().getString("apo_sexo");
+                direccion = con.getResultSet().getString("apo_direccion");
+                telefono = con.getResultSet().getString("apo_telefono");
+                email = con.getResultSet().getString("apo_email");
+                obs = con.getResultSet().getString("apo_obs");
 
-        tbApoderado.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscarApoderado));
-        cbCampoBuscarApoderado.setSelectedIndex(1);
-        metodos.AnchuraColumna(tbApoderado);
+                modelTableApoderados.addRow(new Object[]{codigo, cedula, nombre, apellido, sexo, direccion, telefono, email, obs});
+            }
+            tbApoderado.setModel(modelTableApoderados);
+            metodos.AnchuraColumna(tbApoderado);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
 
         if (tbApoderado.getModel().getRowCount() == 1) {
             lbCantRegistrosApoderado.setText(tbApoderado.getModel().getRowCount() + " Registro encontrado");
@@ -1057,9 +1081,24 @@ public class RegistrarPago extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Codigo", "N° de cedula", "Nombre", "Apellido", "Sexo", "Direccion", "Telefono", "Email", "Observacion"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbApoderado.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbApoderado.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbApoderado.setGridColor(new java.awt.Color(0, 153, 204));
@@ -1728,7 +1767,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                     .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(panel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1205, Short.MAX_VALUE)
                         .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addContainerGap(64, Short.MAX_VALUE))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1751,7 +1790,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 1275, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1984,16 +2023,9 @@ public class RegistrarPago extends javax.swing.JDialog {
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnBuscarApoderadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarApoderadoActionPerformed
-        BuscadorApoderado.setLocationRelativeTo(this);
+        TablaAllApoderado();
         txtBuscarApoderado.setText("");
-        metodos.FiltroJTable(txtBuscarApoderado.getText(), cbCampoBuscarApoderado.getSelectedIndex(), tbApoderado);
-
-        if (tbApoderado.getRowCount() == 1) {
-            lbCantRegistrosApoderado.setText(tbApoderado.getRowCount() + " Registro encontrado");
-        } else {
-            lbCantRegistrosApoderado.setText(tbApoderado.getRowCount() + " Registros encontrados");
-        }
-
+        BuscadorApoderado.setLocationRelativeTo(this);
         BuscadorApoderado.setVisible(true);
     }//GEN-LAST:event_btnBuscarApoderadoActionPerformed
 

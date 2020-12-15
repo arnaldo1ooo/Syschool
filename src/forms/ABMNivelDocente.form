@@ -54,24 +54,15 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
+                      <Component id="cbNivel" min="-2" pref="221" max="-2" attributes="0"/>
+                      <Component id="lblNivel" min="-2" pref="118" max="-2" attributes="0"/>
+                      <Component id="jtpEdicion" min="-2" pref="679" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="jpTabla" min="-2" pref="518" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="cbNivel" min="-2" pref="221" max="-2" attributes="0"/>
-                              <Component id="lblNivel" min="-2" pref="118" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jtpEdicion" min="-2" pref="679" max="-2" attributes="0"/>
-                              <Group type="102" attributes="0">
-                                  <Component id="jpTabla" min="-2" pref="518" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jpBotones" min="-2" pref="155" max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <Component id="jpBotones" min="-2" pref="155" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>

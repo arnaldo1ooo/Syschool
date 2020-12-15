@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
+import java.util.StringTokenizer;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -37,12 +38,39 @@ public class MetodosTXT {
     }
 
     public String QuitaEspaciosString(String texto) {
-        java.util.StringTokenizer tokens = new java.util.StringTokenizer(texto);
+        StringTokenizer tokens = new StringTokenizer(texto);
         StringBuilder buff = new StringBuilder();
         while (tokens.hasMoreTokens()) {
             buff.append(" ").append(tokens.nextToken());
         }
         return buff.toString().trim();
+    }
+
+    public String MayusSoloPrimeraLetra(String laCadena) {
+        if (laCadena == null || laCadena.isEmpty()) {
+            return "";
+        } else {
+            return Character.toUpperCase(laCadena.charAt(0)) + laCadena.substring(1, laCadena.length()).toLowerCase();
+        }
+    }
+
+    public String MayusCadaPrimeraLetra(String laCadena) {
+        if (laCadena == null || laCadena.isEmpty()) {
+            return "";
+        } else {
+            laCadena = laCadena.toLowerCase();
+            char[] caracteres = laCadena.toCharArray();
+            caracteres[0] = Character.toUpperCase(caracteres[0]); //Hace mayuscula la primera letra de la primera palabra
+            // el -2 es para evitar una excepción al caernos del arreglo
+            for (int i = 0; i < laCadena.length() - 2; i++) { //Recorre cada letra
+                // Es 'palabra'
+                if (caracteres[i] == ' ' || caracteres[i] == '.' || caracteres[i] == ',') { //Separadores puede ser espacio . o ,
+
+                    caracteres[i + 1] = Character.toUpperCase(caracteres[i + 1]); // Reemplazamos
+                }
+            }
+            return new String(caracteres);
+        }
     }
 
     public void SoloNumeroEnteroKeyTyped(KeyEvent evt) {

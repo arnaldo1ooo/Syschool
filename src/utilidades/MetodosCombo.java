@@ -112,7 +112,7 @@ public class MetodosCombo {
         }
 
         AutoCompleteDecorator.decorate(elCombo);
-        
+
         CambiarColorDisabledCombo(elCombo, Color.BLACK);
         con.DesconectarBasedeDatos();
     }
@@ -131,8 +131,9 @@ public class MetodosCombo {
         int coditemselect = -1;
         try {
             coditemselect = elCombo.getItemAt(elCombo.getSelectedIndex()).getCodigo();
-        } catch (Exception e) {
-            log_historial.error("ObtenerIdCombo: No se selecciono ningun item en el combo: " + e + " codItemSelect:" + coditemselect);
+        } catch (NullPointerException e) {
+            System.out.println("ObtenerIdCombo: No se selecciono ningun item en el combo: " + e + " codItemSelect:" + coditemselect);
+            //log_historial.error("ObtenerIdCombo: No se selecciono ningun item en el combo: " + e + " codItemSelect:" + coditemselect);
         }
         return coditemselect;
     }

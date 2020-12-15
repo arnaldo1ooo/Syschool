@@ -469,7 +469,8 @@ public class ReportePagos extends javax.swing.JDialog {
         parametros.put("ORDENADOPOR", cbOrdenar.getSelectedItem() + "");
         parametros.put("CONCEPTO", cbConcepto.getSelectedItem().toString());
         String[] totalsplit = lblTotal.getText().split(" ");
-        parametros.put("TOTAL", totalsplit[0]+" Gs");
+        parametros.put("TOTAL", totalsplit[0] + " Gs");
+        parametros.put("CANTREGISTROS", lbCantRegistros.getText());
 
         rutajasper = "/reportes/reporte_pagos.jasper";
 

@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
 import utilidades.Metodos;
@@ -55,7 +54,7 @@ public class ABMPerfil extends javax.swing.JDialog {
             if (ComprobarCampos() == true) {
                 String codperfil = txtCodigo.getText();
                 String denominacion = txtDenominacion.getText().toUpperCase();
-                String descripcion = metodos.MayusPrimeraLetra(taDescripcion.getText());
+                String descripcion = metodostxt.MayusSoloPrimeraLetra(taDescripcion.getText());
 
                 if (txtCodigo.getText().equals("")) { //NUEVO REGISTRO
                     int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo perfil?", "Confirmación", JOptionPane.YES_OPTION);
@@ -691,7 +690,7 @@ public class ABMPerfil extends javax.swing.JDialog {
                 .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jpTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -710,7 +709,7 @@ public class ABMPerfil extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE)
         );
 
         getAccessibleContext().setAccessibleName("Perfiles");

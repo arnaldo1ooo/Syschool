@@ -101,7 +101,7 @@ public class ABMNivelDocente extends javax.swing.JDialog {
         if (filasel != -1) {
             int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea eliminar el registro seleccionado?", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
-                codigo = (String) tbPrincipal.getModel().getValueAt(filasel, 0);
+                codigo = (String) tbPrincipal.getValueAt(filasel, 0);
                 String sentencia = "CALL SP_NivelDocenteEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 

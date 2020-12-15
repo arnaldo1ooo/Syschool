@@ -51,7 +51,7 @@ public class ABMAlumno extends javax.swing.JDialog {
         //Poner fecha actual
         dcFechaInscripcion.setDate(new Date());
         //LLamar metodos
-        TablaConsultaBDAll(); //Trae todos los registros
+        ConsultaAllAlumno(); //Trae todos los registros
         TablaAllApoderado();
         CargarComboBoxes();
 
@@ -92,10 +92,8 @@ public class ABMAlumno extends javax.swing.JDialog {
         try {
             if (ComprobarCampos() == true) {
                 String codigo = txtCodigo.getText();
-                String nombre = metodos.MayusCadaPrimeraLetra(txtNombre.getText());
-                nombre = metodostxt.QuitaEspaciosString(nombre);
-                String apellido = metodos.MayusCadaPrimeraLetra(txtApellido.getText());
-                apellido = metodostxt.QuitaEspaciosString(apellido);
+                String nombre = txtNombre.getText();
+                String apellido = txtApellido.getText();
                 String cedula = null;
                 if (chbSincedula.isSelected() == false) {
                     cedula = metodostxt.StringSinPuntosMiles(txtCedula.getText()) + "";
@@ -106,9 +104,8 @@ public class ABMAlumno extends javax.swing.JDialog {
                 String fechainscripcion = formatofecha.format(dcFechaInscripcion.getDate());
                 String sexo = cbSexo.getSelectedItem().toString();
                 String telefono = txtTelefono.getText();
-                String email = metodostxt.QuitaEspaciosString(txtEmail.getText());
-                String obs = metodos.MayusPrimeraLetra(taObs.getText());
-                obs = metodostxt.QuitaEspaciosString(obs);
+                String email = txtEmail.getText();
+                String obs = taObs.getText();
                 int apoderado = metodoscombo.ObtenerIDSelectCombo(cbApoderado);
                 int estado = cbEstado.getSelectedIndex();
 
@@ -116,12 +113,11 @@ public class ABMAlumno extends javax.swing.JDialog {
                     int confirmado = JOptionPane.showConfirmDialog(this, "¿Esta seguro crear este nuevo registro?", "Confirmación", JOptionPane.YES_OPTION);
                     if (JOptionPane.YES_OPTION == confirmado) {
                         //REGISTRAR NUEVO
-                        String sentencia = "CALL SP_AlumnoAlta ('" + nombre + "','" + apellido + "'," + cedula
-                                + ",'" + fechanacimiento + "','" + fechainscripcion + "','" + sexo + "','" + telefono + "','" + email
-                                + "','" + obs + "','" + apoderado + "','" + estado + "')";
+                        String sentencia = "CALL SP_AlumnoAlta ('" + nombre + "','" + apellido + "'," + cedula + ",'" + fechanacimiento + "','" + fechainscripcion
+                                + "','" + sexo + "','" + telefono + "','" + email + "','" + obs + "','" + apoderado + "','" + estado + "')";
                         con.EjecutarABM(sentencia, true);
 
-                        TablaConsultaBDAll(); //Actualizar tabla
+                        ConsultaAllAlumno(); //Actualizar tabla
                         Limpiar();
                         ModoEdicion(false);
                     }
@@ -133,7 +129,7 @@ public class ABMAlumno extends javax.swing.JDialog {
                                 + "','" + obs + "','" + apoderado + "','" + estado + "')";
 
                         con.EjecutarABM(sentencia, true);
-                        TablaConsultaBDAll(); //Actualizar tabla                        
+                        ConsultaAllAlumno(); //Actualizar tabla                        
                         ModoEdicion(false);
                         Limpiar();
                         //this.repaint();
@@ -153,11 +149,11 @@ public class ABMAlumno extends javax.swing.JDialog {
         if (filasel != -1) {
             int confirmado = javax.swing.JOptionPane.showConfirmDialog(this, "¿Realmente desea eliminar este alumno?, tambien se ELIMINARÁN las matriculas referentes al mismo", "Confirmación", JOptionPane.YES_OPTION);
             if (confirmado == JOptionPane.YES_OPTION) {
-                codigo = Integer.parseInt(tbPrincipal.getModel().getValueAt(filasel, 0) + "");
+                codigo = Integer.parseInt(tbPrincipal.getValueAt(filasel, 0) + "");
                 String sentencia = "CALL SP_AlumnoEliminar(" + codigo + ")";
                 con.EjecutarABM(sentencia, true);
 
-                TablaConsultaBDAll(); //Actualizar tabla
+                ConsultaAllAlumno(); //Actualizar tabla
                 ModoEdicion(false);
                 Limpiar();
             }
@@ -166,24 +162,27 @@ public class ABMAlumno extends javax.swing.JDialog {
         }
     }
 
-    private void TablaConsultaBDAll() {//Realiza la consulta de los productos que tenemos en la base de datos
+    private void ConsultaAllAlumno() {//Realiza la consulta de los productos que tenemos en la base de datos
         modeltableAlumnos = (DefaultTableModel) tbPrincipal.getModel();
         modeltableAlumnos.setRowCount(0); //Vacia tabla
 
         try {
             String sentencia = "CALL SP_AlumnoConsulta()";
             con = con.ObtenerRSSentencia(sentencia);
-            int codigo, cedula, telefono;
-            String nombre, apellido, sexo, fechanac, fechains, email, obs, apoderado, estado;
+            int codigo;
+            String nombre, apellido, sexo, cedula, telefono, fechanac, fechains, email, obs, apoderado, estado;
             while (con.getResultSet().next()) {
                 codigo = con.getResultSet().getInt("alu_codigo");
                 nombre = con.getResultSet().getString("alu_nombre");
                 apellido = con.getResultSet().getString("alu_apellido");
-                cedula = con.getResultSet().getInt("alu_cedula");
+                cedula = con.getResultSet().getString("alu_cedula");
+                if (cedula == null) {
+                    cedula = "0";
+                }
                 fechanac = con.getResultSet().getString("fechanacimiento");
                 fechains = con.getResultSet().getString("fechainscripcion");
                 sexo = con.getResultSet().getString("alu_sexo");
-                telefono = con.getResultSet().getInt("alu_telefono");
+                telefono = con.getResultSet().getString("alu_telefono");
                 email = con.getResultSet().getString("alu_email");
                 obs = con.getResultSet().getString("alu_obs");
                 apoderado = con.getResultSet().getString("nomapeapoderado");
@@ -229,8 +228,7 @@ public class ABMAlumno extends javax.swing.JDialog {
             Period periodo = Period.between(fechaNac, ahora);
             txtEdad.setText(metodos.SiStringEsNull(periodo.getYears() + ""));
 
-            fechaParseada = new SimpleDateFormat("dd/MM/yyyy")
-                    .parse(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 5) + ""));
+            fechaParseada = new SimpleDateFormat("dd/MM/yyyy").parse(metodos.SiStringEsNull(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 5) + ""));
             dcFechaInscripcion.setDate(fechaParseada);
         } catch (ParseException e) {
             System.out.println("Error al parsear fecha");
@@ -581,7 +579,7 @@ public class ABMAlumno extends javax.swing.JDialog {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false, false, false, false, false, false
@@ -746,6 +744,11 @@ public class ABMAlumno extends javax.swing.JDialog {
         txtNombre.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtNombre.setEnabled(false);
         txtNombre.setNextFocusableComponent(txtApellido);
+        txtNombre.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtNombreFocusLost(evt);
+            }
+        });
         txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtNombreKeyReleased(evt);
@@ -765,6 +768,11 @@ public class ABMAlumno extends javax.swing.JDialog {
         txtApellido.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtApellido.setEnabled(false);
         txtApellido.setNextFocusableComponent(txtCedula);
+        txtApellido.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtApellidoFocusLost(evt);
+            }
+        });
         txtApellido.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtApellidoKeyReleased(evt);
@@ -784,6 +792,11 @@ public class ABMAlumno extends javax.swing.JDialog {
         txtTelefono.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtTelefono.setEnabled(false);
         txtTelefono.setNextFocusableComponent(txtEmail);
+        txtTelefono.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtTelefonoFocusLost(evt);
+            }
+        });
         txtTelefono.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtTelefonoKeyPressed(evt);
@@ -803,6 +816,11 @@ public class ABMAlumno extends javax.swing.JDialog {
         txtEmail.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtEmail.setEnabled(false);
         txtEmail.setNextFocusableComponent(taObs);
+        txtEmail.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtEmailFocusLost(evt);
+            }
+        });
         txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtEmailKeyPressed(evt);
@@ -826,6 +844,11 @@ public class ABMAlumno extends javax.swing.JDialog {
         taObs.setEnabled(false);
         taObs.setNextFocusableComponent(cbApoderado);
         taObs.setPreferredSize(new java.awt.Dimension(212, 62));
+        taObs.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                taObsFocusLost(evt);
+            }
+        });
         taObs.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 taObsKeyPressed(evt);
@@ -860,7 +883,6 @@ public class ABMAlumno extends javax.swing.JDialog {
         lblEstado.setFocusable(false);
 
         cbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "INACTIVO", "ACTIVO" }));
-        cbEstado.setSelectedIndex(1);
         cbEstado.setEnabled(false);
         cbEstado.setNextFocusableComponent(btnGuardar);
 
@@ -1128,7 +1150,7 @@ public class ABMAlumno extends javax.swing.JDialog {
             .addGroup(panel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
                 .addComponent(labelMetric1, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1215,7 +1237,7 @@ public class ABMAlumno extends javax.swing.JDialog {
         Limpiar();
         ModoEdicion(false);
 
-        TablaConsultaBDAll();
+        ConsultaAllAlumno();
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnGuardarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnGuardarKeyPressed
@@ -1362,6 +1384,28 @@ public class ABMAlumno extends javax.swing.JDialog {
     private void tbPrincipalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPrincipalMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_tbPrincipalMouseClicked
+
+    private void txtNombreFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNombreFocusLost
+        txtNombre.setText(metodostxt.QuitaEspaciosString(txtNombre.getText()));
+        txtNombre.setText(metodostxt.MayusCadaPrimeraLetra(txtNombre.getText()));
+    }//GEN-LAST:event_txtNombreFocusLost
+
+    private void txtApellidoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtApellidoFocusLost
+        txtApellido.setText(metodostxt.QuitaEspaciosString(txtApellido.getText()));
+        txtApellido.setText(metodostxt.MayusCadaPrimeraLetra(txtApellido.getText()));
+    }//GEN-LAST:event_txtApellidoFocusLost
+
+    private void txtTelefonoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTelefonoFocusLost
+        txtTelefono.setText(metodostxt.QuitaEspaciosString(txtTelefono.getText()));
+    }//GEN-LAST:event_txtTelefonoFocusLost
+
+    private void txtEmailFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtEmailFocusLost
+        txtEmail.setText(metodostxt.QuitaEspaciosString(txtEmail.getText()));
+    }//GEN-LAST:event_txtEmailFocusLost
+
+    private void taObsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_taObsFocusLost
+        taObs.setText(metodostxt.QuitaEspaciosString(taObs.getText()));
+    }//GEN-LAST:event_taObsFocusLost
 
     /**
      * @param args the command line arguments

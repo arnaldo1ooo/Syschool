@@ -9,19 +9,19 @@
         <Property name="modal" type="boolean" value="true"/>
         <Property name="resizable" type="boolean" value="false"/>
         <Property name="size" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[848, 370]"/>
+          <Dimension value="[893, 385]"/>
         </Property>
       </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="pnAltaAlumno" alignment="0" pref="887" max="32767" attributes="0"/>
+              <Component id="pnAltaAlumno" min="-2" pref="878" max="-2" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="pnAltaAlumno" alignment="0" min="-2" max="-2" attributes="0"/>
+              <Component id="pnAltaAlumno" min="-2" pref="363" max="-2" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -29,7 +29,7 @@
         <Container class="org.edisoncor.gui.panel.Panel" name="pnAltaAlumno">
           <Properties>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[848, 370]"/>
+              <Dimension value="[930, 385]"/>
             </Property>
           </Properties>
 
@@ -85,26 +85,26 @@
                           </Group>
                           <Component id="btnAgregarAlumno" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="lblObsAlumno" alignment="1" min="-2" pref="90" max="-2" attributes="0"/>
-                                  <Component id="lblEmailAlumno" alignment="1" min="-2" pref="90" max="-2" attributes="0"/>
-                                  <Component id="lblEstadoAlumno" alignment="1" max="32767" attributes="0"/>
-                                  <Component id="lblTelefonoAlumno" alignment="1" min="-2" pref="90" max="-2" attributes="0"/>
+                                  <Component id="lblEmailAlumno" alignment="1" min="-2" pref="51" max="-2" attributes="0"/>
+                                  <Component id="lblTelefonoAlumno" alignment="1" min="-2" pref="51" max="-2" attributes="0"/>
+                                  <Component id="lblEstadoAlumno" max="-2" attributes="0"/>
+                                  <Component id="lblObsAlumno" alignment="1" min="-2" pref="51" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="cbEstadoAlumno" min="-2" pref="99" max="-2" attributes="0"/>
-                                  <Component id="txtEmailAlumno" alignment="0" min="-2" pref="240" max="-2" attributes="0"/>
-                                  <Component id="scpObsAlumno" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="txtTelefonoAlumno" alignment="0" min="-2" pref="240" max="-2" attributes="0"/>
+                                  <Component id="scpObsAlumno" pref="273" max="32767" attributes="0"/>
+                                  <Component id="txtEmailAlumno" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="txtTelefonoAlumno" alignment="0" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <Component id="jLabel3" alignment="1" min="-2" pref="191" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="46" max="32767" attributes="0"/>
+                      <EmptySpace pref="31" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -117,62 +117,55 @@
                           <Component id="lblNombreAlumno1" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
                           <Component id="txtCodigoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="lblCedulaAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                          <Component id="txtCedulaAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                          <Component id="chbSincedulaAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                          <Component id="lblTelefonoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                          <Component id="txtTelefonoAlumno" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="lblCIValidacionAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="lblNombreAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                          <Component id="txtNombreAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                          <Component id="lblEmailAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                          <Component id="txtEmailAlumno" alignment="2" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="scpObsAlumno" alignment="0" min="-2" pref="62" max="-2" attributes="0"/>
+                          <Component id="lblObsAlumno" alignment="0" min="-2" pref="28" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="2" attributes="0">
-                                  <Component id="lblCedulaAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="txtCedulaAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="chbSincedulaAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="lblTelefonoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="txtTelefonoAlumno" alignment="2" min="-2" max="-2" attributes="0"/>
-                                  <Component id="lblCIValidacionAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="2" attributes="0">
-                                  <Component id="lblNombreAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="txtNombreAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="lblEmailAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="txtEmailAlumno" alignment="2" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="scpObsAlumno" alignment="0" min="-2" pref="62" max="-2" attributes="0"/>
-                                  <Component id="lblObsAlumno" alignment="0" min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="2" attributes="0">
-                                          <Component id="lblApellidoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                          <Component id="txtApellidoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="2" attributes="0">
-                                          <Component id="lblFechaNacimiento" alignment="2" min="-2" pref="25" max="-2" attributes="0"/>
-                                          <Component id="dcFechaNacimientoAlumno" alignment="2" min="-2" pref="26" max="-2" attributes="0"/>
-                                          <Component id="lblEdadAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                          <Component id="txtEdadAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
+                                  <Component id="lblApellidoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                                  <Component id="txtApellidoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="2" attributes="0">
-                                  <Component id="lblFechaInscripcion" alignment="2" min="-2" pref="25" max="-2" attributes="0"/>
-                                  <Component id="dcFechaInscripcionAlumno" alignment="2" min="-2" pref="26" max="-2" attributes="0"/>
-                                  <Component id="lblSexoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="cbSexoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="lblEstadoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                                  <Component id="cbEstadoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="2" pref="63" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" attributes="0">
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="btnAgregarAlumno" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel3" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                                  <Component id="lblFechaNacimiento" alignment="2" min="-2" pref="25" max="-2" attributes="0"/>
+                                  <Component id="dcFechaNacimientoAlumno" alignment="2" min="-2" pref="26" max="-2" attributes="0"/>
+                                  <Component id="lblEdadAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                                  <Component id="txtEdadAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
-                      <EmptySpace min="-2" pref="60" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="lblFechaInscripcion" alignment="2" min="-2" pref="25" max="-2" attributes="0"/>
+                          <Component id="dcFechaInscripcionAlumno" alignment="2" min="-2" pref="26" max="-2" attributes="0"/>
+                          <Component id="lblSexoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                          <Component id="cbSexoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                          <Component id="lblEstadoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                          <Component id="cbEstadoAlumno" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="btnAgregarAlumno" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel3" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="38" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -203,6 +196,7 @@
                 </Property>
               </Properties>
               <Events>
+                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtNombreAlumnoFocusLost"/>
                 <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtNombreAlumnoKeyReleased"/>
                 <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtNombreAlumnoKeyTyped"/>
               </Events>
@@ -232,6 +226,7 @@
                 </Property>
               </Properties>
               <Events>
+                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtApellidoAlumnoFocusLost"/>
                 <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtApellidoAlumnoKeyReleased"/>
                 <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtApellidoAlumnoKeyTyped"/>
               </Events>
@@ -314,6 +309,9 @@
                 </Property>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtEdadAlumnoActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="lblFechaInscripcion">
               <Properties>
@@ -387,6 +385,7 @@
                 </Property>
               </Properties>
               <Events>
+                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtTelefonoAlumnoFocusLost"/>
                 <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtTelefonoAlumnoKeyPressed"/>
                 <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtTelefonoAlumnoKeyTyped"/>
               </Events>
@@ -416,6 +415,7 @@
                 </Property>
               </Properties>
               <Events>
+                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtEmailAlumnoFocusLost"/>
                 <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtEmailAlumnoKeyPressed"/>
                 <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtEmailAlumnoKeyTyped"/>
               </Events>
@@ -451,6 +451,7 @@
                     </Property>
                   </Properties>
                   <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="taObsAlumnoFocusLost"/>
                     <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="taObsAlumnoKeyPressed"/>
                   </Events>
                 </Component>
@@ -477,7 +478,6 @@
                     <StringItem index="1" value="ACTIVO"/>
                   </StringArray>
                 </Property>
-                <Property name="selectedIndex" type="int" value="1"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -1074,12 +1074,12 @@
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="txtNombre" max="32767" attributes="0"/>
                                       <Group type="102" attributes="0">
-                                          <Component id="txtCedula" pref="147" max="32767" attributes="0"/>
+                                          <Component id="txtCedula" max="32767" attributes="0"/>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           <Component id="chbSincedula" min="-2" max="-2" attributes="0"/>
                                       </Group>
+                                      <Component id="txtNombre" min="-2" pref="260" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Component id="lblCIValidacion" min="-2" pref="93" max="-2" attributes="0"/>
@@ -1146,7 +1146,7 @@
                                       </Group>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="cbSexo" alignment="0" min="-2" pref="28" max="-2" attributes="0"/>
                                       <Component id="lblSexo" alignment="0" min="-2" pref="28" max="-2" attributes="0"/>
                                   </Group>
@@ -1238,6 +1238,7 @@
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtDireccionFocusLost"/>
                     <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtDireccionKeyPressed"/>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtDireccionKeyReleased"/>
                     <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtDireccionKeyTyped"/>
@@ -1267,6 +1268,7 @@
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtTelefonoFocusLost"/>
                     <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtTelefonoKeyPressed"/>
                     <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtTelefonoKeyTyped"/>
                   </Events>
@@ -1295,6 +1297,7 @@
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtEmailFocusLost"/>
                     <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtEmailKeyPressed"/>
                     <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtEmailKeyTyped"/>
                   </Events>
@@ -1331,6 +1334,7 @@
                         <Property name="enabled" type="boolean" value="false"/>
                       </Properties>
                       <Events>
+                        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="taObsFocusLost"/>
                         <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="taObsKeyPressed"/>
                       </Events>
                     </Component>
@@ -1394,6 +1398,7 @@
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtNombreFocusLost"/>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtNombreKeyReleased"/>
                     <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtNombreKeyTyped"/>
                   </Events>
@@ -1435,6 +1440,7 @@
                     <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtApellidoFocusLost"/>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtApellidoKeyReleased"/>
                     <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtApellidoKeyTyped"/>
                   </Events>
@@ -1532,7 +1538,7 @@
                             <Column editable="false" title="C&#xf3;digo" type="java.lang.Integer"/>
                             <Column editable="false" title="Nombre" type="java.lang.String"/>
                             <Column editable="false" title="Apellido" type="java.lang.String"/>
-                            <Column editable="false" title="N&#xb0; de C&#xe9;dula" type="java.lang.Integer"/>
+                            <Column editable="false" title="N&#xb0; de C&#xe9;dula" type="java.lang.String"/>
                             <Column editable="false" title="Fecha de nac." type="java.lang.String"/>
                             <Column editable="false" title="Fecha de inscr." type="java.lang.String"/>
                             <Column editable="false" title="Sexo" type="java.lang.String"/>

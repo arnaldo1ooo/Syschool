@@ -50,10 +50,10 @@ public class Conexion {
             case "remoto" -> {
                 //Modo host remoto
                 controlador = "com.mysql.cj.jdbc.Driver";
-                usuarioDB = "supervisor";
+                usuarioDB = "root";
                 passDB = "toor5127"; //Contrasena de la BD
                 nombreBD = "syschool";
-                host = "192.168.88.240"; //San roque 192.168.1.240
+                host = "192.168.100.234"; //San roque 192.168.1.240
                 puerto = "3306";
                 servidor = "jdbc:mysql://" + host + ":" + puerto + "/" + nombreBD
                         + "?useUnicode=true"
@@ -195,6 +195,7 @@ public class Conexion {
         //Ejecuta consultas de Altas, Bajas y Modificaciones
         try {
             System.out.println("EjecutarABM: " + sentencia);
+            log_historial.debug("EjecutarABM: " + sentencia);
             connection = Conexion.ConectarBasedeDatos();
             st = connection.createStatement();
             st.executeUpdate(sentencia);

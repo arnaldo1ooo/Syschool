@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import static login.Login.codUsuario;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
@@ -31,10 +32,11 @@ import utilidades.MetodosTXT;
  */
 public class RegistrarMatricula extends javax.swing.JDialog {
 
-    Conexion con = new Conexion();
-    Metodos metodos = new Metodos();
-    MetodosTXT metodostxt = new MetodosTXT();
-    MetodosCombo metodoscombo = new MetodosCombo();
+    private Conexion con = new Conexion();
+    private Metodos metodos = new Metodos();
+    private MetodosTXT metodostxt = new MetodosTXT();
+    private MetodosCombo metodoscombo = new MetodosCombo();
+    private DefaultTableModel tableModelAlumnos;
 
     public RegistrarMatricula(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -70,10 +72,10 @@ public class RegistrarMatricula extends javax.swing.JDialog {
                 + "FROM nivel ORDER BY niv_codigo", 1);
     }
 
-    public void TablaAllAlumno(boolean confiltro) {
+    public void TablaAllAlumno(boolean confiltroSinMat) {
         String sentencia;
-        if (confiltro == false) {
-            sentencia = "CALL SP_AlumnoConsulta";
+        if (confiltroSinMat == false) {
+            sentencia = "CALL SP_AlumnoConsulta()";
         } else {
             sentencia = "SELECT alu_codigo, alu_nombre, alu_apellido, alu_cedula, "
                     + "DATE_FORMAT(alu_fechanacimiento, '%d/%m/%Y') AS fechanacimiento, "
@@ -84,11 +86,42 @@ public class RegistrarMatricula extends javax.swing.JDialog {
                     + "WHERE alu_apoderado = apo_codigo  AND mat_alumno IS NULL ORDER BY alu_codigo DESC";
         }
 
-        String titlesJtabla[] = {"Código", "Nombre", "Apellido", "N° de cédula", "Fecha de nacimiento", "Fecha de inscripcion", "Sexo",
-            "Telefono", "Email", "Observación", "Apoderado", "Estado"};
-        tbAlumnos.setModel(con.ConsultaTableBD(sentencia, titlesJtabla, cbCampoBuscarAlumno));
-        cbCampoBuscarAlumno.setSelectedIndex(1);
-        metodos.AnchuraColumna(tbAlumnos);
+        if (cbCampoBuscarAlumno.getItemCount() == 0) {
+            metodos.CargarTitlesaCombo(cbCampoBuscarAlumno, tbAlumnos);
+        }
+
+        tableModelAlumnos = (DefaultTableModel) tbAlumnos.getModel();
+        tableModelAlumnos.setRowCount(0);
+        try {
+            con = con.ObtenerRSSentencia(sentencia);
+            int codigo;
+            String nombre, apellido, cedula, fechanacimiento, fechainscripcion, sexo, telefono, email, obs, apoderado, estado;
+            while (con.getResultSet().next()) {
+                codigo = con.getResultSet().getInt("alu_codigo");
+                nombre = con.getResultSet().getString("alu_nombre");
+                apellido = con.getResultSet().getString("alu_apellido");
+                cedula = con.getResultSet().getString("alu_cedula");
+                System.out.println("cedula " + cedula);
+                if (cedula == null) {
+                    cedula = "0";
+                }
+                fechanacimiento = con.getResultSet().getString("fechanacimiento");
+                fechainscripcion = con.getResultSet().getString("fechainscripcion");
+                sexo = con.getResultSet().getString("alu_sexo");
+                telefono = con.getResultSet().getString("alu_telefono");
+                email = con.getResultSet().getString("alu_email");
+                obs = con.getResultSet().getString("alu_obs");
+                apoderado = con.getResultSet().getString("nomapeapoderado");
+                estado = con.getResultSet().getString("estado");
+
+                tableModelAlumnos.addRow(new Object[]{codigo, nombre, apellido, cedula, fechanacimiento, fechainscripcion, sexo, telefono, email, obs, apoderado, estado});
+            }
+            tbAlumnos.setModel(tableModelAlumnos);
+            metodos.AnchuraColumna(tbAlumnos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
 
         if (tbAlumnos.getModel().getRowCount() == 1) {
             lbCantRegistrosAlumno.setText(tbAlumnos.getModel().getRowCount() + " Registro encontrado");
@@ -99,8 +132,8 @@ public class RegistrarMatricula extends javax.swing.JDialog {
 
     public void RegistroNuevo() {
         if (ComprobarCampos() == true) {
-            int alumno = metodoscombo.ObtenerIDSelectCombo(cbAlumno);
-            int nivel = metodoscombo.ObtenerIDSelectCombo(cbNivel);
+            int idalumno = metodoscombo.ObtenerIDSelectCombo(cbAlumno);
+            int idnivel = metodoscombo.ObtenerIDSelectCombo(cbNivel);
             DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
             String fecha = formatoFecha.format(dcFechaMatricula.getDate());
             String periodo = txtPeriodo.getText();
@@ -108,8 +141,12 @@ public class RegistrarMatricula extends javax.swing.JDialog {
             int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nueva matricula?", "Confirmación", JOptionPane.YES_OPTION);
             if (JOptionPane.YES_OPTION == confirmado) {
                 //Registrar nuevo
-                String sentencia = "CALL SP_MatriculaAlta('" + alumno + "','" + nivel + "','" + fecha + "','" + periodo + "')";
+                String sentencia = "CALL SP_MatriculaAlta('" + idalumno + "','" + idnivel + "','" + fecha + "','" + periodo + "')";
                 con.EjecutarABM(sentencia, true);
+
+                //Cambiar estado de alumno
+                sentencia = "UPDATE alumno SET alu_estado=1 WHERE alu_codigo=" + idalumno;
+                con.EjecutarABM(sentencia, false);
 
                 Limpiar();
             }
@@ -188,7 +225,8 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         lblNivel = new javax.swing.JLabel();
         cbNivel = new javax.swing.JComboBox<>();
         txtPeriodo = new javax.swing.JTextField();
-        lblCodigo6 = new javax.swing.JLabel();
+        lblCantMatriculados = new javax.swing.JLabel();
+        lblCodigo7 = new javax.swing.JLabel();
         panel2 = new org.edisoncor.gui.panel.Panel();
         labelMetric2 = new org.edisoncor.gui.label.LabelMetric();
         lblAlumnoActual = new javax.swing.JLabel();
@@ -229,9 +267,24 @@ public class RegistrarMatricula extends javax.swing.JDialog {
 
             },
             new String [] {
-
+                "Codigo", "Nombre", "Apellido", "N° de cedula", "Fecha de nacimiento", "Fecha de inscripcion", "Sexo", "Telefono", "Email", "Observacion", "Apoderado", "Estado"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tbAlumnos.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         tbAlumnos.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbAlumnos.setGridColor(new java.awt.Color(0, 153, 204));
@@ -425,21 +478,32 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         lblNivel.setFocusable(false);
 
         cbNivel.setToolTipText("Seleccione el nivel en donde se matriculará al alumno seleccionado");
+        cbNivel.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbNivelItemStateChanged(evt);
+            }
+        });
 
         txtPeriodo.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         txtPeriodo.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtPeriodo.setToolTipText("Periodo del año lectivo en donde se matriculará el alumno seleccionado");
         txtPeriodo.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtPeriodo.setEnabled(false);
         txtPeriodo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtPeriodoKeyTyped(evt);
             }
         });
 
-        lblCodigo6.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        lblCodigo6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblCodigo6.setText("Periodo:");
-        lblCodigo6.setFocusable(false);
+        lblCantMatriculados.setFont(new java.awt.Font("SansSerif", 1, 13)); // NOI18N
+        lblCantMatriculados.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblCantMatriculados.setText("X alumnos matriculados en el periodo XXXX");
+        lblCantMatriculados.setFocusable(false);
+
+        lblCodigo7.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        lblCodigo7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblCodigo7.setText("Periodo:");
+        lblCodigo7.setFocusable(false);
 
         javax.swing.GroupLayout jpDatosVentaLayout = new javax.swing.GroupLayout(jpDatosVenta);
         jpDatosVenta.setLayout(jpDatosVentaLayout);
@@ -447,43 +511,46 @@ public class RegistrarMatricula extends javax.swing.JDialog {
             jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpDatosVentaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblRucCedula, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblNivel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblRucCedula, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNivel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblFechaRegistro, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(2, 2, 2)
+                .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cbAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dcFechaMatricula, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cbAlumno, 0, 254, Short.MAX_VALUE)
-                    .addComponent(cbNivel, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnBuscarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(69, 69, 69)
-                .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblCodigo6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblFechaRegistro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(2, 2, 2)
-                .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(dcFechaMatricula, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-                    .addComponent(txtPeriodo))
-                .addGap(44, 44, 44))
+                    .addGroup(jpDatosVentaLayout.createSequentialGroup()
+                        .addComponent(btnBuscarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblCodigo7)
+                        .addGap(2, 2, 2)
+                        .addComponent(txtPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblCantMatriculados, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE))
+                .addGap(24, 24, 24))
         );
         jpDatosVentaLayout.setVerticalGroup(
             jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpDatosVentaLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
+                .addContainerGap()
                 .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(dcFechaMatricula, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblFechaRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCodigo7, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBuscarAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cbAlumno, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblRucCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(10, 10, 10)
                 .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(lblNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblCodigo6, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cbNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(21, Short.MAX_VALUE))
+                    .addComponent(lblCantMatriculados, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpDatosVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(dcFechaMatricula, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblFechaRegistro, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(8, Short.MAX_VALUE))
         );
 
         panel2.setColorPrimario(new java.awt.Color(0, 153, 153));
@@ -544,7 +611,7 @@ public class RegistrarMatricula extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(177, 177, 177))
+                .addGap(185, 185, 185))
             .addGroup(jpPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -573,16 +640,16 @@ public class RegistrarMatricula extends javax.swing.JDialog {
                     .addComponent(lblUltimaMatriculacion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(12, 12, 12)
                 .addComponent(jpDatosVenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap(8, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 762, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 734, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -713,6 +780,21 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         metodostxt.TxtCantidadCaracteresKeyTyped(txtPeriodo, 4);
     }//GEN-LAST:event_txtPeriodoKeyTyped
 
+    private void cbNivelItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbNivelItemStateChanged
+
+        try {
+            con = con.ObtenerRSSentencia("SELECT COUNT(mat_nivel) AS cantidad FROM matricula WHERE "
+                    + "mat_nivel = '" + metodoscombo.ObtenerIDSelectCombo(cbNivel) + "' AND mat_periodo = '" + txtPeriodo.getText() + "'");
+
+            while (con.getResultSet().next()) {
+                lblCantMatriculados.setText(con.getResultSet().getString("cantidad") + " alumnos matriculados en el periodo " + txtPeriodo.getText());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
+    }//GEN-LAST:event_cbNivelItemStateChanged
+
     List<Component> ordenTabulador;
 
     private void OrdenTabulador() {
@@ -774,7 +856,8 @@ public class RegistrarMatricula extends javax.swing.JDialog {
     private javax.swing.JLabel lbCantRegistrosAlumno;
     private javax.swing.JLabel lblAlumnoActual;
     private javax.swing.JLabel lblBuscarCampoAlumno;
-    private javax.swing.JLabel lblCodigo6;
+    private javax.swing.JLabel lblCantMatriculados;
+    private javax.swing.JLabel lblCodigo7;
     private javax.swing.JLabel lblFechaRegistro;
     private javax.swing.JLabel lblNivel;
     private javax.swing.JLabel lblRucCedula;
