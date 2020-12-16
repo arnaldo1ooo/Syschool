@@ -56,7 +56,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
             String codigo = txtCodigo.getText();
             String descripcion = txtDescripcion.getText().toUpperCase();
             String tipoimporte = cbTipoImporte.getSelectedItem().toString();
-            double importe = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
+            double importe = metodostxt.StringAFormatoAmericano(txtImporte.getText());
             String tipopago = cbTipoPago.getSelectedItem().toString();
             int numpagos = sfNumPagos.getValue();
             int ene = chbEne.isSelected() ? 1 : 0;
@@ -972,7 +972,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
     }//GEN-LAST:event_cbTipoPagoItemStateChanged
 
     private void txtImporteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyReleased
-        txtImporte.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtImporte.getText()));
+        txtImporte.setText(metodostxt.StringAFormatSudamericaKeyRelease(txtImporte.getText()));
     }//GEN-LAST:event_txtImporteKeyReleased
 
     private void txtImporteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyTyped

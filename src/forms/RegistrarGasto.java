@@ -74,7 +74,7 @@ public class RegistrarGasto extends javax.swing.JDialog {
     public void RegistroNuevo() {
         if (ComprobarCampos() == true) {
             int idconcepto = metodoscombo.ObtenerIDSelectCombo(cbConceptoGasto);
-            double monto = metodostxt.DoubleAFormatoAmericano(txtMonto.getText());
+            double monto = metodostxt.StringAFormatoAmericano(txtMonto.getText());
             String obs = txtObs.getText();
             DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
             String fecha = formatoFecha.format(dcFecha.getDate());
@@ -423,7 +423,7 @@ public class RegistrarGasto extends javax.swing.JDialog {
     }//GEN-LAST:event_cbConceptoGastoItemStateChanged
 
     private void txtMontoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMontoKeyReleased
-        txtMonto.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtMonto.getText()));
+        txtMonto.setText(metodostxt.StringAFormatSudamericaKeyRelease(txtMonto.getText()));
     }//GEN-LAST:event_txtMontoKeyReleased
 
     private void txtMontoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMontoKeyTyped

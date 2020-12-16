@@ -22,7 +22,6 @@ import java.util.GregorianCalendar;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import static login.Login.codUsuario;
-import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
@@ -46,7 +45,6 @@ public class ABMAlumno extends javax.swing.JDialog {
         initComponents();
 
         metodos.AnchuraColumna(tbPrincipal);
-        TableRowFilterSupport.forTable(tbPrincipal).searchable(true).apply(); //Activar filtrado de tabla click derecho en cabecera
 
         //Poner fecha actual
         dcFechaInscripcion.setDate(new Date());
@@ -165,6 +163,10 @@ public class ABMAlumno extends javax.swing.JDialog {
     private void ConsultaAllAlumno() {//Realiza la consulta de los productos que tenemos en la base de datos
         modeltableAlumnos = (DefaultTableModel) tbPrincipal.getModel();
         modeltableAlumnos.setRowCount(0); //Vacia tabla
+
+        if (cbCampoBuscar.getItemCount() == 0) {
+            metodos.CargarTitlesaCombo(cbCampoBuscar, tbPrincipal);
+        }
 
         try {
             String sentencia = "CALL SP_AlumnoConsulta()";
@@ -296,9 +298,10 @@ public class ABMAlumno extends javax.swing.JDialog {
         taObs.setText("");
         cbEstado.setSelectedItem(0);
         cbApoderado.setSelectedIndex(-1);
-        lblFechaIngreso.setForeground(new Color(102, 102, 102));
-        lblNombre.setForeground(new Color(102, 102, 102));
-        lblApellido.setForeground(new Color(102, 102, 102));
+        lblFechaIngreso.setForeground(Color.DARK_GRAY);
+        lblNombre.setForeground(Color.DARK_GRAY);
+        lblApellido.setForeground(Color.DARK_GRAY);
+        lblCedula.setForeground(Color.DARK_GRAY);
 
         tbPrincipal.clearSelection();
     }
@@ -401,6 +404,10 @@ public class ABMAlumno extends javax.swing.JDialog {
             }
         };
         lbCantRegistros = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        txtBuscar = new javax.swing.JTextField();
+        lblBuscarCampoApoderado1 = new javax.swing.JLabel();
+        cbCampoBuscar = new javax.swing.JComboBox();
         jpBotones = new javax.swing.JPanel();
         btnNuevo = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
@@ -621,24 +628,62 @@ public class ABMAlumno extends javax.swing.JDialog {
         lbCantRegistros.setText("0 Registros encontrados");
         lbCantRegistros.setPreferredSize(new java.awt.Dimension(57, 25));
 
+        jLabel13.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
+        jLabel13.setText("  BUSCAR ");
+
+        txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
+        txtBuscar.setForeground(new java.awt.Color(0, 0, 0));
+        txtBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txtBuscar.setCaretColor(new java.awt.Color(0, 204, 204));
+        txtBuscar.setDisabledTextColor(new java.awt.Color(0, 204, 204));
+        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBuscarKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtBuscarKeyTyped(evt);
+            }
+        });
+
+        lblBuscarCampoApoderado1.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        lblBuscarCampoApoderado1.setForeground(new java.awt.Color(0, 0, 0));
+        lblBuscarCampoApoderado1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblBuscarCampoApoderado1.setText("Buscar por:");
+
         javax.swing.GroupLayout jpTablaLayout = new javax.swing.GroupLayout(jpTabla);
         jpTabla.setLayout(jpTablaLayout);
         jpTablaLayout.setHorizontalGroup(
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
+            .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scPrincipal)
-                    .addGroup(jpTablaLayout.createSequentialGroup()
+                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scPrincipal, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpTablaLayout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addComponent(lblBuscarCampoApoderado1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jpTablaLayout.setVerticalGroup(
             jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpTablaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jpTablaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbCampoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblBuscarCampoApoderado1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(2, 2, 2)
+                .addComponent(scPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbCantRegistros, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1200,7 +1245,7 @@ public class ABMAlumno extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 952, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 969, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1407,6 +1452,20 @@ public class ABMAlumno extends javax.swing.JDialog {
         taObs.setText(metodostxt.QuitaEspaciosString(taObs.getText()));
     }//GEN-LAST:event_taObsFocusLost
 
+    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
+        metodos.FiltroJTable(txtBuscar.getText(), cbCampoBuscar.getSelectedIndex(), tbPrincipal);
+
+        if (tbPrincipal.getRowCount() == 1) {
+            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registro encontrado");
+        } else {
+            lbCantRegistros.setText(tbPrincipal.getRowCount() + " Registros encontrados");
+        }
+    }//GEN-LAST:event_txtBuscarKeyReleased
+
+    private void txtBuscarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyTyped
+        metodostxt.FiltroCaracteresProhibidos(evt);
+    }//GEN-LAST:event_txtBuscarKeyTyped
+
     /**
      * @param args the command line arguments
      */
@@ -1456,6 +1515,7 @@ public class ABMAlumno extends javax.swing.JDialog {
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnNuevo;
     private javax.swing.JComboBox<MetodosCombo> cbApoderado;
+    private javax.swing.JComboBox cbCampoBuscar;
     private javax.swing.JComboBox cbCampoBuscarApoderado;
     private javax.swing.JComboBox<String> cbEstado;
     private javax.swing.JComboBox<String> cbSexo;
@@ -1463,6 +1523,7 @@ public class ABMAlumno extends javax.swing.JDialog {
     private com.toedter.calendar.JDateChooser dcFechaInscripcion;
     private com.toedter.calendar.JDateChooser dcFechaNacimiento;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jpBotones;
     private javax.swing.JPanel jpBotones2;
@@ -1475,6 +1536,7 @@ public class ABMAlumno extends javax.swing.JDialog {
     private javax.swing.JLabel lbCantRegistrosApoderado;
     private javax.swing.JLabel lblApellido;
     private javax.swing.JLabel lblBuscarCampoApoderado;
+    private javax.swing.JLabel lblBuscarCampoApoderado1;
     private javax.swing.JLabel lblCedula;
     private javax.swing.JLabel lblCedula1;
     private javax.swing.JLabel lblCodigo;
@@ -1496,6 +1558,7 @@ public class ABMAlumno extends javax.swing.JDialog {
     private javax.swing.JTable tbApoderado;
     private javax.swing.JTable tbPrincipal;
     private javax.swing.JTextField txtApellido;
+    private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtBuscarApoderado;
     private javax.swing.JTextField txtCedula;
     private javax.swing.JTextField txtCodigo;

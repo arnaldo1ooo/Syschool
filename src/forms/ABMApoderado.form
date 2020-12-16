@@ -862,7 +862,7 @@
                   <Font name="Tahoma" size="17" style="1"/>
                 </Property>
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="99" green="99" red="0" type="rgb"/>
+                  <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
@@ -1534,7 +1534,7 @@
                           <Font name="Tahoma" size="12" style="0"/>
                         </Property>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                          <Table columnCount="11" rowCount="0">
+                          <Table columnCount="12" rowCount="0">
                             <Column editable="false" title="C&#xf3;digo" type="java.lang.Integer"/>
                             <Column editable="false" title="Nombre" type="java.lang.String"/>
                             <Column editable="false" title="Apellido" type="java.lang.String"/>
@@ -1546,6 +1546,7 @@
                             <Column editable="false" title="Email" type="java.lang.String"/>
                             <Column editable="false" title="Obs" type="java.lang.String"/>
                             <Column editable="false" title="Estado" type="java.lang.String"/>
+                            <Column editable="false" title="Nivel (Periodo)" type="java.lang.Object"/>
                           </Table>
                         </Property>
                         <Property name="autoResizeMode" type="int" value="4"/>

@@ -13,6 +13,7 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,10 +46,14 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         //Obtener fecha actual
         dcFechaMatricula.setDate(new Date());
 
-        //Obtener año
+        Date fechaActual = new Date();
         Calendar c2 = new GregorianCalendar();
-        int periodo = c2.get(Calendar.YEAR) + 1;
-        txtPeriodo.setText(periodo + "");
+        if (fechaActual.after(FechaFinPeriodo())) {
+            int periodo = c2.get(Calendar.YEAR) + 1;
+            txtPeriodo.setText(periodo + "");
+        } else {
+            txtPeriodo.setText(c2.get(Calendar.YEAR) + "");
+        }
 
         //Metodos
         CargarComboBoxes();
@@ -488,7 +493,6 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         txtPeriodo.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtPeriodo.setToolTipText("Periodo del año lectivo en donde se matriculará el alumno seleccionado");
         txtPeriodo.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtPeriodo.setEnabled(false);
         txtPeriodo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtPeriodoKeyTyped(evt);
@@ -794,6 +798,30 @@ public class RegistrarMatricula extends javax.swing.JDialog {
         }
         con.DesconectarBasedeDatos();
     }//GEN-LAST:event_cbNivelItemStateChanged
+
+    private Date FechaFinPeriodo() {
+        Date fechaFinPeriodo = new Date();
+        String[] diaMes;
+        String diaFinPeriodo;
+        String mesFinPeriodo;
+        String añoActual;
+        Calendar calendar = new java.util.GregorianCalendar();
+        DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            con = con.ObtenerRSSentencia("SELECT conf_valor FROM configuracion WHERE conf_codigo = '3'");
+            while (con.getResultSet().next()) {
+                diaMes = con.getResultSet().getString("conf_valor").split("/");
+                diaFinPeriodo = diaMes[0];
+                mesFinPeriodo = diaMes[1];
+                añoActual = calendar.get(Calendar.YEAR) + "";
+                fechaFinPeriodo = formatoFecha.parse(diaFinPeriodo + "/" + mesFinPeriodo + "/" + añoActual);
+            }
+        } catch (SQLException | ParseException e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
+        return fechaFinPeriodo;
+    }
 
     List<Component> ordenTabulador;
 

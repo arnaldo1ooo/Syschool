@@ -79,7 +79,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
             String sexo = cbSexo.getSelectedItem().toString();
             String telefono = txtTelefono.getText();
             telefono = metodostxt.QuitaEspaciosString(telefono);
-            double salario = metodostxt.DoubleAFormatoAmericano(txtSalario.getText());
+            double salario = metodostxt.StringAFormatoAmericano(txtSalario.getText());
             String email = txtEmail.getText();
             email = metodostxt.QuitaEspaciosString(email);
             String obs = taObs.getText();
@@ -992,7 +992,7 @@ public class ABMFuncionario extends javax.swing.JDialog {
     }//GEN-LAST:event_tbPrincipalKeyReleased
 
     private void txtSalarioKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSalarioKeyReleased
-        txtSalario.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtSalario.getText()));
+        txtSalario.setText(metodostxt.StringAFormatSudamericaKeyRelease(txtSalario.getText()));
     }//GEN-LAST:event_txtSalarioKeyReleased
 
     private void txtSalarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSalarioKeyTyped

@@ -54,7 +54,7 @@ public class ABMConceptoGasto extends javax.swing.JDialog {
             String codigo = txtCodigo.getText();
             String descripcion = txtDescripcion.getText().toUpperCase();
             String tipogasto = cbTipoGasto.getSelectedItem().toString();
-            double monto = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
+            double monto = metodostxt.StringAFormatoAmericano(txtImporte.getText());
 
             if (txtCodigo.getText().equals("")) { //NUEVO REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo registro?", "Confirmación", JOptionPane.YES_OPTION);
@@ -726,7 +726,7 @@ public class ABMConceptoGasto extends javax.swing.JDialog {
     }//GEN-LAST:event_cbTipoGastoItemStateChanged
     }
     private void txtImporteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyReleased
-        txtImporte.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtImporte.getText()));
+        txtImporte.setText(metodostxt.StringAFormatSudamericaKeyRelease(txtImporte.getText()));
     }//GEN-LAST:event_txtImporteKeyReleased
 
     private void txtImporteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyTyped

@@ -74,7 +74,7 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
         if (ComprobarCampos() == true) {
             String numpago = lblNumPago.getText();
             int idfuncionario = metodoscombo.ObtenerIDSelectCombo(cbFuncionario);
-            double salario = metodostxt.DoubleAFormatoAmericano(txtSalario.getText());
+            double salario = metodostxt.StringAFormatoAmericano(txtSalario.getText());
 
             DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
             String fecha = formatoFecha.format(dcFecha.getDate());
@@ -602,7 +602,7 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
     }//GEN-LAST:event_cbFuncionarioItemStateChanged
 
     private void txtSalarioKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSalarioKeyReleased
-        txtSalario.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtSalario.getText()));
+        txtSalario.setText(metodostxt.StringAFormatSudamericaKeyRelease(txtSalario.getText()));
     }//GEN-LAST:event_txtSalarioKeyReleased
 
     private void txtSalarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSalarioKeyTyped

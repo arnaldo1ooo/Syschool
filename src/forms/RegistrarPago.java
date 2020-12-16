@@ -73,7 +73,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         TablaAllConcepto();
         TablaAllApoderado();
         metodos.CargarTitlesaCombo(cbCampoBuscarApoderado, tbApoderado);
-        
+
         txtCedulaApoderado.setText("");
 
         //Permiso Roles de usuario
@@ -124,7 +124,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 int alumno = metodoscombo.ObtenerIDSelectCombo(cbApoderado);
                 DateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
                 String fechapago = formatoFecha.format(dcFechaPago.getDate());
-                double importe = metodostxt.DoubleAFormatoAmericano(txtImporteRecibido.getText());
+                double importe = metodostxt.StringAFormatoAmericano(txtImporteRecibido.getText());
                 int periodo = Integer.parseInt(lblPeriodoActual.getText());
 
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo pago?", "Confirmación", JOptionPane.YES_OPTION);
@@ -153,7 +153,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                             idconcepto = Integer.parseInt(tbConceptoAPagar.getValueAt(fila, 0) + "");
                             numcuotas = Integer.parseInt(tbConceptoAPagar.getValueAt(fila, 3) + "");
                             meses = tbConceptoAPagar.getValueAt(fila, 4) + "";
-                            monto = metodostxt.DoubleAFormatoAmericano(tbConceptoAPagar.getValueAt(fila, 5) + "");
+                            monto = metodostxt.StringAFormatoAmericano(tbConceptoAPagar.getValueAt(fila, 5) + "");
 
                             sentencia = "CALL SP_PagoConceptosAlta('" + idultimopago + "','" + idconcepto
                                     + "','" + numcuotas + "','" + meses + "','" + monto + "')";
@@ -188,7 +188,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             double total = 0.0;
             double subtotal;
             for (int i = 0; i < tbConceptoAPagar.getRowCount(); i++) {
-                subtotal = metodostxt.DoubleAFormatoAmericano(tbConceptoAPagar.getValueAt(i, 6) + "");
+                subtotal = metodostxt.StringAFormatoAmericano(tbConceptoAPagar.getValueAt(i, 6) + "");
                 total = total + subtotal;
             }
             String totalString = metodostxt.DoubleAFormatSudamerica(total);
@@ -307,8 +307,8 @@ public class RegistrarPago extends javax.swing.JDialog {
             return false;
         }
 
-        double importe = metodostxt.DoubleAFormatoAmericano(txtImporteRecibido.getText());
-        double totalventa = metodostxt.DoubleAFormatoAmericano(txtTotalAPagar.getText());
+        double importe = metodostxt.StringAFormatoAmericano(txtImporteRecibido.getText());
+        double totalventa = metodostxt.StringAFormatoAmericano(txtTotalAPagar.getText());
         if (totalventa > importe || txtImporteRecibido.getText().equals("")) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "El importe debe ser mayor al total del pago", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -330,6 +330,9 @@ public class RegistrarPago extends javax.swing.JDialog {
             while (con.getResultSet().next()) {
                 codigo = con.getResultSet().getInt("apo_codigo");
                 cedula = con.getResultSet().getString("apo_cedula");
+                if (cedula == null) {
+                    cedula = "0";
+                }
                 nombre = con.getResultSet().getString("apo_nombre");
                 apellido = con.getResultSet().getString("apo_apellido");
                 sexo = con.getResultSet().getString("apo_sexo");
@@ -968,8 +971,8 @@ public class RegistrarPago extends javax.swing.JDialog {
                                 .addGap(35, 35, 35)
                                 .addComponent(lbl10)
                                 .addGap(2, 2, 2)
-                                .addComponent(txtSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(2, 2, 2)
+                                .addComponent(txtSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(lbl8)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -1177,7 +1180,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Ventana Registrar Pagos");
         setBackground(new java.awt.Color(45, 62, 80));
-        setPreferredSize(new java.awt.Dimension(1244, 575));
+        setPreferredSize(new java.awt.Dimension(1260, 575));
         setResizable(false);
         setSize(new java.awt.Dimension(1260, 575));
 
@@ -1767,7 +1770,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                     .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(panel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1205, Short.MAX_VALUE)
                         .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1790,7 +1793,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 1275, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1998,7 +2001,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     private void SumarSubtotal() {
         //Suma la colmna subtotal
         double sumarsubtotal = metodos.SumarColumnaDouble(tbConceptoAPagar, 6);
-        sumarsubtotal = metodostxt.FormatearATresDecimales(sumarsubtotal);
+        sumarsubtotal = metodostxt.DoubleATresDecimales(sumarsubtotal);
         String sumarsubtotalString = metodostxt.DoubleAFormatSudamerica(sumarsubtotal);
         txtTotalAPagar.setText(sumarsubtotalString); //El 5 es la columna 5, comienza de 0
     }
@@ -2055,15 +2058,15 @@ public class RegistrarPago extends javax.swing.JDialog {
     }//GEN-LAST:event_txtImporteRecibidoKeyTyped
 
     private void CalcularVuelto() {
-        double importe = metodostxt.DoubleAFormatoAmericano(txtImporteRecibido.getText());
-        double totalAPagar = metodostxt.DoubleAFormatoAmericano(txtTotalAPagar.getText());
+        double importe = metodostxt.StringAFormatoAmericano(txtImporteRecibido.getText());
+        double totalAPagar = metodostxt.StringAFormatoAmericano(txtTotalAPagar.getText());
         if (totalAPagar > importe) {
             txtImporteRecibido.setForeground(Color.RED);
             txtVuelto.setText("0");
         } else {
-            txtImporteRecibido.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtImporteRecibido.getText()));
+            txtImporteRecibido.setText(metodostxt.StringAFormatSudamericaKeyRelease(txtImporteRecibido.getText()));
             double vuelto = importe - totalAPagar;
-            vuelto = metodostxt.FormatearATresDecimales(vuelto);
+            vuelto = metodostxt.DoubleATresDecimales(vuelto);
             txtVuelto.setText(metodostxt.DoubleAFormatSudamerica(vuelto));
             txtImporteRecibido.setForeground(new Color(0, 153, 51)); //Verde
         }
@@ -2071,7 +2074,7 @@ public class RegistrarPago extends javax.swing.JDialog {
 
     private void txtImporteRecibidoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteRecibidoKeyReleased
         if (txtImporteRecibido.getText().equals("") == false) {
-            txtImporteRecibido.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtImporteRecibido.getText()));
+            txtImporteRecibido.setText(metodostxt.StringAFormatSudamericaKeyRelease(txtImporteRecibido.getText()));
             CalcularVuelto();
         }
 
@@ -2110,17 +2113,14 @@ public class RegistrarPago extends javax.swing.JDialog {
                     + "ELSE "
                     + "(CASE niv_seccion "
                     + "WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
-                    + "ELSE CONCAT(niv_descripcion,' \\\"', niv_seccion,'\\\"', ' ',niv_turno) END) END) AS nivel, niv_codigo, apo_cedula "
+                    + "ELSE CONCAT(niv_descripcion,' \\\"', niv_seccion,'\\\"', ' ',niv_turno,' (',mat_periodo,')') END) END) AS nivel, niv_codigo, apo_cedula "
                     + "FROM (alumno LEFT OUTER JOIN matricula ON alu_codigo=mat_alumno LEFT OUTER JOIN nivel ON mat_nivel=niv_codigo), apoderado "
                     + "WHERE (mat_alumno IS NULL OR mat_alumno=alu_codigo) AND (mat_nivel IS NULL OR mat_nivel=niv_codigo) AND alu_apoderado = apo_codigo "
                     + "AND alu_apoderado='" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' "
                     + "ORDER BY alu_nombre");
 
             try {
-                String nomapealumno;
-                String cedula;
-                String nivel;
-                String codnivel;
+                String nomapealumno, cedula, nivel, codnivel;
                 while (con.getResultSet().next()) {
                     nomapealumno = con.getResultSet().getString("nomapealumno");
                     cedula = metodostxt.StringPuntosMiles(con.getResultSet().getString("alu_cedula"));
@@ -2210,7 +2210,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 return;
             }
 
-            double importe = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
+            double importe = metodostxt.StringAFormatoAmericano(txtImporte.getText());
 
             //Sumar cantidad de poderantes basicos y medio
             int numpoderantes = 0;
@@ -2222,7 +2222,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             }
             importe = importe * numpoderantes;
 
-            txtSubtotal.setText(metodostxt.DoubleAFormatSudamerica(numCuotasAPagar * importe));
+            txtSubtotal.setText(metodostxt.DoubleAFormatSudamerica((numCuotasAPagar * importe)));
             if (numactual != Integer.parseInt(txtNumCuotasAPagar.getText())) { //Si el numero ingresado no es el mismo
                 numactual = Integer.parseInt(txtNumCuotasAPagar.getText());
                 //Recorrer los meses y poner checks sin pagar
@@ -2264,11 +2264,14 @@ public class RegistrarPago extends javax.swing.JDialog {
     }
 
     private void txtImporteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyReleased
-        txtImporte.setText(metodostxt.DoubleFormatoSudamericaKeyReleased(txtImporte.getText()));
 
-        double importe = metodostxt.DoubleAFormatoAmericano(txtImporte.getText());
+        txtImporte.setText(metodostxt.StringAFormatSudamericaKeyRelease(txtImporte.getText()));
+
+        double importe = metodostxt.StringAFormatoAmericano(txtImporte.getText());
         int numcuotas = Integer.parseInt(txtNumCuotasAPagar.getText());
-        txtSubtotal.setText(metodostxt.DoubleAFormatSudamerica(importe * numcuotas));
+
+        double subtotal = importe * numcuotas;
+        txtSubtotal.setText(metodostxt.DoubleAFormatSudamerica(subtotal));
     }//GEN-LAST:event_txtImporteKeyReleased
 
     private void txtImporteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyTyped
@@ -2342,7 +2345,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         String subtotal = txtSubtotal.getText();
 
         if (numcuotas <= 0) {
-            JOptionPane.showMessageDialog(null, "El número de cuotas no puede ser menor o igual a 0", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "El número de cuotas no puede ser menor o igual a 0", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtNumCuotasAPagar.requestFocus();
             return;
         }

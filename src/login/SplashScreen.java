@@ -6,6 +6,12 @@
 package login;
 
 import conexion.Conexion;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import principal.Principal;
 
 /**
@@ -24,10 +30,10 @@ public class SplashScreen extends javax.swing.JFrame implements Runnable {
         try {
             this.setLocationRelativeTo(null);
             this.setVisible(true);
-            
+
             lblVersionBD.setText(ObtenerVersionBD());
-            
-            
+            PonerInactivoAlumnos(FechaFinPeriodo());
+
             Thread.sleep(3000); //Esta en pantalla por 3 segundos
             this.dispose(); //Desaparece
             Principal principal = new Principal();
@@ -51,6 +57,43 @@ public class SplashScreen extends javax.swing.JFrame implements Runnable {
 
         return versionBD;
     }
+
+    private Date FechaFinPeriodo() {
+        Date fechaFinPeriodo = new Date();
+        String[] diaMes;
+        String diaFinPeriodo;
+        String mesFinPeriodo;
+        String añoActual;
+        Calendar calendar = new java.util.GregorianCalendar();
+        DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            con = con.ObtenerRSSentencia("SELECT conf_valor FROM configuracion WHERE conf_codigo = '3'");
+            while (con.getResultSet().next()) {
+                diaMes = con.getResultSet().getString("conf_valor").split("/");
+                diaFinPeriodo = diaMes[0];
+                mesFinPeriodo = diaMes[1];
+                añoActual = calendar.get(Calendar.YEAR) + "";
+                fechaFinPeriodo = formatoFecha.parse(diaFinPeriodo + "/" + mesFinPeriodo + "/" + añoActual);
+            }
+        } catch (SQLException | ParseException e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
+        return fechaFinPeriodo;
+    }
+
+    private void PonerInactivoAlumnos(Date laFechaFinPeriodo) {
+        Date fechaActual = new Date();
+        Calendar calendar = new java.util.GregorianCalendar();
+        if (fechaActual.after(laFechaFinPeriodo)) {
+            con.EjecutarABM("SET SQL_SAFE_UPDATES = 0", false); //Desactiva safemode de bd
+            con.EjecutarABM("UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo "
+                    + "AND mat_periodo='" + (calendar.get(Calendar.YEAR) + 1) + "')", false);
+            con.EjecutarABM("SET SQL_SAFE_UPDATES = 1", false); //Volver a activar safemode de bd
+        }
+    }
+
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

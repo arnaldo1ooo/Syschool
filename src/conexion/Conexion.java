@@ -34,7 +34,7 @@ public class Conexion {
                 //Modo host local
                 controlador = "com.mysql.cj.jdbc.Driver";
                 usuarioDB = "root";
-                passDB = "toor5127"; //Contrasena de la BD
+                passDB = "toor5127-"; //Contrasena de la BD
                 nombreBD = "syschool";
                 host = "localhost";
                 puerto = "3306";
@@ -50,8 +50,8 @@ public class Conexion {
             case "remoto" -> {
                 //Modo host remoto
                 controlador = "com.mysql.cj.jdbc.Driver";
-                usuarioDB = "root";
-                passDB = "toor5127"; //Contrasena de la BD
+                usuarioDB = "supervisor";
+                passDB = "toor5127-"; //Contrasena de la BD
                 nombreBD = "syschool";
                 host = "192.168.100.234"; //San roque 192.168.1.240
                 puerto = "3306";
@@ -66,7 +66,7 @@ public class Conexion {
                 //Modo host online
                 controlador = "com.mysql.cj.jdbc.Driver";
                 usuarioDB = "root";
-                passDB = "toor5127"; //Contrasena de la BD
+                passDB = "toor5127-"; //Contrasena de la BD
                 nombreBD = "escuela";
                 host = "181.123.175.39";
                 puerto = "3306";
@@ -184,8 +184,15 @@ public class Conexion {
             con.rs.last(); //Poner el puntero en el ultimo
             System.out.println("ObtenerRSSentencia trajo " + con.rs.getRow() + " resultados, consulta: " + sentencia);
             con.getResultSet().beforeFirst(); //Poner el puntero en el anteprimero
-        } catch (SQLException | NullPointerException e) {
+        } catch (SQLException e) {
             log_historial.error("Error 1092: " + e);
+            e.printStackTrace();
+            if (e.getMessage().equals("Can not issue data manipulation statements with executeQuery().")) {
+                System.out.println("Se esta ejecutando un update en ObtenerConsulta, cambie de metodo a EjecutarABM sentencia:" + sentencia + ", Error:" + e);
+                JOptionPane.showMessageDialog(null, "Se esta ejecutando un update en ObtenerConsulta, cambie de metodo a EjecutarABM");
+            }
+        } catch (NullPointerException e) {
+            log_historial.error("Error 1026: " + e);
             e.printStackTrace();
         }
         return con;

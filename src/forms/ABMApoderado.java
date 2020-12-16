@@ -36,13 +36,13 @@ import utilidades.MetodosCombo;
 public class ABMApoderado extends javax.swing.JDialog {
 
     private Conexion con = new Conexion();
-    private Metodos metodos = new Metodos();
-    private MetodosTXT metodostxt = new MetodosTXT();
-    private MetodosCombo metodoscombo = new MetodosCombo();
+    private final Metodos metodos = new Metodos();
+    private final MetodosTXT metodostxt = new MetodosTXT();
+    private final MetodosCombo metodoscombo = new MetodosCombo();
     private DefaultTableModel modelTablaPoderantes;
     private DefaultTableModel modelTableApoderados;
-    private Color colorVerde = new Color(6, 147, 27);
-    private Color colorRojo = new Color(206, 16, 45);
+    private final Color colorVerde = new Color(6, 147, 27);
+    private final Color colorRojo = new Color(206, 16, 45);
 
     public ABMApoderado(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -79,7 +79,6 @@ public class ABMApoderado extends javax.swing.JDialog {
             String direccion = txtDireccion.getText();
             String email = txtEmail.getText();
             String telefono = txtTelefono.getText();
-            telefono = telefono;
             String obs = metodostxt.MayusSoloPrimeraLetra(taObs.getText());
             obs = metodostxt.QuitaEspaciosString(obs);
 
@@ -248,7 +247,7 @@ public class ABMApoderado extends javax.swing.JDialog {
             }
             tbPrincipal.setModel(modelTableApoderados);
             metodos.AnchuraColumna(tbPrincipal);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error " + e);
             e.printStackTrace();
         }
@@ -950,7 +949,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         lblBuscarCampoApoderado.setText("Buscar por:");
 
         txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
-        txtBuscar.setForeground(new java.awt.Color(0, 153, 153));
+        txtBuscar.setForeground(new java.awt.Color(0, 0, 0));
         txtBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         txtBuscar.setCaretColor(new java.awt.Color(0, 204, 204));
         txtBuscar.setDisabledTextColor(new java.awt.Color(0, 204, 204));
@@ -1394,14 +1393,14 @@ public class ABMApoderado extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Código", "Nombre", "Apellido", "N° de Cédula", "Fecha de nac.", "Fecha de inscr.", "Sexo", "Teléfono", "Email", "Obs", "Estado"
+                "Código", "Nombre", "Apellido", "N° de Cédula", "Fecha de nac.", "Fecha de inscr.", "Sexo", "Teléfono", "Email", "Obs", "Estado", "Nivel (Periodo)"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -2177,14 +2176,22 @@ public class ABMApoderado extends javax.swing.JDialog {
         modelTablaPoderantes = (DefaultTableModel) tbPoderantes.getModel();//Cargamos campos de jtable al modeltable
         modelTablaPoderantes.setRowCount(0); //Vacia la tabla
 
-        int codigoapoderado = Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "");
-        String sentencia = "CALL SP_ApoderadoAlumnosConsulta(" + codigoapoderado + ")";
-
+        int idApoderado = Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "");
+        //String sentencia = "CALL SP_ApoderadoAlumnosConsulta(" + codigoapoderado + ")";
+        String sentencia = "SELECT alu_codigo,alu_nombre,alu_apellido,alu_cedula, "
+                + "DATE_FORMAT(alu_fechanacimiento, '%d/%m/%Y') AS fechanacimiento,"
+                + "DATE_FORMAT(alu_fechainscripcion, '%d/%m/%Y') AS fechainscripcion,"
+                + "alu_sexo, alu_telefono, alu_email, alu_obs,CASE alu_estado  WHEN 1 THEN 'ACTIVO'  WHEN 0 THEN 'INACTIVO' END AS estado,"
+                + "(CASE WHEN mat_alumno IS NULL THEN 'NO MATRICULADO' ELSE (CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
+                + "ELSE CONCAT(niv_descripcion,' \"', niv_seccion,'\"', ' ',niv_turno,' (',mat_periodo,')') END) END) AS nivel "
+                + "FROM (alumno LEFT OUTER JOIN matricula ON alu_codigo=mat_alumno LEFT OUTER JOIN nivel ON mat_nivel=niv_codigo), apoderado "
+                + "WHERE (mat_alumno IS NULL OR mat_alumno=alu_codigo) AND (mat_nivel IS NULL OR mat_nivel=niv_codigo) AND alu_apoderado = apo_codigo AND alu_apoderado='" + idApoderado + "' "
+                + "ORDER BY alu_nombre";
         con = con.ObtenerRSSentencia(sentencia);
 
         try {
             int codigo;
-            String nombre, apellido, cedula, fechanac, fechainsc, sexo, telefono, email, obs, estado;
+            String nombre, apellido, cedula, fechanac, fechainsc, sexo, telefono, email, obs, estado, nivel;
             while (con.getResultSet().next()) {
                 codigo = con.getResultSet().getInt("alu_codigo");
                 nombre = con.getResultSet().getString("alu_nombre");
@@ -2200,8 +2207,9 @@ public class ABMApoderado extends javax.swing.JDialog {
                 email = con.getResultSet().getString("alu_email");
                 obs = con.getResultSet().getString("alu_obs");
                 estado = con.getResultSet().getString("estado");
+                nivel = con.getResultSet().getString("nivel");
 
-                modelTablaPoderantes.addRow(new Object[]{codigo, nombre, apellido, cedula, fechanac, fechainsc, sexo, telefono, email, obs, estado});
+                modelTablaPoderantes.addRow(new Object[]{codigo, nombre, apellido, cedula, fechanac, fechainsc, sexo, telefono, email, obs, estado, nivel});
             }
             tbPoderantes.setModel(modelTablaPoderantes);
             metodos.AnchuraColumna(tbPoderantes);

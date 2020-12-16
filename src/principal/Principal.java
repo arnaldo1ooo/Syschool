@@ -33,8 +33,6 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import login.Login;
-import utilidades.Metodos;
-import utilidades.MetodosTXT;
 //Variables globales
 import static login.Login.codUsuario;
 import static login.Login.alias;
@@ -166,15 +164,6 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         btnAlumno = new javax.swing.JButton();
         btnApoderado = new javax.swing.JButton();
         btnUsuario = new javax.swing.JButton();
-        panel1 = new org.edisoncor.gui.panel.Panel();
-        jLabel1 = new javax.swing.JLabel();
-        lbAlias = new javax.swing.JLabel();
-        lblPerfil = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        lbFechaTitulo = new javax.swing.JLabel();
-        lbFecha = new javax.swing.JLabel();
-        lbHoraTitulo = new javax.swing.JLabel();
-        lbHora = new javax.swing.JLabel();
         btnGasto = new javax.swing.JButton();
         btnMatricula = new javax.swing.JButton();
         btnNivel = new javax.swing.JButton();
@@ -188,6 +177,15 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         panelImage2 = new org.edisoncor.gui.panel.PanelImage();
         panelImage3 = new org.edisoncor.gui.panel.PanelImage();
         jLabel7 = new javax.swing.JLabel();
+        panel1 = new org.edisoncor.gui.panel.Panel();
+        jLabel1 = new javax.swing.JLabel();
+        lbAlias = new javax.swing.JLabel();
+        lblPerfil = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        lbFechaTitulo = new javax.swing.JLabel();
+        lbFecha = new javax.swing.JLabel();
+        lbHoraTitulo = new javax.swing.JLabel();
+        lbHora = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         meMatricula = new javax.swing.JMenu();
         meitRegistrarMatricula = new javax.swing.JMenuItem();
@@ -246,7 +244,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         piPrincipal.setPreferredSize(new java.awt.Dimension(2000, 655));
 
         btnPago.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        btnPago.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoPagos70.png"))); // NOI18N
+        btnPago.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoPagos50.png"))); // NOI18N
         btnPago.setText("PAGOS");
         btnPago.setEnabled(false);
         btnPago.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -257,7 +255,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         });
 
         btnFuncionario.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        btnFuncionario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoFuncionario70.png"))); // NOI18N
+        btnFuncionario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoFuncionario50.png"))); // NOI18N
         btnFuncionario.setText("FUNCIONARIOS");
         btnFuncionario.setEnabled(false);
         btnFuncionario.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -268,7 +266,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         });
 
         btnAlumno.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        btnAlumno.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoAlumnos70.png"))); // NOI18N
+        btnAlumno.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoAlumnos50.png"))); // NOI18N
         btnAlumno.setText("ALUMNOS");
         btnAlumno.setEnabled(false);
         btnAlumno.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -279,7 +277,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         });
 
         btnApoderado.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        btnApoderado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoEncargado70.png"))); // NOI18N
+        btnApoderado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoEncargado50.png"))); // NOI18N
         btnApoderado.setText("APODERADOS");
         btnApoderado.setEnabled(false);
         btnApoderado.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -290,7 +288,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         });
 
         btnUsuario.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        btnUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoUsuario70.png"))); // NOI18N
+        btnUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoUsuario50.png"))); // NOI18N
         btnUsuario.setText("USUARIOS");
         btnUsuario.setEnabled(false);
         btnUsuario.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -300,93 +298,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             }
         });
 
-        panel1.setColorPrimario(new java.awt.Color(255, 255, 255));
-        panel1.setColorSecundario(new java.awt.Color(154, 255, 255));
-        panel1.setGradiente(org.edisoncor.gui.panel.Panel.Gradiente.VERTICAL);
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos20x20/IconoUsuario.png"))); // NOI18N
-        jLabel1.setText("Usuario:");
-
-        lbAlias.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        lbAlias.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lbAlias.setText("Error de usuario");
-
-        lblPerfil.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        lblPerfil.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblPerfil.setText("Error de perfil");
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel2.setText("Perfil:");
-
-        lbFechaTitulo.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        lbFechaTitulo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lbFechaTitulo.setText("Fecha de hoy:");
-        lbFechaTitulo.setFocusable(false);
-        lbFechaTitulo.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-
-        lbFecha.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        lbFecha.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lbFecha.setText("00/00/0000");
-        lbFecha.setFocusable(false);
-        lbFecha.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-
-        lbHoraTitulo.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        lbHoraTitulo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lbHoraTitulo.setText("Hora actual:");
-        lbHoraTitulo.setFocusable(false);
-        lbHoraTitulo.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-
-        lbHora.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        lbHora.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lbHora.setText("00:00:00");
-        lbHora.setFocusable(false);
-        lbHora.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-
-        javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
-        panel1.setLayout(panel1Layout);
-        panel1Layout.setHorizontalGroup(
-            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbAlias, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblPerfil, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(496, 496, 496)
-                .addComponent(lbFechaTitulo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbFecha)
-                .addGap(18, 18, 18)
-                .addComponent(lbHoraTitulo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbHora, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
-        );
-        panel1Layout.setVerticalGroup(
-            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel1Layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(lbAlias, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbFechaTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbHoraTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbHora, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-        );
-
-        lbFechaTitulo.getAccessibleContext().setAccessibleName("");
-
         btnGasto.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        btnGasto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoGastos70.png"))); // NOI18N
+        btnGasto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoGastos50.png"))); // NOI18N
         btnGasto.setText("GASTOS");
         btnGasto.setEnabled(false);
         btnGasto.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -397,7 +310,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         });
 
         btnMatricula.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        btnMatricula.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoMatricula70.png"))); // NOI18N
+        btnMatricula.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoMatricula50.png"))); // NOI18N
         btnMatricula.setText("MATRICULAS");
         btnMatricula.setEnabled(false);
         btnMatricula.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -408,7 +321,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         });
 
         btnNivel.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        btnNivel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoNivel.png"))); // NOI18N
+        btnNivel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoNivel50.png"))); // NOI18N
         btnNivel.setText("NIVELES");
         btnNivel.setEnabled(false);
         btnNivel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -419,7 +332,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         });
 
         btnPagoSalario.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        btnPagoSalario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoPagos70.png"))); // NOI18N
+        btnPagoSalario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoPagos50.png"))); // NOI18N
         btnPagoSalario.setText("PAGOS DE SALARIO");
         btnPagoSalario.setEnabled(false);
         btnPagoSalario.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -539,12 +452,96 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                 .addGap(64, 64, 64))
         );
 
+        panel1.setColorPrimario(new java.awt.Color(255, 255, 255));
+        panel1.setColorSecundario(new java.awt.Color(154, 255, 255));
+        panel1.setGradiente(org.edisoncor.gui.panel.Panel.Gradiente.VERTICAL);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos20x20/IconoUsuario.png"))); // NOI18N
+        jLabel1.setText("Usuario:");
+
+        lbAlias.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        lbAlias.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lbAlias.setText("Error de usuario");
+
+        lblPerfil.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        lblPerfil.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblPerfil.setText("Error de perfil");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel2.setText("Perfil:");
+
+        lbFechaTitulo.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        lbFechaTitulo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbFechaTitulo.setText("Fecha de hoy:");
+        lbFechaTitulo.setFocusable(false);
+        lbFechaTitulo.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        lbFecha.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        lbFecha.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lbFecha.setText("00/00/0000");
+        lbFecha.setFocusable(false);
+        lbFecha.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        lbHoraTitulo.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        lbHoraTitulo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbHoraTitulo.setText("Hora actual:");
+        lbHoraTitulo.setFocusable(false);
+        lbHoraTitulo.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        lbHora.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        lbHora.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lbHora.setText("00:00:00");
+        lbHora.setFocusable(false);
+        lbHora.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
+        panel1.setLayout(panel1Layout);
+        panel1Layout.setHorizontalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbAlias, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblPerfil, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                .addGap(496, 496, 496)
+                .addComponent(lbFechaTitulo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbFecha)
+                .addGap(18, 18, 18)
+                .addComponent(lbHoraTitulo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbHora, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
+        );
+        panel1Layout.setVerticalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel1Layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lbAlias, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbFechaTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbHoraTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbHora, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
+
+        lbFechaTitulo.getAccessibleContext().setAccessibleName("");
+
         javax.swing.GroupLayout piPrincipalLayout = new javax.swing.GroupLayout(piPrincipal);
         piPrincipal.setLayout(piPrincipalLayout);
         piPrincipalLayout.setHorizontalGroup(
             piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, piPrincipalLayout.createSequentialGroup()
+            .addGroup(piPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnPagoSalario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -556,10 +553,10 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                     .addComponent(btnMatricula, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnApoderado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, piPrincipalLayout.createSequentialGroup()
-                .addGap(1046, 1096, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
+            .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         piPrincipalLayout.setVerticalGroup(
             piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -578,13 +575,17 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                 .addComponent(btnPagoSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 162, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
+                .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(piPrincipalLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, piPrincipalLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)))
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
@@ -592,11 +593,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         jMenuBar1.setMinimumSize(new java.awt.Dimension(120, 70));
         jMenuBar1.setPreferredSize(new java.awt.Dimension(120, 55));
 
-        meMatricula.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoMatricula70.png"))); // NOI18N
+        meMatricula.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoMatricula50.png"))); // NOI18N
         meMatricula.setText("MATRICULA");
         meMatricula.setEnabled(false);
-        meMatricula.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        meMatricula.setPreferredSize(new java.awt.Dimension(170, 70));
+        meMatricula.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        meMatricula.setPreferredSize(new java.awt.Dimension(140, 70));
         meMatricula.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 meMatriculaActionPerformed(evt);
@@ -624,11 +625,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         jMenuBar1.add(meMatricula);
 
-        mePago.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoPagos70.png"))); // NOI18N
+        mePago.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoPagos50.png"))); // NOI18N
         mePago.setText("PAGOS");
         mePago.setEnabled(false);
-        mePago.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        mePago.setPreferredSize(new java.awt.Dimension(140, 70));
+        mePago.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        mePago.setPreferredSize(new java.awt.Dimension(120, 70));
         mePago.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mePagoActionPerformed(evt);
@@ -656,11 +657,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         jMenuBar1.add(mePago);
 
-        mePagoSalario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoPagos70.png"))); // NOI18N
+        mePagoSalario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoPagos50.png"))); // NOI18N
         mePagoSalario.setText("PAGO SALARIO");
         mePagoSalario.setEnabled(false);
-        mePagoSalario.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        mePagoSalario.setPreferredSize(new java.awt.Dimension(190, 70));
+        mePagoSalario.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        mePagoSalario.setPreferredSize(new java.awt.Dimension(160, 70));
         mePagoSalario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mePagoSalarioActionPerformed(evt);
@@ -688,11 +689,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         jMenuBar1.add(mePagoSalario);
 
-        meGasto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoGastos70.png"))); // NOI18N
+        meGasto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoGastos50.png"))); // NOI18N
         meGasto.setText("GASTOS");
         meGasto.setEnabled(false);
-        meGasto.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        meGasto.setPreferredSize(new java.awt.Dimension(140, 70));
+        meGasto.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        meGasto.setPreferredSize(new java.awt.Dimension(120, 70));
         meGasto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 meGastoActionPerformed(evt);
@@ -720,11 +721,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         jMenuBar1.add(meGasto);
 
-        meReporte.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoReporte70.png"))); // NOI18N
+        meReporte.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoReporte50.png"))); // NOI18N
         meReporte.setText("REPORTES");
         meReporte.setEnabled(false);
-        meReporte.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        meReporte.setPreferredSize(new java.awt.Dimension(150, 70));
+        meReporte.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        meReporte.setPreferredSize(new java.awt.Dimension(130, 70));
 
         meitReporteAlumnos.setText("Reporte de listado de alumnos (Por Nivel)");
         meitReporteAlumnos.setEnabled(false);
@@ -767,10 +768,10 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         jMenuBar1.add(meReporte);
 
-        meUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoUsuario70.png"))); // NOI18N
+        meUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoUsuario50.png"))); // NOI18N
         meUsuario.setText("USUARIOS");
         meUsuario.setEnabled(false);
-        meUsuario.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
+        meUsuario.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
         meUsuario.setMaximumSize(new java.awt.Dimension(150, 32767));
         meUsuario.setMinimumSize(new java.awt.Dimension(150, 70));
         meUsuario.setPreferredSize(new java.awt.Dimension(150, 70));
@@ -796,11 +797,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         jMenuBar1.add(meUsuario);
 
-        meNivel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoNivel.png"))); // NOI18N
+        meNivel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoNivel50.png"))); // NOI18N
         meNivel.setText("NIVELES");
         meNivel.setEnabled(false);
-        meNivel.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        meNivel.setPreferredSize(new java.awt.Dimension(190, 70));
+        meNivel.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        meNivel.setPreferredSize(new java.awt.Dimension(135, 70));
         meNivel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 meNivelActionPerformed(evt);
@@ -819,11 +820,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         jMenuBar1.add(meNivel);
 
-        meConfiguracion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoConfiguracion70.png"))); // NOI18N
+        meConfiguracion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoConfiguracion50.png"))); // NOI18N
         meConfiguracion.setText("CONFIGURACIÓN");
         meConfiguracion.setEnabled(false);
-        meConfiguracion.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        meConfiguracion.setPreferredSize(new java.awt.Dimension(220, 70));
+        meConfiguracion.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        meConfiguracion.setPreferredSize(new java.awt.Dimension(180, 70));
 
         jMenuItem6.setText("Configuración principal");
         jMenuItem6.setEnabled(false);
@@ -878,10 +879,10 @@ public class Principal extends javax.swing.JFrame implements Runnable {
 
         jMenuBar1.add(meConfiguracion);
 
-        meSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos70x70/IconoSalir70.png"))); // NOI18N
+        meSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/Iconos50x50/IconoSalir50.png"))); // NOI18N
         meSalir.setText("DESCONECTAR");
-        meSalir.setFont(new java.awt.Font("Century Gothic", 1, 14)); // NOI18N
-        meSalir.setPreferredSize(new java.awt.Dimension(200, 70));
+        meSalir.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
+        meSalir.setPreferredSize(new java.awt.Dimension(160, 70));
 
         jMenuItem19.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0));
         jMenuItem19.setText("OK");
@@ -900,11 +901,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(piPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 1386, Short.MAX_VALUE)
+            .addComponent(piPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 1360, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(piPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 986, Short.MAX_VALUE)
+            .addComponent(piPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 768, Short.MAX_VALUE)
         );
 
         getAccessibleContext().setAccessibleName("Principal");
