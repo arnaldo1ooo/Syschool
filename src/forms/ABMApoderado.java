@@ -1688,11 +1688,7 @@ public class ABMApoderado extends javax.swing.JDialog {
     }//GEN-LAST:event_txtDireccionKeyPressed
 
     private void txtCedulaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyTyped
-        //Solo numero y "-"
-        char car = evt.getKeyChar();
-        if (car != '-') {
-            metodostxt.SoloNumeroEnteroKeyTyped(evt);
-        }
+        metodostxt.SoloNumeroEnteroKeyTyped(evt);
 
         //Cantidad de caracteres
         metodostxt.TxtCantidadCaracteresKeyTyped(txtCedula, 15);
@@ -1834,7 +1830,7 @@ public class ABMApoderado extends javax.swing.JDialog {
     private void txtCedulaAlumnoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaAlumnoKeyTyped
         // Verificar si la tecla pulsada no es un digito
         char caracter = evt.getKeyChar();
-        if (((caracter < '0') || (caracter > '9')) && caracter != '-' && (caracter != '\b' /* corresponde a BACK_SPACE */)) {
+        if (((caracter < '0') || (caracter > '9')) && (caracter != '\b' /* corresponde a BACK_SPACE */)) {
             evt.consume(); // ignorar el evento de teclado
         }
     }//GEN-LAST:event_txtCedulaAlumnoKeyTyped
@@ -1894,7 +1890,7 @@ public class ABMApoderado extends javax.swing.JDialog {
         if (ComprobarCamposAlumnos() == true) {
             String nombre = txtNombreAlumno.getText();
             String apellido = txtApellidoAlumno.getText();
-            int cedula = metodostxt.StringSinPuntosMiles(txtCedulaAlumno.getText());
+            String cedula = metodostxt.StringSinPuntosMiles(txtCedulaAlumno.getText());
             SimpleDateFormat formatofecha = new SimpleDateFormat("dd/MM/yyyy");
             String fechanacimiento = formatofecha.format(dcFechaNacimientoAlumno.getDate());
             String fechainscripcion = formatofecha.format(dcFechaInscripcionAlumno.getDate());
@@ -2024,13 +2020,13 @@ public class ABMApoderado extends javax.swing.JDialog {
     }//GEN-LAST:event_txtBuscarKeyTyped
 
     private void chbSincedulaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chbSincedulaItemStateChanged
-        if (chbSincedula.isSelected()) {
-            txtCedula.setEnabled(false);
-            txtCedula.setText("0");
-            lblCedula.setForeground(colorVerde);
-            lblCIValidacion.setVisible(false);
-        } else {
-            if (btnGuardar.isEnabled()) {
+        if (btnGuardar.isEnabled()) {
+            if (chbSincedula.isSelected()) {
+                txtCedula.setEnabled(false);
+                txtCedula.setText("0");
+                lblCedula.setForeground(colorVerde);
+                lblCIValidacion.setVisible(false);
+            } else {
                 txtCedula.setText("");
                 txtCedula.setEnabled(true);
                 lblCedula.setForeground(Color.DARK_GRAY);

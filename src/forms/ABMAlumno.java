@@ -1352,11 +1352,7 @@ public class ABMAlumno extends javax.swing.JDialog {
     }//GEN-LAST:event_tbPrincipalKeyReleased
 
     private void txtCedulaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyTyped
-        // Verificar si la tecla pulsada no es un digito
-        char caracter = evt.getKeyChar();
-        if (((caracter < '0') || (caracter > '9')) && caracter != '-' && (caracter != '\b' /* corresponde a BACK_SPACE */)) {
-            evt.consume(); // ignorar el evento de teclado
-        }
+        metodostxt.SoloNumeroEnteroKeyTyped(evt);
 
         metodostxt.TxtCantidadCaracteresKeyTyped(txtCedula, 11);
     }//GEN-LAST:event_txtCedulaKeyTyped

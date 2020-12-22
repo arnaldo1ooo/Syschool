@@ -182,16 +182,17 @@ public class MetodosTXT {
         return ElNumDouble;
     }
 
-    public int StringSinPuntosMiles(String elNumString) {
+    public String StringSinPuntosMiles(String elNumString) {
         try {
             if (elNumString.equals("")) {
-                return 0;
+                return "0";
             }
+
             elNumString = elNumString.replace(".", "");
-            int elNumInt = Integer.parseInt(elNumString);
-            return elNumInt;
+
+            return elNumString;
         } catch (NullPointerException e) {
-            return 0;
+            return "0";
         }
     }
 

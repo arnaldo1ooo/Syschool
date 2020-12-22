@@ -2053,8 +2053,10 @@ public class RegistrarPago extends javax.swing.JDialog {
     }//GEN-LAST:event_txtVueltoActionPerformed
 
     private void txtImporteRecibidoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteRecibidoKeyTyped
-        metodostxt.TxtCantidadCaracteresKeyTyped(txtImporteRecibido, 11);
-        metodostxt.SoloNumeroDecimalKeyTyped(evt, txtImporteRecibido);
+        if (evt.getKeyCode() != (char) KeyEvent.VK_LEFT && evt.getKeyCode() != (char) KeyEvent.VK_RIGHT) { //Ignorar derecha e izquierda
+            metodostxt.TxtCantidadCaracteresKeyTyped(txtImporteRecibido, 11);
+            metodostxt.SoloNumeroDecimalKeyTyped(evt, txtImporteRecibido);
+        }
     }//GEN-LAST:event_txtImporteRecibidoKeyTyped
 
     private void CalcularVuelto() {
@@ -2073,11 +2075,12 @@ public class RegistrarPago extends javax.swing.JDialog {
     }
 
     private void txtImporteRecibidoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteRecibidoKeyReleased
-        if (txtImporteRecibido.getText().equals("") == false) {
-            txtImporteRecibido.setText(metodostxt.StringAFormatSudamericaKeyRelease(txtImporteRecibido.getText()));
-            CalcularVuelto();
+        if (evt.getKeyCode() != (char) KeyEvent.VK_LEFT && evt.getKeyCode() != (char) KeyEvent.VK_RIGHT) { //Ignorar derecha e izquierda
+            if (txtImporteRecibido.getText().equals("") == false) {
+                txtImporteRecibido.setText(metodostxt.StringAFormatSudamericaKeyRelease(txtImporteRecibido.getText()));
+                CalcularVuelto();
+            }
         }
-
     }//GEN-LAST:event_txtImporteRecibidoKeyReleased
 
     private void txtTotalAPagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTotalAPagarActionPerformed

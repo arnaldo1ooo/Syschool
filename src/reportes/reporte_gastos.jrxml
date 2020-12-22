@@ -26,8 +26,8 @@
 	</background>
 	<title>
 		<band height="107" splitType="Stretch">
-			<textField pattern="EEEEE dd MMMMM yyyy">
-				<reportElement x="0" y="0" width="142" height="20" uuid="0e79e0b6-91d5-4ae2-a83e-4e83973a3623"/>
+			<textField pattern="EEEEE dd MMM yyyy, h:mm a">
+				<reportElement x="0" y="0" width="150" height="20" uuid="0e79e0b6-91d5-4ae2-a83e-4e83973a3623"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
@@ -42,7 +42,7 @@
 				<reportElement x="0" y="95" width="555" height="1" uuid="fba8c39c-7a58-49e5-9f6b-f80e0e01569b"/>
 			</line>
 			<image hAlign="Center" vAlign="Top" onErrorType="Icon">
-				<reportElement stretchType="RelativeToTallestObject" x="142" y="0" width="275" height="60" uuid="a8053cd9-837f-4ff6-9002-ea0e22ed5d57"/>
+				<reportElement stretchType="RelativeToTallestObject" x="150" y="0" width="260" height="60" uuid="a8053cd9-837f-4ff6-9002-ea0e22ed5d57"/>
 				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
 			</image>
 			<image hAlign="Center" vAlign="Top" onErrorType="Icon">

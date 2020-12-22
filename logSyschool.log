@@ -1,67 +1,153 @@
-16/12/2020 08:42:10 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 08:42:10 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 08:50:56 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 08:50:56 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 08:50:56 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 08:52:39 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 08:52:39 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 08:52:39 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 08:54:31 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 08:54:31 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 08:54:31 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 08:56:13 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 08:56:13 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 08:56:13 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:00:32 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 09:00:32 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 09:00:32 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:01:32 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 09:01:32 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 09:01:32 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:07:25 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 09:07:25 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 09:07:25 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:09:17 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 09:09:17 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 09:09:17 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:10:17 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 09:10:17 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 09:10:17 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:12:55 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 09:12:55 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 09:12:55 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:16:29 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 09:16:29 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 09:16:29 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:17:08 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 09:17:08 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 09:17:08 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:18:12 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 09:18:12 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 09:18:13 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:19:17 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 09:19:17 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 09:19:17 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:20:17 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 09:20:17 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 09:20:17 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:35:54 ERROR [AWT-EventQueue-0] (Conexion.java:94) â Error 1089: java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)
-16/12/2020 09:35:56 ERROR [AWT-EventQueue-0] (Conexion.java:195) â Error 1026: java.lang.NullPointerException
-16/12/2020 09:35:56 ERROR [AWT-EventQueue-0] (Login.java:60) â Error 1072: java.lang.NullPointerException
-16/12/2020 09:46:55 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 09:46:55 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 09:46:55 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:59:48 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 09:59:48 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 09:59:48 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 09:59:59 ERROR [AWT-EventQueue-0] (Conexion.java:188) â Error 1092: java.sql.SQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(CASE WHEN mat_alumno IS NULL THEN 'NO MATRICULADO' ELSE (CASE niv_seccion WHEN ' at line 1
-16/12/2020 10:01:31 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 10:01:31 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 10:01:31 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 10:04:24 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 10:04:24 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 10:04:24 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
-16/12/2020 10:04:33 ERROR [AWT-EventQueue-0] (Conexion.java:188) â Error 1092: java.sql.SQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '(alumno LEFT OUTER JOIN matricula ON alu_codigo=mat_alumno LEFT OUTER JOIN nivel' at line 1
-16/12/2020 10:06:02 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
-16/12/2020 10:06:02 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
-16/12/2020 10:06:02 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
+21/12/2020 13:04:19 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1235322237}
+21/12/2020 13:04:19 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 295711612}
+21/12/2020 13:04:19 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: COLUMN, group: null, band: 0}
+21/12/2020 13:04:19 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: PAGE, group: null, band: 0}
+21/12/2020 13:04:19 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: REPORT, group: null, band: 0}
+21/12/2020 13:04:19 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: MASTER, group: null, band: 0}
+21/12/2020 13:04:19 DEBUG [AWT-EventQueue-0] (JRBaseFiller.java:639) â Fill 1: ended
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (BaseReportFiller.java:163) â Fill 1: created for null
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (BaseReportFiller.java:191) â created delayed actions 1 for filler 1
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: BACKGROUND} for band 1571951707
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: TITLE} for band 702958523
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: PAGE_HEADER} for band 751028822
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: COLUMN_HEADER} for band 236790149
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: DETAIL} for band 1443353662
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: COLUMN_FOOTER} for band 847379383
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: PAGE_FOOTER} for band 885975147
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: SUMMARY} for band 634640144
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:95) â Filler 1 - pageHeight: 842, columnFooterOffsetY: 761, lastPageColumnFooterOffsetY: 799
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRBaseFiller.java:564) â Fill 1: filling report
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRBaseFiller.java:1054) â max page width is 2097152000
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRBaseFiller.java:1362) â Fill 1: adding page 1
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:311) â Fill 1: title at 20
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillTextField.java:673) â 0e79e0b6-91d5-4ae2-a83e-4e83973a3623: pattern timezone property net.sf.jasperreports.pattern.timezone is null, resolved to null
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillTextField.java:591) â 0e79e0b6-91d5-4ae2-a83e-4e83973a3623: formatted value Mon Dec 21 13:05:05 PYST 2020 (java.util.Date/1608566705762) to lunes 21 diciembre 2020
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (SimpleTextLineWrapper.java:318) â creating element font infos cache of size 2000
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@699e85d9
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@699e85d9 for (null, {java.util.Date, EEEEE dd MMMMM yyyy,null,null,null})
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@38ffa9c3
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@38ffa9c3 for (null, null)
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@530d89fa
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateLine@2c185a03
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateImage@31b5b214
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateImage@31b5b214 for object net.sf.jasperreports.engine.fill.JRTemplateImage@7441a450
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 702958523}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:396) â Fill 1: page header at 127
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@4b3ca17b
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@4b3ca17b for (null, null)
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@259a325d
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@259a325d for object net.sf.jasperreports.engine.fill.JRTemplateText@39a311e8
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@4b3ca17b for object net.sf.jasperreports.engine.fill.JRTemplateText@403941a8
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@4b3ca17b for (null, null)
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 751028822}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:480) â Fill 1: column header at 158
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateLine@6e2007ad
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateLine@6e2007ad for object net.sf.jasperreports.engine.fill.JRTemplateLine@1a5cd8ee
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@3bd1a61c
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@3bd1a61c for object net.sf.jasperreports.engine.fill.JRTemplateText@316f84cf
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@3bd1a61c for object net.sf.jasperreports.engine.fill.JRTemplateText@5f1cf020
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@3bd1a61c for object net.sf.jasperreports.engine.fill.JRTemplateText@237bc885
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@15ac7bb0
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 236790149}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 182
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@58a8dc36
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@58a8dc36 for (null, null)
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@58a8dc36 for object net.sf.jasperreports.engine.fill.JRTemplateText@608daaf3
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@58a8dc36 for (null, null)
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@58a8dc36 for object net.sf.jasperreports.engine.fill.JRTemplateText@1dcf7987
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@58a8dc36 for (null, null)
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@58a8dc36 for object net.sf.jasperreports.engine.fill.JRTemplateText@6b48f075
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@58a8dc36 for (null, null)
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@58a8dc36 for object net.sf.jasperreports.engine.fill.JRTemplateText@759fc846
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@58a8dc36 for (null, null)
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 202
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 222
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 242
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 262
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 282
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 302
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 322
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 342
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 362
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 382
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 402
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 422
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 442
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 462
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 482
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 1443353662}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:1190) â Fill 1: summary at 502
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@78482e34
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@78482e34 for (null, null)
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@1e2d63fb
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateLine@324af313
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateLine@324af313 for object net.sf.jasperreports.engine.fill.JRTemplateLine@391cc0e4
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@78482e34 for object net.sf.jasperreports.engine.fill.JRTemplateText@1c707d
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@78482e34 for (null, null)
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:1094) â Fill 1: column footer at 565
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 847379383}
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:1163) â Fill 1: page footer at 784
+21/12/2020 13:05:05 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 885975147}
+21/12/2020 13:05:06 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 634640144}
+21/12/2020 13:05:06 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: COLUMN, group: null, band: 0}
+21/12/2020 13:05:06 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: PAGE, group: null, band: 0}
+21/12/2020 13:05:06 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: REPORT, group: null, band: 0}
+21/12/2020 13:05:06 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: MASTER, group: null, band: 0}
+21/12/2020 13:05:06 DEBUG [AWT-EventQueue-0] (JRBaseFiller.java:639) â Fill 1: ended
+21/12/2020 13:24:01 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
+21/12/2020 13:24:01 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
+21/12/2020 13:24:01 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
+21/12/2020 13:24:30 DEBUG [AWT-EventQueue-0] (Conexion.java:205) â EjecutarABM: CALL SP_ApoderadoAlta (null,'Hrh','Hrh','MASCULINO','Rhr','','','')
+21/12/2020 13:24:30 DEBUG [AWT-EventQueue-0] (Conexion.java:205) â EjecutarABM: CALL SP_AlumnoAlta('Geg','Geg',null,'2017-06-25','2020-12-21','MASCULINO','','','','267','0')
+21/12/2020 13:28:18 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
+21/12/2020 13:28:18 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
+21/12/2020 13:28:18 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
+21/12/2020 13:30:57 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
+21/12/2020 13:30:57 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
+21/12/2020 13:30:57 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
+21/12/2020 13:31:29 DEBUG [AWT-EventQueue-0] (Conexion.java:205) â EjecutarABM: CALL SP_ApoderadoAlta (2544441-2,'Sdsd','Sfsf','MASCULINO','Sfs','43','','')
+21/12/2020 13:33:20 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
+21/12/2020 13:33:20 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
+21/12/2020 13:33:20 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
+21/12/2020 13:33:53 DEBUG [AWT-EventQueue-0] (Conexion.java:205) â EjecutarABM: CALL SP_ApoderadoModificar('268',2544439-9,'Sdsd','Sfsf','MASCULINO','Sfs','43','','')
+21/12/2020 13:36:15 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
+21/12/2020 13:36:15 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
+21/12/2020 13:36:15 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
+21/12/2020 13:36:27 DEBUG [AWT-EventQueue-0] (Conexion.java:205) â EjecutarABM: CALL SP_ApoderadoModificar('268',2544430-3,'Sdsd','Sfsf','MASCULINO','Sfs','43','','')
+21/12/2020 13:38:46 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
+21/12/2020 13:38:46 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
+21/12/2020 13:38:46 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
+21/12/2020 13:39:04 DEBUG [AWT-EventQueue-0] (Conexion.java:205) â EjecutarABM: CALL SP_ApoderadoModificar('268',null,'Sdsd','Sfsf','MASCULINO','Sfs','43','','')
+21/12/2020 13:39:37 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
+21/12/2020 13:39:37 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
+21/12/2020 13:39:37 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
+21/12/2020 13:40:39 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
+21/12/2020 13:40:39 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
+21/12/2020 13:40:40 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
+21/12/2020 13:43:08 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
+21/12/2020 13:43:08 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
+21/12/2020 13:43:08 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
+21/12/2020 13:46:13 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
+21/12/2020 13:46:13 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
+21/12/2020 13:46:13 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
+21/12/2020 13:48:02 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
+21/12/2020 13:48:03 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
+21/12/2020 13:48:03 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1
+21/12/2020 13:49:49 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 0
+21/12/2020 13:49:49 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: UPDATE alumno SET alu_estado=0 WHERE NOT EXISTS(SELECT mat_alumno FROM matricula WHERE mat_alumno=alu_codigo AND mat_periodo='2021')
+21/12/2020 13:49:49 DEBUG [Thread-0] (Conexion.java:205) â EjecutarABM: SET SQL_SAFE_UPDATES = 1

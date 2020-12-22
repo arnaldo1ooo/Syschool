@@ -1000,11 +1000,15 @@ public class ABMFuncionario extends javax.swing.JDialog {
     }//GEN-LAST:event_txtSalarioKeyTyped
 
     private void txtCedulaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyReleased
-        txtCedula.setText(metodostxt.StringPuntosMiles(txtCedula.getText()));
+
+        if (evt.getKeyCode() != (char) KeyEvent.VK_LEFT && evt.getKeyCode() != (char) KeyEvent.VK_RIGHT) { //Ignorar derecha e izquierda
+            txtCedula.setText(metodostxt.StringPuntosMiles(txtCedula.getText()));
+        }
+
     }//GEN-LAST:event_txtCedulaKeyReleased
 
     private void txtCedulaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyTyped
-        // TODO add your handling code here:
+        metodostxt.SoloNumeroEnteroKeyTyped(evt);
     }//GEN-LAST:event_txtCedulaKeyTyped
 
     private void txtApellidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidoActionPerformed

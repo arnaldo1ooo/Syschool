@@ -198,7 +198,7 @@
 	<summary>
 		<band height="96" splitType="Stretch">
 			<textField>
-				<reportElement x="480" y="26" width="70" height="20" uuid="5206525c-cdc2-4c9a-9e1c-1aa5f9a3ddb9">
+				<reportElement x="466" y="26" width="86" height="20" uuid="5206525c-cdc2-4c9a-9e1c-1aa5f9a3ddb9">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -206,14 +206,14 @@
 				<textFieldExpression><![CDATA[$P{TOTAL}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="417" y="25" width="60" height="20" uuid="6921b4b5-daeb-41e3-b4c4-8e9953a29c9c"/>
+				<reportElement x="404" y="25" width="60" height="20" uuid="6921b4b5-daeb-41e3-b4c4-8e9953a29c9c"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total: ]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="271" y="26" width="43" height="20" uuid="38c8c32f-5d96-4224-ab3d-5257002aeae1">
+				<reportElement x="258" y="26" width="43" height="20" uuid="38c8c32f-5d96-4224-ab3d-5257002aeae1">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -221,14 +221,14 @@
 				<textFieldExpression><![CDATA[$P{TOTAL_MASC}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="209" y="25" width="60" height="20" uuid="768e423b-30b4-4035-9265-b36fb8c99cac"/>
+				<reportElement x="196" y="25" width="60" height="20" uuid="768e423b-30b4-4035-9265-b36fb8c99cac"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Masculino: ]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="376" y="26" width="43" height="20" uuid="6df8a93b-efef-4ec3-a661-5bdbc0f755ab">
+				<reportElement x="363" y="26" width="43" height="20" uuid="6df8a93b-efef-4ec3-a661-5bdbc0f755ab">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -236,7 +236,7 @@
 				<textFieldExpression><![CDATA[$P{TOTAL_FEM}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="314" y="25" width="60" height="20" uuid="9b513116-4eeb-4207-b34a-9ac7c2d6c381">
+				<reportElement x="301" y="25" width="60" height="20" uuid="9b513116-4eeb-4207-b34a-9ac7c2d6c381">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">

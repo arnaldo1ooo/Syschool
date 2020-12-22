@@ -24,7 +24,9 @@ import forms.RegistrarPagoSalario;
 import forms.ReporteAlumnos;
 import forms.ReporteAlumnosEyC;
 import forms.ReporteGastos;
+import forms.ReporteMatriculados;
 import forms.ReportePagos;
+import forms.ReportePagosConNombre;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -111,7 +113,9 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                         meitReporteAlumnos.setEnabled(true);
                         meitReporteAlumnosEyC.setEnabled(true);
                         meitReportePagos.setEnabled(true);
+                        meitReportePagosConNombre.setEnabled(true);
                         meitReporteGastos.setEnabled(true);
+                        meitReporteMatriculados.setEnabled(true);
                     }
 
                     case "CONFIGURACION" -> {
@@ -210,7 +214,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         jSeparator8 = new javax.swing.JPopupMenu.Separator();
         meitReportePagos = new javax.swing.JMenuItem();
         jSeparator10 = new javax.swing.JPopupMenu.Separator();
+        meitReportePagosConNombre = new javax.swing.JMenuItem();
+        jSeparator11 = new javax.swing.JPopupMenu.Separator();
         meitReporteGastos = new javax.swing.JMenuItem();
+        jSeparator12 = new javax.swing.JPopupMenu.Separator();
+        meitReporteMatriculados = new javax.swing.JMenuItem();
         meUsuario = new javax.swing.JMenu();
         meitRol = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
@@ -554,8 +562,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                     .addComponent(btnAlumno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnApoderado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         piPrincipalLayout.setVerticalGroup(
@@ -575,17 +582,16 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                 .addComponent(btnPagoSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGasto, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(piPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(piPrincipalLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, piPrincipalLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)))
+                        .addGap(0, 72, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0))
         );
@@ -757,6 +763,16 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meReporte.add(meitReportePagos);
         meReporte.add(jSeparator10);
 
+        meitReportePagosConNombre.setText("Reporte de pagos con nombre");
+        meitReportePagosConNombre.setEnabled(false);
+        meitReportePagosConNombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meitReportePagosConNombreActionPerformed(evt);
+            }
+        });
+        meReporte.add(meitReportePagosConNombre);
+        meReporte.add(jSeparator11);
+
         meitReporteGastos.setText("Reporte de gastos");
         meitReporteGastos.setEnabled(false);
         meitReporteGastos.addActionListener(new java.awt.event.ActionListener() {
@@ -765,6 +781,17 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             }
         });
         meReporte.add(meitReporteGastos);
+        meReporte.add(jSeparator12);
+
+        meitReporteMatriculados.setText("Reporte de matriculas");
+        meitReporteMatriculados.setToolTipText("");
+        meitReporteMatriculados.setEnabled(false);
+        meitReporteMatriculados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meitReporteMatriculadosActionPerformed(evt);
+            }
+        });
+        meReporte.add(meitReporteMatriculados);
 
         jMenuBar1.add(meReporte);
 
@@ -1128,6 +1155,18 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         reportegastos.setVisible(true);
     }//GEN-LAST:event_meitReporteGastosActionPerformed
 
+    private void meitReportePagosConNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitReportePagosConNombreActionPerformed
+        ReportePagosConNombre reportepagosconnombre = new ReportePagosConNombre(this, true);
+        reportepagosconnombre.setLocationRelativeTo(this);
+        reportepagosconnombre.setVisible(true);
+    }//GEN-LAST:event_meitReportePagosConNombreActionPerformed
+
+    private void meitReporteMatriculadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitReporteMatriculadosActionPerformed
+        ReporteMatriculados reportematriculados = new ReporteMatriculados(this, true);
+        reportematriculados.setLocationRelativeTo(this);
+        reportematriculados.setVisible(true);
+    }//GEN-LAST:event_meitReporteMatriculadosActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -1184,6 +1223,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
+    private javax.swing.JPopupMenu.Separator jSeparator11;
+    private javax.swing.JPopupMenu.Separator jSeparator12;
     private javax.swing.JPopupMenu.Separator jSeparator17;
     private javax.swing.JPopupMenu.Separator jSeparator18;
     private javax.swing.JPopupMenu.Separator jSeparator20;
@@ -1226,7 +1267,9 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenuItem meitReporteAlumnos;
     private javax.swing.JMenuItem meitReporteAlumnosEyC;
     private javax.swing.JMenuItem meitReporteGastos;
+    private javax.swing.JMenuItem meitReporteMatriculados;
     private javax.swing.JMenuItem meitReportePagos;
+    private javax.swing.JMenuItem meitReportePagosConNombre;
     private javax.swing.JMenuItem meitRol;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.PanelImage panelImage1;

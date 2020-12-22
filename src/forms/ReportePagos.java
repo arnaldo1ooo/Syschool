@@ -47,7 +47,6 @@ public class ReportePagos extends javax.swing.JDialog {
         //Obtener Fechas
         Calendar cal = Calendar.getInstance();
         cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), 1); //Primer dia del mes seleccionado
-        System.out.println("Cale " + cal.get(Calendar.MONTH));
         dcDesde.setCalendar(cal);
         cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.getActualMaximum(Calendar.DAY_OF_MONTH)); //Ultimo dia del mes seleccionado
         dcHasta.setCalendar(cal);
@@ -89,11 +88,11 @@ public class ReportePagos extends javax.swing.JDialog {
             double monto, total = 0;
             while (con.getResultSet().next()) {
                 numpago = con.getResultSet().getString("pag_numpago");
-                fechapago = formatofecha2.format(con.getResultSet().getDate("pag_fechapago"));
                 concepto = con.getResultSet().getString("con_descripcion");
+                fechapago = formatofecha2.format(con.getResultSet().getDate("pag_fechapago"));
                 monto = con.getResultSet().getDouble("totalpago");
                 total = total + monto;
-                modelTablePagos.addRow(new Object[]{numpago, fechapago, concepto, monto});
+                modelTablePagos.addRow(new Object[]{numpago, concepto, fechapago, monto});
 
                 lblTotal.setText(metodostxt.DoubleAFormatSudamerica(total) + " Gs.");
             }
@@ -286,7 +285,7 @@ public class ReportePagos extends javax.swing.JDialog {
 
             },
             new String [] {
-                "N° de pago", "Fecha de pago", "Concepto", "Monto"
+                "N° de pago", "Concepto", "Fecha de pago", "Monto"
             }
         ) {
             Class[] types = new Class [] {
