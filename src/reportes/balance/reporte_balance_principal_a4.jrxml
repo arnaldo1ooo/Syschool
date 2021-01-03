@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d7ba0bb7-545a-46fb-9be6-63e81b1f1532">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="290"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="LOGO" class="java.io.InputStream"/>
+	<parameter name="LOGO2" class="java.io.InputStream"/>
+	<parameter name="FECHADESDEHASTA" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR_PAGOS" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR_GASTOS" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR_PAGOS_SALARIO" class="java.lang.String"/>
+	<parameter name="DATASOURCE_PAGOS" class="net.sf.jasperreports.engine.JRDataSource" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATASOURCE_GASTOS" class="net.sf.jasperreports.engine.JRDataSource" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATASOURCE_PAGOS_SALARIO" class="net.sf.jasperreports.engine.JRDataSource" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TOTAL_PAGO" class="java.lang.String"/>
+	<parameter name="TOTAL_GASTO" class="java.lang.String"/>
+	<parameter name="TOTAL_PAGO_SALARIO" class="java.lang.String"/>
+	<parameter name="TOTAL_INGRESO" class="java.lang.String"/>
+	<parameter name="TOTAL_EGRESO" class="java.lang.String"/>
+	<parameter name="TOTAL_UTILIDAD" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[CALL SP_ProductoConsulta]]>
+	</queryString>
+	<title>
+		<band height="123">
+			<textField pattern="EEEEE dd MMM yyyy, h:mm a">
+				<reportElement x="0" y="0" width="150" height="20" uuid="e8379e2e-c0e4-4304-ae83-60e6f30671f1"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Master">
+				<reportElement x="180" y="96" width="375" height="25" uuid="71985890-0b8b-4f32-ab87-ba6c160d1916"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Bodoni MT&#xD;&#xA;" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FECHADESDEHASTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="96" width="170" height="25" uuid="42d1080a-b326-4134-803d-b9b205838a55"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="Bodoni MT" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REPORTE DE BALANCE]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="121" width="555" height="1" uuid="7b5ff273-5159-4519-98ba-168ca22a3d80"/>
+			</line>
+			<textField>
+				<reportElement x="410" y="0" width="144" height="19" uuid="c41e0838-8626-496a-b338-b128db3cdec7"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Pág. " + ($V{PAGE_NUMBER}) + " de " + ($V{PAGE_NUMBER})]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Top" onErrorType="Icon">
+				<reportElement stretchType="RelativeToTallestObject" x="150" y="23" width="259" height="60" uuid="74811cc0-f9e9-4a3a-a398-122add796ea1"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+			<image hAlign="Center" vAlign="Top" onErrorType="Icon">
+				<reportElement stretchType="RelativeToTallestObject" x="450" y="23" width="70" height="70" uuid="523d645f-c345-4518-9e69-c76efbe30cf0"/>
+				<imageExpression><![CDATA[$P{LOGO2}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="113" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="10" width="555" height="25" uuid="e0557cfb-34ab-4ce6-b0b6-489305ed701e"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Bodoni MT" size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INGRESOS]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="0" y="35" width="555" height="65" uuid="cda4d50b-c999-4d23-a09e-cc4a02780d61"/>
+				<subreportParameter name="TOTAL_PAGO">
+					<subreportParameterExpression><![CDATA[$P{TOTAL_PAGO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FECHADESDEHASTA">
+					<subreportParameterExpression><![CDATA[$P{FECHADESDEHASTA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{DATASOURCE_PAGOS}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR_PAGOS} + "subreporte_balance_pagos.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="123">
+			<staticText>
+				<reportElement x="0" y="14" width="554" height="25" uuid="f29bc6aa-35fc-4c92-a1b8-fcd65789d68c"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Bodoni MT" size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EGRESOS]]></text>
+			</staticText>
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="44" width="555" height="75" uuid="59b4d847-9d75-4b35-96aa-ee2d71bbe506">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<subreportParameter name="TOTAL_GASTO">
+					<subreportParameterExpression><![CDATA[$P{TOTAL_GASTO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FECHADESDEHASTA">
+					<subreportParameterExpression><![CDATA[$P{FECHADESDEHASTA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{DATASOURCE_GASTOS}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR_GASTOS} + "subreporte_balance_gastos.jasper"]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement x="0" y="6" width="553" height="1" uuid="b14bff74-47dd-4981-adaa-8c5cc001d6a9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="2.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+		<band height="88">
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="10" width="555" height="75" uuid="6d4b9b36-e9d4-4fb3-aa03-b2ae0ccd9807">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<subreportParameter name="TOTAL_PAGO_SALARIO">
+					<subreportParameterExpression><![CDATA[$P{TOTAL_PAGO_SALARIO}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FECHADESDEHASTA">
+					<subreportParameterExpression><![CDATA[$P{FECHADESDEHASTA}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[$P{DATASOURCE_PAGOS_SALARIO}]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR_PAGOS_SALARIO} + "subreporte_balance_pagos_salario.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="57">
+			<rectangle>
+				<reportElement x="0" y="0" width="154" height="50" uuid="291c030e-c847-4b27-9289-c7cfb606ca9a"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="154" y="0" width="154" height="50" uuid="df3982f4-98da-4397-9317-4423701693fb"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="308" y="0" width="247" height="50" uuid="2a62cbb7-ec50-4036-a113-fc38f305c192"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="10" y="0" width="140" height="20" uuid="36af1872-1894-45f7-8ee3-f06c2f60f518">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total ingresos]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="10" y="20" width="140" height="30" uuid="41a8fb5b-7a35-4137-8633-4349ba347ac4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="13"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TOTAL_INGRESO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="160" y="20" width="148" height="30" uuid="f91bad3a-a6ce-4885-8e49-3edbbcc30603"/>
+				<textElement verticalAlignment="Middle">
+					<font size="13"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TOTAL_EGRESO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="160" y="0" width="148" height="20" uuid="3b94d7d2-56e4-488e-9b79-bb94fc6d527a">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total egresos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="390" y="0" width="155" height="20" backcolor="#49B804" uuid="eae2f508-7df0-4466-ba94-a45d04c119f4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total Utilidad]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Transparent" x="390" y="20" width="155" height="30" backcolor="#12A30D" uuid="7498a33a-15a4-4726-b336-8719ecd07ed0">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="13"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TOTAL_UTILIDAD}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

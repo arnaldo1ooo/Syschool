@@ -31,27 +31,10 @@ public class RegistrarGasto extends javax.swing.JDialog {
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
     MetodosCombo metodoscombo = new MetodosCombo();
-    String tipogasto = "OPERACIONAL";
 
     public RegistrarGasto(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
-
-        //Si es gasto operacional o administrativo
-        try {
-            con = con.ObtenerRSSentencia("SELECT per_denominacion FROM usuario,perfil,usuario_perfil "
-                    + "WHERE usu_codigo = '" + codUsuario + "' AND usuper_usuario = usu_codigo AND usuper_perfil = per_codigo "
-                    + "ORDER BY per_denominacion");
-            while (con.getResultSet().next()) {
-                if (con.getResultSet().getString("per_denominacion").equals("DIRECTORA")) {
-                    tipogasto = "ADMINISTRATIVO";
-                    lblPrivilegio.setText("GASTOS ADMINISTRATIVOS");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        con.DesconectarBasedeDatos();
 
         //Metodos
         CargarComboBoxes();
@@ -68,7 +51,7 @@ public class RegistrarGasto extends javax.swing.JDialog {
     private void CargarComboBoxes() {
         //Carga los combobox con las consultas
         metodoscombo.CargarComboConsulta(cbConceptoGasto, "SELECT congas_codigo, congas_descripcion "
-                + "FROM concepto_gasto WHERE congas_tipo='" + tipogasto + "' ORDER BY congas_descripcion", -1);
+                + "FROM concepto_gasto ORDER BY congas_descripcion", -1);
     }
 
     public void RegistroNuevo() {
@@ -407,7 +390,7 @@ public class RegistrarGasto extends javax.swing.JDialog {
     private void cbConceptoGastoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbConceptoGastoItemStateChanged
         try {
             int idConceptoGasto = metodoscombo.ObtenerIDSelectCombo(cbConceptoGasto);
-            String sentencia = "SELECT congas_monto FROM concepto_gasto WHERE congas_codigo = '" + idConceptoGasto + "' AND congas_tipo = '" + tipogasto + "'";
+            String sentencia = "SELECT congas_monto FROM concepto_gasto WHERE congas_codigo = '" + idConceptoGasto + "'";
             con = con.ObtenerRSSentencia(sentencia);
             while (con.getResultSet().next()) {
                 if (con.getResultSet().getDouble("congas_monto") != 0) { //Si no es null

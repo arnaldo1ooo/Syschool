@@ -147,7 +147,8 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
                             tipohoja = con.getResultSet().getString("conf_valor");
                             break;
                         default:
-                            JOptionPane.showMessageDialog(this, "No se encontró la hoja seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
+                            System.out.println("Error switch " + con.getResultSet().getString("conf_descripcion"));
+                            //JOptionPane.showMessageDialog(this, "No se encontró la hoja seleccionada", "Error", JOptionPane.ERROR_MESSAGE);
                             break;
                     }
                 }
@@ -380,11 +381,9 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
         lblFechaRegistro2.setText("Desde:");
         lblFechaRegistro2.setToolTipText("");
 
-        dcFechaDesde.setEnabled(false);
         dcFechaDesde.setMaxSelectableDate(new java.util.Date(4102455600000L));
         dcFechaDesde.setMinSelectableDate(new java.util.Date(631162800000L));
 
-        dcFechaHasta.setEnabled(false);
         dcFechaHasta.setMaxSelectableDate(new java.util.Date(4102455600000L));
         dcFechaHasta.setMinSelectableDate(new java.util.Date(631162800000L));
 
@@ -536,7 +535,7 @@ public class RegistrarPagoSalario extends javax.swing.JDialog {
                                 .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(197, 197, 197))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())))))
         );
         jpPrincipalLayout.setVerticalGroup(

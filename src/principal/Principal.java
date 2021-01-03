@@ -23,6 +23,7 @@ import forms.RegistrarPago;
 import forms.RegistrarPagoSalario;
 import forms.ReporteAlumnos;
 import forms.ReporteAlumnosEyC;
+import forms.ReporteBalance;
 import forms.ReporteGastos;
 import forms.ReporteMatriculados;
 import forms.ReportePagos;
@@ -116,6 +117,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                         meitReportePagosConNombre.setEnabled(true);
                         meitReporteGastos.setEnabled(true);
                         meitReporteMatriculados.setEnabled(true);
+                        meitReporteBalance.setEnabled(true);
                     }
 
                     case "CONFIGURACION" -> {
@@ -219,6 +221,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         meitReporteGastos = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         meitReporteMatriculados = new javax.swing.JMenuItem();
+        jSeparator13 = new javax.swing.JPopupMenu.Separator();
+        meitReporteBalance = new javax.swing.JMenuItem();
         meUsuario = new javax.swing.JMenu();
         meitRol = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
@@ -792,6 +796,17 @@ public class Principal extends javax.swing.JFrame implements Runnable {
             }
         });
         meReporte.add(meitReporteMatriculados);
+        meReporte.add(jSeparator13);
+
+        meitReporteBalance.setText("Reporte de balance");
+        meitReporteBalance.setToolTipText("");
+        meitReporteBalance.setEnabled(false);
+        meitReporteBalance.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                meitReporteBalanceActionPerformed(evt);
+            }
+        });
+        meReporte.add(meitReporteBalance);
 
         jMenuBar1.add(meReporte);
 
@@ -1167,6 +1182,12 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         reportematriculados.setVisible(true);
     }//GEN-LAST:event_meitReporteMatriculadosActionPerformed
 
+    private void meitReporteBalanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_meitReporteBalanceActionPerformed
+        ReporteBalance reportebalance = new ReporteBalance(this, true);
+        reportebalance.setLocationRelativeTo(this);
+        reportebalance.setVisible(true);
+    }//GEN-LAST:event_meitReporteBalanceActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -1225,6 +1246,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
     private javax.swing.JPopupMenu.Separator jSeparator12;
+    private javax.swing.JPopupMenu.Separator jSeparator13;
     private javax.swing.JPopupMenu.Separator jSeparator17;
     private javax.swing.JPopupMenu.Separator jSeparator18;
     private javax.swing.JPopupMenu.Separator jSeparator20;
@@ -1266,6 +1288,7 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JMenuItem meitRegistrarPagoSalario;
     private javax.swing.JMenuItem meitReporteAlumnos;
     private javax.swing.JMenuItem meitReporteAlumnosEyC;
+    private javax.swing.JMenuItem meitReporteBalance;
     private javax.swing.JMenuItem meitReporteGastos;
     private javax.swing.JMenuItem meitReporteMatriculados;
     private javax.swing.JMenuItem meitReportePagos;

@@ -175,6 +175,7 @@ public class Conexion {
     }
 
     public Conexion ObtenerRSSentencia(String sentencia) { //con.Desconectar luego de usar el metodo
+        System.out.println("ObtenerRSSentencia: " + sentencia);
         con = new Conexion();
         try {
             con.connection = (Connection) Conexion.ConectarBasedeDatos();

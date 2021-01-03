@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="d7ba0bb7-545a-46fb-9be6-63e81b1f1532">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="TOTAL_PAGO" class="java.lang.String"/>
+	<parameter name="FECHADESDEHASTA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="Concepto" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="Subtotal" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="31" splitType="Stretch">
+			<staticText>
+				<reportElement x="9" y="0" width="51" height="25" uuid="f2cbda6d-d2e3-49e2-a119-79229cf84982">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Berlin Sans FB Demi" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PAGOS]]></text>
+			</staticText>
+			<textField evaluationTime="Master">
+				<reportElement x="60" y="0" width="375" height="25" uuid="c625a679-32bf-4f86-8760-2fead6a6844a"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="SansSerif&#xD;&#xA;" size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{FECHADESDEHASTA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="4" width="555" height="1" forecolor="#B5B5B5" uuid="8540f4a5-62a1-44f2-98b0-9dbf83a37cf2"/>
+			</line>
+			<line>
+				<reportElement x="0" y="24" width="555" height="1" forecolor="#B5B5B5" uuid="51d3e0af-cdd0-4054-82a7-1bd81031165a"/>
+			</line>
+			<staticText>
+				<reportElement x="9" y="4" width="261" height="20" uuid="d47981d4-2a90-4d00-9168-26e246a850fd">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Concepto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="310" y="4" width="240" height="20" uuid="d3f4799d-48e7-4165-9753-3440f09ec087"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Subtotal (Gs)]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="9" y="2" width="261" height="18" uuid="504f1771-5b5a-4352-a9bf-a94fa994816d">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Concepto}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="2" width="240" height="18" uuid="054e29b7-7298-40a7-9cc3-9d5bbcd1431b"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.DecimalFormat("###,###").format(Double.valueOf($F{Subtotal}))]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="34" splitType="Stretch">
+			<textField>
+				<reportElement x="410" y="7" width="140" height="20" uuid="5206525c-cdc2-4c9a-9e1c-1aa5f9a3ddb9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{TOTAL_PAGO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="268" y="6" width="140" height="20" uuid="6921b4b5-daeb-41e3-b4c4-8e9953a29c9c">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total pagos:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="27" width="555" height="1" forecolor="#B5B5B5" uuid="94fad646-cc84-4b87-a99e-05f9fcb18430"/>
+			</line>
+			<line>
+				<reportElement x="0" y="6" width="555" height="1" forecolor="#B5B5B5" uuid="b1d8ba38-c30f-4eb2-b179-a2a726ded8ae"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>
