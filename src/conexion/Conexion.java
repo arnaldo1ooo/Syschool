@@ -29,10 +29,10 @@ public class Conexion {
 
     public static Connection ConectarBasedeDatos() {
         String tipoHost = "local";
+        controlador = "com.mysql.cj.jdbc.Driver";
         switch (tipoHost) {
             case "local" -> {
                 //Modo host local
-                controlador = "com.mysql.cj.jdbc.Driver";
                 usuarioDB = "root";
                 passDB = "toor5127-"; //Contrasena de la BD
                 nombreBD = "syschool";
@@ -46,10 +46,10 @@ public class Conexion {
                         //+ "&serverTimezone=UTC"
                         + "&useSSL=false"
                         + "&allowPublicKeyRetrieval=true";
+                break;
             }
             case "remoto" -> {
                 //Modo host remoto
-                controlador = "com.mysql.cj.jdbc.Driver";
                 usuarioDB = "supervisor";
                 passDB = "toor5127-"; //Contrasena de la BD
                 nombreBD = "syschool";
@@ -61,10 +61,10 @@ public class Conexion {
                         + "&useLegacyDatetimeCode=false"
                         + "&serverTimezone=UTC"
                         + "&useSSL=false";
+                break;
             }
             case "online" -> {
                 //Modo host online
-                controlador = "com.mysql.cj.jdbc.Driver";
                 usuarioDB = "root";
                 passDB = "toor5127-"; //Contrasena de la BD
                 nombreBD = "escuela";
@@ -76,10 +76,14 @@ public class Conexion {
                         + "&useLegacyDatetimeCode=false"
                         + "&serverTimezone=UTC"
                         + "&useSSL=false";
+                break;
             }
 
-            default ->
+            default -> {
                 JOptionPane.showMessageDialog(null, "Case no se encontro", "Error", JOptionPane.ERROR_MESSAGE);
+                break;
+            }
+
         }
 
         Connection connection;
