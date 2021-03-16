@@ -1374,7 +1374,7 @@ public class ABMAlumno extends javax.swing.JDialog {
     }//GEN-LAST:event_dcFechaNacimientoPropertyChange
 
     private void btnBuscarApoderadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarApoderadoActionPerformed
-        BuscadorApoderado.setLocationRelativeTo(null);
+        BuscadorApoderado.setLocationRelativeTo(this);
         BuscadorApoderado.setVisible(true);
     }//GEN-LAST:event_btnBuscarApoderadoActionPerformed
 
