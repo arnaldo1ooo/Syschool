@@ -43,7 +43,7 @@ import utilidades.ColorearCelda;
  * @author Lic. Arnaldo Cantero
  */
 public class RegistrarPago extends javax.swing.JDialog {
-
+    
     private Conexion con = new Conexion();
     private Metodos metodos = new Metodos();
     private MetodosTXT metodostxt = new MetodosTXT();
@@ -52,19 +52,25 @@ public class RegistrarPago extends javax.swing.JDialog {
     private DefaultTableModel modelTablePoderantes;
     private DefaultTableModel modelTableConceptos;
     private DefaultTableModel modelTableApoderados;
+    private Calendar c2 = new GregorianCalendar();
+    int anhoActual = c2.get(Calendar.YEAR);
+    Date finPeriodoEscolar = new Date(anhoActual-1900, 12, 1); //Se resta 1900 y mes comienza de 0
 
     public RegistrarPago(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
         initComponents();
-
+        
         modelTableConceptoAPagar = (DefaultTableModel) tbConceptoAPagar.getModel();
         modelTablePoderantes = (DefaultTableModel) tbPoderantes.getModel();
         modelTableApoderados = (DefaultTableModel) tbApoderado.getModel();
-
-        //Obtener fecha actual
-        dcFechaPago.setDate(new Date());
-        Calendar c2 = new GregorianCalendar();
-        lblPeriodoActual.setText(c2.get(Calendar.YEAR) + 1 + "");
+        
+        dcFechaPago.setDate(new Date()); //Fecha actual
+        
+        if (dcFechaPago.getDate().before(finPeriodoEscolar)) { //Si la fecha de pago es despues del fin del periodo escolar
+            lblPeriodoActual.setText(anhoActual + "");
+        } else {
+            lblPeriodoActual.setText(anhoActual + 1 + "");
+        }
 
         //Llamar Metodos
         GenerarNumpago();
@@ -73,13 +79,13 @@ public class RegistrarPago extends javax.swing.JDialog {
         TablaAllConcepto();
         TablaAllApoderado();
         metodos.CargarTitlesaCombo(cbCampoBuscarApoderado, tbApoderado);
-
+        
         txtCedulaApoderado.setText("");
 
         //Permiso Roles de usuario
         String permisos = metodos.PermisoRol(codUsuario, "PAGO");
         btnGuardar.setVisible(permisos.contains("A"));
-
+        
         OrdenTabulador();
     }
 
@@ -89,7 +95,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         metodoscombo.CargarComboConsulta(cbApoderado, "SELECT apo_codigo, CONCAT(apo_nombre,' ', apo_apellido) AS nomape "
                 + "FROM apoderado ORDER BY apo_nombre", -1);
     }
-
+    
     private void TablaAllConcepto() {//Realiza la consulta de los productos que tenemos en la base de datos
         modelTableConceptos = (DefaultTableModel) tbAllConceptos.getModel();
         modelTableConceptos.setRowCount(0); //Vacia tabla
@@ -106,7 +112,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 importe = con.getResultSet().getDouble("con_importe");
                 numpagos = con.getResultSet().getInt("con_numpagos");
                 tipopago = con.getResultSet().getString("con_tipopago");
-
+                
                 modelTableConceptos.addRow(new Object[]{codigo, descripcion, tipoimporte, importe, numpagos, tipopago});
             }
             tbAllConceptos.setModel(modelTableConceptos);
@@ -116,7 +122,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         con.DesconectarBasedeDatos();
         metodos.AnchuraColumna(tbAllConceptos);
     }
-
+    
     public void RegistroNuevo() {
         try {
             if (ComprobarCampos() == true) {
@@ -126,7 +132,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 String fechapago = formatoFecha.format(dcFechaPago.getDate());
                 double importe = metodostxt.StringAFormatoAmericano(txtImporteRecibido.getText());
                 int periodo = Integer.parseInt(lblPeriodoActual.getText());
-
+                
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo pago?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
                     try {
@@ -147,21 +153,21 @@ public class RegistrarPago extends javax.swing.JDialog {
                             idultimopago = con.getResultSet().getInt("ultimoid");
                         }
                         con.DesconectarBasedeDatos();
-
+                        
                         int cantfila = tbConceptoAPagar.getRowCount();
                         for (int fila = 0; fila < cantfila; fila++) {
                             idconcepto = Integer.parseInt(tbConceptoAPagar.getValueAt(fila, 0) + "");
                             numcuotas = Integer.parseInt(tbConceptoAPagar.getValueAt(fila, 3) + "");
                             meses = tbConceptoAPagar.getValueAt(fila, 4) + "";
                             monto = metodostxt.StringAFormatoAmericano(tbConceptoAPagar.getValueAt(fila, 5) + "");
-
+                            
                             sentencia = "CALL SP_PagoConceptosAlta('" + idultimopago + "','" + idconcepto
                                     + "','" + numcuotas + "','" + meses + "','" + monto + "')";
                             con.EjecutarABM(sentencia, false);
                         }
                         Toolkit.getDefaultToolkit().beep(); //BEEP
                         JOptionPane.showMessageDialog(this, "Se agregó correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
-
+                        
                         ImprimirReciboPago();
                         Limpiar();
                         GenerarNumpago();
@@ -179,7 +185,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             e.printStackTrace();
         }
     }
-
+    
     private void ImprimirReciboPago() {
         //Imprimir recibo
         int confirmado2 = JOptionPane.showConfirmDialog(this, "¿Quieres imprimir el recibo de pago?", "Confirmación", JOptionPane.YES_OPTION);
@@ -249,14 +255,14 @@ public class RegistrarPago extends javax.swing.JDialog {
                 e.printStackTrace();
             }
             con.DesconectarBasedeDatos();
-
+            
             System.out.println("tipohoja " + tipohoja);
             String rutajasper = "/reportes/recibo_pago/reporte_recibo_principal_" + tipohoja.toLowerCase() + ".jasper";
-
+            
             metodos.GenerarReporteJTABLE(rutajasper, parametros, null);
         }
     }
-
+    
     private void Limpiar() {
         cbApoderado.setSelectedIndex(-1);
         txtCedulaApoderado.setText("");
@@ -273,11 +279,11 @@ public class RegistrarPago extends javax.swing.JDialog {
         for (int f = 0; f < tbAllConceptos.getRowCount(); f++) { //Vaciar num cuotas pagados
             tbAllConceptos.setValueAt("", f, 6);
         }
-
+        
         modelTablePoderantes = (DefaultTableModel) tbPoderantes.getModel();
         modelTablePoderantes.setRowCount(0);
     }
-
+    
     private boolean ComprobarCampos() {
         if (cbApoderado.getSelectedIndex() == -1) {
             Toolkit.getDefaultToolkit().beep();
@@ -285,28 +291,28 @@ public class RegistrarPago extends javax.swing.JDialog {
             cbApoderado.requestFocus();
             return false;
         }
-
+        
         if (dcFechaPago.getDate() == null) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Complete la fecha de pago", "Advertencia", JOptionPane.WARNING_MESSAGE);
             dcFechaPago.requestFocus();
             return false;
         }
-
+        
         int cantidadpagos = tbConceptoAPagar.getModel().getRowCount();
         if (cantidadpagos <= 0) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "No se cargó ningún pago", "Advertencia", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-
+        
         if (txtImporteRecibido.getText().equals("")) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(this, "Ingrese el importe", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtImporteRecibido.requestFocus();
             return false;
         }
-
+        
         double importe = metodostxt.StringAFormatoAmericano(txtImporteRecibido.getText());
         double totalventa = metodostxt.StringAFormatoAmericano(txtTotalAPagar.getText());
         if (totalventa > importe || txtImporteRecibido.getText().equals("")) {
@@ -315,10 +321,10 @@ public class RegistrarPago extends javax.swing.JDialog {
             txtImporteRecibido.requestFocus();
             return false;
         }
-
+        
         return true;
     }
-
+    
     private void TablaAllApoderado() {//Realiza la consulta de los productos que tenemos en la base de datos
         modelTableApoderados = (DefaultTableModel) tbApoderado.getModel();
         modelTableApoderados.setRowCount(0);
@@ -340,7 +346,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 telefono = con.getResultSet().getString("apo_telefono");
                 email = con.getResultSet().getString("apo_email");
                 obs = con.getResultSet().getString("apo_obs");
-
+                
                 modelTableApoderados.addRow(new Object[]{codigo, cedula, nombre, apellido, sexo, direccion, telefono, email, obs});
             }
             tbApoderado.setModel(modelTableApoderados);
@@ -349,14 +355,14 @@ public class RegistrarPago extends javax.swing.JDialog {
             e.printStackTrace();
         }
         con.DesconectarBasedeDatos();
-
+        
         if (tbApoderado.getModel().getRowCount() == 1) {
             lbCantRegistrosApoderado.setText(tbApoderado.getModel().getRowCount() + " Registro encontrado");
         } else {
             lbCantRegistrosApoderado.setText(tbApoderado.getModel().getRowCount() + " Registros encontrados");
         }
     }
-
+    
     private void GenerarNumpago() {
         try {
             con = con.ObtenerRSSentencia("SELECT MAX(pag_numpago) AS numultimopago FROM pago");
@@ -364,7 +370,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             while (con.getResultSet().next()) {
                 numultimapago = con.getResultSet().getString("numultimopago");
             }
-
+            
             if (numultimapago == null) {
                 numultimapago = String.format("%8s", String.valueOf(1)).replace(' ', '0');
             } else {
@@ -1433,7 +1439,7 @@ public class RegistrarPago extends javax.swing.JDialog {
 
         lblTituloTotalCompra1.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblTituloTotalCompra1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblTituloTotalCompra1.setText("IMPORTE RECIBIDO");
+        lblTituloTotalCompra1.setText("TOTAL EFECTIVO");
         lblTituloTotalCompra1.setFocusable(false);
 
         txtImporteRecibido.setFont(new java.awt.Font("sansserif", 1, 22)); // NOI18N
@@ -1679,11 +1685,11 @@ public class RegistrarPago extends javax.swing.JDialog {
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtBuscar))
                     .addComponent(scAllConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 547, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1817,7 +1823,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             switch (tipoimporte) {
                 case "FIJO" ->
                     txtImporte.setEnabled(false);
-
+                
                 case "VARIABLE" ->
                     txtImporte.setEnabled(true);
                 default ->
@@ -1851,13 +1857,13 @@ public class RegistrarPago extends javax.swing.JDialog {
                 btnAgregar2.setEnabled(true);
                 lblCancelado.setVisible(false);
             }
-
+            
             IconMesesAPagar();
             AgregarPago.setLocationRelativeTo(this); //Centrar
             AgregarPago.setVisible(true);
         }
     }//GEN-LAST:event_btnAgregarActionPerformed
-
+    
     private void BuscarCantBasicoyMedio() {
         //Verificar cantidad de poderantes del basico y medio
         String cantbasico = "NO";
@@ -1884,22 +1890,22 @@ public class RegistrarPago extends javax.swing.JDialog {
             con.DesconectarBasedeDatos();
         }
     }
-
+    
     private void CargarDatosaAgregarPagos() {
         //Cargar valores del concepto a ventana agregar pago
         txtConcepto.setText(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 1) + "");
-
+        
         double importe = Double.parseDouble(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 3) + "");
         if (importe == 0) {
             txtImporte.setText("");
         } else {
             txtImporte.setText(metodostxt.DoubleAFormatSudamerica(importe));
         }
-
+        
         lblNumTotalCuotas.setText(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 4) + "");
         txtSubtotal.setText("0");
         numactual = 0;
-
+        
         try {
             int codconcepto = Integer.parseInt(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 0) + "");
             //Obtener numero de cuotas pagados
@@ -1949,7 +1955,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         }
         con.DesconectarBasedeDatos();
     }
-
+    
     private boolean ComprobarAgregar() {
         //Verificar si se selecciono un apoderado
         if (cbApoderado.getSelectedIndex() == -1) {
@@ -1994,10 +2000,10 @@ public class RegistrarPago extends javax.swing.JDialog {
                 return false;
             }
         }
-
+        
         return true;
     }
-
+    
     private void SumarSubtotal() {
         //Suma la colmna subtotal
         double sumarsubtotal = metodos.SumarColumnaDouble(tbConceptoAPagar, 6);
@@ -2011,7 +2017,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         if (tbConceptoAPagar.getSelectedRowCount() > 0) {
             modelTableConceptoAPagar.removeRow(tbConceptoAPagar.getSelectedRow());
             SumarSubtotal();
-
+            
             if (tbConceptoAPagar.getRowCount() <= 0) {
                 txtImporteRecibido.setEnabled(false);
                 txtImporteRecibido.setText("");
@@ -2037,7 +2043,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnGuardarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnGuardarKeyPressed
-
+        
 
     }//GEN-LAST:event_btnGuardarKeyPressed
 
@@ -2058,7 +2064,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             metodostxt.SoloNumeroDecimalKeyTyped(evt, txtImporteRecibido);
         }
     }//GEN-LAST:event_txtImporteRecibidoKeyTyped
-
+    
     private void CalcularVuelto() {
         double importe = metodostxt.StringAFormatoAmericano(txtImporteRecibido.getText());
         double totalAPagar = metodostxt.StringAFormatoAmericano(txtTotalAPagar.getText());
@@ -2109,7 +2115,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             for (int f = 0; f < tbAllConceptos.getRowCount(); f++) { //Vaciar num cuotas pagados
                 tbAllConceptos.setValueAt("0", f, 6);
             }
-
+            
             con = con.ObtenerRSSentencia("SELECT CONCAT(alu_nombre,' ',alu_apellido) AS nomapealumno, alu_cedula, "
                     + "(CASE "
                     + "WHEN mat_alumno IS NULL THEN 'NO MATRICULADO' "
@@ -2121,7 +2127,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                     + "WHERE (mat_alumno IS NULL OR mat_alumno=alu_codigo) AND (mat_nivel IS NULL OR mat_nivel=niv_codigo) AND alu_apoderado = apo_codigo "
                     + "AND alu_apoderado='" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' "
                     + "ORDER BY alu_nombre");
-
+            
             try {
                 String nomapealumno, cedula, nivel, codnivel;
                 while (con.getResultSet().next()) {
@@ -2130,7 +2136,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                     nivel = con.getResultSet().getString("nivel");
                     codnivel = con.getResultSet().getString("niv_codigo");
                     txtCedulaApoderado.setText(metodostxt.StringPuntosMiles(con.getResultSet().getString("apo_cedula")));
-
+                    
                     modelTablePoderantes.addRow(new Object[]{nomapealumno, cedula, nivel, codnivel});
                 }
                 tbPoderantes.setModel(modelTablePoderantes);
@@ -2152,7 +2158,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 while (con.getResultSet().next()) {
                     idconcepto = con.getResultSet().getInt("pagcon_concepto");
                     sumnumcuotas = con.getResultSet().getInt("sumnumcuotas");
-
+                    
                     for (int f = 0; f < tbAllConceptos.getRowCount(); f++) {
                         if (tbAllConceptos.getValueAt(f, 0).equals(idconcepto)) {
                             totalcuotas = (int) tbAllConceptos.getValueAt(f, 4);
@@ -2193,18 +2199,18 @@ public class RegistrarPago extends javax.swing.JDialog {
     private void txtConceptoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtConceptoKeyTyped
         // TODO add your handling code here:
     }//GEN-LAST:event_txtConceptoKeyTyped
-
+    
     int numactual = 0;
     private void txtNumCuotasAPagarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNumCuotasAPagarKeyReleased
         IconMesesAPagar();
     }//GEN-LAST:event_txtNumCuotasAPagarKeyReleased
-
+    
     private void IconMesesAPagar() {
         if (txtNumCuotasAPagar.getText().equals("") == false) {
             int numCuotasAPagar = Integer.parseInt(txtNumCuotasAPagar.getText());
             int numCuotasPagados = Integer.parseInt(lblNumCuotasPagados.getText());
             int numTotalCuotas = Integer.parseInt(lblNumTotalCuotas.getText());
-
+            
             if (numCuotasAPagar > (numTotalCuotas - numCuotasPagados) && (numTotalCuotas - numCuotasPagados) != 0) {
                 Toolkit.getDefaultToolkit().beep();
                 JOptionPane.showMessageDialog(AgregarPago, "El número de cuotas a pagar no puede ser mayor al número de cuotas faltantes", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -2212,7 +2218,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 txtSubtotal.setText("0");
                 return;
             }
-
+            
             double importe = metodostxt.StringAFormatoAmericano(txtImporte.getText());
 
             //Sumar cantidad de poderantes basicos y medio
@@ -2224,7 +2230,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                 numpoderantes = numpoderantes + Integer.parseInt(lblPoderantesMedio.getText());
             }
             importe = importe * numpoderantes;
-
+            
             txtSubtotal.setText(metodostxt.DoubleAFormatSudamerica((numCuotasAPagar * importe)));
             if (numactual != Integer.parseInt(txtNumCuotasAPagar.getText())) { //Si el numero ingresado no es el mismo
                 numactual = Integer.parseInt(txtNumCuotasAPagar.getText());
@@ -2267,12 +2273,12 @@ public class RegistrarPago extends javax.swing.JDialog {
     }
 
     private void txtImporteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyReleased
-
+        
         txtImporte.setText(metodostxt.StringAFormatSudamericaKeyRelease(txtImporte.getText()));
-
+        
         double importe = metodostxt.StringAFormatoAmericano(txtImporte.getText());
         int numcuotas = Integer.parseInt(txtNumCuotasAPagar.getText());
-
+        
         double subtotal = importe * numcuotas;
         txtSubtotal.setText(metodostxt.DoubleAFormatSudamerica(subtotal));
     }//GEN-LAST:event_txtImporteKeyReleased
@@ -2300,14 +2306,14 @@ public class RegistrarPago extends javax.swing.JDialog {
             txtNumCuotasAPagar.requestFocus();
             return;
         }
-
+        
         if (txtImporte.getText().equals("") || txtImporte.getText().equals("0")) {
             Toolkit.getDefaultToolkit().beep();
             JOptionPane.showMessageDialog(AgregarPago, "El importe no puede ser vacío o 0", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtNumCuotasAPagar.requestFocus();
             return;
         }
-
+        
         String codigo = tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 0) + "";
         String concepto = txtConcepto.getText();
         int numcuotaspagadosyapagar = Integer.parseInt(lblNumCuotasPagados.getText()) + Integer.parseInt(txtNumCuotasAPagar.getText());
@@ -2336,35 +2342,35 @@ public class RegistrarPago extends javax.swing.JDialog {
             }
         }
         String meses;
-
+        
         if (mes2.equals("")) {
             meses = mes1;
         } else {
             meses = mes1 + " a " + mes2;
         }
-
+        
         int numcuotas = Integer.parseInt(txtNumCuotasAPagar.getText());
         String importe = txtImporte.getText();
         String subtotal = txtSubtotal.getText();
-
+        
         if (numcuotas <= 0) {
             JOptionPane.showMessageDialog(this, "El número de cuotas no puede ser menor o igual a 0", "Advertencia", JOptionPane.WARNING_MESSAGE);
             txtNumCuotasAPagar.requestFocus();
             return;
         }
-
+        
         modelTableConceptoAPagar.addRow(new Object[]{codigo, concepto, numcuotastotalpagados, numcuotas, meses, importe, subtotal});
         tbConceptoAPagar.setModel(modelTableConceptoAPagar);
         metodos.AnchuraColumna(tbConceptoAPagar);
-
+        
         SumarSubtotal();
-
+        
         if (tbConceptoAPagar.getRowCount() > 0) {
             txtImporteRecibido.setEnabled(true);
         } else {
             txtImporteRecibido.setEnabled(false);
         }
-
+        
         txtImporteRecibido.requestFocus();
         AgregarPago.dispose();
     }//GEN-LAST:event_btnAgregar2ActionPerformed
@@ -2383,7 +2389,7 @@ public class RegistrarPago extends javax.swing.JDialog {
 
     private void txtBuscarApoderadoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarApoderadoKeyReleased
         metodos.FiltroJTable(txtBuscarApoderado.getText(), cbCampoBuscarApoderado.getSelectedIndex(), tbApoderado);
-
+        
         if (tbApoderado.getRowCount() == 1) {
             lbCantRegistrosApoderado.setText(tbApoderado.getRowCount() + " Registro encontrado");
         } else {
@@ -2410,9 +2416,9 @@ public class RegistrarPago extends javax.swing.JDialog {
     private void tbPoderantesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPoderantesMousePressed
         // TODO add your handling code here:
     }//GEN-LAST:event_tbPoderantesMousePressed
-
+    
     List<Component> ordenTabulador;
-
+    
     private void OrdenTabulador() {
         ordenTabulador = new ArrayList<>();
         ordenTabulador.add(cbApoderado);
@@ -2420,31 +2426,31 @@ public class RegistrarPago extends javax.swing.JDialog {
         ordenTabulador.add(txtImporteRecibido);
         ordenTabulador.add(btnGuardar);
         setFocusTraversalPolicy(new PersonalizadoFocusTraversalPolicy());
-
+        
     }
-
+    
     private class PersonalizadoFocusTraversalPolicy extends FocusTraversalPolicy {
-
+        
         public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
             int currentPosition = ordenTabulador.indexOf(aComponent);
             currentPosition = (currentPosition + 1) % ordenTabulador.size();
             return (Component) ordenTabulador.get(currentPosition);
         }
-
+        
         public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
             int currentPosition = ordenTabulador.indexOf(aComponent);
             currentPosition = (ordenTabulador.size() + currentPosition - 1) % ordenTabulador.size();
             return (Component) ordenTabulador.get(currentPosition);
         }
-
+        
         public Component getFirstComponent(Container cntnr) {
             return (Component) ordenTabulador.get(0);
         }
-
+        
         public Component getLastComponent(Container cntnr) {
             return (Component) ordenTabulador.get(ordenTabulador.size() - 1);
         }
-
+        
         public Component getDefaultComponent(Container cntnr) {
             return (Component) ordenTabulador.get(0);
         }

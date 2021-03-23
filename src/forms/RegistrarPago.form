@@ -1761,7 +1761,7 @@
                   <Font name="SansSerif" size="12" style="1"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="2"/>
-                <Property name="text" type="java.lang.String" value="IMPORTE RECIBIDO"/>
+                <Property name="text" type="java.lang.String" value="TOTAL EFECTIVO"/>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
             </Component>
@@ -1897,11 +1897,11 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" attributes="0">
                               <Component id="jLabel10" min="-2" pref="154" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="txtBuscar" min="-2" pref="246" max="-2" attributes="0"/>
+                              <Component id="txtBuscar" max="32767" attributes="0"/>
                           </Group>
                           <Component id="scAllConcepto" min="-2" pref="547" max="-2" attributes="0"/>
                       </Group>
