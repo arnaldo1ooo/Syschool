@@ -117,8 +117,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     }
 
 //--------------------------METODOS----------------------------//
-    private void CargarComboBoxes() {
-        //Carga los combobox con las consultas
+    private void CargarComboBoxes() { //Carga los combobox con las consultas
         metodoscombo.CargarComboConsulta(cbApoderado, "SELECT apo_codigo, CONCAT(apo_nombre,' ', apo_apellido) AS nomape "
                 + "FROM apoderado ORDER BY apo_nombre", -1);
     }

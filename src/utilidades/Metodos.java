@@ -231,7 +231,7 @@ public class Metodos {
         return totalDouble;
     }
 
-    public Icon AjustarIconoAButton(Icon icono, int largo) {
+    public Icon AjustarIconoAButton(Icon icono, int largo) { //Ajusta el tamaño del icono al boton
         ImageIcon imageicono = (ImageIcon) icono;
         Image img = imageicono.getImage();
         Image resizedImage = img.getScaledInstance(largo, largo, java.awt.Image.SCALE_SMOOTH);
