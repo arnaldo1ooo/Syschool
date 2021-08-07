@@ -5,7 +5,7 @@
  */
 package forms;
 
-import conexion.Conexion;
+import dao.DAO;
 import java.awt.Toolkit;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -28,7 +28,7 @@ public class ReporteMatriculados extends javax.swing.JDialog {
     MetodosCombo metodoscombo = new MetodosCombo();
     Metodos metodos = new Metodos();
     MetodosTXT metodostxt = new MetodosTXT();
-    Conexion con = new Conexion();
+    DAO con = new DAO();
     DefaultTableModel modelTablaMatriculados;
     static org.apache.log4j.Logger log_historial = org.apache.log4j.Logger.getLogger(ReporteMatriculados.class.getName());
 

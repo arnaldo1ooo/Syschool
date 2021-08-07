@@ -5,7 +5,7 @@
  */
 package forms;
 
-import conexion.Conexion;
+import dao.DAO;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
  */
 public class Configuracion extends javax.swing.JDialog {
 
-    Conexion con = new Conexion();
+    DAO con = new DAO();
 
     public Configuracion(java.awt.Frame parent, boolean modal) {
         super(parent, modal);

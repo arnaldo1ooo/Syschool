@@ -241,3 +241,253 @@
 23/03/2021 15:01:07 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: MASTER, group: null, band: 0}
 23/03/2021 15:01:07 DEBUG [AWT-EventQueue-0] (JRBaseFiller.java:639) â Fill 1: ended
 23/03/2021 15:01:07 DEBUG [AWT-EventQueue-0] (ThreadPoolSubreportRunnerFactory.java:91) â shutting down java.util.concurrent.ThreadPoolExecutor@62b2ce6a[Running, pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 2]
+22/04/2021 09:04:41 DEBUG [AWT-EventQueue-0] (Conexion.java:210) â EjecutarABM: CALL SP_PagoAlta('00000019','205','2021-04-22','50000.0','2021')
+22/04/2021 09:04:41 DEBUG [AWT-EventQueue-0] (Conexion.java:210) â EjecutarABM: CALL SP_PagoConceptosAlta('184','1','2','Feb a Mar','15000.0')
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (BaseReportFiller.java:163) â Fill 1: created for null
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (BaseReportFiller.java:191) â created delayed actions 1 for filler 1
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (ExtensionsEnvironment.java:87) â Instantiating extensions registry class net.sf.jasperreports.extensions.DefaultExtensionsRegistry
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:154) â Loading registries for cache key jdk.internal.loader.ClassLoaders$AppClassLoader@4e0e2f2a
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (JRLoader.java:791) â Found resource jasperreports_extension.properties at jar:file:/C:/Users/Arnaldo_Cantero/Documents/NetBeansProjects/Syschool/libs/jasperreports-6.16.0.jar!/jasperreports_extension.properties in classloader jdk.internal.loader.ClassLoaders$AppClassLoader@4e0e2f2a
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:186) â Loading JasperReports extension properties resource jar:file:/C:/Users/Arnaldo_Cantero/Documents/NetBeansProjects/Syschool/libs/jasperreports-6.16.0.jar!/jasperreports_extension.properties
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.components.headertoolbar.HeaderToolbarParameterContributorExtensionFactory for property net.sf.jasperreports.extension.registry.factory.header.toolbar.parameter.contributor
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for header.toolbar.parameter.contributor using factory class net.sf.jasperreports.components.headertoolbar.HeaderToolbarParameterContributorExtensionFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.types.date.DateRangeQueryClauseExtensions for property net.sf.jasperreports.extension.registry.factory.date.range.clause.functions
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for date.range.clause.functions using factory class net.sf.jasperreports.types.date.DateRangeQueryClauseExtensions
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.repo.DefaultRepositoryExtensionsRegistryFactory for property net.sf.jasperreports.extension.registry.factory.repository
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for repository using factory class net.sf.jasperreports.repo.DefaultRepositoryExtensionsRegistryFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.parts.PartComponentsExtensionsRegistryFactory for property net.sf.jasperreports.extension.registry.factory.parts
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for parts using factory class net.sf.jasperreports.parts.PartComponentsExtensionsRegistryFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.web.util.ContentTypeMappingExtensionsRegistryFactory for property net.sf.jasperreports.extension.registry.factory.content.type.mapping
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for content.type.mapping using factory class net.sf.jasperreports.web.util.ContentTypeMappingExtensionsRegistryFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.engine.fonts.SimpleFontExtensionsRegistryFactory for property net.sf.jasperreports.extension.registry.factory.simple.font.families
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for simple.font.families using factory class net.sf.jasperreports.engine.fonts.SimpleFontExtensionsRegistryFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.data.DefaultDataAdapterServiceExtensionsRegistryFactory for property net.sf.jasperreports.extension.registry.factory.data.adapter.services
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for data.adapter.services using factory class net.sf.jasperreports.data.DefaultDataAdapterServiceExtensionsRegistryFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.web.util.WebResourceHandlersExtensionRegistryFactory for property net.sf.jasperreports.extension.registry.factory.jive.web.resource.handlers
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for jive.web.resource.handlers using factory class net.sf.jasperreports.web.util.WebResourceHandlersExtensionRegistryFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.util.CastorMappingExtensionsRegistryFactory for property net.sf.jasperreports.extension.registry.factory.castor.mapping
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for castor.mapping using factory class net.sf.jasperreports.util.CastorMappingExtensionsRegistryFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.engine.export.MatcherExportFilterMappingExtensionsRegistryFactory for property net.sf.jasperreports.extension.registry.factory.matcher.exporter.filter.mapping
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for matcher.exporter.filter.mapping using factory class net.sf.jasperreports.engine.export.MatcherExportFilterMappingExtensionsRegistryFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.governors.GovernorExtensionsRegistryFactory for property net.sf.jasperreports.extension.registry.factory.governor
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for governor using factory class net.sf.jasperreports.governors.GovernorExtensionsRegistryFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.engine.query.SQLQueryClauseFunctionsExtensions for property net.sf.jasperreports.extension.registry.factory.sql.clause.functions
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for sql.clause.functions using factory class net.sf.jasperreports.engine.query.SQLQueryClauseFunctionsExtensions
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.data.DataAdapterParameterContributorExtensionsRegistryFactory for property net.sf.jasperreports.extension.registry.factory.parameter.contributor.data.adapter
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for parameter.contributor.data.adapter using factory class net.sf.jasperreports.data.DataAdapterParameterContributorExtensionsRegistryFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.engine.style.PropertyStyleProviderExtensionFactory for property net.sf.jasperreports.extension.registry.factory.property.style.provider
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for property.style.provider using factory class net.sf.jasperreports.engine.style.PropertyStyleProviderExtensionFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.web.util.JacksonMappingExtensionsRegistryFactory for property net.sf.jasperreports.extension.registry.factory.jackson.mapping
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for jackson.mapping using factory class net.sf.jasperreports.web.util.JacksonMappingExtensionsRegistryFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.extensions.DefaultExtensionsRegistryFactory for property net.sf.jasperreports.extension.registry.factory.default
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for default using factory class net.sf.jasperreports.extensions.DefaultExtensionsRegistryFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.components.ComponentsExtensionsRegistryFactory for property net.sf.jasperreports.extension.registry.factory.components
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for components using factory class net.sf.jasperreports.components.ComponentsExtensionsRegistryFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:268) â Instantiating registry of type net.sf.jasperreports.components.headertoolbar.HeaderToolbarConditionalStyleProviderExtensionFactory for property net.sf.jasperreports.extension.registry.factory.header.toolbar.style.provider
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (DefaultExtensionsRegistry.java:293) â Instantiating extensions registry for header.toolbar.style.provider using factory class net.sf.jasperreports.components.headertoolbar.HeaderToolbarConditionalStyleProviderExtensionFactory
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (FontExtensionsRegistry.java:88) â Loading font extensions from net/sf/jasperreports/fonts/jasperreports-fonts.xml
+22/04/2021 09:04:45 DEBUG [AWT-EventQueue-0] (SimpleFontExtensionHelper.java:293) â Parsing font family JasperReports Icons
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (SimpleFontFace.java:172) â Loading font net/sf/jasperreports/fonts/icons/icons.ttf
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (AwtFontManager.java:84) â created font file C:\Users\ARNALD~1\AppData\Local\Temp\jr-font2181136086275350348.ttf for net/sf/jasperreports/fonts/icons/icons.ttf
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (SimpleFontExtensionHelper.java:293) â Parsing font family Pictonic
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (SimpleFontFace.java:172) â Loading font net/sf/jasperreports/fonts/icons/icons.ttf
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (AwtFontManager.java:84) â created font file C:\Users\ARNALD~1\AppData\Local\Temp\jr-font6860537843015088436.ttf for net/sf/jasperreports/fonts/icons/icons.ttf
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: DETAIL} for band 2038350451
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:95) â Filler 1 - pageHeight: 943, columnFooterOffsetY: 923, lastPageColumnFooterOffsetY: 923
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRBaseFiller.java:564) â Fill 1: filling report
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRBaseFiller.java:1054) â max page width is 2097152000
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRBaseFiller.java:1362) â Fill 1: adding page 1
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:759) â Fill 1: detail at 20
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRFillSubreport.java:615) â Fill 1: creating subreport filler for null
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (BaseReportFiller.java:163) â Fill 2: created for null
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (BaseReportFiller.java:191) â created delayed actions 2 for filler 2
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: BACKGROUND} for band 1190710066
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: TITLE} for band 556491873
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: PAGE_HEADER} for band 2042151289
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: COLUMN_HEADER} for band 626502560
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: DETAIL} for band 1259613454
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: COLUMN_FOOTER} for band 1176309394
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: PAGE_FOOTER} for band 921656587
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: SUMMARY} for band 525246697
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:95) â Filler 2 - pageHeight: 842, columnFooterOffsetY: 761, lastPageColumnFooterOffsetY: 799
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (ThreadPoolSubreportRunnerFactory.java:66) â created subreports thread executor java.util.concurrent.ThreadPoolExecutor@655fcb21[Running, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0] for null
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRFillSubreport.java:1190) â Band height validation for subreport "null" succeeded in the current page context (height = 943, top margin = 40, bottom margin = 40)
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (FillReturnValues.java:142) â saving return variables on band net.sf.jasperreports.engine.fill.JRFillBand@797ec273
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (JRFillSubreport.java:615) â Fill 1: creating subreport filler for null
+22/04/2021 09:04:46 DEBUG [AWT-EventQueue-0] (BaseReportFiller.java:163) â Fill 3: created for null
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (BaseReportFiller.java:191) â created delayed actions 3 for filler 3
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: BACKGROUND} for band 1066251952
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: TITLE} for band 187492480
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: PAGE_HEADER} for band 1698068837
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: COLUMN_HEADER} for band 1426066176
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: DETAIL} for band 345084268
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: COLUMN_FOOTER} for band 841300736
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: PAGE_FOOTER} for band 1102039473
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (JRFillBand.java:175) â Origin {reportName: null, groupName: null,bandType: SUMMARY} for band 1173774362
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:95) â Filler 3 - pageHeight: 842, columnFooterOffsetY: 761, lastPageColumnFooterOffsetY: 799
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (JRFillSubreport.java:1190) â Band height validation for subreport "null" succeeded in the current page context (height = 943, top margin = 40, bottom margin = 40)
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (FillReturnValues.java:142) â saving return variables on band net.sf.jasperreports.engine.fill.JRFillBand@797ec273
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:95) â Filler 2 - pageHeight: 924, columnFooterOffsetY: 843, lastPageColumnFooterOffsetY: 881
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (JRFillSubreport.java:940) â Fill 1: starting 2
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (ThreadExecutorSubreportRunner.java:69) â Fill 2: starting
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (ThreadPoolSubreportRunnerFactory.java:117) â created thread Thread[null subreports #1,6,main]
+22/04/2021 09:04:47 DEBUG [AWT-EventQueue-0] (AbstractThreadSubreportRunner.java:78) â Fill 2: waiting for fill result
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRBaseFiller.java:564) â Fill 2: filling report
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRBaseFiller.java:1054) â max page width is 2097152000
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRVerticalFiller.java:311) â Fill 2: title at 20
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:673) â 0e79e0b6-91d5-4ae2-a83e-4e83973a3623: pattern timezone property net.sf.jasperreports.pattern.timezone is null, resolved to null
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:591) â 0e79e0b6-91d5-4ae2-a83e-4e83973a3623: formatted value Thu Apr 22 09:04:47 PYT 2021 (java.util.Date/1619096687286) to jueves 22 abril 2021
+22/04/2021 09:04:47 DEBUG [null subreports #1] (SimpleTextLineWrapper.java:318) â creating element font infos cache of size 2000
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@5d3b8ad
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@5d3b8ad for (null, {java.util.Date, EEEEE dd MMMMM yyyy,null,null,null})
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateImage@3224d108
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@18ea16a7
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@34d334dd
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@34d334dd for (null, null)
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@1609ab1e
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateLine@51d713e4
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 2 running delayed actions on {type: BAND, group: null, band: 556491873}
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRVerticalFiller.java:396) â Fill 2: page header at 117
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@5a20a346
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@5b23ed89
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@5b23ed89 for (null, null)
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@5a20a346 for object net.sf.jasperreports.engine.fill.JRTemplateText@491cf464
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@5b23ed89 for object net.sf.jasperreports.engine.fill.JRTemplateText@16795492
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@5b23ed89 for (null, null)
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@5a20a346 for object net.sf.jasperreports.engine.fill.JRTemplateText@ddce932
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@5a20a346 for object net.sf.jasperreports.engine.fill.JRTemplateText@495712a5
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@6746703f
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@6746703f for (null, null)
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@6746703f for object net.sf.jasperreports.engine.fill.JRTemplateText@3b477581
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@6746703f for (null, null)
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 2 running delayed actions on {type: BAND, group: null, band: 2042151289}
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRVerticalFiller.java:480) â Fill 2: column header at 164
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateLine@51b89ea2
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateLine@51b89ea2 for object net.sf.jasperreports.engine.fill.JRTemplateLine@208b6c0a
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@749837ac
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@749837ac for object net.sf.jasperreports.engine.fill.JRTemplateText@7473afc3
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@749837ac for object net.sf.jasperreports.engine.fill.JRTemplateText@61ab6261
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@749837ac for object net.sf.jasperreports.engine.fill.JRTemplateText@1abba962
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@749837ac for object net.sf.jasperreports.engine.fill.JRTemplateText@2f2bd8ce
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@749837ac for object net.sf.jasperreports.engine.fill.JRTemplateText@46cf775f
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 2 running delayed actions on {type: BAND, group: null, band: 626502560}
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRVerticalFiller.java:759) â Fill 2: detail at 188
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@77ae5a5a
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@77ae5a5a for (null, null)
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@669e20e7
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@669e20e7 for (null, null)
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@669e20e7 for object net.sf.jasperreports.engine.fill.JRTemplateText@7581bbed
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@669e20e7 for (null, null)
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@77ae5a5a for object net.sf.jasperreports.engine.fill.JRTemplateText@7078438d
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@77ae5a5a for (null, null)
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@6776dc7d
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@6776dc7d for (null, {java.lang.Integer, null,null,null,null})
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@77ae5a5a for object net.sf.jasperreports.engine.fill.JRTemplateText@594596a0
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@77ae5a5a for (null, null)
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 2 running delayed actions on {type: BAND, group: null, band: 1259613454}
+22/04/2021 09:04:47 DEBUG [null subreports #1] (JRVerticalFiller.java:1190) â Fill 2: summary at 215
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@12f26213
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateRectangle@1465508d
+22/04/2021 09:04:47 DEBUG [null subreports #1] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateText@c7ea8b5
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@c7ea8b5 for (null, null)
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRVerticalFiller.java:1094) â Fill 2: column footer at 255
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 2 running delayed actions on {type: BAND, group: null, band: 1176309394}
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRVerticalFiller.java:1163) â Fill 2: page footer at 278
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 2 running delayed actions on {type: BAND, group: null, band: 921656587}
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 2 running delayed actions on {type: BAND, group: null, band: 525246697}
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 2 running delayed actions on {type: COLUMN, group: null, band: 0}
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 2 running delayed actions on {type: PAGE, group: null, band: 0}
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 2 running delayed actions on {type: REPORT, group: null, band: 0}
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRBaseFiller.java:639) â Fill 2: ended
+22/04/2021 09:04:48 DEBUG [null subreports #1] (AbstractThreadSubreportRunner.java:225) â Fill 2: notifying of completion
+22/04/2021 09:04:48 DEBUG [AWT-EventQueue-0] (AbstractThreadSubreportRunner.java:115) â Fill 2: notified of fill result
+22/04/2021 09:04:48 DEBUG [AWT-EventQueue-0] (JRFillSubreport.java:976) â Fill 1: subreport 2 finished
+22/04/2021 09:04:48 DEBUG [AWT-EventQueue-0] (JRVerticalFiller.java:95) â Filler 3 - pageHeight: 447, columnFooterOffsetY: 366, lastPageColumnFooterOffsetY: 404
+22/04/2021 09:04:48 DEBUG [AWT-EventQueue-0] (JRFillSubreport.java:940) â Fill 1: starting 3
+22/04/2021 09:04:48 DEBUG [AWT-EventQueue-0] (ThreadExecutorSubreportRunner.java:69) â Fill 3: starting
+22/04/2021 09:04:48 DEBUG [AWT-EventQueue-0] (AbstractThreadSubreportRunner.java:78) â Fill 3: waiting for fill result
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRBaseFiller.java:564) â Fill 3: filling report
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRBaseFiller.java:1054) â max page width is 2097152000
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRVerticalFiller.java:311) â Fill 3: title at 20
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:673) â 0e79e0b6-91d5-4ae2-a83e-4e83973a3623: pattern timezone property net.sf.jasperreports.pattern.timezone is null, resolved to null
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:591) â 0e79e0b6-91d5-4ae2-a83e-4e83973a3623: formatted value Thu Apr 22 09:04:48 PYT 2021 (java.util.Date/1619096688124) to jueves 22 abril 2021
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@5d3b8ad for object net.sf.jasperreports.engine.fill.JRTemplateText@16f49184
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@5d3b8ad for (null, {java.util.Date, EEEEE dd MMMMM yyyy,null,null,null})
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateImage@3224d108 for object net.sf.jasperreports.engine.fill.JRTemplateImage@757ad548
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@18ea16a7 for object net.sf.jasperreports.engine.fill.JRTemplateText@f24c7f8
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@34d334dd for object net.sf.jasperreports.engine.fill.JRTemplateText@149b08f1
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@34d334dd for (null, null)
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@1609ab1e for object net.sf.jasperreports.engine.fill.JRTemplateText@2651d357
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateLine@51d713e4 for object net.sf.jasperreports.engine.fill.JRTemplateLine@5a29240
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 3 running delayed actions on {type: BAND, group: null, band: 187492480}
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRVerticalFiller.java:396) â Fill 3: page header at 117
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@5a20a346 for object net.sf.jasperreports.engine.fill.JRTemplateText@2c108e0b
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@5b23ed89 for object net.sf.jasperreports.engine.fill.JRTemplateText@6080c7f8
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@5b23ed89 for (null, null)
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@5a20a346 for object net.sf.jasperreports.engine.fill.JRTemplateText@48e37bd4
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@5b23ed89 for object net.sf.jasperreports.engine.fill.JRTemplateText@59c2d01a
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@5b23ed89 for (null, null)
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@5a20a346 for object net.sf.jasperreports.engine.fill.JRTemplateText@718a6dff
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@5a20a346 for object net.sf.jasperreports.engine.fill.JRTemplateText@17d3db31
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@6746703f for object net.sf.jasperreports.engine.fill.JRTemplateText@44bd2fc4
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@6746703f for (null, null)
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@6746703f for object net.sf.jasperreports.engine.fill.JRTemplateText@bb07549
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@6746703f for (null, null)
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 3 running delayed actions on {type: BAND, group: null, band: 1698068837}
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRVerticalFiller.java:480) â Fill 3: column header at 164
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateLine@51b89ea2 for object net.sf.jasperreports.engine.fill.JRTemplateLine@29771455
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateLine@51b89ea2 for object net.sf.jasperreports.engine.fill.JRTemplateLine@20745819
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@749837ac for object net.sf.jasperreports.engine.fill.JRTemplateText@d9a80dc
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@749837ac for object net.sf.jasperreports.engine.fill.JRTemplateText@588b61b
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@749837ac for object net.sf.jasperreports.engine.fill.JRTemplateText@144ccf43
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@749837ac for object net.sf.jasperreports.engine.fill.JRTemplateText@16faf943
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@749837ac for object net.sf.jasperreports.engine.fill.JRTemplateText@4f3f1720
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@749837ac for object net.sf.jasperreports.engine.fill.JRTemplateText@fc758b2
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 3 running delayed actions on {type: BAND, group: null, band: 1426066176}
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRVerticalFiller.java:759) â Fill 3: detail at 188
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@77ae5a5a for object net.sf.jasperreports.engine.fill.JRTemplateText@7d03b8de
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@77ae5a5a for (null, null)
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@669e20e7 for object net.sf.jasperreports.engine.fill.JRTemplateText@3c7276dc
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@669e20e7 for (null, null)
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@669e20e7 for object net.sf.jasperreports.engine.fill.JRTemplateText@bc3f065
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@669e20e7 for (null, null)
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@77ae5a5a for object net.sf.jasperreports.engine.fill.JRTemplateText@3ef42b67
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@77ae5a5a for (null, null)
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@6776dc7d for object net.sf.jasperreports.engine.fill.JRTemplateText@5ed1b12f
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@6776dc7d for (null, {java.lang.Integer, null,null,null,null})
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@77ae5a5a for object net.sf.jasperreports.engine.fill.JRTemplateText@713ae8bf
+22/04/2021 09:04:48 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@77ae5a5a for (null, null)
+22/04/2021 09:04:48 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 3 running delayed actions on {type: BAND, group: null, band: 345084268}
+22/04/2021 09:04:49 DEBUG [null subreports #1] (JRVerticalFiller.java:1190) â Fill 3: summary at 215
+22/04/2021 09:04:49 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@12f26213 for object net.sf.jasperreports.engine.fill.JRTemplateText@65ee7e25
+22/04/2021 09:04:49 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateRectangle@1465508d for object net.sf.jasperreports.engine.fill.JRTemplateRectangle@7a5edeec
+22/04/2021 09:04:49 DEBUG [null subreports #1] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateText@c7ea8b5 for object net.sf.jasperreports.engine.fill.JRTemplateText@29d55041
+22/04/2021 09:04:49 DEBUG [null subreports #1] (JRFillTextField.java:498) â created net.sf.jasperreports.engine.fill.JRTemplateText@c7ea8b5 for (null, null)
+22/04/2021 09:04:49 DEBUG [null subreports #1] (JRVerticalFiller.java:1094) â Fill 3: column footer at 255
+22/04/2021 09:04:49 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 3 running delayed actions on {type: BAND, group: null, band: 841300736}
+22/04/2021 09:04:49 DEBUG [null subreports #1] (JRVerticalFiller.java:1163) â Fill 3: page footer at 278
+22/04/2021 09:04:49 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 3 running delayed actions on {type: BAND, group: null, band: 1102039473}
+22/04/2021 09:04:49 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 3 running delayed actions on {type: BAND, group: null, band: 1173774362}
+22/04/2021 09:04:49 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 3 running delayed actions on {type: COLUMN, group: null, band: 0}
+22/04/2021 09:04:49 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 3 running delayed actions on {type: PAGE, group: null, band: 0}
+22/04/2021 09:04:49 DEBUG [null subreports #1] (DelayedFillActions.java:229) â 3 running delayed actions on {type: REPORT, group: null, band: 0}
+22/04/2021 09:04:49 DEBUG [null subreports #1] (JRBaseFiller.java:639) â Fill 3: ended
+22/04/2021 09:04:49 DEBUG [null subreports #1] (AbstractThreadSubreportRunner.java:225) â Fill 3: notifying of completion
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (AbstractThreadSubreportRunner.java:115) â Fill 3: notified of fill result
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (JRFillSubreport.java:976) â Fill 1: subreport 3 finished
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateRectangle@6c9e9d40
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (JRFillSubreport.java:1081) â empty rectangle, generate option: null
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:343) â 2 moving actions from page net.sf.jasperreports.engine.base.JRBasePrintPage@7c69dd26, index 0 to page net.sf.jasperreports.engine.base.JRBasePrintPage@6ecacbbc, index 0
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:530) â 1 moving master actions from 2, source page net.sf.jasperreports.engine.base.JRBasePrintPage@6ecacbbc, index 0, destination page net.sf.jasperreports.engine.base.JRBasePrintPage@6ecacbbc, index 0
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:84) â Added object net.sf.jasperreports.engine.fill.JRTemplateLine@6b4f16dc
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (DeduplicableRegistry.java:91) â Found existing instance net.sf.jasperreports.engine.fill.JRTemplateRectangle@6c9e9d40 for object net.sf.jasperreports.engine.fill.JRTemplateRectangle@3a1cb0ff
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (JRFillSubreport.java:1081) â empty rectangle, generate option: null
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:343) â 3 moving actions from page net.sf.jasperreports.engine.base.JRBasePrintPage@2b31b2b, index 0 to page net.sf.jasperreports.engine.base.JRBasePrintPage@6ecacbbc, index 0
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:530) â 1 moving master actions from 3, source page net.sf.jasperreports.engine.base.JRBasePrintPage@6ecacbbc, index 0, destination page net.sf.jasperreports.engine.base.JRBasePrintPage@6ecacbbc, index 0
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: BAND, group: null, band: 2038350451}
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: COLUMN, group: null, band: 0}
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: PAGE, group: null, band: 0}
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: REPORT, group: null, band: 0}
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (DelayedFillActions.java:229) â 1 running delayed actions on {type: MASTER, group: null, band: 0}
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (JRBaseFiller.java:639) â Fill 1: ended
+22/04/2021 09:04:49 DEBUG [AWT-EventQueue-0] (ThreadPoolSubreportRunnerFactory.java:91) â shutting down java.util.concurrent.ThreadPoolExecutor@655fcb21[Running, pool size = 1, active threads = 0, queued tasks = 0, completed tasks = 2]

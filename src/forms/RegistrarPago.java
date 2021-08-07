@@ -1,11 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package forms;
 
-import conexion.Conexion;
+import dao.DAO;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -44,7 +39,7 @@ import utilidades.ColorearCelda;
  */
 public class RegistrarPago extends javax.swing.JDialog {
 
-    private Conexion con = new Conexion();
+    private DAO con = new DAO();
     private Metodos metodos = new Metodos();
     private MetodosTXT metodostxt = new MetodosTXT();
     private MetodosCombo metodoscombo = new MetodosCombo();
@@ -89,8 +84,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         OrdenTabulador();
     }
 
-    private Date ObtenerFechaFinPeriodo(int anho) {
-        //Obtener de bd fin fecha periodo
+    private Date ObtenerFechaFinPeriodo(int anho) { //Obtener de bd fin fecha periodo
         int dia = 1, mes = 1;
         String[] diames;
         String finPeriodoEscolarString;

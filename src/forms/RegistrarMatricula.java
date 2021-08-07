@@ -5,7 +5,7 @@
  */
 package forms;
 
-import conexion.Conexion;
+import dao.DAO;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
@@ -33,7 +33,7 @@ import utilidades.MetodosTXT;
  */
 public class RegistrarMatricula extends javax.swing.JDialog {
 
-    private Conexion con = new Conexion();
+    private DAO con = new DAO();
     private Metodos metodos = new Metodos();
     private MetodosTXT metodostxt = new MetodosTXT();
     private MetodosCombo metodoscombo = new MetodosCombo();

@@ -5,7 +5,7 @@
  */
 package utilidades;
 
-import conexion.Conexion;
+import dao.DAO;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.Image;
@@ -234,7 +234,7 @@ public class MetodosImagen {
     public String ObtenerUltimoID() {
         String idultimoproducto = "";
         try {
-            Conexion con = new Conexion();
+            DAO con = new DAO();
             con = con.ObtenerRSSentencia("SELECT MAX(pro_codigo) AS idultimoproducto FROM producto");
             while (con.getResultSet().next()) {
                 idultimoproducto = con.getResultSet().getString("idultimoproducto");

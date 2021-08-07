@@ -5,7 +5,7 @@
  */
 package forms;
 
-import conexion.Conexion;
+import dao.DAO;
 import java.awt.Toolkit;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -33,7 +33,7 @@ public class ReporteBalance extends javax.swing.JDialog {
     private MetodosCombo metodoscombo = new MetodosCombo();
     private Metodos metodos = new Metodos();
     private MetodosTXT metodostxt = new MetodosTXT();
-    private Conexion con = new Conexion();
+    private DAO con = new DAO();
     private int mesActual, anhoActual;
     private Calendar cal = Calendar.getInstance();
     private DateFormat dateFormat = new SimpleDateFormat("dd/MMM/yyyy");

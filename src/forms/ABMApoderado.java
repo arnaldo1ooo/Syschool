@@ -5,7 +5,7 @@
  */
 package forms;
 
-import conexion.Conexion;
+import dao.DAO;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -35,7 +35,7 @@ import utilidades.MetodosCombo;
  */
 public class ABMApoderado extends javax.swing.JDialog {
 
-    private Conexion con = new Conexion();
+    private DAO con = new DAO();
     private final Metodos metodos = new Metodos();
     private final MetodosTXT metodostxt = new MetodosTXT();
     private final MetodosCombo metodoscombo = new MetodosCombo();

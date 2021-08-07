@@ -1,6 +1,6 @@
 package principal;
 
-import conexion.Conexion;
+import dao.DAO;
 import forms.ABMAlumno;
 import forms.ABMApoderado;
 import forms.ABMConceptoGasto;
@@ -47,7 +47,7 @@ import static login.Login.alias;
  */
 public class Principal extends javax.swing.JFrame implements Runnable {
 
-    private Conexion con = new Conexion();
+    private DAO con = new DAO();
     private Thread hilo;
 
     public Principal() {

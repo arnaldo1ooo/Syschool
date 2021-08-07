@@ -5,7 +5,7 @@
  */
 package forms;
 
-import conexion.Conexion;
+import dao.DAO;
 import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -16,7 +16,7 @@ import utilidades.MetodosTXT;
 
 public class Gasto extends javax.swing.JDialog {
 
-    private Conexion con = new Conexion();
+    private DAO con = new DAO();
     private Metodos metodos = new Metodos();
     private MetodosTXT metodostxt = new MetodosTXT();
     private DefaultTableModel tableModelGasto;

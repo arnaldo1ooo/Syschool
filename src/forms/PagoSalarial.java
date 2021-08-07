@@ -5,7 +5,7 @@
  */
 package forms;
 
-import conexion.Conexion;
+import dao.DAO;
 import java.awt.Toolkit;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
@@ -17,7 +17,7 @@ import utilidades.MetodosTXT;
 
 public class PagoSalarial extends javax.swing.JDialog {
 
-    private Conexion con = new Conexion();
+    private DAO con = new DAO();
     private Metodos metodos = new Metodos();
     private MetodosTXT metodostxt = new MetodosTXT();
     private DefaultTableModel modelTablePagoSal;

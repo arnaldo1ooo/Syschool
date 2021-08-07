@@ -5,7 +5,7 @@
  */
 package forms;
 
-import conexion.Conexion;
+import dao.DAO;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 import java.sql.SQLException;
@@ -24,7 +24,7 @@ import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
  */
 public class ABMUsuarioRol extends javax.swing.JDialog {
 
-    private Conexion con = new Conexion();
+    private DAO con = new DAO();
     private Metodos metodos = new Metodos();
     private MetodosCombo metodoscombo = new MetodosCombo();
     private DefaultTableModel tableModelModulo;

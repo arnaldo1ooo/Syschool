@@ -5,7 +5,7 @@
  */
 package forms;
 
-import conexion.Conexion;
+import dao.DAO;
 import java.awt.Color;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
@@ -32,7 +32,7 @@ import utilidades.MetodosTXT;
  */
 public class ABMAlumno extends javax.swing.JDialog {
 
-    private Conexion con = new Conexion();
+    private DAO con = new DAO();
     private Metodos metodos = new Metodos();
     private MetodosTXT metodostxt = new MetodosTXT();
     private MetodosCombo metodoscombo = new MetodosCombo();
