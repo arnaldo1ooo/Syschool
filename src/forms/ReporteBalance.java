@@ -536,7 +536,7 @@ public class ReporteBalance extends javax.swing.JDialog {
             parametros.put("SUBREPORT_DIR_PAGOS_SALARIO", dirSubReportePagosSalario); //Direccion del subreporte
 
             //Cargar tabla pagos
-            sentencia = "SELECT con_descripcion AS Concepto, SUM(pagcon_monto) AS Subtotal FROM pago_concepto, concepto, pago WHERE pagcon_concepto=con_codigo AND pag_codigo=pagcon_pago "
+            sentencia = "SELECT con_descripcion AS Concepto, SUM(pagcon_monto * pagcon_numcuotas) AS Subtotal FROM pago_concepto, concepto, pago WHERE pagcon_concepto=con_codigo AND pag_codigo=pagcon_pago "
                     + "AND pag_fechapago BETWEEN '" + fechaDesdeString + "' AND '" + fechaHastaString + "' GROUP BY pagcon_concepto";
             con = con.ObtenerRSSentencia(sentencia);
             double totalPago = 0;
