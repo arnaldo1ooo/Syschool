@@ -59,6 +59,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         lbAlias.setText(alias);
         PerfilesUsuario(codUsuario);
         PermisoModulos(codUsuario);
+        
+        lblVersionSistema.setText(con.versionSistema());
 
     }
 
@@ -192,6 +194,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         lbFecha = new javax.swing.JLabel();
         lbHoraTitulo = new javax.swing.JLabel();
         lbHora = new javax.swing.JLabel();
+        lbFechaTitulo1 = new javax.swing.JLabel();
+        lblVersionSistema = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         meMatricula = new javax.swing.JMenu();
         meitRegistrarMatricula = new javax.swing.JMenuItem();
@@ -509,6 +513,18 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         lbHora.setFocusable(false);
         lbHora.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
+        lbFechaTitulo1.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        lbFechaTitulo1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbFechaTitulo1.setText("Versión del sistema:");
+        lbFechaTitulo1.setFocusable(false);
+        lbFechaTitulo1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        lblVersionSistema.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        lblVersionSistema.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblVersionSistema.setText("v0.0.0");
+        lblVersionSistema.setFocusable(false);
+        lblVersionSistema.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
@@ -521,8 +537,12 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblPerfil, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                .addGap(496, 496, 496)
+                .addComponent(lblPerfil, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
+                .addGap(217, 217, 217)
+                .addComponent(lbFechaTitulo1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblVersionSistema)
+                .addGap(24, 24, 24)
                 .addComponent(lbFechaTitulo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbFecha)
@@ -544,7 +564,10 @@ public class Principal extends javax.swing.JFrame implements Runnable {
                     .addComponent(lbFechaTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbHoraTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbHora, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(lbHora, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblVersionSistema, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lbFechaTitulo1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
         lbFechaTitulo.getAccessibleContext().setAccessibleName("");
@@ -1261,9 +1284,11 @@ public class Principal extends javax.swing.JFrame implements Runnable {
     private javax.swing.JLabel lbAlias;
     private javax.swing.JLabel lbFecha;
     private javax.swing.JLabel lbFechaTitulo;
+    private javax.swing.JLabel lbFechaTitulo1;
     private javax.swing.JLabel lbHora;
     private javax.swing.JLabel lbHoraTitulo;
     private javax.swing.JLabel lblPerfil;
+    private javax.swing.JLabel lblVersionSistema;
     private javax.swing.JMenu meConfiguracion;
     private javax.swing.JMenu meGasto;
     private javax.swing.JMenu meMatricula;
