@@ -285,7 +285,7 @@ public class ReporteBalance extends javax.swing.JDialog {
                 .addGroup(panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(cbHastaMes, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblHasta2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
         panel4Layout.setVerticalGroup(
             panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -316,15 +316,15 @@ public class ReporteBalance extends javax.swing.JDialog {
         lblDesde3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblDesde3.setText("Desde");
 
-        dcDesde.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                dcDesdeMouseClicked(evt);
+        dcDesde.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                dcDesdePropertyChange(evt);
             }
         });
 
-        dcHasta.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                dcHastaMouseClicked(evt);
+        dcHasta.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                dcHastaPropertyChange(evt);
             }
         });
 
@@ -377,20 +377,17 @@ public class ReporteBalance extends javax.swing.JDialog {
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panel1Layout.createSequentialGroup()
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panel1Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblDesdeFecha)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblTituloFecha1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblHastaFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(panel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblDesdeFecha)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblTituloFecha1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblHastaFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panel1Layout.setVerticalGroup(
@@ -430,14 +427,15 @@ public class ReporteBalance extends javax.swing.JDialog {
             .addGroup(jpPrincipalLayout.createSequentialGroup()
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel11))
-                    .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addGap(198, 198, 198)
-                        .addComponent(btnGenerarReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
-                .addComponent(panel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jpPrincipalLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel11))
+                            .addGroup(jpPrincipalLayout.createSequentialGroup()
+                                .addGap(198, 198, 198)
+                                .addComponent(btnGenerarReporte, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(panel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jpPrincipalLayout.setVerticalGroup(
@@ -538,7 +536,7 @@ public class ReporteBalance extends javax.swing.JDialog {
             parametros.put("SUBREPORT_DIR_PAGOS_SALARIO", dirSubReportePagosSalario); //Direccion del subreporte
 
             //Cargar tabla pagos
-            sentencia = "SELECT con_descripcion AS Concepto, SUM(pagcon_monto) AS Subtotal FROM pago_concepto, concepto, pago WHERE pagcon_concepto=con_codigo AND pag_codigo=pagcon_pago "
+            sentencia = "SELECT con_descripcion AS Concepto, SUM(pagcon_monto * pagcon_numcuotas) AS Subtotal FROM pago_concepto, concepto, pago WHERE pagcon_concepto=con_codigo AND pag_codigo=pagcon_pago "
                     + "AND pag_fechapago BETWEEN '" + fechaDesdeString + "' AND '" + fechaHastaString + "' GROUP BY pagcon_concepto";
             con = con.ObtenerRSSentencia(sentencia);
             double totalPago = 0;
@@ -673,13 +671,13 @@ public class ReporteBalance extends javax.swing.JDialog {
         FiltroMes();
     }//GEN-LAST:event_cbHastaMesItemStateChanged
 
-    private void dcDesdeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dcDesdeMouseClicked
+    private void dcDesdePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dcDesdePropertyChange
         FiltroPerso();
-    }//GEN-LAST:event_dcDesdeMouseClicked
+    }//GEN-LAST:event_dcDesdePropertyChange
 
-    private void dcHastaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dcHastaMouseClicked
-        FiltroPerso();
-    }//GEN-LAST:event_dcHastaMouseClicked
+    private void dcHastaPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dcHastaPropertyChange
+         FiltroPerso();
+    }//GEN-LAST:event_dcHastaPropertyChange
 
     /**
      * @param args the command line arguments
