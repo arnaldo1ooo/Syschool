@@ -31,6 +31,7 @@ public class SplashScreen extends javax.swing.JFrame implements Runnable {
             this.setLocationRelativeTo(null);
             this.setVisible(true);
 
+            lblVersionSistemaSplash.setText(con.versionSistema());
             lblVersionBD.setText(ObtenerVersionBD());
             PonerInactivoAlumnos(FechaFinPeriodo());
 
@@ -105,7 +106,7 @@ public class SplashScreen extends javax.swing.JFrame implements Runnable {
         lbHora1 = new javax.swing.JLabel();
         lbHora3 = new javax.swing.JLabel();
         lblVersionBD = new javax.swing.JLabel();
-        lbHora2 = new javax.swing.JLabel();
+        lblVersionSistemaSplash = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cargando sistema...");
@@ -155,12 +156,12 @@ public class SplashScreen extends javax.swing.JFrame implements Runnable {
         lblVersionBD.setFocusable(false);
         lblVersionBD.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
-        lbHora2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        lbHora2.setForeground(new java.awt.Color(255, 255, 255));
-        lbHora2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lbHora2.setText("1.1.2");
-        lbHora2.setFocusable(false);
-        lbHora2.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        lblVersionSistemaSplash.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblVersionSistemaSplash.setForeground(new java.awt.Color(255, 255, 255));
+        lblVersionSistemaSplash.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblVersionSistemaSplash.setText("v0.0.0");
+        lblVersionSistemaSplash.setFocusable(false);
+        lblVersionSistemaSplash.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
         javax.swing.GroupLayout panelCurves1Layout = new javax.swing.GroupLayout(panelCurves1);
         panelCurves1.setLayout(panelCurves1Layout);
@@ -188,7 +189,7 @@ public class SplashScreen extends javax.swing.JFrame implements Runnable {
                     .addComponent(lbHora3, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelCurves1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lbHora2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblVersionSistemaSplash, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblVersionBD, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -203,7 +204,7 @@ public class SplashScreen extends javax.swing.JFrame implements Runnable {
                 .addComponent(panelImage1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12)
                 .addGroup(panelCurves1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbHora2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblVersionSistemaSplash, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbHora1, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelCurves1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -246,9 +247,9 @@ public class SplashScreen extends javax.swing.JFrame implements Runnable {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lbHora1;
-    private javax.swing.JLabel lbHora2;
     private javax.swing.JLabel lbHora3;
     private javax.swing.JLabel lblVersionBD;
+    private javax.swing.JLabel lblVersionSistemaSplash;
     private org.edisoncor.gui.label.LabelMetric lmCargando;
     private org.edisoncor.gui.panel.PanelCurves panelCurves1;
     private org.edisoncor.gui.panel.PanelImage panelImage1;

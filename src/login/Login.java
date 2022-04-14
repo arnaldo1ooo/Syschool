@@ -28,6 +28,8 @@ public class Login extends javax.swing.JFrame {
         lblError.setVisible(false);
         PlaceHolder placeholder = new PlaceHolder("Alias", txtAlias);
         placeholder = new PlaceHolder("Contraseña", txtPass);
+        
+        lblVersionSistemaLogin.setText(con.versionSistema());
     }
 
     //-------------METODOS----------//
@@ -78,6 +80,8 @@ public class Login extends javax.swing.JFrame {
         txtPass = new javax.swing.JPasswordField();
         btnIniciarSesion = new org.edisoncor.gui.button.ButtonSeven();
         panelImage1 = new org.edisoncor.gui.panel.PanelImage();
+        lbHora1 = new javax.swing.JLabel();
+        lblVersionSistemaLogin = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -195,6 +199,20 @@ public class Login extends javax.swing.JFrame {
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
+        lbHora1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lbHora1.setForeground(new java.awt.Color(255, 255, 255));
+        lbHora1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbHora1.setText("Versión del sistema:");
+        lbHora1.setFocusable(false);
+        lbHora1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        lblVersionSistemaLogin.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblVersionSistemaLogin.setForeground(new java.awt.Color(255, 255, 255));
+        lblVersionSistemaLogin.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblVersionSistemaLogin.setText("v0.0.0");
+        lblVersionSistemaLogin.setFocusable(false);
+        lblVersionSistemaLogin.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
@@ -206,15 +224,24 @@ public class Login extends javax.swing.JFrame {
                         .addComponent(btncancelar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCambiarPass)
-                        .addGap(27, 27, 27)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
                         .addComponent(lblError, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panel1Layout.createSequentialGroup()
-                        .addGap(91, 91, 91)
-                        .addComponent(panelNice1, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addGap(210, 210, 210)
-                        .addComponent(panelImage1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel1Layout.createSequentialGroup()
+                                .addGap(91, 91, 91)
+                                .addComponent(panelNice1, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(panel1Layout.createSequentialGroup()
+                                .addGap(210, 210, 210)
+                                .addComponent(panelImage1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lbHora1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblVersionSistemaLogin)
+                        .addGap(11, 11, 11)))
+                .addContainerGap())
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -228,10 +255,14 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(btnCambiarPass, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btncancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblError, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbHora1)
+                    .addComponent(lblVersionSistemaLogin))
+                .addContainerGap())
         );
 
-        getContentPane().add(panel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 520, 330));
+        getContentPane().add(panel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 520, 350));
 
         jMenuBar1.setPreferredSize(new java.awt.Dimension(199, 30));
 
@@ -340,7 +371,9 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JLabel lbHora1;
     private javax.swing.JLabel lblError;
+    private javax.swing.JLabel lblVersionSistemaLogin;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel2;
     private org.edisoncor.gui.panel.PanelImage panelImage1;

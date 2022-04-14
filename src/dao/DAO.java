@@ -248,4 +248,9 @@ public class DAO {
             return false;
         }
     }
+    
+    public String versionSistema(){
+        
+        return "v1.1.3.";
+    }
 }
