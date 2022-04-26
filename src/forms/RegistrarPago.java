@@ -49,6 +49,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     private DefaultTableModel modelTableApoderados;
     private Calendar c2 = new GregorianCalendar();
     private int anhoActual = c2.get(Calendar.YEAR);
+    Date finPeriodoEscolar;
 
     public RegistrarPago(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -58,7 +59,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         modelTablePoderantes = (DefaultTableModel) tbPoderantes.getModel();
         modelTableApoderados = (DefaultTableModel) tbApoderado.getModel();
 
-        Date finPeriodoEscolar = ObtenerFechaFinPeriodo(anhoActual);
+        finPeriodoEscolar = ObtenerFechaFinPeriodo(anhoActual);
 
         dcFechaPago.setDate(new Date()); //Fecha actual
         if (dcFechaPago.getDate().before(finPeriodoEscolar)) { //Si la fecha de pago es despues del fin del periodo escolar
@@ -2214,7 +2215,11 @@ public class RegistrarPago extends javax.swing.JDialog {
             //Obtener pagos ya realizados
             try {
                 con = con.ObtenerRSSentencia("SELECT pagcon_concepto, SUM(pagcon_numcuotas) AS sumnumcuotas "
-                        + "FROM pago, pago_concepto WHERE pag_codigo=pagcon_pago AND pag_apoderado = '" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' GROUP BY pagcon_concepto");
+                        + "FROM pago, pago_concepto "
+                        + "WHERE pag_codigo=pagcon_pago "
+                        + "AND pag_apoderado = '" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' "
+                        + "AND pag_periodo = '"+ anhoActual +"' " 
+                        + "GROUP BY pagcon_concepto");
                 int idconcepto, sumnumcuotas, totalcuotas;
                 while (con.getResultSet().next()) {
                     idconcepto = con.getResultSet().getInt("pagcon_concepto");
