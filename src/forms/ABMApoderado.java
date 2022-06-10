@@ -1393,14 +1393,14 @@ public class ABMApoderado extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Código", "Nombre", "Apellido", "N° de Cédula", "Fecha de nac.", "Fecha de inscr.", "Sexo", "Teléfono", "Email", "Obs", "Estado", "Nivel (Periodo)"
+                "Código", "Nombre", "Apellido", "N° de Cédula", "Fecha de nac.", "Fecha de inscr.", "Sexo", "Teléfono", "Email", "Obs", "Estado"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -2174,14 +2174,16 @@ public class ABMApoderado extends javax.swing.JDialog {
 
         int idApoderado = Integer.parseInt(tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0) + "");
         //String sentencia = "CALL SP_ApoderadoAlumnosConsulta(" + codigoapoderado + ")";
-        String sentencia = "SELECT alu_codigo,alu_nombre,alu_apellido,alu_cedula, "
+        String sentencia = "SELECT alu_codigo, alu_nombre, alu_apellido, alu_cedula, "
                 + "DATE_FORMAT(alu_fechanacimiento, '%d/%m/%Y') AS fechanacimiento,"
                 + "DATE_FORMAT(alu_fechainscripcion, '%d/%m/%Y') AS fechainscripcion,"
-                + "alu_sexo, alu_telefono, alu_email, alu_obs,CASE alu_estado  WHEN 1 THEN 'ACTIVO'  WHEN 0 THEN 'INACTIVO' END AS estado,"
-                + "(CASE WHEN mat_alumno IS NULL THEN 'NO MATRICULADO' ELSE (CASE niv_seccion WHEN 'SIN ESPECIFICAR' THEN CONCAT(niv_descripcion,' ',niv_turno) "
-                + "ELSE CONCAT(niv_descripcion,' \"', niv_seccion,'\"', ' ',niv_turno,' (',mat_periodo,')') END) END) AS nivel "
-                + "FROM (alumno LEFT OUTER JOIN matricula ON alu_codigo=mat_alumno LEFT OUTER JOIN nivel ON mat_nivel=niv_codigo), apoderado "
-                + "WHERE (mat_alumno IS NULL OR mat_alumno=alu_codigo) AND (mat_nivel IS NULL OR mat_nivel=niv_codigo) AND alu_apoderado = apo_codigo AND alu_apoderado='" + idApoderado + "' "
+                + "alu_sexo, alu_telefono, alu_email, alu_obs, "
+                + "CASE alu_estado "
+                + "     WHEN 1 THEN 'ACTIVO' "
+                + "     WHEN 0 THEN 'INACTIVO' "
+                + "END AS estado "
+                + "FROM alumno "
+                + "WHERE alu_apoderado='" + idApoderado + "' "
                 + "ORDER BY alu_nombre";
         con = con.ObtenerRSSentencia(sentencia);
 
@@ -2203,9 +2205,8 @@ public class ABMApoderado extends javax.swing.JDialog {
                 email = con.getResultSet().getString("alu_email");
                 obs = con.getResultSet().getString("alu_obs");
                 estado = con.getResultSet().getString("estado");
-                nivel = con.getResultSet().getString("nivel");
 
-                modelTablaPoderantes.addRow(new Object[]{codigo, nombre, apellido, cedula, fechanac, fechainsc, sexo, telefono, email, obs, estado, nivel});
+                modelTablaPoderantes.addRow(new Object[]{codigo, nombre, apellido, cedula, fechanac, fechainsc, sexo, telefono, email, obs, estado});
             }
             tbPoderantes.setModel(modelTablaPoderantes);
             metodos.AnchuraColumna(tbPoderantes);
