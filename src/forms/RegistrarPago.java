@@ -2187,6 +2187,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                     + "FROM (alumno LEFT OUTER JOIN matricula ON alu_codigo=mat_alumno LEFT OUTER JOIN nivel ON mat_nivel=niv_codigo), apoderado "
                     + "WHERE (mat_alumno IS NULL OR mat_alumno=alu_codigo) AND (mat_nivel IS NULL OR mat_nivel=niv_codigo) AND alu_apoderado = apo_codigo "
                     + "AND alu_apoderado='" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' "
+                    + "AND mat_periodo='" + Integer.parseInt(lblPeriodoActual.getText()) + "' "
                     + "ORDER BY alu_nombre");
 
             try {
