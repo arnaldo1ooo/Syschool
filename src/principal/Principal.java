@@ -61,6 +61,8 @@ public class Principal extends javax.swing.JFrame implements Runnable {
         PermisoModulos(codUsuario);
         
         lblVersionSistema.setText(con.versionSistema());
+        
+        this.setTitle("SYSCHOOL v" + con.versionSistema());
 
     }
 
