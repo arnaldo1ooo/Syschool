@@ -463,6 +463,8 @@ public class RegistrarPago extends javax.swing.JDialog {
         lblPoderantesBasico = new javax.swing.JLabel();
         lblPoderantesMedio = new javax.swing.JLabel();
         lblPoderantesMedio2 = new javax.swing.JLabel();
+        lbl6 = new javax.swing.JLabel();
+        txtCantAlumnosPaganCuota = new javax.swing.JTextField();
         BuscadorApoderado = new javax.swing.JDialog();
         panel6 = new org.edisoncor.gui.panel.Panel();
         jLabel12 = new javax.swing.JLabel();
@@ -828,7 +830,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         pnMesesAPagarLayout.setHorizontalGroup(
             pnMesesAPagarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnMesesAPagarLayout.createSequentialGroup()
-                .addContainerGap(40, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblEne)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblFeb)
@@ -886,7 +888,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             .addGroup(pnCuotasAPagarLayout.createSequentialGroup()
                 .addGap(39, 39, 39)
                 .addComponent(lbl3)
-                .addContainerGap(518, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnCuotasAPagarLayout.setVerticalGroup(
             pnCuotasAPagarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1026,6 +1028,31 @@ public class RegistrarPago extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        lbl6.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        lbl6.setForeground(new java.awt.Color(255, 255, 255));
+        lbl6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbl6.setText("Alumnos que pagan cuota:");
+
+        txtCantAlumnosPaganCuota.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        txtCantAlumnosPaganCuota.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtCantAlumnosPaganCuota.setText("0");
+        txtCantAlumnosPaganCuota.setToolTipText("");
+        txtCantAlumnosPaganCuota.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtCantAlumnosPaganCuota.setEnabled(false);
+        txtCantAlumnosPaganCuota.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCantAlumnosPaganCuotaActionPerformed(evt);
+            }
+        });
+        txtCantAlumnosPaganCuota.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCantAlumnosPaganCuotaKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtCantAlumnosPaganCuotaKeyTyped(evt);
+            }
+        });
+
         javax.swing.GroupLayout panel3Layout = new javax.swing.GroupLayout(panel3);
         panel3.setLayout(panel3Layout);
         panel3Layout.setHorizontalGroup(
@@ -1048,28 +1075,33 @@ public class RegistrarPago extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(pnCuotasPagadas, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel3Layout.createSequentialGroup()
-                                .addComponent(pnCuotasAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(pnCuotasAPagar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(panel3Layout.createSequentialGroup()
-                                .addComponent(lbl4)
-                                .addGap(2, 2, 2)
-                                .addComponent(txtNumCuotasAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(panel3Layout.createSequentialGroup()
+                                        .addComponent(lbl4)
+                                        .addGap(2, 2, 2)
+                                        .addComponent(txtNumCuotasAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(panel3Layout.createSequentialGroup()
+                                        .addComponent(lbl6)
+                                        .addGap(2, 2, 2)
+                                        .addComponent(txtCantAlumnosPaganCuota, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(18, 18, 18)
-                                .addComponent(lbl10)
-                                .addGap(2, 2, 2)
-                                .addComponent(txtSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbl8)
-                                .addGap(28, 28, 28)
-                                .addComponent(panel4, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(48, Short.MAX_VALUE))
-            .addGroup(panel3Layout.createSequentialGroup()
-                .addGap(240, 240, 240)
-                .addComponent(btnAgregar2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(buttonSeven2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(panel3Layout.createSequentialGroup()
+                                        .addComponent(btnAgregar2, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(buttonSeven2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(panel3Layout.createSequentialGroup()
+                                        .addComponent(lbl10)
+                                        .addGap(2, 2, 2)
+                                        .addComponent(txtSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lbl8)
+                                        .addGap(28, 28, 28)
+                                        .addComponent(panel4, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                .addGap(43, 43, 43))
         );
         panel3Layout.setVerticalGroup(
             panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1093,7 +1125,11 @@ public class RegistrarPago extends javax.swing.JDialog {
                             .addComponent(txtNumCuotasAPagar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lbl10)
                             .addComponent(txtSubtotal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lbl8)))
+                            .addComponent(lbl8))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(lbl6)
+                            .addComponent(txtCantAlumnosPaganCuota, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(panel3Layout.createSequentialGroup()
                         .addGap(15, 15, 15)
                         .addComponent(panel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -2215,7 +2251,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             //Obtener pagos ya realizados
             try {
                 con = con.ObtenerRSSentencia("SELECT pagcon_concepto, SUM(pagcon_numcuotas) AS sumnumcuotas "
-                        + "FROM pago, pago_concepto WHERE pag_codigo=pagcon_pago AND pag_apoderado = '" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' GROUP BY pagcon_concepto");
+                        + "FROM pago, pago_concepto WHERE pag_codigo=pagcon_pago AND pag_apoderado = '" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' AND pag_periodo = '" + lblPeriodoActual.getText() + "' GROUP BY pagcon_concepto");
                 int idconcepto, sumnumcuotas, totalcuotas;
                 while (con.getResultSet().next()) {
                     idconcepto = con.getResultSet().getInt("pagcon_concepto");
@@ -2280,18 +2316,11 @@ public class RegistrarPago extends javax.swing.JDialog {
                 txtSubtotal.setText("0");
                 return;
             }
-
+               
+            txtCantAlumnosPaganCuota.setText(String.valueOf(sumarCantidadPoderantes()));
+            
             double importe = metodostxt.StringAFormatoAmericano(txtImporte.getText());
-
-            //Sumar cantidad de poderantes basicos y medio
-            int numpoderantes = 0;
-            if (lblPoderantesBasico.getText().equals("SI")) {
-                numpoderantes = numpoderantes + 1;
-            }
-            if (lblPoderantesMedio.getText().equals("0") == false) {
-                numpoderantes = numpoderantes + Integer.parseInt(lblPoderantesMedio.getText());
-            }
-            importe = importe * numpoderantes;
+            importe = importe * sumarCantidadPoderantes();
 
             txtSubtotal.setText(metodostxt.DoubleAFormatSudamerica((numCuotasAPagar * importe)));
             if (numactual != Integer.parseInt(txtNumCuotasAPagar.getText())) { //Si el numero ingresado no es el mismo
@@ -2334,6 +2363,19 @@ public class RegistrarPago extends javax.swing.JDialog {
         }
     }
 
+    private int sumarCantidadPoderantes(){
+        //Sumar cantidad de poderantes basicos y medio
+            int numPoderantes = 0;
+            if (lblPoderantesBasico.getText().equals("SI")) {
+                numPoderantes = numPoderantes + 1;
+            }
+            if (lblPoderantesMedio.getText().equals("0") == false) {
+                numPoderantes = numPoderantes + Integer.parseInt(lblPoderantesMedio.getText());
+            }
+            
+            return numPoderantes;
+    }
+    
     private void txtImporteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtImporteKeyReleased
 
         txtImporte.setText(metodostxt.StringAFormatSudamericaKeyRelease(txtImporte.getText()));
@@ -2479,6 +2521,18 @@ public class RegistrarPago extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_tbPoderantesMousePressed
 
+    private void txtCantAlumnosPaganCuotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantAlumnosPaganCuotaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCantAlumnosPaganCuotaActionPerformed
+
+    private void txtCantAlumnosPaganCuotaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantAlumnosPaganCuotaKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCantAlumnosPaganCuotaKeyReleased
+
+    private void txtCantAlumnosPaganCuotaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCantAlumnosPaganCuotaKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCantAlumnosPaganCuotaKeyTyped
+
     List<Component> ordenTabulador;
 
     private void OrdenTabulador() {
@@ -2546,6 +2600,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     private javax.swing.JLabel lbl3;
     private javax.swing.JLabel lbl4;
     private javax.swing.JLabel lbl5;
+    private javax.swing.JLabel lbl6;
     private javax.swing.JLabel lbl7;
     private javax.swing.JLabel lbl8;
     private javax.swing.JLabel lblAbr;
@@ -2616,6 +2671,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     private javax.swing.JTable tbPoderantes;
     private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtBuscarApoderado;
+    private javax.swing.JTextField txtCantAlumnosPaganCuota;
     private javax.swing.JTextField txtCedulaApoderado;
     private javax.swing.JTextField txtConcepto;
     private javax.swing.JTextField txtImporte;
