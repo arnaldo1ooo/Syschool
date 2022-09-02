@@ -2113,7 +2113,7 @@
                       <Font name="Tahoma" size="11" style="0"/>
                     </Property>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="7" rowCount="0">
+                      <Table columnCount="8" rowCount="0">
                         <Column editable="false" title="Codigo" type="java.lang.Object"/>
                         <Column editable="false" title="Concepto" type="java.lang.Object"/>
                         <Column editable="false" title="Cuotas pagadas" type="java.lang.Object"/>
@@ -2121,6 +2121,7 @@
                         <Column editable="false" title="Mes" type="java.lang.Object"/>
                         <Column editable="false" title="Importe" type="java.lang.Object"/>
                         <Column editable="false" title="Subtotal" type="java.lang.Object"/>
+                        <Column editable="false" title="Alumnos que pagan cuota" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="autoResizeMode" type="int" value="4"/>

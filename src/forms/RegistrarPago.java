@@ -166,6 +166,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                         int numcuotas;
                         String meses;
                         double monto;
+                        int cantAlumnos;
 
                         //Obtener el id de pago
                         con = con.ObtenerRSSentencia("SELECT MAX(pag_codigo) AS ultimoid FROM pago");
@@ -180,9 +181,11 @@ public class RegistrarPago extends javax.swing.JDialog {
                             numcuotas = Integer.parseInt(tbConceptoAPagar.getValueAt(fila, 3) + "");
                             meses = tbConceptoAPagar.getValueAt(fila, 4) + "";
                             monto = metodostxt.StringAFormatoAmericano(tbConceptoAPagar.getValueAt(fila, 5) + "");
+                            cantAlumnos = Integer.parseInt(tbConceptoAPagar.getValueAt(fila, 7) + "");
 
-                            sentencia = "CALL SP_PagoConceptosAlta('" + idultimopago + "','" + idconcepto
-                                    + "','" + numcuotas + "','" + meses + "','" + monto + "')";
+                            sentencia = "INSERT INTO pago_concepto VALUES (pagcon_codigo, '" + idultimopago + "', '" + idconcepto 
+                                    + "', '" + numcuotas + "', '" + meses + "', '" + monto + "', '" + cantAlumnos + "')";
+                            
                             con.EjecutarABM(sentencia, false);
                         }
                         Toolkit.getDefaultToolkit().beep(); //BEEP
@@ -1689,11 +1692,11 @@ public class RegistrarPago extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Codigo", "Concepto", "Cuotas pagadas", "Cuotas a pagar", "Mes", "Importe", "Subtotal"
+                "Codigo", "Concepto", "Cuotas pagadas", "Cuotas a pagar", "Mes", "Importe", "Subtotal", "Alumnos que pagan cuota"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -1870,7 +1873,7 @@ public class RegistrarPago extends javax.swing.JDialog {
                         .addGap(9, 9, 9)
                         .addComponent(panel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(panel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1205, Short.MAX_VALUE)
+                        .addComponent(panel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 1205, Short.MAX_VALUE)
                         .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(49, Short.MAX_VALUE))
         );
@@ -2456,6 +2459,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         int numcuotas = Integer.parseInt(txtNumCuotasAPagar.getText());
         String importe = txtImporte.getText();
         String subtotal = txtSubtotal.getText();
+        String cantAlumnosPaganCuota = txtCantAlumnosPaganCuota.getText();
 
         if (numcuotas <= 0) {
             JOptionPane.showMessageDialog(this, "El número de cuotas no puede ser menor o igual a 0", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -2463,7 +2467,7 @@ public class RegistrarPago extends javax.swing.JDialog {
             return;
         }
 
-        modelTableConceptoAPagar.addRow(new Object[]{codigo, concepto, numcuotastotalpagados, numcuotas, meses, importe, subtotal});
+        modelTableConceptoAPagar.addRow(new Object[]{codigo, concepto, numcuotastotalpagados, numcuotas, meses, importe, subtotal, cantAlumnosPaganCuota});
         tbConceptoAPagar.setModel(modelTableConceptoAPagar);
         metodos.AnchuraColumna(tbConceptoAPagar);
 
