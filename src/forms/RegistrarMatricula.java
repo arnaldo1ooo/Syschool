@@ -737,7 +737,9 @@ public class RegistrarMatricula extends javax.swing.JDialog {
             }
 
             if (lblUltimaMatriculacion.getText().equals("Nunca")) {
-                cbNivel.setSelectedIndex(0);
+                if (cbNivel.getItemCount() > 0) {
+                    cbNivel.setSelectedIndex(0);
+                }
             } else {
                 String niveles[] = {"JARDIN", "PREESCOLAR", "1° GRADO", "2° GRADO", "3° GRADO", "4° GRADO", "5° GRADO", "6° GRADO", "7° GRADO", "8° GRADO", "9° GRADO",
                     "1° CURSO", "2° CURSO", "3° CURSO"};
