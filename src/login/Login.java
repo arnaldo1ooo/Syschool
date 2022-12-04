@@ -5,6 +5,7 @@
 package login;
 
 import dao.DAO;
+import dao.FlywayMetodos;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.sql.SQLException;
@@ -21,6 +22,7 @@ public class Login extends javax.swing.JFrame {
     private String pass;
     DAO con = new DAO();
     static Logger log_historial = Logger.getLogger(Login.class.getName());
+    private FlywayMetodos flywayMetodos = new FlywayMetodos();
 
     public Login() {
         initComponents();
@@ -30,6 +32,8 @@ public class Login extends javax.swing.JFrame {
         placeholder = new PlaceHolder("Contraseña", txtPass);
         
         lblVersionSistemaLogin.setText(con.versionSistema());
+        
+        flywayMetodos.iniciarFlyway(con.datosConexion().get(0), con.datosConexion().get(1), con.datosConexion().get(2));
     }
 
     //-------------METODOS----------//
@@ -305,6 +309,8 @@ public class Login extends javax.swing.JFrame {
         txtPass.setText("");
         txtAlias.requestFocus();
     }
+    
+
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         int opcion = JOptionPane.showConfirmDialog(this, "¿Realmente desea salir?", "Advertencia!", JOptionPane.YES_NO_OPTION);
