@@ -22,6 +22,7 @@ import utilidades.Metodos;
 import utilidades.MetodosTXT;
 import static login.Login.codUsuario;
 import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
+import service.ConceptoPagoService;
 
 /**
  *
@@ -33,6 +34,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
     private Metodos metodos = new Metodos();
     private MetodosTXT metodostxt = new MetodosTXT();
     private DefaultTableModel modelTablaPrincipal;
+    private ConceptoPagoService conceptoPagoService = new ConceptoPagoService();
 
     public ABMConceptoPago(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -71,12 +73,13 @@ public class ABMConceptoPago extends javax.swing.JDialog {
             int oct = chbOct.isSelected() ? 1 : 0;
             int nov = chbNov.isSelected() ? 1 : 0;
             int dic = chbDic.isSelected() ? 1 : 0;
+            int consideraCantAlumno = chbConsideraCantAlumnos.isSelected() ? 1 : 0;
 
             if (txtCodigo.getText().equals("")) { //NUEVO REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de registrar este nuevo registro?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
-                    String sentencia = "CALL SP_ConceptoAlta ('" + descripcion + "','" + tipoimporte + "','" + importe + "','" + tipopago + "','" + numpagos + "','"
-                            + ene + "','" + feb + "','" + mar + "','" + abr + "','" + may + "','" + jun + "','" + jul + "','" + ago + "','" + sep + "','" + oct + "','" + nov + "','" + dic + "')";
+                    String sentencia = conceptoPagoService.registrarConceptoPago(descripcion, tipoimporte, importe, tipopago, numpagos, 
+                            ene, feb, mar, abr, may, jun, jul, ago, sep, oct, nov, dic, consideraCantAlumno);
                     con.EjecutarABM(sentencia, true);
 
                     TablaConsultaBDAll(); //Actualizar tabla
@@ -86,8 +89,8 @@ public class ABMConceptoPago extends javax.swing.JDialog {
             } else { //MODIFICAR REGISTRO
                 int confirmado = JOptionPane.showConfirmDialog(this, "¿Estás seguro de modificar este regitro?", "Confirmación", JOptionPane.YES_OPTION);
                 if (JOptionPane.YES_OPTION == confirmado) {
-                    String sentencia = "CALL SP_ConceptoModificar(" + codigo + ",'" + descripcion + "','" + tipoimporte + "','" + importe + "','" + tipopago + "','" + numpagos + "','"
-                            + ene + "','" + feb + "','" + mar + "','" + abr + "','" + may + "','" + jun + "','" + jul + "','" + ago + "','" + sep + "','" + oct + "','" + nov + "','" + dic + "')";
+                    String sentencia = conceptoPagoService.modificarConceptoPago(codigo, descripcion, tipoimporte, importe, tipopago, numpagos, 
+                            ene, feb, mar, abr, may, jun, jul, ago, sep, oct, nov, dic, consideraCantAlumno);
                     con.EjecutarABM(sentencia, true);
 
                     TablaConsultaBDAll(); //Actualizar tabla
@@ -121,13 +124,13 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         modelTablaPrincipal = (DefaultTableModel) tbPrincipal.getModel();
         modelTablaPrincipal.setRowCount(0);
 
-        String sentencia = "CALL SP_ConceptoConsulta()";
+        String sentencia = conceptoPagoService.consultarAllConceptosPago();
         con = con.ObtenerRSSentencia(sentencia);
         try {
             int codigo, numpagos;
             String descripcion, tipoimporte, tipopago;
             double importe;
-            boolean ene, feb, mar, abr, may, jun, jul, ago, sept, oct, nov, dic;
+            boolean ene, feb, mar, abr, may, jun, jul, ago, sept, oct, nov, dic, consideraCantAlumno;
             while (con.getResultSet().next()) {
                 codigo = con.getResultSet().getInt(1);
                 descripcion = con.getResultSet().getString(2);
@@ -147,8 +150,10 @@ public class ABMConceptoPago extends javax.swing.JDialog {
                 oct = con.getResultSet().getBoolean(16);
                 nov = con.getResultSet().getBoolean(17);
                 dic = con.getResultSet().getBoolean(18);
+                consideraCantAlumno = con.getResultSet().getBoolean(19);
+                
 
-                modelTablaPrincipal.addRow(new Object[]{codigo, descripcion, tipoimporte, importe, tipopago, numpagos, ene, feb, mar, abr, may, jun, jul, ago, sept, oct, nov, dic});//agrega el registro a la tabla
+                modelTablaPrincipal.addRow(new Object[]{codigo, descripcion, tipoimporte, importe, tipopago, numpagos, ene, feb, mar, abr, may, jun, jul, ago, sept, oct, nov, dic, consideraCantAlumno});//agrega el registro a la tabla
             }
             tbPrincipal.setModel(modelTablaPrincipal);
         } catch (SQLException e) {
@@ -183,6 +188,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         chbOct.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 15));
         chbNov.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 16));
         chbDic.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 17));
+        chbConsideraCantAlumnos.setSelected((Boolean) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 18));
     }
 
     private void ModoEdicion(boolean valor) {
@@ -204,6 +210,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         chbOct.setEnabled(valor);
         chbNov.setEnabled(valor);
         chbDic.setEnabled(valor);
+        chbConsideraCantAlumnos.setEnabled(valor);
 
         btnNuevo.setEnabled(!valor);
         btnModificar.setEnabled(false);
@@ -233,6 +240,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         chbOct.setSelected(false);
         chbNov.setSelected(false);
         chbDic.setSelected(false);
+        chbConsideraCantAlumnos.setSelected(false);
 
         tbPrincipal.clearSelection();
     }
@@ -333,6 +341,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         chbSep = new javax.swing.JCheckBox();
         chbNov = new javax.swing.JCheckBox();
         chbDic = new javax.swing.JCheckBox();
+        chbConsideraCantAlumnos = new javax.swing.JCheckBox();
         jpBotones2 = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
@@ -359,14 +368,14 @@ public class ABMConceptoPago extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Codigo", "Descripcion", "Tipo de importe", "Importe", "Tipo de pago", "N° de pagos", "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic"
+                "Codigo", "Descripcion", "Tipo de importe", "Importe", "Tipo de pago", "N° de pagos", "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sept", "Oct", "Nov", "Dic", "Considera cantidad alumnos?"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -683,37 +692,48 @@ public class ABMConceptoPago extends javax.swing.JDialog {
                 .addGap(0, 10, Short.MAX_VALUE))
         );
 
+        chbConsideraCantAlumnos.setText("Considera cantidad de alumnos?");
+        chbConsideraCantAlumnos.setToolTipText("Si considerará en el cálculo de pago la cantidad de alumnos del apoderado (ej: cuota de 15.000gs x 2 alumnos = 30.000 gs)");
+        chbConsideraCantAlumnos.setEnabled(false);
+        chbConsideraCantAlumnos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chbConsideraCantAlumnosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpEdicionLayout = new javax.swing.GroupLayout(jpEdicion);
         jpEdicion.setLayout(jpEdicionLayout);
         jpEdicionLayout.setHorizontalGroup(
             jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jpEdicionLayout.createSequentialGroup()
+                .addGap(39, 39, 39)
+                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblImporte3)
+                    .addComponent(lblCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblImporte, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(txtCodigo, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cbTipoImporte, javax.swing.GroupLayout.Alignment.LEADING, 0, 105, Short.MAX_VALUE)
+                    .addComponent(txtImporte))
+                .addGap(113, 113, 113)
+                .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblNumPagos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblDescripcion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblImporte2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpEdicionLayout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblImporte3)
-                            .addComponent(lblCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblImporte, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(txtCodigo, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cbTipoImporte, javax.swing.GroupLayout.Alignment.LEADING, 0, 105, Short.MAX_VALUE)
-                            .addComponent(txtImporte))
-                        .addGap(113, 113, 113)
-                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblNumPagos, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblDescripcion, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblImporte2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(sfNumPagos, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(cbTipoPago, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txtDescripcion)))
-                    .addGroup(jpEdicionLayout.createSequentialGroup()
-                        .addGap(71, 71, 71)
-                        .addComponent(pnMesesAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(sfNumPagos, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cbTipoPago, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(chbConsideraCantAlumnos, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 8, Short.MAX_VALUE))
+            .addGroup(jpEdicionLayout.createSequentialGroup()
+                .addGap(71, 71, 71)
+                .addComponent(pnMesesAPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(83, 83, 83))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpEdicionLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
@@ -734,7 +754,8 @@ public class ABMConceptoPago extends javax.swing.JDialog {
                     .addComponent(lblNumPagos, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(sfNumPagos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblImporte3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbTipoImporte, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbTipoImporte, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chbConsideraCantAlumnos))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jpEdicionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(lblImporte, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -835,21 +856,21 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         jpPrincipalLayout.setHorizontalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(251, 251, 251))
             .addGroup(jpPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
-                        .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 815, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jtpEdicion, javax.swing.GroupLayout.PREFERRED_SIZE, 840, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jpPrincipalLayout.createSequentialGroup()
                         .addComponent(jpTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jpBotones, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jpPrincipalLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jpBotones2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(251, 251, 251))
         );
         jpPrincipalLayout.setVerticalGroup(
             jpPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -872,7 +893,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 827, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 852, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -979,6 +1000,10 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         metodostxt.SoloNumeroDecimalKeyTyped(evt, txtImporte);
     }//GEN-LAST:event_txtImporteKeyTyped
 
+    private void chbConsideraCantAlumnosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chbConsideraCantAlumnosActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_chbConsideraCantAlumnosActionPerformed
+
     List<Component> ordenTabulador;
 
     private void OrdenTabulador() {
@@ -1025,6 +1050,7 @@ public class ABMConceptoPago extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> cbTipoPago;
     private javax.swing.JCheckBox chbAbr;
     private javax.swing.JCheckBox chbAgo;
+    private javax.swing.JCheckBox chbConsideraCantAlumnos;
     private javax.swing.JCheckBox chbDic;
     private javax.swing.JCheckBox chbEne;
     private javax.swing.JCheckBox chbFeb;
