@@ -251,6 +251,6 @@ public class DAO {
     
     public String versionSistema(){
         
-        return "1.1.8";
+        return "1.1.9";
     }
 }
