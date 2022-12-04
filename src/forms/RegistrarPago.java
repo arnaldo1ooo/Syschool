@@ -120,7 +120,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         modelTableConceptos = (DefaultTableModel) tbAllConceptos.getModel();
         modelTableConceptos.setRowCount(0); //Vacia tabla
         try {
-            String sentencia = "SELECT con_codigo, con_descripcion, con_tipoimporte, con_importe, con_numpagos, con_tipopago FROM concepto ORDER BY con_descripcion";
+            String sentencia = "SELECT con_codigo, con_descripcion, con_tipoimporte, con_importe, con_numpagos, con_tipopago FROM concepto ORDER BY con_codigo";
             con = con.ObtenerRSSentencia(sentencia);
             int codigo, numpagos;
             String descripcion, tipoimporte, tipopago;
@@ -2253,8 +2253,11 @@ public class RegistrarPago extends javax.swing.JDialog {
 
             //Obtener pagos ya realizados
             try {
-                con = con.ObtenerRSSentencia("SELECT pagcon_concepto, SUM(pagcon_numcuotas) AS sumnumcuotas "
-                        + "FROM pago, pago_concepto WHERE pag_codigo=pagcon_pago AND pag_apoderado = '" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' AND pag_periodo = '" + lblPeriodoActual.getText() + "' GROUP BY pagcon_concepto");
+                con = con.ObtenerRSSentencia(" SELECT pagcon_concepto, SUM(pagcon_numcuotas) AS sumnumcuotas\n"
+                        + " FROM pago, pago_concepto\n"
+                        + " WHERE pag_codigo=pagcon_pago AND pag_apoderado = '" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "'\n"
+                          + " AND pag_periodo = '" + lblPeriodoActual.getText() + "'\n"
+                        + " GROUP BY pagcon_concepto");
                 int idconcepto, sumnumcuotas, totalcuotas;
                 while (con.getResultSet().next()) {
                     idconcepto = con.getResultSet().getInt("pagcon_concepto");

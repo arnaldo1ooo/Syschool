@@ -10,7 +10,7 @@ public class ConceptoPagoRepository {
         return  " SELECT con_codigo, con_descripcion, con_tipoimporte, con_importe, con_tipopago, con_numpagos,\n" 
                 + " con_ene, con_feb, con_mar, con_abr, con_may, con_jun, con_jul, con_ago, con_sep, con_oct, con_nov, con_dic, con_considera_cant_alumno\n" 
                 + " FROM concepto\n" 
-                + " ORDER BY con_descripcion\n";
+                + " ORDER BY con_codigo\n";
     }
     
     public String sqlRegistrarConceptoPago(String descripcion, String tipoImporte, double importe, String tipopago, int numpagos, 
