@@ -5,7 +5,11 @@
  */
 package repository;
 
+import dao.DAO;
+
 public class ConceptoPagoRepository {
+    private DAO con = new DAO();
+    
     public String sqlConsultarAllConceptosPago(){                
         return  " SELECT con_codigo, con_descripcion, con_tipoimporte, con_importe, con_tipopago, con_numpagos,\n" 
                 + " con_ene, con_feb, con_mar, con_abr, con_may, con_jun, con_jul, con_ago, con_sep, con_oct, con_nov, con_dic, con_considera_cant_alumno\n" 
@@ -29,6 +33,24 @@ public class ConceptoPagoRepository {
                + "     con_ene=" + ene + ", con_feb=" + feb + ", con_mar=" + mar + ", con_abr=" + abr + ", con_may=" + may + ", con_jun=" + jun + ", con_jul=" + jul + ", \n"
                + "     con_ago=" + ago + ", con_sep=" + sep + ", con_oct=" + oct + ", con_nov=" + nov + ", con_dic=" + dic + ", con_considera_cant_alumno=" + consideraCantAlumno + "\n"
                + " WHERE con_codigo=" + codigo;
+    }
+    
+    public boolean isConsideraCantidadAlumnos(String codigoConcepto){
+        String sentencia = "SELECT con_considera_cant_alumno FROM concepto WHERE con_codigo=" + codigoConcepto;
+        con = con.ObtenerRSSentencia(sentencia);
+        int consideraCantAlumno = 0;
+            
+        try {
+            while (con.getResultSet().next()) {
+                consideraCantAlumno = con.getResultSet().getInt("con_considera_cant_alumno");
+            }           
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        con.DesconectarBasedeDatos();
+        
+        return consideraCantAlumno == 1 ? true : false;
+        
     }
     
     

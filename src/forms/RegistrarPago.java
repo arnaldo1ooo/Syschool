@@ -28,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import static login.Login.codUsuario;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+import service.ConceptoPagoService;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
@@ -49,6 +50,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     private DefaultTableModel modelTableApoderados;
     private Calendar c2 = new GregorianCalendar();
     private int anhoActual = c2.get(Calendar.YEAR);
+    private ConceptoPagoService conceptoPagoService = new ConceptoPagoService();
 
     public RegistrarPago(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -2326,8 +2328,9 @@ public class RegistrarPago extends javax.swing.JDialog {
             txtCantAlumnosPaganCuota.setText(String.valueOf(sumarCantidadPoderantes()));
             
             double importe = metodostxt.StringAFormatoAmericano(txtImporte.getText());
-            importe = importe * sumarCantidadPoderantes();
-
+            
+            importe = conceptoPagoService.isConsideraCantidadAlumnos(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 0)+"") ? importe * sumarCantidadPoderantes() : importe;
+            
             txtSubtotal.setText(metodostxt.DoubleAFormatSudamerica((numCuotasAPagar * importe)));
             if (numactual != Integer.parseInt(txtNumCuotasAPagar.getText())) { //Si el numero ingresado no es el mismo
                 numactual = Integer.parseInt(txtNumCuotasAPagar.getText());
