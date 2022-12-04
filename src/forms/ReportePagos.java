@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import service.PagosService;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
@@ -29,11 +30,12 @@ import utilidades.MetodosTXT;
  */
 public class ReportePagos extends javax.swing.JDialog {
 
-    MetodosCombo metodoscombo = new MetodosCombo();
-    Metodos metodos = new Metodos();
-    MetodosTXT metodostxt = new MetodosTXT();
-    DAO con = new DAO();
-    DefaultTableModel modelTablePagos;
+    private PagosService pagosService = new PagosService();
+    private MetodosCombo metodoscombo = new MetodosCombo();
+    private Metodos metodos = new Metodos();
+    private MetodosTXT metodostxt = new MetodosTXT();
+    private DAO con = new DAO();
+    private DefaultTableModel modelTablePagos;
     static org.apache.log4j.Logger log_historial = org.apache.log4j.Logger.getLogger(ReportePagos.class.getName());
 
     public ReportePagos(java.awt.Frame parent, boolean modal) {
@@ -72,14 +74,15 @@ public class ReportePagos extends javax.swing.JDialog {
             }
             cbOrdenar.setSelectedIndex(0);
         }
+        
         SimpleDateFormat formatofecha = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatofecha2 = new SimpleDateFormat("dd/MM/yyyy");
         String sentencia;
+        
         if (cbConcepto.getSelectedItem().toString().equals("TODOS")) {
-            sentencia = "CALL SP_ReportePagos('" + formatofecha.format(dcDesde.getDate()) + "','" + formatofecha.format(dcHasta.getDate()) + "','-1')";
+            sentencia = pagosService.sqlPagosConceptoPorFecha(formatofecha.format(dcDesde.getDate()), formatofecha.format(dcHasta.getDate()), -1);
         } else {
-            sentencia = "CALL SP_ReportePagos('" + formatofecha.format(dcDesde.getDate()) + "','" + formatofecha.format(dcHasta.getDate()) + "','"
-                    + metodoscombo.ObtenerIDSelectCombo(cbConcepto) + "')";
+            sentencia = pagosService.sqlPagosConceptoPorFecha(formatofecha.format(dcDesde.getDate()), formatofecha.format(dcHasta.getDate()), metodoscombo.ObtenerIDSelectCombo(cbConcepto));
         }
 
         try {
@@ -114,6 +117,8 @@ public class ReportePagos extends javax.swing.JDialog {
         lblTituloFecha.setVisible(true);
         lblTituloFecha.setText("Pagos del " + dateFormat.format(dcDesde.getDate()) + " al " + dateFormat.format(dcHasta.getDate()));
     }
+    
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

@@ -30,7 +30,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jpPrincipal" pref="827" max="32767" attributes="0"/>
+          <Component id="jpPrincipal" pref="852" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -54,11 +54,16 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="panel2" alignment="0" max="32767" attributes="0"/>
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="jpBotones2" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="251" max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="jtpEdicion" min="-2" pref="815" max="-2" attributes="0"/>
+                          <Component id="jtpEdicion" min="-2" pref="840" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
@@ -68,11 +73,6 @@
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-              </Group>
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace max="32767" attributes="0"/>
-                  <Component id="jpBotones2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="251" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -157,7 +157,7 @@
                       <Font name="Tahoma" size="12" style="0"/>
                     </Property>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="18" rowCount="0">
+                      <Table columnCount="19" rowCount="0">
                         <Column editable="false" title="Codigo" type="java.lang.Integer"/>
                         <Column editable="false" title="Descripcion" type="java.lang.String"/>
                         <Column editable="false" title="Tipo de importe" type="java.lang.String"/>
@@ -176,6 +176,7 @@
                         <Column editable="false" title="Oct" type="java.lang.Boolean"/>
                         <Column editable="false" title="Nov" type="java.lang.Boolean"/>
                         <Column editable="false" title="Dic" type="java.lang.Boolean"/>
+                        <Column editable="false" title="Considera cantidad alumnos?" type="java.lang.Boolean"/>
                       </Table>
                     </Property>
                     <Property name="autoResizeMode" type="int" value="4"/>
@@ -366,41 +367,42 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="lblImporte3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="lblCodigo" min="-2" pref="69" max="-2" attributes="0"/>
-                                      <Component id="lblImporte" min="-2" pref="69" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="txtCodigo" alignment="0" max="32767" attributes="0"/>
-                                      <Component id="cbTipoImporte" alignment="0" pref="105" max="32767" attributes="0"/>
-                                      <Component id="txtImporte" max="32767" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="113" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                      <Component id="lblNumPagos" alignment="1" max="32767" attributes="0"/>
-                                      <Component id="lblDescripcion" alignment="1" max="32767" attributes="0"/>
-                                      <Component id="lblImporte2" alignment="1" min="-2" pref="110" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                          <Component id="sfNumPagos" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="cbTipoPago" alignment="0" min="-2" pref="114" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Component id="txtDescripcion" max="32767" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
-                                  <Component id="pnMesesAPagar" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="lblImporte3" min="-2" max="-2" attributes="0"/>
+                              <Component id="lblCodigo" min="-2" pref="69" max="-2" attributes="0"/>
+                              <Component id="lblImporte" min="-2" pref="69" max="-2" attributes="0"/>
                           </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="txtCodigo" alignment="0" max="32767" attributes="0"/>
+                              <Component id="cbTipoImporte" alignment="0" pref="105" max="32767" attributes="0"/>
+                              <Component id="txtImporte" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="113" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="lblNumPagos" alignment="1" max="32767" attributes="0"/>
+                              <Component id="lblDescripcion" alignment="1" max="32767" attributes="0"/>
+                              <Component id="lblImporte2" alignment="1" min="-2" pref="110" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                      <Component id="sfNumPagos" alignment="0" max="32767" attributes="0"/>
+                                      <Component id="cbTipoPago" alignment="0" min="-2" pref="114" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="chbConsideraCantAlumnos" min="-2" pref="226" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="txtDescripcion" min="-2" pref="264" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="0" pref="8" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
+                          <Component id="pnMesesAPagar" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="83" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
@@ -426,6 +428,7 @@
                               <Component id="sfNumPagos" alignment="2" min="-2" max="-2" attributes="0"/>
                               <Component id="lblImporte3" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
                               <Component id="cbTipoImporte" alignment="2" min="-2" pref="28" max="-2" attributes="0"/>
+                              <Component id="chbConsideraCantAlumnos" alignment="2" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="2" attributes="0">
@@ -774,6 +777,16 @@
                     </Component>
                   </SubComponents>
                 </Container>
+                <Component class="javax.swing.JCheckBox" name="chbConsideraCantAlumnos">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Considera cantidad de alumnos?"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Si considerar&#xe1; en el c&#xe1;lculo de pago la cantidad de alumnos del apoderado (ej: cuota de 15.000gs x 2 alumnos = 30.000 gs)"/>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chbConsideraCantAlumnosActionPerformed"/>
+                  </Events>
+                </Component>
               </SubComponents>
             </Container>
           </SubComponents>

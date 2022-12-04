@@ -13,11 +13,13 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import static login.Login.codUsuario;
 import org.oxbow.swingbits.table.filter.TableRowFilterSupport;
+import service.PagosService;
 import utilidades.Metodos;
 import utilidades.MetodosTXT;
 
 public class Pago extends javax.swing.JDialog {
 
+    private PagosService pagosService = new PagosService();
     private DAO con = new DAO();
     private Metodos metodos = new Metodos();
     private MetodosTXT metodostxt = new MetodosTXT();
@@ -46,7 +48,8 @@ public class Pago extends javax.swing.JDialog {
         modelTablePago.setRowCount(0); //Vacia tabla
 
         try {
-            String sentencia = "CALL SP_PagoConsulta()";
+            String sentencia = pagosService.sqlAllPagos();
+            
             con = con.ObtenerRSSentencia(sentencia);
             int codigo, periodo;
             String apoderado, fechapago, numpago;
@@ -81,19 +84,21 @@ public class Pago extends javax.swing.JDialog {
         modelTablePagoConceptos.setRowCount(0); //Vacia tabla
         try {
             int idPagoSelect = (int) tbPrincipal.getValueAt(tbPrincipal.getSelectedRow(), 0);
-            String sentencia = "CALL SP_PagoConceptosConsulta(" + idPagoSelect + ")";
+            String sentencia = pagosService.sqlPagoConceptos(idPagoSelect);
             con = con.ObtenerRSSentencia(sentencia);
             String concepto, meses;
-            int numcuotaspagadas;
+            int numcuotaspagadas, cantAlumno;
             double monto, subtotal;
             while (con.getResultSet().next()) {
                 concepto = con.getResultSet().getString("con_descripcion");
-                numcuotaspagadas = con.getResultSet().getInt("pagcon_numcuotas");
                 meses = con.getResultSet().getString("pagcon_meses");
+                numcuotaspagadas = con.getResultSet().getInt("pagcon_numcuotas");
                 monto = con.getResultSet().getDouble("pagcon_monto");
+                cantAlumno = con.getResultSet().getInt("pagcon_cantalumno");
                 subtotal = con.getResultSet().getDouble("subtotal");
+                
 
-                modelTablePagoConceptos.addRow(new Object[]{concepto, numcuotaspagadas, meses, monto, subtotal});
+                modelTablePagoConceptos.addRow(new Object[]{concepto, meses, numcuotaspagadas, monto, cantAlumno, subtotal});
             }
             tbConceptosPagados.setModel(modelTablePagoConceptos);
             metodos.AnchuraColumna(tbConceptosPagados);
@@ -161,14 +166,14 @@ public class Pago extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Concepto", "N° de cuotas pagadas", "Meses", "Monto", "Subtotal"
+                "Concepto", "Meses", "N° de cuotas pagadas", "Monto por cuota", "Alumnos que pagan cuota", "Subtotal"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Object.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
