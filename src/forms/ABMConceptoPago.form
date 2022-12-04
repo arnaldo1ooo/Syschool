@@ -780,6 +780,8 @@
                 <Component class="javax.swing.JCheckBox" name="chbConsideraCantAlumnos">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Considera cantidad de alumnos?"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Si considerar&#xe1; en el c&#xe1;lculo de pago la cantidad de alumnos del apoderado (ej: cuota de 15.000gs x 2 alumnos = 30.000 gs)"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chbConsideraCantAlumnosActionPerformed"/>

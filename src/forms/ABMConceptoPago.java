@@ -693,6 +693,8 @@ public class ABMConceptoPago extends javax.swing.JDialog {
         );
 
         chbConsideraCantAlumnos.setText("Considera cantidad de alumnos?");
+        chbConsideraCantAlumnos.setToolTipText("Si considerará en el cálculo de pago la cantidad de alumnos del apoderado (ej: cuota de 15.000gs x 2 alumnos = 30.000 gs)");
+        chbConsideraCantAlumnos.setEnabled(false);
         chbConsideraCantAlumnos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chbConsideraCantAlumnosActionPerformed(evt);
