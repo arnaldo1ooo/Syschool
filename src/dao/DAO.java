@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -18,7 +20,7 @@ public class DAO {
     private Connection connection;
     private Statement st;
     private ResultSet rs;
-    private static String controlador;
+    private static String controlador = "com.mysql.cj.jdbc.Driver";
     private static String usuarioDB;
     private static String passDB; //Contrasena de la BD
     private static String nombreBD;
@@ -26,10 +28,19 @@ public class DAO {
     private static String puerto;
     private static String servidor;
     static Logger log_historial = Logger.getLogger(DAO.class.getName());
+    private String cliente = "testArnaldo"; //testArnaldo o sanRoque
 
+    
+    public String getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(String cliente) {
+        this.cliente = cliente;
+    }
+    
     public static Connection ConectarBasedeDatos() {
         String tipoHost = "local";
-        controlador = "com.mysql.cj.jdbc.Driver";
         switch (tipoHost) {
             case "local" -> {
                 //Modo host local
@@ -252,5 +263,51 @@ public class DAO {
     public String versionSistema(){
         
         return "1.1.9";
+    }
+    
+    public ArrayList<String> datosConexion(){
+        ArrayList<String> listaDatos = new ArrayList<>();
+        //url, user, pass
+        switch (cliente) {
+            case "testArnaldo" -> {
+                host = "localhost";
+                puerto = "3306";
+                nombreBD = "syschool";
+                listaDatos.add("jdbc:mysql://" + host + ":" + puerto + "/" + nombreBD
+                        + "?useUnicode=true"
+                        + "&useJDBCCompliantTimezoneShift=true"
+                        + "&useLegacyDatetimeCode=false"
+                        + "&serverTimezone=America/Mexico_City"
+                        //+ "&serverTimezone=UTC"
+                        + "&useSSL=false"
+                        + "&allowPublicKeyRetrieval=true");
+                listaDatos.add("root");
+                listaDatos.add("toor5127-");
+                
+                return listaDatos;
+            }
+            case "sanRoque" -> {
+                host = "localhost";
+                puerto = "3306";
+                nombreBD = "syschool";
+                listaDatos.add("jdbc:mysql://" + host + ":" + puerto + "/" + nombreBD
+                        + "?useUnicode=true"
+                        + "&useJDBCCompliantTimezoneShift=true"
+                        + "&useLegacyDatetimeCode=false"
+                        + "&serverTimezone=America/Mexico_City"
+                        //+ "&serverTimezone=UTC"
+                        + "&useSSL=false"
+                        + "&allowPublicKeyRetrieval=true");
+                listaDatos.add("root");
+                listaDatos.add("toor5127-");
+                
+                return listaDatos;
+            }
+            
+            default -> {
+                JOptionPane.showMessageDialog(null, "Case no se encontro", "Error", JOptionPane.ERROR_MESSAGE);
+                return listaDatos;
+            }
+        }
     }
 }
