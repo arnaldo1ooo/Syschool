@@ -20,6 +20,7 @@ public class FlywayMetodos {
                 .configure()
                 .dataSource(url, user, pass) //url, user, pass
                 .locations(localizacionSQLs)
+                .baselineOnMigrate(true) //Para que genere la tabla flyway history
                 .load();
         
         flyway.migrate();
