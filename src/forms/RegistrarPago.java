@@ -28,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import static login.Login.codUsuario;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRTableModelDataSource;
+import service.ConceptoPagoService;
 import utilidades.Metodos;
 import utilidades.MetodosCombo;
 import utilidades.MetodosTXT;
@@ -49,6 +50,7 @@ public class RegistrarPago extends javax.swing.JDialog {
     private DefaultTableModel modelTableApoderados;
     private Calendar c2 = new GregorianCalendar();
     private int anhoActual = c2.get(Calendar.YEAR);
+    private ConceptoPagoService conceptoPagoService = new ConceptoPagoService();
 
     public RegistrarPago(java.awt.Frame parent, Boolean modal) {
         super(parent, modal);
@@ -120,7 +122,7 @@ public class RegistrarPago extends javax.swing.JDialog {
         modelTableConceptos = (DefaultTableModel) tbAllConceptos.getModel();
         modelTableConceptos.setRowCount(0); //Vacia tabla
         try {
-            String sentencia = "SELECT con_codigo, con_descripcion, con_tipoimporte, con_importe, con_numpagos, con_tipopago FROM concepto ORDER BY con_descripcion";
+            String sentencia = "SELECT con_codigo, con_descripcion, con_tipoimporte, con_importe, con_numpagos, con_tipopago FROM concepto ORDER BY con_codigo";
             con = con.ObtenerRSSentencia(sentencia);
             int codigo, numpagos;
             String descripcion, tipoimporte, tipopago;
@@ -2253,8 +2255,11 @@ public class RegistrarPago extends javax.swing.JDialog {
 
             //Obtener pagos ya realizados
             try {
-                con = con.ObtenerRSSentencia("SELECT pagcon_concepto, SUM(pagcon_numcuotas) AS sumnumcuotas "
-                        + "FROM pago, pago_concepto WHERE pag_codigo=pagcon_pago AND pag_apoderado = '" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "' AND pag_periodo = '" + lblPeriodoActual.getText() + "' GROUP BY pagcon_concepto");
+                con = con.ObtenerRSSentencia(" SELECT pagcon_concepto, SUM(pagcon_numcuotas) AS sumnumcuotas\n"
+                        + " FROM pago, pago_concepto\n"
+                        + " WHERE pag_codigo=pagcon_pago AND pag_apoderado = '" + metodoscombo.ObtenerIDSelectCombo(cbApoderado) + "'\n"
+                          + " AND pag_periodo = '" + lblPeriodoActual.getText() + "'\n"
+                        + " GROUP BY pagcon_concepto");
                 int idconcepto, sumnumcuotas, totalcuotas;
                 while (con.getResultSet().next()) {
                     idconcepto = con.getResultSet().getInt("pagcon_concepto");
@@ -2323,8 +2328,9 @@ public class RegistrarPago extends javax.swing.JDialog {
             txtCantAlumnosPaganCuota.setText(String.valueOf(sumarCantidadPoderantes()));
             
             double importe = metodostxt.StringAFormatoAmericano(txtImporte.getText());
-            importe = importe * sumarCantidadPoderantes();
-
+            
+            importe = conceptoPagoService.isConsideraCantidadAlumnos(tbAllConceptos.getValueAt(tbAllConceptos.getSelectedRow(), 0)+"") ? importe * sumarCantidadPoderantes() : importe;
+            
             txtSubtotal.setText(metodostxt.DoubleAFormatSudamerica((numCuotasAPagar * importe)));
             if (numactual != Integer.parseInt(txtNumCuotasAPagar.getText())) { //Si el numero ingresado no es el mismo
                 numactual = Integer.parseInt(txtNumCuotasAPagar.getText());
