@@ -8,7 +8,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -262,7 +261,7 @@ public class DAO {
     
     public String versionSistema(){
         
-        return "1.1.9";
+        return "1.2.0";
     }
     
     public ArrayList<String> datosConexion(){
