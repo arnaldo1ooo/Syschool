@@ -494,8 +494,9 @@ public class ReportePagosApoderados extends javax.swing.JDialog {
         for (int f = 0; f < tbPrincipal.getRowCount(); f++) {
             Object fila[] = new Object[tbPrincipal.getColumnCount()];
             for (int c = 0; c < tbPrincipal.getColumnCount(); c++) {
-                if (tbPrincipal.getColumnName(c).equals("Subtotal")) {
-                    fila[c] = metodostxt.DoubleAFormatSudamerica(Double.parseDouble(tbPrincipal.getValueAt(f, c) + ""));
+                if (tbPrincipal.getColumnName(c).equals("Nro Cedula") 
+                        || tbPrincipal.getColumnName(c).equals("Subtotal")) {
+                    fila[c] = metodostxt.doubleAFormatSudamerica(tbPrincipal.getValueAt(f, c));
                 } else {
                     fila[c] = tbPrincipal.getValueAt(f, c);
                 }

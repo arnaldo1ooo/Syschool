@@ -56,27 +56,27 @@
 	<columnHeader height="24" splitType="Stretch">
 		<element kind="line" uuid="8540f4a5-62a1-44f2-98b0-9dbf83a37cf2" x="0" y="2" width="555" height="1"/>
 		<element kind="line" uuid="51d3e0af-cdd0-4054-82a7-1bd81031165a" x="0" y="22" width="555" height="1"/>
-		<element kind="staticText" uuid="f297a0b0-df17-4c5b-aaa1-231eb64dfd95" x="10" y="2" width="105" height="20" bold="true" vTextAlign="Middle">
+		<element kind="staticText" uuid="f297a0b0-df17-4c5b-aaa1-231eb64dfd95" x="10" y="2" width="105" height="20" bold="true" hTextAlign="Right" vTextAlign="Middle">
 			<text><![CDATA[N° Cedula]]></text>
 		</element>
-		<element kind="staticText" uuid="d47981d4-2a90-4d00-9168-26e246a850fd" x="130" y="2" width="250" height="20" bold="true" vTextAlign="Middle">
+		<element kind="staticText" uuid="d47981d4-2a90-4d00-9168-26e246a850fd" x="160" y="2" width="220" height="20" bold="true" vTextAlign="Middle">
 			<text><![CDATA[Apoderado]]></text>
 			<property name="com.jaspersoft.studio.unit.x" value="px"/>
 		</element>
-		<element kind="staticText" uuid="d3f4799d-48e7-4165-9753-3440f09ec087" x="430" y="2" width="113" height="20" bold="true" vTextAlign="Middle">
+		<element kind="staticText" uuid="d3f4799d-48e7-4165-9753-3440f09ec087" x="430" y="2" width="113" height="20" bold="true" hTextAlign="Right" vTextAlign="Middle">
 			<text><![CDATA[Subtotal (Gs)]]></text>
 		</element>
 	</columnHeader>
 	<detail>
 		<band height="21" splitType="Stretch">
-			<element kind="textField" uuid="f55510ff-5cf1-4419-9e96-1bde0d27d20a" x="10" y="0" width="105" height="21" vTextAlign="Middle">
+			<element kind="textField" uuid="f55510ff-5cf1-4419-9e96-1bde0d27d20a" x="10" y="0" width="105" height="21" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle">
 				<expression><![CDATA[$F{Nro Cedula}]]></expression>
 			</element>
-			<element kind="textField" uuid="504f1771-5b5a-4352-a9bf-a94fa994816d" x="130" y="0" width="250" height="21" vTextAlign="Middle">
+			<element kind="textField" uuid="504f1771-5b5a-4352-a9bf-a94fa994816d" x="160" y="0" width="220" height="21" blankWhenNull="true" vTextAlign="Middle">
 				<expression><![CDATA[$F{Apoderado}]]></expression>
 				<property name="com.jaspersoft.studio.unit.x" value="px"/>
 			</element>
-			<element kind="textField" uuid="054e29b7-7298-40a7-9cc3-9d5bbcd1431b" x="430" y="0" width="113" height="21" vTextAlign="Middle">
+			<element kind="textField" uuid="054e29b7-7298-40a7-9cc3-9d5bbcd1431b" x="430" y="0" width="113" height="21" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle">
 				<expression><![CDATA[$F{Subtotal}]]></expression>
 			</element>
 		</band>
