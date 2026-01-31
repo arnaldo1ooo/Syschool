@@ -81,4 +81,25 @@ public class PagosRepository {
                 + " WHERE pagcon_pago = " + idPago + " AND pag_codigo = pagcon_pago AND pagcon_concepto = con_codigo\n";
     }
     
+        public String sqlPagosPorApoderados(String fechaDesde, String fechaHasta, int idConcepto){                
+        return  " SELECT\n"
+              + "  apo.apo_cedula AS ci,\n"
+              + "  CONCAT(apo.apo_apellido, ', ', apo.apo_nombre) AS nombre_apellido_apo,\n"
+              + "  SUM(pago.pag_importe) AS subtotal\n"
+              + " FROM apoderado apo\n"
+              + "       JOIN pago\n"
+              + "           ON pago.pag_apoderado = apo.apo_codigo\n"
+              + "       JOIN pago_concepto pagcon\n"
+              + "           ON pagcon.pagcon_pago = pago.pag_codigo\n"
+              + " WHERE\n"
+              + "   pagcon.pagcon_concepto = (CASE\n"
+              + "                               WHEN " + idConcepto + "=-1\n"
+              + "                                   THEN pagcon.pagcon_concepto\n"
+              + "                               ELSE " + idConcepto + "\n"
+              + "                             END)\n"
+              + "   AND pago.pag_fechapago BETWEEN '" + fechaDesde + "' AND '" + fechaHasta + "'\n"
+              + " GROUP BY\n"
+              + "   apo.apo_codigo\n";
+    }
+    
 }

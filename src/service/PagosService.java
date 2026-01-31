@@ -33,6 +33,10 @@ public class PagosService {
     public String sqlPagoConceptos(int idPago){                        
         return  pagosRepository.sqlPagoConceptos(idPago);
     }
+    
+        public String sqlPagosPorApoderados(String fechaDesde, String fechaHasta, int idConcepto){                
+        return  pagosRepository.sqlPagosPorApoderados(fechaDesde, fechaHasta, idConcepto);
+    }
 }
 
 

@@ -114,9 +114,9 @@ public class DAO {
         try {
             Class.forName(controlador);
             connection = DriverManager.getConnection(servidor, usuarioDB, passDB);
-            if (connection != null) {
-                System.out.println("\nCONEXIÓN A " + nombreBD + ", EXITOSA..");
-            }
+            /*if (connection != null) {
+                System.out.println("\nCONEXION A " + nombreBD + ", EXITOSA..");
+            }*/
         } catch (ClassNotFoundException | SQLException ex) {
             connection = null;
             log_historial.error("Error 1089: " + ex);
@@ -149,7 +149,7 @@ public class DAO {
             if (getResultSet() != null) {
                 getResultSet().close();
             }
-            System.out.println("DESCONEXIÓN DE LA BD (" + nombreBD + ") EXITOSA..");
+            //System.out.println("DESCONEXION DE LA BD (" + nombreBD + ") EXITOSA..");
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "ERROR AL INTENTAR DESCONECTAR CONNECTION(" + nombreBD + "), RESULTSET y del STATEMENT", JOptionPane.ERROR_MESSAGE);
@@ -203,7 +203,7 @@ public class DAO {
     }
 
     public DAO ObtenerRSSentencia(String sentencia) { //con.Desconectar luego de usar el metodo
-        System.out.println("ObtenerRSSentencia: " + sentencia);
+        System.out.println("ObtenerRSSentencia:\n  " + sentencia);
         con = new DAO();
         try {
             con.connection = (Connection) DAO.ConectarBasedeDatos();
@@ -211,7 +211,7 @@ public class DAO {
             con.rs = con.st.executeQuery(sentencia);
 
             con.rs.last(); //Poner el puntero en el ultimo
-            System.out.println("ObtenerRSSentencia trajo " + con.rs.getRow() + " resultados, consulta: " + sentencia);
+            //System.out.println("ObtenerRSSentencia trajo " + con.rs.getRow() + " resultados, consulta: " + sentencia);
             con.getResultSet().beforeFirst(); //Poner el puntero en el anteprimero
         } catch (SQLException e) {
             log_historial.error("Error 1092: " + e);
