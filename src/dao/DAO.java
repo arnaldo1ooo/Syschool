@@ -275,7 +275,7 @@ public class DAO {
     
     public String versionSistema(){
         
-        return "1.2.0";
+        return "1.2.1";
     }
     
     public ArrayList<String> datosConexion(){
