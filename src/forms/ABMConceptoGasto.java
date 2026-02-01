@@ -253,7 +253,7 @@ public class ABMConceptoGasto extends javax.swing.JDialog {
         panel2 = new org.edisoncor.gui.panel.Panel();
         labelMetric2 = new org.edisoncor.gui.label.LabelMetric();
 
-        setTitle("Ventana Conceptos de pago");
+        setTitle("Ventana Conceptos de gastos");
         setBackground(new java.awt.Color(45, 62, 80));
         setResizable(false);
 
@@ -295,7 +295,6 @@ public class ABMConceptoGasto extends javax.swing.JDialog {
         tbPrincipal.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         tbPrincipal.setGridColor(new java.awt.Color(0, 153, 204));
         tbPrincipal.setOpaque(false);
-        tbPrincipal.setRowHeight(20);
         tbPrincipal.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbPrincipal.getTableHeader().setReorderingAllowed(false);
         tbPrincipal.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -317,14 +316,11 @@ public class ABMConceptoGasto extends javax.swing.JDialog {
         lbCantRegistros.setPreferredSize(new java.awt.Dimension(57, 25));
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(0, 0, 0));
         jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/iconos40x40/IconoBuscar.png"))); // NOI18N
         jLabel13.setText("  BUSCAR ");
 
         txtBuscar.setFont(new java.awt.Font("Tahoma", 1, 17)); // NOI18N
-        txtBuscar.setForeground(new java.awt.Color(0, 0, 0));
         txtBuscar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        txtBuscar.setCaretColor(new java.awt.Color(0, 0, 0));
         txtBuscar.setDisabledTextColor(new java.awt.Color(0, 204, 204));
         txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -336,7 +332,6 @@ public class ABMConceptoGasto extends javax.swing.JDialog {
         });
 
         lblBuscarCampoApoderado1.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        lblBuscarCampoApoderado1.setForeground(new java.awt.Color(0, 0, 0));
         lblBuscarCampoApoderado1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblBuscarCampoApoderado1.setText("Buscar por:");
 
@@ -444,7 +439,7 @@ public class ABMConceptoGasto extends javax.swing.JDialog {
                 .addComponent(btnModificar)
                 .addGap(18, 18, 18)
                 .addComponent(btnEliminar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
         jtpEdicion.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
