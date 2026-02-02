@@ -14,8 +14,8 @@ import repository.PagosRepository;
 public class PagosService {
     private PagosRepository pagosRepository = new PagosRepository();
         
-    public String sqlPagosConceptoPorFecha(String fechaDesde, String fechaHasta, int idConcepto){                
-        return  pagosRepository.sqlPagosConceptoPorFecha(fechaDesde, fechaHasta, idConcepto);
+    public String sqlPagosConceptoPorFecha(String fechaDesde, String fechaHasta, int idConcepto, String periodo, boolean isFiltrarPorPeriodo){                
+        return  pagosRepository.sqlPagosConceptoPorFecha(fechaDesde, fechaHasta, idConcepto, periodo, isFiltrarPorPeriodo);
     }
     
     public String sqlPagosConceptoPorFechaConNombre(String fechaDesde, String fechaHasta, int idConcepto){                        
