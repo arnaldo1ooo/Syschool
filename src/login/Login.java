@@ -347,7 +347,11 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_btncancelarActionPerformed
 
     public static void main(String args[]) {
-        try {
+        //Evita problema de renderizado de graficos que hace que desaparezcan los componentes
+        System.setProperty("sun.java2d.d3d", "false");
+        System.setProperty("sun.java2d.noddraw", "true");
+        
+        try {    
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
