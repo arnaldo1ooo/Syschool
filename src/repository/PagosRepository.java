@@ -10,37 +10,43 @@ package repository;
  * @author Arnaldo_Cantero
  */
 public class PagosRepository {
-    public String sqlPagosConceptoPorFecha(String fechaDesde, String fechaHasta, int idConcepto){                
+    public String sqlPagosConceptoPorFecha(String fechaDesde, String fechaHasta, int idConcepto, String periodo, boolean isFiltrarPorPeriodo){                        
         return  " SELECT pag_numpago, con_descripcion, pag_fechapago,\n"
                     + " CASE\n"
                     + "   WHEN con_considera_cant_alumno = 1\n"
                     + "    THEN (SELECT SUM(pagcon_monto * pagcon_numcuotas * pagcon_cantalumno) AS sumamonto FROM pago_concepto WHERE pagcon_pago=pag_codigo)\n"
                     + "   ELSE  (SELECT SUM(pagcon_monto * pagcon_numcuotas) AS sumamonto FROM pago_concepto WHERE pagcon_pago=pag_codigo)\n"
-                    + " END AS totalpago\n"
+                    + " END AS totalpago,\n"
+                    + " pag_periodo\n"
                     + " FROM pago, concepto, pago_concepto\n"
                     + " WHERE pagcon_pago=pag_codigo AND pagcon_concepto=con_codigo\n"
-                    + "  AND pag_fechapago BETWEEN '" + fechaDesde + "' AND '" + fechaHasta + "'\n"
-                    +"   AND con_codigo = (CASE\n"
+                    + "        AND con_codigo = (CASE\n"
                     + "                      WHEN " + idConcepto + "=-1\n"
                     + "                        THEN con_codigo\n"
                     + "                      ELSE " + idConcepto + "\n"
-                    + "                    END)\n";
+                    + "                    END)\n"
+                    + (isFiltrarPorPeriodo 
+                        ? "        AND pag_periodo=" + periodo + "\n"
+                        : "        AND pag_fechapago BETWEEN '" + fechaDesde + "' AND '" + fechaHasta + "'\n");
     }
     
     public String sqlPagosConceptoPorFechaConNombre(String fechaDesde, String fechaHasta, int idConcepto){                        
-        return  " SELECT pag_numpago, CONCAT(apo_apellido,', ', apo_nombre) AS apoderado, con_descripcion, pag_fechapago,\n"
-                    + " CASE\n"
-                    + "   WHEN con_considera_cant_alumno = 1\n"
-                    + "    THEN (SELECT SUM(pagcon_monto * pagcon_numcuotas * pagcon_cantalumno) AS sumamonto FROM pago_concepto WHERE pagcon_pago=pag_codigo)\n"
-                    + "   ELSE  (SELECT SUM(pagcon_monto * pagcon_numcuotas) AS sumamonto FROM pago_concepto WHERE pagcon_pago=pag_codigo)\n"
-                    + " END AS totalpago\n"
-                    + " FROM pago, concepto, pago_concepto, apoderado\n"
-                    + " WHERE pagcon_pago=pag_codigo AND pagcon_concepto=con_codigo AND pag_fechapago BETWEEN '" + fechaDesde + "' AND '" + fechaHasta + "'\n"
-                    + "  AND con_codigo = (CASE\n"
-                    + "                      WHEN " + idConcepto + "=-1\n"
-                    + "                        THEN con_codigo\n"
-                    + "                      ELSE " + idConcepto + "\n"
-                    + "                    END) AND apo_codigo = pag_apoderado\n";
+        return  " SELECT pag_numpago,\n"
+                + " CONCAT(apo_apellido,', ', apo_nombre) AS apoderado,\n"
+                + " con_descripcion, pag_fechapago,\n"
+                + " CASE\n"
+                + "   WHEN con_considera_cant_alumno = 1\n"
+                + "    THEN (SELECT SUM(pagcon_monto * pagcon_numcuotas * pagcon_cantalumno) AS sumamonto FROM pago_concepto WHERE pagcon_pago=pag_codigo)\n"
+                + "   ELSE  (SELECT SUM(pagcon_monto * pagcon_numcuotas) AS sumamonto FROM pago_concepto WHERE pagcon_pago=pag_codigo)\n"
+                + " END AS totalpago\n"
+                + " FROM pago, concepto, pago_concepto, apoderado\n"
+                + " WHERE pagcon_pago=pag_codigo AND pagcon_concepto=con_codigo AND pag_fechapago BETWEEN '" + fechaDesde + "' AND '" + fechaHasta + "'\n"
+                    
+                + "  AND con_codigo = (CASE\n"
+                + "                      WHEN " + idConcepto + "=-1\n"
+                + "                        THEN con_codigo\n"
+                + "                      ELSE " + idConcepto + "\n"
+                + "                    END) AND apo_codigo = pag_apoderado\n";
     }
     
     public String sqlPagosPorFecha(String fechaDesde, String fechaHasta){                        
@@ -79,6 +85,27 @@ public class PagosRepository {
                 + "  END AS subtotal, pagcon_cantalumno\n"
                 + " FROM pago, pago_concepto, concepto\n"
                 + " WHERE pagcon_pago = " + idPago + " AND pag_codigo = pagcon_pago AND pagcon_concepto = con_codigo\n";
+    }
+    
+        public String sqlPagosPorApoderados(String fechaDesde, String fechaHasta, int idConcepto){                
+        return  " SELECT\n"
+              + "  apo.apo_cedula AS ci,\n"
+              + "  CONCAT(apo.apo_apellido, ', ', apo.apo_nombre) AS nombre_apellido_apo,\n"
+              + "  SUM(pago.pag_importe) AS subtotal\n"
+              + " FROM apoderado apo\n"
+              + "       JOIN pago\n"
+              + "           ON pago.pag_apoderado = apo.apo_codigo\n"
+              + "       JOIN pago_concepto pagcon\n"
+              + "           ON pagcon.pagcon_pago = pago.pag_codigo\n"
+              + " WHERE\n"
+              + "   pagcon.pagcon_concepto = (CASE\n"
+              + "                               WHEN " + idConcepto + "=-1\n"
+              + "                                   THEN pagcon.pagcon_concepto\n"
+              + "                               ELSE " + idConcepto + "\n"
+              + "                             END)\n"
+              + "   AND pago.pag_fechapago BETWEEN '" + fechaDesde + "' AND '" + fechaHasta + "'\n"
+              + " GROUP BY\n"
+              + "   apo.apo_codigo\n";
     }
     
 }

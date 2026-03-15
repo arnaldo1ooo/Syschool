@@ -1,4 +1,4 @@
-<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
 <jasperReport name="null" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d7ba0bb7-545a-46fb-9be6-63e81b1f1532">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
@@ -8,25 +8,23 @@
 	<parameter name="FECHADESDEHASTA" class="java.lang.String"/>
 	<parameter name="ORDENADOPOR" class="java.lang.String"/>
 	<parameter name="CONCEPTO" class="java.lang.String"/>
-	<parameter name="PERIODO" class="java.lang.String"/>
 	<parameter name="TOTAL" class="java.lang.String"/>
 	<parameter name="CANTREGISTROS" class="java.lang.String"/>
 	<query language="sql"><![CDATA[]]></query>
-	<field name="N° de pago" class="java.lang.String">
+	<field name="Nro Cedula" class="java.lang.String">
 		<description><![CDATA[]]></description>
 	</field>
-	<field name="Concepto" class="java.lang.String">
+	<field name="Apoderado" class="java.lang.String">
 		<description><![CDATA[]]></description>
 	</field>
-	<field name="Fecha de pago" class="java.lang.String"/>
-	<field name="Monto" class="java.lang.String"/>
+	<field name="Subtotal" class="java.lang.String"/>
 	<background splitType="Stretch"/>
 	<title height="108" splitType="Stretch">
 		<element kind="textField" uuid="0e79e0b6-91d5-4ae2-a83e-4e83973a3623" x="0" y="0" width="142" height="20" pattern="EEEEE dd MMMMM yyyy" vTextAlign="Middle">
 			<expression><![CDATA[new java.util.Date()]]></expression>
 		</element>
-		<element kind="staticText" uuid="afe7d3cd-1c5b-4e90-bd15-49424048cc57" x="10" y="70" width="160" height="25" fontName="SansSerif" fontSize="14.0" bold="true" hTextAlign="Left" vTextAlign="Bottom">
-			<text><![CDATA[REPORTE DE PAGOS]]></text>
+		<element kind="staticText" uuid="afe7d3cd-1c5b-4e90-bd15-49424048cc57" x="10" y="70" width="140" height="25" fontName="Bodoni MT" fontSize="14.0" bold="true" hTextAlign="Left" vTextAlign="Bottom">
+			<text><![CDATA[REPORTE DE PAGOS POR APODERADOS]]></text>
 		</element>
 		<element kind="line" uuid="fba8c39c-7a58-49e5-9f6b-f80e0e01569b" x="0" y="95" width="555" height="1"/>
 		<element kind="image" uuid="a8053cd9-837f-4ff6-9002-ea0e22ed5d57" stretchType="ElementGroupHeight" x="142" y="0" width="275" height="60" onErrorType="Icon" hImageAlign="Center" vImageAlign="Top">
@@ -35,24 +33,22 @@
 		<element kind="image" uuid="92810677-b3f8-440c-8552-43163f464c9e" stretchType="ElementGroupHeight" x="450" y="0" width="70" height="70" onErrorType="Icon" hImageAlign="Center" vImageAlign="Top">
 			<expression><![CDATA[$P{LOGO2}]]></expression>
 		</element>
-		<element kind="textField" uuid="f8e8b747-4e04-4338-bb6c-bcbf24125066" x="182" y="70" width="247" height="26" fontName="SansSerif" fontSize="14.0" vTextAlign="Bottom">
-			<expression><![CDATA[$P{FECHADESDEHASTA} != null 
-	? $P{FECHADESDEHASTA} 
-	: "Periodo " + $P{PERIODO}]]></expression>
+		<element kind="textField" uuid="f8e8b747-4e04-4338-bb6c-bcbf24125066" x="150" y="70" width="247" height="26" fontName="Bodoni MT" fontSize="14.0" vTextAlign="Bottom">
+			<expression><![CDATA[$P{FECHADESDEHASTA}]]></expression>
 		</element>
 	</title>
-	<pageHeader height="34" splitType="Stretch">
-		<element kind="textField" uuid="96fc7a32-967c-47c5-9240-f8885643853b" x="111" y="9" width="150" height="14" vTextAlign="Middle">
+	<pageHeader height="31" splitType="Stretch">
+		<element kind="textField" uuid="96fc7a32-967c-47c5-9240-f8885643853b" x="111" y="5" width="150" height="20" vTextAlign="Middle">
 			<expression><![CDATA[$P{ORDENADOPOR}]]></expression>
 			<property name="com.jaspersoft.studio.unit.x" value="px"/>
 		</element>
-		<element kind="staticText" uuid="22f5217f-78a9-44b6-944a-a7d9bb1cb28f" x="10" y="9" width="98" height="14" fontSize="10.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+		<element kind="staticText" uuid="22f5217f-78a9-44b6-944a-a7d9bb1cb28f" x="10" y="5" width="98" height="20" fontSize="11.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
 			<text><![CDATA[ORDENADO POR: ]]></text>
 		</element>
-		<element kind="staticText" uuid="db572c10-ecb0-4d2b-9343-5e4fd9e03a81" x="270" y="9" width="98" height="14" fontSize="10.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
+		<element kind="staticText" uuid="db572c10-ecb0-4d2b-9343-5e4fd9e03a81" x="322" y="5" width="73" height="20" fontSize="11.0" bold="true" hTextAlign="Right" vTextAlign="Middle">
 			<text><![CDATA[CONCEPTO:]]></text>
 		</element>
-		<element kind="textField" uuid="647b8897-b3d2-4432-84ab-61dc3c8ec62c" x="370" y="9" width="150" height="14" vTextAlign="Middle">
+		<element kind="textField" uuid="647b8897-b3d2-4432-84ab-61dc3c8ec62c" x="397" y="5" width="145" height="20" vTextAlign="Middle">
 			<expression><![CDATA[$P{CONCEPTO}]]></expression>
 			<property name="com.jaspersoft.studio.unit.x" value="px"/>
 		</element>
@@ -60,36 +56,28 @@
 	<columnHeader height="24" splitType="Stretch">
 		<element kind="line" uuid="8540f4a5-62a1-44f2-98b0-9dbf83a37cf2" x="0" y="2" width="555" height="1"/>
 		<element kind="line" uuid="51d3e0af-cdd0-4054-82a7-1bd81031165a" x="0" y="22" width="555" height="1"/>
-		<element kind="staticText" uuid="f297a0b0-df17-4c5b-aaa1-231eb64dfd95" x="10" y="2" width="105" height="20" bold="true" vTextAlign="Middle">
-			<text><![CDATA[N° de pago]]></text>
+		<element kind="staticText" uuid="f297a0b0-df17-4c5b-aaa1-231eb64dfd95" x="10" y="2" width="105" height="20" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[N° Cedula]]></text>
 		</element>
-		<element kind="staticText" uuid="d47981d4-2a90-4d00-9168-26e246a850fd" x="130" y="2" width="177" height="20" bold="true" vTextAlign="Middle">
-			<text><![CDATA[Concepto]]></text>
+		<element kind="staticText" uuid="d47981d4-2a90-4d00-9168-26e246a850fd" x="160" y="2" width="220" height="20" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Apoderado]]></text>
 			<property name="com.jaspersoft.studio.unit.x" value="px"/>
 		</element>
-		<element kind="staticText" uuid="5d56ba85-a453-4231-bda5-5eb00ddf5ea7" x="322" y="2" width="88" height="20" bold="true" vTextAlign="Middle">
-			<text><![CDATA[Fecha de pago]]></text>
-			<property name="com.jaspersoft.studio.unit.x" value="px"/>
-		</element>
-		<element kind="staticText" uuid="d3f4799d-48e7-4165-9753-3440f09ec087" x="430" y="2" width="113" height="20" bold="true" vTextAlign="Middle">
-			<text><![CDATA[Monto (Gs)]]></text>
+		<element kind="staticText" uuid="d3f4799d-48e7-4165-9753-3440f09ec087" x="430" y="2" width="113" height="20" bold="true" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Subtotal (Gs)]]></text>
 		</element>
 	</columnHeader>
 	<detail>
 		<band height="21" splitType="Stretch">
-			<element kind="textField" uuid="f55510ff-5cf1-4419-9e96-1bde0d27d20a" x="10" y="0" width="105" height="21" vTextAlign="Middle">
-				<expression><![CDATA[$F{N° de pago}]]></expression>
+			<element kind="textField" uuid="f55510ff-5cf1-4419-9e96-1bde0d27d20a" x="10" y="0" width="105" height="21" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{Nro Cedula}]]></expression>
 			</element>
-			<element kind="textField" uuid="b6430fb7-2e9b-4bcc-a89c-4cd1423ee357" x="322" y="0" width="88" height="21" vTextAlign="Middle">
-				<expression><![CDATA[$F{Fecha de pago}]]></expression>
+			<element kind="textField" uuid="504f1771-5b5a-4352-a9bf-a94fa994816d" x="160" y="0" width="220" height="21" blankWhenNull="true" vTextAlign="Middle">
+				<expression><![CDATA[$F{Apoderado}]]></expression>
 				<property name="com.jaspersoft.studio.unit.x" value="px"/>
 			</element>
-			<element kind="textField" uuid="054e29b7-7298-40a7-9cc3-9d5bbcd1431b" x="430" y="0" width="113" height="21" vTextAlign="Middle">
-				<expression><![CDATA[$F{Monto}]]></expression>
-			</element>
-			<element kind="textField" uuid="504f1771-5b5a-4352-a9bf-a94fa994816d" x="130" y="0" width="177" height="21" vTextAlign="Middle">
-				<expression><![CDATA[$F{Concepto}]]></expression>
-				<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<element kind="textField" uuid="054e29b7-7298-40a7-9cc3-9d5bbcd1431b" x="430" y="0" width="113" height="21" blankWhenNull="true" hTextAlign="Right" vTextAlign="Middle">
+				<expression><![CDATA[$F{Subtotal}]]></expression>
 			</element>
 		</band>
 	</detail>

@@ -155,6 +155,13 @@ public class MetodosTXT {
         }
 
     }
+    
+     public String doubleAFormatSudamerica(Object elDoubleAmericanoObject) {
+         if(elDoubleAmericanoObject == null)
+             return null;
+         
+         return DoubleAFormatSudamerica(Double.parseDouble(elDoubleAmericanoObject + ""));
+     }
 
     public Double StringAFormatoAmericano(String ElNumString) {
         double ElNumDouble = 0.0;
@@ -199,9 +206,9 @@ public class MetodosTXT {
     //Poner los puntos de miles
     public String StringPuntosMiles(String elNumString) {
         try {
-            if (elNumString.equals("") || elNumString.contains("-")) {
+            if (elNumString == null || elNumString.equals("") || elNumString.contains("-")) {
                 return elNumString;
-            }
+            } 
 
             elNumString = elNumString.replace(".", "");
             DecimalFormat formatSudamerica = new DecimalFormat("#,###");
@@ -212,7 +219,7 @@ public class MetodosTXT {
         }
         return elNumString;
     }
-
+    
     //Formatear double para que tenga solo dos numeros despues de la coma, y la coma es punto
     public double DoubleATresDecimales(double ElDouble) {
         String elDoubleString = "";
