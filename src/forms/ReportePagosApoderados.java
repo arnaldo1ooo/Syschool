@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -29,7 +28,7 @@ import utilidades.MetodosTXT;
  *
  * @author Arnaldo_Cantero
  */
-public class ReportePagos extends javax.swing.JDialog {
+public class ReportePagosApoderados extends javax.swing.JDialog {
 
     private PagosService pagosService = new PagosService();
     private MetodosCombo metodoscombo = new MetodosCombo();
@@ -37,40 +36,36 @@ public class ReportePagos extends javax.swing.JDialog {
     private MetodosTXT metodostxt = new MetodosTXT();
     private DAO con = new DAO();
     private DefaultTableModel modelTablePagos;
-    static org.apache.log4j.Logger log_historial = org.apache.log4j.Logger.getLogger(ReportePagos.class.getName());
-    private static String TODOS = "TODOS";
+    static org.apache.log4j.Logger log_historial = org.apache.log4j.Logger.getLogger(ReportePagosApoderados.class.getName());
+    private static final String TODOS = "TODOS";
+    private static final Integer ORDEN_DEFAULT = 1;
 
-    public ReportePagos(java.awt.Frame parent, boolean modal) {
+    public ReportePagosApoderados(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+
         CargarComboBoxes();
 
         lblTituloFecha.setVisible(false);
-        cargarValoresPorDefecto();
-    }
 
-    //--------------------------METODOS----------------------------//
-    private void cargarValoresPorDefecto() {
         //Obtener Fechas
         Calendar cal = Calendar.getInstance();
         cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), 1); //Primer dia del mes seleccionado
         dcDesde.setCalendar(cal);
         cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.getActualMaximum(Calendar.DAY_OF_MONTH)); //Ultimo dia del mes seleccionado
         dcHasta.setCalendar(cal);
-        
-        int anhoActual = LocalDate.now().getYear(); 
-        cbPeriodo.setSelectedItem(String.valueOf(anhoActual));
     }
-    
+
+    //--------------------------METODOS----------------------------//
     private void CargarComboBoxes() {
         //Carga los combobox con las consultas
         metodoscombo.CargarComboConsulta(cbConcepto, "SELECT con_codigo, con_descripcion FROM concepto ORDER BY con_descripcion", 1);
-        cbConcepto.addItem(new MetodosCombo(-1, "TODOS"));
+        cbConcepto.addItem(new MetodosCombo(-1, TODOS));
         cbConcepto.setMaximumRowCount(cbConcepto.getModel().getSize()); //Tamaño del combo
         cbConcepto.setSelectedItem("TODOS");
     }
 
-    private void ConsultaPagos() {
+    private void ConsultaPagosPorApoderados() {
         modelTablePagos = (DefaultTableModel) tbPrincipal.getModel();//Cargamos campos de jtable al modeltable
         modelTablePagos.setRowCount(0); //Vacia la tabla
 
@@ -79,36 +74,28 @@ public class ReportePagos extends javax.swing.JDialog {
             for (int i = 0; i < tbPrincipal.getColumnCount(); i++) {
                 cbOrdenar.addItem(tbPrincipal.getColumnName(i));
             }
-            cbOrdenar.setSelectedIndex(0);
+            cbOrdenar.setSelectedIndex(ORDEN_DEFAULT);
         }
         
         SimpleDateFormat formatofecha = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat formatofecha2 = new SimpleDateFormat("dd/MM/yyyy");
         String sentencia;
         
-        int idConcepto = cbConcepto.getSelectedItem().toString().equals(TODOS) 
-                            ? metodoscombo.ObtenerIDSelectCombo(cbConcepto)
-                            : -1;
-        
-        boolean isFiltrarPorPeriodo = rbPeriodo.isSelected();
-
-        sentencia = pagosService.sqlPagosConceptoPorFecha(formatofecha.format(dcDesde.getDate()), 
-                                                          formatofecha.format(dcHasta.getDate()), 
-                                                          idConcepto, cbPeriodo.getSelectedItem().toString(),
-                                                          isFiltrarPorPeriodo);
+        if (cbConcepto.getSelectedItem().toString().equals(TODOS)) {
+            sentencia = pagosService.sqlPagosPorApoderados(formatofecha.format(dcDesde.getDate()), formatofecha.format(dcHasta.getDate()), -1);
+        } else {
+            sentencia = pagosService.sqlPagosPorApoderados(formatofecha.format(dcDesde.getDate()), formatofecha.format(dcHasta.getDate()), metodoscombo.ObtenerIDSelectCombo(cbConcepto));
+        }
 
         try {
             con = con.ObtenerRSSentencia(sentencia);
-            String numpago, fechapago, concepto, periodo;
-            double monto, total = 0;
+            String nroCedula, nombreApellidoApoderado;
+            double subtotal, total = 0;
             while (con.getResultSet().next()) {
-                numpago = con.getResultSet().getString("pag_numpago");
-                concepto = con.getResultSet().getString("con_descripcion");
-                fechapago = formatofecha2.format(con.getResultSet().getDate("pag_fechapago"));
-                monto = con.getResultSet().getDouble("totalpago");
-                periodo = con.getResultSet().getString("pag_periodo");
-                total = total + monto;
-                modelTablePagos.addRow(new Object[]{numpago, concepto, fechapago, monto, periodo});
+                nroCedula = con.getResultSet().getString("ci");
+                nombreApellidoApoderado = con.getResultSet().getString("nombre_apellido_apo");
+                subtotal = con.getResultSet().getDouble("subtotal");
+                total = total + subtotal;
+                modelTablePagos.addRow(new Object[]{nroCedula, nombreApellidoApoderado, subtotal});
 
                 lblTotal.setText(metodostxt.DoubleAFormatSudamerica(total) + " Gs.");
             }
@@ -137,21 +124,18 @@ public class ReportePagos extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup = new javax.swing.ButtonGroup();
         jpPrincipal = new javax.swing.JPanel();
         panel3 = new org.edisoncor.gui.panel.Panel();
         labelMetric2 = new org.edisoncor.gui.label.LabelMetric();
         panel1 = new org.edisoncor.gui.panel.Panel();
-        rbFechaPago = new javax.swing.JRadioButton();
-        lblDesde = new javax.swing.JLabel();
+        lblFechaPago = new javax.swing.JLabel();
         lblHasta = new javax.swing.JLabel();
+        lblDesde = new javax.swing.JLabel();
         dcDesde = new com.toedter.calendar.JDateChooser();
         dcHasta = new com.toedter.calendar.JDateChooser();
-        lblConcepto = new javax.swing.JLabel();
-        cbConcepto = new javax.swing.JComboBox<>();
-        rbPeriodo = new javax.swing.JRadioButton();
-        cbPeriodo = new javax.swing.JComboBox<>();
         btnFiltrar = new org.edisoncor.gui.button.ButtonSeven();
+        cbConcepto = new javax.swing.JComboBox<>();
+        lblConcepto = new javax.swing.JLabel();
         panel4 = new org.edisoncor.gui.panel.Panel();
         lblBuscarCampo = new javax.swing.JLabel();
         cbOrdenar = new javax.swing.JComboBox();
@@ -169,7 +153,7 @@ public class ReportePagos extends javax.swing.JDialog {
         btnGenerarReporte = new org.edisoncor.gui.button.ButtonSeven();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Ventana reporte de pagos");
+        setTitle("Ventana reporte de pagos por apoderados");
 
         jpPrincipal.setBackground(new java.awt.Color(233, 255, 255));
         jpPrincipal.setPreferredSize(new java.awt.Dimension(1580, 478));
@@ -178,7 +162,7 @@ public class ReportePagos extends javax.swing.JDialog {
         panel3.setColorSecundario(new java.awt.Color(233, 255, 255));
 
         labelMetric2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        labelMetric2.setText("REPORTE DE PAGOS");
+        labelMetric2.setText("REPORTE DE PAGOS POR APODERADOS");
         labelMetric2.setDireccionDeSombra(110);
         labelMetric2.setFont(new java.awt.Font("Cooper Black", 0, 22)); // NOI18N
 
@@ -203,53 +187,15 @@ public class ReportePagos extends javax.swing.JDialog {
         panel1.setColorPrimario(new java.awt.Color(233, 255, 255));
         panel1.setColorSecundario(new java.awt.Color(255, 255, 255));
 
-        buttonGroup.add(rbFechaPago);
-        rbFechaPago.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        rbFechaPago.setSelected(true);
-        rbFechaPago.setText("Fecha de pago");
-        rbFechaPago.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbFechaPagoActionPerformed(evt);
-            }
-        });
-
-        lblDesde.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblDesde.setText("Desde");
+        lblFechaPago.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
+        lblFechaPago.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblFechaPago.setText("Fecha de pago");
 
         lblHasta.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblHasta.setText("Hasta");
 
-        dcDesde.setEnabled(rbFechaPago.isSelected());
-
-        dcHasta.setEnabled(rbFechaPago.isSelected());
-
-        lblConcepto.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        lblConcepto.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        lblConcepto.setText("Concepto");
-
-        cbConcepto.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbConceptoItemStateChanged(evt);
-            }
-        });
-
-        buttonGroup.add(rbPeriodo);
-        rbPeriodo.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        rbPeriodo.setText("Periodo");
-        rbPeriodo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbPeriodoActionPerformed(evt);
-            }
-        });
-
-        cbPeriodo.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        cbPeriodo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031", "2032", "2033", "2034", "2035", "2036", "2037", "2038", "2039", "2040" }));
-        cbPeriodo.setEnabled(rbPeriodo.isSelected());
-        cbPeriodo.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbPeriodoItemStateChanged(evt);
-            }
-        });
+        lblDesde.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblDesde.setText("Desde");
 
         btnFiltrar.setBackground(new java.awt.Color(0, 153, 153));
         btnFiltrar.setText("Filtrar");
@@ -259,59 +205,65 @@ public class ReportePagos extends javax.swing.JDialog {
             }
         });
 
+        cbConcepto.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbConceptoItemStateChanged(evt);
+            }
+        });
+
+        lblConcepto.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
+        lblConcepto.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lblConcepto.setText("Concepto");
+
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(rbFechaPago, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(rbPeriodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(lblFechaPago)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(cbPeriodo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblDesde, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(dcDesde, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dcHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
-                                .addGap(2, 2, 2)
-                                .addComponent(lblHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblDesde, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(dcDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(dcHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(lblHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblConcepto)
                 .addGap(2, 2, 2)
                 .addComponent(cbConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15))
+            .addGroup(panel1Layout.createSequentialGroup()
+                .addGap(298, 298, 298)
+                .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(1, 1, 1)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel1Layout.createSequentialGroup()
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(rbFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rbPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(27, 27, 27)
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblFechaPago, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(lblConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(cbConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(panel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(1, 1, 1)
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(dcDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dcHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(dcHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(28, 28, 28)
+                .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -328,6 +280,11 @@ public class ReportePagos extends javax.swing.JDialog {
                 cbOrdenarItemStateChanged(evt);
             }
         });
+        cbOrdenar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbOrdenarActionPerformed(evt);
+            }
+        });
 
         scPrincipal.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
@@ -338,14 +295,14 @@ public class ReportePagos extends javax.swing.JDialog {
 
             },
             new String [] {
-                "N° de pago", "Concepto", "Fecha de pago", "Monto", "Periodo"
+                "Nro Cedula", "Apoderado", "Subtotal"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -492,7 +449,7 @@ public class ReportePagos extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
+            .addComponent(jpPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE)
         );
 
         pack();
@@ -515,13 +472,7 @@ public class ReportePagos extends javax.swing.JDialog {
         parametros.clear();
         parametros.put("LOGO", logo);
         parametros.put("LOGO2", logo2);
-       
-        if(rbFechaPago.isSelected()) {
-          parametros.put("FECHADESDEHASTA", "(" + lblTituloFecha.getText() + ")");
-        }
-        else {
-          parametros.put("PERIODO", cbPeriodo.getSelectedItem().toString());  
-        }
+        parametros.put("FECHADESDEHASTA", "(" + lblTituloFecha.getText() + ")");
 
         parametros.put("ORDENADOPOR", cbOrdenar.getSelectedItem() + "");
         parametros.put("CONCEPTO", cbConcepto.getSelectedItem().toString());
@@ -529,7 +480,7 @@ public class ReportePagos extends javax.swing.JDialog {
         parametros.put("TOTAL", totalsplit[0] + " Gs");
         parametros.put("CANTREGISTROS", lbCantRegistros.getText());
 
-        rutajasper = "/reportes/reporte_pagos.jasper";
+        rutajasper = "/reportes/reporte_pagos_apoderados.jasper";
 
         //Crea una tabla auxiliar en donde se carga los registros ordenados por cierta en la tabla principal
         JTable tableAuxiliar = new JTable(); //tabla auxiliar
@@ -543,8 +494,9 @@ public class ReportePagos extends javax.swing.JDialog {
         for (int f = 0; f < tbPrincipal.getRowCount(); f++) {
             Object fila[] = new Object[tbPrincipal.getColumnCount()];
             for (int c = 0; c < tbPrincipal.getColumnCount(); c++) {
-                if (tbPrincipal.getColumnName(c).equals("Monto")) {
-                    fila[c] = metodostxt.DoubleAFormatSudamerica(Double.parseDouble(tbPrincipal.getValueAt(f, c) + ""));
+                if (tbPrincipal.getColumnName(c).equals("Nro Cedula") 
+                        || tbPrincipal.getColumnName(c).equals("Subtotal")) {
+                    fila[c] = metodostxt.doubleAFormatSudamerica(tbPrincipal.getValueAt(f, c));
                 } else {
                     fila[c] = tbPrincipal.getValueAt(f, c);
                 }
@@ -570,7 +522,7 @@ public class ReportePagos extends javax.swing.JDialog {
 
     private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
         if (dcHasta.getDate().after(dcDesde.getDate())) {
-            ConsultaPagos();
+            ConsultaPagosPorApoderados();
         } else {
             JOptionPane.showMessageDialog(this, "La fecha DESDE no puede ser mayor a la fecha HASTA", "Advertencia", JOptionPane.WARNING_MESSAGE);
             dcDesde.requestFocus();
@@ -582,24 +534,9 @@ public class ReportePagos extends javax.swing.JDialog {
         modelTablePagos.setRowCount(0);
     }//GEN-LAST:event_cbConceptoItemStateChanged
 
-    private void cbPeriodoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbPeriodoItemStateChanged
-        
-    }//GEN-LAST:event_cbPeriodoItemStateChanged
-
-    private void rbFechaPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbFechaPagoActionPerformed
-        // El ButtonGroup ya desmarcó rbPeriodo automáticamente.
-        // Aquí solo habilitas lo que necesitas.
-        dcDesde.setEnabled(true);
-        dcHasta.setEnabled(true);
-        cbPeriodo.setEnabled(false);
-    }//GEN-LAST:event_rbFechaPagoActionPerformed
-
-    private void rbPeriodoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbPeriodoActionPerformed
-        // El ButtonGroup ya desmarcó rbFechaPago automáticamente.
-        cbPeriodo.setEnabled(true);
-        dcDesde.setEnabled(false);
-        dcHasta.setEnabled(false);
-    }//GEN-LAST:event_rbPeriodoActionPerformed
+    private void cbOrdenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbOrdenarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbOrdenarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -621,7 +558,7 @@ public class ReportePagos extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                ReportePagos dialog = new ReportePagos(new javax.swing.JFrame(), true);
+                ReportePagosApoderados dialog = new ReportePagosApoderados(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -636,10 +573,8 @@ public class ReportePagos extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.edisoncor.gui.button.ButtonSeven btnFiltrar;
     private org.edisoncor.gui.button.ButtonSeven btnGenerarReporte;
-    private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JComboBox<MetodosCombo> cbConcepto;
     private javax.swing.JComboBox cbOrdenar;
-    private javax.swing.JComboBox<String> cbPeriodo;
     private com.toedter.calendar.JDateChooser dcDesde;
     private com.toedter.calendar.JDateChooser dcHasta;
     private javax.swing.JLabel jLabel11;
@@ -650,14 +585,13 @@ public class ReportePagos extends javax.swing.JDialog {
     private javax.swing.JLabel lblBuscarCampo;
     private javax.swing.JLabel lblConcepto;
     private javax.swing.JLabel lblDesde;
+    private javax.swing.JLabel lblFechaPago;
     private javax.swing.JLabel lblHasta;
     private javax.swing.JLabel lblTituloFecha;
     private javax.swing.JLabel lblTotal;
     private org.edisoncor.gui.panel.Panel panel1;
     private org.edisoncor.gui.panel.Panel panel3;
     private org.edisoncor.gui.panel.Panel panel4;
-    private javax.swing.JRadioButton rbFechaPago;
-    private javax.swing.JRadioButton rbPeriodo;
     private javax.swing.JScrollPane scPrincipal;
     private javax.swing.JTable tbPrincipal;
     // End of variables declaration//GEN-END:variables

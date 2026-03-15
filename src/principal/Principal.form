@@ -280,6 +280,17 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="meitReporteBalanceActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator14">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="meitReportePagosApoderados">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Reporte de pagos por apoderados"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="meitReportePagosApoderadosActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="meUsuario">
@@ -533,7 +544,6 @@
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
                   <Component id="pContactos" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               </Group>
               <Component id="pBarraInferior" alignment="0" max="32767" attributes="0"/>
           </Group>
